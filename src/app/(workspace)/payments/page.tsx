@@ -15,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
 import { RefundDialog } from "@/components/payments/refund-dialog";
+import { formatCurrency } from "@/lib/utils";
+import type { Currency } from "@/lib/types";
 
 interface PaymentItem {
   id: string;
@@ -40,6 +42,8 @@ interface PaymentItem {
 interface PaymentMetrics {
   totalCapturedMinor: number;
   totalRefundedMinor: number;
+  capturedByCurrency?: Array<{ currency: string; totalAmountMinor: number; count: number }>;
+  refundedByCurrency?: Array<{ currency: string; totalAmountMinor: number; count: number }>;
   activeDisputesCount: number;
   totalTransactions: number;
 }
@@ -152,7 +156,9 @@ export default function PaymentsPage() {
             <DollarSign className="h-4 w-4 text-emerald-400" />
           </div>
           <div className="mt-2 text-2xl font-bold text-fg">
-            ${(metrics.totalCapturedMinor / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+            {metrics.capturedByCurrency && metrics.capturedByCurrency.length > 0
+              ? metrics.capturedByCurrency.map((c) => formatCurrency(c.totalAmountMinor / 100, (c.currency as Currency) || "USD")).join(" + ")
+              : formatCurrency(metrics.totalCapturedMinor / 100, "USD")}
           </div>
           <p className="mt-1 text-[11px] text-muted">Authoritative ledger capture total</p>
         </div>
@@ -163,7 +169,9 @@ export default function PaymentsPage() {
             <RotateCcw className="h-4 w-4 text-sky-400" />
           </div>
           <div className="mt-2 text-2xl font-bold text-fg">
-            ${(metrics.totalRefundedMinor / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+            {metrics.refundedByCurrency && metrics.refundedByCurrency.length > 0
+              ? metrics.refundedByCurrency.map((r) => formatCurrency(r.totalAmountMinor / 100, (r.currency as Currency) || "USD")).join(" + ")
+              : formatCurrency(metrics.totalRefundedMinor / 100, "USD")}
           </div>
           <p className="mt-1 text-[11px] text-muted">Completed refund transactions</p>
         </div>
@@ -288,11 +296,11 @@ export default function PaymentsPage() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="font-mono font-semibold text-fg">
-                          ${(p.amountMinor / 100).toFixed(2)}
+                          {formatCurrency(p.amountMinor / 100, (p.currency as Currency) || "USD")}
                         </div>
                         {refundedSum > 0 && (
                           <div className="text-[10px] text-amber-400">
-                            Refunded: ${(refundedSum / 100).toFixed(2)}
+                            Refunded: {formatCurrency(refundedSum / 100, (p.currency as Currency) || "USD")}
                           </div>
                         )}
                       </td>

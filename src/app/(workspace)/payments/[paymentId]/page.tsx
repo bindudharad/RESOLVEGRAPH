@@ -17,6 +17,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RefundDialog } from "@/components/payments/refund-dialog";
+import { formatCurrency } from "@/lib/utils";
+import type { Currency } from "@/lib/types";
 
 interface PaymentDetailData {
   payment: {
@@ -265,13 +267,13 @@ export default function PaymentDetailPage({
           <div className="mt-2 grid grid-cols-2 gap-4 text-muted sm:grid-cols-4">
             <div>
               <span className="block text-[10px] uppercase">Internal Ledger</span>
-              <span className="font-mono text-fg">${(reconciliation.internalAmountMinor / 100).toFixed(2)} ({reconciliation.internalStatus})</span>
+              <span className="font-mono text-fg">{formatCurrency(reconciliation.internalAmountMinor / 100, (payment.currency as Currency) || "USD")} ({reconciliation.internalStatus})</span>
             </div>
             <div>
               <span className="block text-[10px] uppercase">PayPal Provider</span>
               <span className="font-mono text-fg">
                 {reconciliation.providerAmountMinor !== undefined
-                  ? `$${(reconciliation.providerAmountMinor / 100).toFixed(2)}`
+                  ? formatCurrency(reconciliation.providerAmountMinor / 100, (payment.currency as Currency) || "USD")
                   : "N/A"}{" "}
                 ({reconciliation.providerStatus || "N/A"})
               </span>
@@ -369,9 +371,9 @@ export default function PaymentDetailPage({
                         {item.sku && <div className="font-mono text-[10px] text-muted">{item.sku}</div>}
                       </td>
                       <td className="py-2.5 text-muted">{item.quantity}</td>
-                      <td className="py-2.5 font-mono text-muted">${(item.unitAmountMinor / 100).toFixed(2)}</td>
+                      <td className="py-2.5 font-mono text-muted">{formatCurrency(item.unitAmountMinor / 100, (order.currency as Currency) || "USD")}</td>
                       <td className="py-2.5 text-right font-mono font-medium text-fg">
-                        ${(item.totalAmountMinor / 100).toFixed(2)}
+                        {formatCurrency(item.totalAmountMinor / 100, (order.currency as Currency) || "USD")}
                       </td>
                     </tr>
                   ))}
@@ -432,18 +434,18 @@ export default function PaymentDetailPage({
             <div className="space-y-2 text-xs">
               <div className="flex justify-between text-muted">
                 <span>Gross Captured</span>
-                <span className="font-mono font-medium text-fg">${(payment.amountMinor / 100).toFixed(2)}</span>
+                <span className="font-mono font-medium text-fg">{formatCurrency(payment.amountMinor / 100, (payment.currency as Currency) || "USD")}</span>
               </div>
               <div className="flex justify-between text-muted">
                 <span>Total Refunded</span>
                 <span className="font-mono font-medium text-amber-400">
-                  -${(totalRefunded / 100).toFixed(2)}
+                  -{formatCurrency(totalRefunded / 100, (payment.currency as Currency) || "USD")}
                 </span>
               </div>
               <div className="border-t border-line pt-2 flex justify-between font-semibold text-fg">
                 <span>Retained Balance</span>
                 <span className="font-mono text-emerald-400">
-                  ${(remainingRefundableMinor / 100).toFixed(2)}
+                  {formatCurrency(remainingRefundableMinor / 100, (payment.currency as Currency) || "USD")}
                 </span>
               </div>
             </div>

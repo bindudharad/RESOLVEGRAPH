@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    const [payments, total, totalCapturedAgg, totalRefundsAgg] = await Promise.all([
+    const [payments, total, capturedByCurrencyRaw, refundsByCurrencyRaw] = await Promise.all([
       prisma.payPalPayment.findMany({
         where,
         include: {
@@ -55,19 +55,50 @@ export async function GET(request: NextRequest) {
         take: limit,
       }),
       prisma.payPalPayment.count({ where }),
-      prisma.payPalPayment.aggregate({
+      prisma.payPalPayment.groupBy({
+        by: ['currency'],
         where: { ...where, paymentStatus: 'COMPLETED' },
         _sum: { amountMinor: true },
+        _count: { id: true },
       }),
-      prisma.refundTransaction.aggregate({
-        where: { status: 'COMPLETED' },
+      prisma.refundTransaction.groupBy({
+        by: ['currency'],
+        where: {
+          ...(where.commerceOrder ? { payment: { commerceOrder: where.commerceOrder } } : {}),
+          status: 'COMPLETED',
+        },
         _sum: { amountMinor: true },
+        _count: { id: true },
       }),
     ]);
 
     const activeDisputesCount = await prisma.payPalDispute.count({
-      where: { paypalStatus: { not: 'RESOLVED' } },
+      where: {
+        ...(where.commerceOrder ? { payment: { commerceOrder: where.commerceOrder } } : {}),
+        paypalStatus: { not: 'RESOLVED' },
+      },
     });
+
+    const capturedByCurrency = capturedByCurrencyRaw.map((c) => ({
+      currency: c.currency,
+      totalAmountMinor: c._sum.amountMinor || 0,
+      count: c._count.id,
+    }));
+
+    const refundedByCurrency = refundsByCurrencyRaw.map((r) => ({
+      currency: r.currency,
+      totalAmountMinor: r._sum.amountMinor || 0,
+      count: r._count.id,
+    }));
+
+    const totalCapturedMinor = capturedByCurrencyRaw.reduce(
+      (sum, item) => sum + (item._sum.amountMinor || 0),
+      0
+    );
+    const totalRefundedMinor = refundsByCurrencyRaw.reduce(
+      (sum, item) => sum + (item._sum.amountMinor || 0),
+      0
+    );
 
     return NextResponse.json({
       payments,
@@ -78,8 +109,10 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(total / limit),
       },
       metrics: {
-        totalCapturedMinor: totalCapturedAgg._sum.amountMinor || 0,
-        totalRefundedMinor: totalRefundsAgg._sum.amountMinor || 0,
+        totalCapturedMinor,
+        totalRefundedMinor,
+        capturedByCurrency,
+        refundedByCurrency,
         activeDisputesCount,
         totalTransactions: total,
       },
