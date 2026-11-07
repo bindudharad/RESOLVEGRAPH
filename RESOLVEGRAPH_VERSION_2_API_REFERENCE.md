@@ -304,3 +304,62 @@ Registers customer-submitted UPI complaints with honest status labeling and stat
     }
   }
   ```
+
+
+---
+
+## 11. Enterprise Merchant APIs
+
+Enterprise merchants automate fulfillment registration directly through secured endpoints using \`x-resolvegraph-api-key\`.
+
+### \`POST /api/enterprise/orders\`
+Batch import merchant orders into immutable Purchase Memory.
+- **Headers:** \`x-resolvegraph-api-key: rg_ent_...\`
+- **Request Body:**
+  \`\`\`json
+  {
+    "orders": [
+      {
+        "orderNumber": "ORD-ENT-1001",
+        "title": "UltraPro 1TB NVMe SSD",
+        "totalAmountMinor": 649900,
+        "currency": "INR",
+        "specifications": [{ "key": "storage_capacity", "value": "1 TB" }]
+      }
+    ]
+  }
+  \`\`\`
+- **Response (201 Created):**
+  \`\`\`json
+  {
+    "success": true,
+    "count": 1,
+    "memories": [...]
+  }
+  \`\`\`
+
+### \`POST /api/enterprise/packages\`
+Registers outbound package manifests and assigns signed QR verification tokens.
+- **Headers:** \`x-resolvegraph-api-key: rg_ent_...\`
+- **Request Body:**
+  \`\`\`json
+  {
+    "carrierName": "Blue Dart Express",
+    "trackingNumber": "BD-99881122",
+    "items": [
+      { "productName": "UltraPro 1TB NVMe SSD", "sku": "SKU-SSD-1TB", "quantity": 1 }
+    ]
+  }
+  \`\`\`
+
+### \`POST /api/enterprise/dispatch\`
+Confirms parcel handover to the carrier.
+- **Headers:** \`x-resolvegraph-api-key: rg_ent_...\`
+- **Request Body:**
+  \`\`\`json
+  {
+    "packageId": "pkg_clx...",
+    "carrierName": "Blue Dart Express",
+    "trackingNumber": "BD-99881122"
+  }
+  \`\`\`

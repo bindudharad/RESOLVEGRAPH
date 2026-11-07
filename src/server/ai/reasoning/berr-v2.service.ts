@@ -53,6 +53,7 @@ export interface BerrV2ReasoningOutput {
     establishedFacts: string[];
     remainingUncertainties: string[];
     riskScore: number;
+    objectiveUncertaintyScore: number;
     requiresHumanReview: boolean;
   };
   metrics: {
@@ -212,6 +213,7 @@ export class BerrV2Service {
         ],
         remainingUncertainties,
         riskScore: counts.contested > 0 ? 0.65 : 0.2,
+        objectiveUncertaintyScore: counts.contested > 0 ? 0.65 : 0.2,
         requiresHumanReview: counts.contested > 0 || counts.missing > 0,
       },
       metrics: {

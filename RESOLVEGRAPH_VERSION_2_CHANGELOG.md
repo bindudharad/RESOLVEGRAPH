@@ -66,10 +66,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 - Extended Prisma Schema with 16 new models (`PurchaseMemory`, `PackagePassport`, `DeliveryEvent`, `CameraSession`, `EvidenceAnalysisResult`, `SharedRoomMessage`, `PaymentComplaint`, etc.).
-- Upgraded Next.js routes to 50 production-built endpoints.
+- Upgraded Next.js routes to 54 production-built endpoints.
 - Expanded navigation rail with "Purchase Memory", "Package Passports", and "Shared Resolution Room".
+- 221 automated tests passing 100% across 49 test suites (0 failures).
+- Authored 25 comprehensive Final Verification & Release Certification reports in `reports/RESOLVEGRAPH_V2_FINAL/`.
 
 ### Security & Invariants Protected
-- Baseline SQLite database (`dev.db`) preserved with 127 CaseRecords intact.
+- Baseline SQLite database (`dev.db`) preserved with 133 CaseRecords intact.
 - `PAYPAL_LIVE_ENABLED=false` hard-locked across all runtime environments.
 - Zero autonomous fund movements; explicit human approvals enforced on all remedies.

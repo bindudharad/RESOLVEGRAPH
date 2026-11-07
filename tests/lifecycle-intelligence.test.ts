@@ -75,7 +75,7 @@ describe('RESOLVEGRAPH Version 2.0: Multimodal Case Intelligence Suite', () => {
     });
 
     // 5. Add a Claim where buyer asserts a 512 GB SSD was inside
-    const claim = await prisma.claim.create({
+    await prisma.claim.create({
       data: {
         caseId: testCaseId,
         authorId: testBuyerId,
