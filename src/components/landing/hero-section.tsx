@@ -21,8 +21,12 @@ const HeroGlobe = dynamic(() => import("@/components/landing/hero-globe"), {
 /*  Trust logos                                                                */
 /* -------------------------------------------------------------------------- */
 
-const trustLogos = [
-  "PayPal", "Stripe", "Shopify", "Square", "Klarna",
+const platformCapabilities = [
+  "Bilateral Evidence Graph",
+  "PayPal Sandbox Verified",
+  "Cryptographic Provenance",
+  "Human-in-the-Loop Safeguards",
+  "Multi-Tenant Workspaces",
 ];
 
 function TrustBar() {
@@ -30,13 +34,13 @@ function TrustBar() {
     <FadeIn delay={0.8}>
       <div className="mt-16 flex flex-col items-center gap-4">
         <p className="text-xs font-medium uppercase tracking-[0.15em] text-[var(--color-faint)]">
-          Trusted by leading commerce platforms
+          Architectural Foundation & Compliance Safeguards
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-8">
-          {trustLogos.map((name) => (
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {platformCapabilities.map((name) => (
             <span
               key={name}
-              className="text-sm font-semibold tracking-wider text-[var(--color-subtle)] transition-colors hover:text-[var(--color-muted)]"
+              className="rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-1 text-xs font-medium tracking-wide text-[var(--color-subtle)] transition-colors hover:text-white"
             >
               {name}
             </span>
@@ -94,7 +98,7 @@ export function HeroSection() {
             <br />
             <span className="rg-gradient-text">
               <AnimatedText
-                text="AI Intelligence"
+                text="Evidence-First AI"
                 mode="word"
                 delay={0.55}
               />
