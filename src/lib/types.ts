@@ -82,6 +82,7 @@ export interface EvidenceItem {
   verification: VerificationStatus;
   sizeKb: number;
   extension: "pdf" | "png" | "jpg" | "csv" | "txt";
+  sha256?: string;
 }
 
 export type ActivityKind =
