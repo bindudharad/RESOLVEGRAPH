@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useDashboard } from "@/components/dashboard/dashboard-context";
 import { MetricCardSkeleton } from "@/components/common/loading-skeleton";
-import { KPI_METRICS, type MetricCardData } from "@/lib/mock-data";
+import { type MetricCardData } from "@/lib/mock-data";
 import { cn, formatNumber, formatTrend } from "@/lib/utils";
 
 const ICONS: Record<string, LucideIcon> = {
@@ -82,7 +82,7 @@ export function MetricGrid() {
   const { refreshing, summary } = useDashboard();
 
   const metrics: MetricCardData[] = useMemo(() => {
-    if (!summary?.kpis) return KPI_METRICS;
+    if (!summary?.kpis) return [];
     return [
       {
         key: "total-cases",
@@ -119,11 +119,11 @@ export function MetricGrid() {
     ];
   }, [summary]);
 
-  if (refreshing) {
+  if (refreshing || !summary) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {metrics.map((metric) => (
-          <MetricCardSkeleton key={metric.key} />
+        {["total-cases", "open-cases", "awaiting-response", "resolved-cases"].map((key) => (
+          <MetricCardSkeleton key={key} />
         ))}
       </div>
     );
