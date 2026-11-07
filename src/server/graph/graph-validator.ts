@@ -73,6 +73,26 @@ const ALLOWED_EDGE_CONNECTIONS: Record<
     allowedSources: ["RESOLUTION_PROPOSAL"],
     allowedTargets: ["CLAIM"],
   },
+  PROMISES_SPEC: {
+    allowedSources: ["CASE"],
+    allowedTargets: ["PURCHASE_MEMORY"],
+  },
+  PACKED_IN: {
+    allowedSources: ["CASE"],
+    allowedTargets: ["PACKAGE_PASSPORT"],
+  },
+  SEALED_WITH: {
+    allowedSources: ["PACKAGE_PASSPORT"],
+    allowedTargets: ["PACKAGE_SEAL"],
+  },
+  TRANSIT_VERIFIED: {
+    allowedSources: ["PACKAGE_PASSPORT", "CASE"],
+    allowedTargets: ["DELIVERY_EVENT"],
+  },
+  UNBOXED_IN_SESSION: {
+    allowedSources: ["CASE"],
+    allowedTargets: ["CAMERA_SESSION"],
+  },
 };
 
 export class GraphValidator {

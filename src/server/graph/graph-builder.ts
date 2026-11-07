@@ -52,6 +52,9 @@ export class GraphBuilder {
       findingEvidence,
       timelineEvents,
       resolutionProposals,
+      purchaseMemory,
+      packagePassport,
+      cameraSessions,
     ] = await Promise.all([
       prisma.extractedFact.findMany({
         where: { caseId: actualCaseId },
@@ -79,6 +82,21 @@ export class GraphBuilder {
       prisma.resolutionProposal.findMany({
         where: { caseId: actualCaseId },
         include: { responses: true },
+      }),
+      caseRecord.purchaseMemoryId
+        ? prisma.purchaseMemory.findUnique({
+            where: { id: caseRecord.purchaseMemoryId },
+            include: { specifications: true },
+          })
+        : Promise.resolve(null),
+      caseRecord.packagePassportId
+        ? prisma.packagePassport.findUnique({
+            where: { id: caseRecord.packagePassportId },
+            include: { items: true, seals: true },
+          })
+        : Promise.resolve(null),
+      prisma.cameraSession.findMany({
+        where: { caseId: actualCaseId },
       }),
     ]);
 
@@ -414,6 +432,102 @@ export class GraphBuilder {
           provenance: "RULE",
         });
       }
+    }
+
+    // --- Version 2.0 Nodes & Edges ---
+    if (purchaseMemory) {
+      const pmNodeId = `purchase:${purchaseMemory.id}`;
+      nodes.push({
+        id: pmNodeId,
+        type: "PURCHASE_MEMORY",
+        label: purchaseMemory.listingTitle,
+        sublabel: `Order #${purchaseMemory.externalOrderId}`,
+        party: "BUYER",
+        timestamp: purchaseMemory.purchaseDate.toISOString(),
+        metadata: {
+          marketplace: purchaseMemory.marketplace,
+          priceMinor: purchaseMemory.priceMinor,
+          specs: purchaseMemory.specifications,
+        },
+      });
+      edges.push({
+        id: `edge:case->pm:${actualCaseId}`,
+        source: `case:${actualCaseId}`,
+        target: pmNodeId,
+        type: "PROMISES_SPEC",
+        label: "PROMISES_SPEC",
+        provenance: "SYSTEM_AUDIT",
+      });
+    }
+
+    if (packagePassport) {
+      const pkgNodeId = `package:${packagePassport.id}`;
+      nodes.push({
+        id: pkgNodeId,
+        type: "PACKAGE_PASSPORT",
+        label: packagePassport.packageNumber,
+        sublabel: `Status: ${packagePassport.status}`,
+        party: "MERCHANT",
+        status: packagePassport.status,
+        timestamp: packagePassport.createdAt.toISOString(),
+        metadata: {
+          trackingNumber: packagePassport.trackingNumber,
+          carrier: packagePassport.carrierName,
+          items: packagePassport.items,
+        },
+      });
+      edges.push({
+        id: `edge:case->pkg:${actualCaseId}`,
+        source: `case:${actualCaseId}`,
+        target: pkgNodeId,
+        type: "PACKED_IN",
+        label: "PACKED_IN",
+        provenance: "SYSTEM_AUDIT",
+      });
+
+      for (const seal of packagePassport.seals) {
+        const sealNodeId = `seal:${seal.id}`;
+        nodes.push({
+          id: sealNodeId,
+          type: "PACKAGE_SEAL",
+          label: seal.sealNumber,
+          sublabel: seal.sealType,
+          party: "MERCHANT",
+          status: seal.verificationStatus,
+          timestamp: seal.appliedAt.toISOString(),
+          metadata: { sealType: seal.sealType, status: seal.verificationStatus },
+        });
+        edges.push({
+          id: `edge:pkg->seal:${packagePassport.id}_${seal.id}`,
+          source: pkgNodeId,
+          target: sealNodeId,
+          type: "SEALED_WITH",
+          label: "SEALED_WITH",
+          provenance: "SYSTEM_AUDIT",
+        });
+      }
+    }
+
+    for (const session of cameraSessions) {
+      const sessNodeId = `session:${session.id}`;
+      nodes.push({
+        id: sessNodeId,
+        type: "CAMERA_SESSION",
+        label: `Unboxing (${session.sessionToken.slice(0, 8)})`,
+        sublabel: session.captureMode,
+        party: "BUYER",
+        status: session.status,
+        timestamp: session.createdAt.toISOString(),
+        metadata: { captureMode: session.captureMode, status: session.status },
+      });
+      edges.push({
+        id: `edge:case->sess:${actualCaseId}_${session.id}`,
+        source: `case:${actualCaseId}`,
+        target: sessNodeId,
+        type: "UNBOXED_IN_SESSION",
+        label: "UNBOXED_IN_SESSION",
+        provenance: "SYSTEM_AUDIT",
+      });
     }
 
     const graphData: GraphData = {

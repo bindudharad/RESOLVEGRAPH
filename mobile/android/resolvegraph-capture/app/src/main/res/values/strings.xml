@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ResolveGraph Capture</string>
+    <string name="title_dual_sight">Dual-Sight Unboxing Verification</string>
+    <string name="desc_unboxing_prompt">Record the package seal, shipping label, and product opening to generate immutable resolution evidence.</string>
+    <string name="btn_start_session">Start Verification Session</string>
+    <string name="btn_stop_record">Finish &amp; Upload Evidence</string>
+    <string name="status_detecting">Checking Camera Hardware Capabilities…</string>
+    <string name="status_dual_ready">Dual Concurrent Cameras Supported</string>
+    <string name="status_single_ready">Rear Camera Only (Dual Concurrent Unavailable)</string>
+    <string name="challenge_prompt">Hold Challenge Code in Video Frame:</string>
+</resources>

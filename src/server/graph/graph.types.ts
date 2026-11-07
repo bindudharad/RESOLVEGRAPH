@@ -12,7 +12,12 @@ export type GraphNodeType =
   | "FACT"
   | "FINDING"
   | "TIMELINE_EVENT"
-  | "RESOLUTION_PROPOSAL";
+  | "RESOLUTION_PROPOSAL"
+  | "PURCHASE_MEMORY"
+  | "PACKAGE_PASSPORT"
+  | "PACKAGE_SEAL"
+  | "CAMERA_SESSION"
+  | "DELIVERY_EVENT";
 
 export type GraphEdgeType =
   | "ASSERTS_CLAIM"
@@ -24,7 +29,12 @@ export type GraphEdgeType =
   | "CITES_EVIDENCE"
   | "CORRESPONDS_TO_EVENT"
   | "GROUNDED_IN_FINDING"
-  | "RESOLVES_CLAIM";
+  | "RESOLVES_CLAIM"
+  | "PROMISES_SPEC"
+  | "PACKED_IN"
+  | "SEALED_WITH"
+  | "TRANSIT_VERIFIED"
+  | "UNBOXED_IN_SESSION";
 
 export type FactRelationType =
   | "EQUIVALENT"

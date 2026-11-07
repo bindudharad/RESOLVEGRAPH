@@ -33,14 +33,24 @@ const NODE_COLORS: Record<GraphNodeType, string> = {
   FINDING: "#ef4444", // Rose / Red
   TIMELINE_EVENT: "#8b5cf6", // Violet
   RESOLUTION_PROPOSAL: "#14b8a6", // Teal
+  PURCHASE_MEMORY: "#38bdf8", // Sky
+  PACKAGE_PASSPORT: "#818cf8", // Light Indigo
+  PACKAGE_SEAL: "#34d399", // Mint
+  CAMERA_SESSION: "#fb923c", // Orange
+  DELIVERY_EVENT: "#a78bfa", // Lavender
 };
 
 const TIER_ORDER: Record<GraphNodeType, number> = {
   BUYER: 0,
   MERCHANT: 0,
   CASE: 1,
+  PURCHASE_MEMORY: 1,
   CLAIM: 2,
   EVIDENCE: 2,
+  PACKAGE_PASSPORT: 2,
+  PACKAGE_SEAL: 2,
+  CAMERA_SESSION: 2,
+  DELIVERY_EVENT: 3,
   FACT: 3,
   FINDING: 4,
   TIMELINE_EVENT: 4,

@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-11-04T00:54:00.606Z",
+  "timestamp": "2026-11-07T19:00:36.184Z",
   "datasetMetadata": {
     "name": "RECOURSE-BENCH: Commerce Dispute Bilateral Reasoning Benchmark",
-    "version": "1.0.0",
-    "totalCases": 300,
+    "version": "2.0.0",
+    "totalCases": 400,
     "categoriesCount": 20,
     "perspectivesCount": 8
   },
   "subsystems": {
     "extraction": {
-      "totalEvidenceItems": 675,
-      "totalFactsEvaluated": 1920,
+      "totalEvidenceItems": 900,
+      "totalFactsEvaluated": 2560,
       "precision": 1,
       "recall": 1,
       "f1": 1,
@@ -18,59 +18,59 @@
       "subjectiveClassificationAccuracy": 1,
       "byDocumentType": {
         "INVOICE": {
-          "itemsCount": 300,
+          "itemsCount": 400,
           "precision": 1,
           "recall": 1,
           "f1": 1
         },
         "TRACKING_PROOF": {
-          "itemsCount": 300,
+          "itemsCount": 400,
           "precision": 1,
           "recall": 1,
           "f1": 1
         },
         "DAMAGE_PHOTO": {
-          "itemsCount": 45,
+          "itemsCount": 60,
           "precision": 1,
           "recall": 1,
           "f1": 1
         },
         "RETURN_RECEIPT": {
-          "itemsCount": 30,
+          "itemsCount": 40,
           "precision": 1,
           "recall": 1,
           "f1": 1
         }
       },
-      "avgLatencyMs": 0.01
+      "avgLatencyMs": 0
     },
     "berr": {
-      "totalCasesEvaluated": 300,
+      "totalCasesEvaluated": 400,
       "contradictionDetection": {
-        "precision": 0.4286,
-        "recall": 0.9667,
-        "f1": 0.5939,
-        "accuracy": 0.6033
+        "precision": 0.3529,
+        "recall": 1,
+        "f1": 0.5217,
+        "accuracy": 0.5875
       },
       "missingEvidenceDetection": {
-        "precision": 0.2167,
-        "recall": 0.3152,
-        "f1": 0.2568
+        "precision": 0.2182,
+        "recall": 0.2,
+        "f1": 0.2087
       },
       "discrepancyCalibration": {
-        "withinTargetRangeRate": 0.4233,
-        "meanAbsoluteError": 0.3127
+        "withinTargetRangeRate": 0.4125,
+        "meanAbsoluteError": 0.2953
       },
-      "relationshipClassificationAccuracy": 0.6033,
-      "avgLatencyMs": 0.15
+      "relationshipClassificationAccuracy": 0.5875,
+      "avgLatencyMs": 0.06
     },
     "temporal": {
-      "totalCasesEvaluated": 300,
+      "totalCasesEvaluated": 400,
       "temporalOrderingAccuracy": 1,
       "policyWindowAnomalyDetection": {
-        "precision": 0,
-        "recall": 0,
-        "f1": 0
+        "precision": 0.1,
+        "recall": 1,
+        "f1": 0.1818
       },
       "semanticDriftDetection": {
         "precision": 0.2,
@@ -78,43 +78,43 @@
         "f1": 0.3333,
         "avgDriftScore": 0.3
       },
-      "avgLatencyMs": 0.05
+      "avgLatencyMs": 0.01
     },
     "fairness": {
-      "totalCasesEvaluated": 300,
-      "meanDiscrepancyDivergence": 0.2039,
+      "totalCasesEvaluated": 400,
+      "meanDiscrepancyDivergence": 0.2042,
       "maxDiscrepancyDivergence": 0.66,
-      "discrepancyInvarianceRate": 0.5633,
-      "findingClassificationStability": 1,
-      "remedyRecommendationStability": 0.6767,
+      "discrepancyInvarianceRate": 0.5875,
+      "findingClassificationStability": 0.5375,
+      "remedyRecommendationStability": 0.675,
       "relationshipSymmetryRate": 1,
-      "buyerFavoredSkewRate": 0.0367,
-      "merchantFavoredSkewRate": 0.4,
-      "neutralRate": 0.5633
+      "buyerFavoredSkewRate": 0.0375,
+      "merchantFavoredSkewRate": 0.375,
+      "neutralRate": 0.5875
     },
     "resolution": {
-      "totalCasesEvaluated": 300,
-      "remedyAccuracy": 0.5933,
+      "totalCasesEvaluated": 400,
+      "remedyAccuracy": 0.6375,
       "policyComplianceRate": 1,
-      "humanEscalationPrecision": 0.7143,
-      "humanEscalationRecall": 1,
-      "humanEscalationF1": 0.8333,
+      "humanEscalationPrecision": 1,
+      "humanEscalationRecall": 0.9565,
+      "humanEscalationF1": 0.9778,
       "insufficientInfoHandlingRate": 1,
       "financialSafetyRate": 1,
       "remedyDistribution": {
-        "FULL_REFUND": 30,
-        "PARTIAL_REFUND": 71,
-        "REPLACEMENT": 4,
-        "STORE_CREDIT": 38,
+        "FULL_REFUND": 0,
+        "PARTIAL_REFUND": 95,
+        "REPLACEMENT": 0,
+        "STORE_CREDIT": 95,
         "RETURN_FOR_REFUND": 0,
         "REJECT_CLAIM": 0,
-        "REQUEST_MORE_EVIDENCE": 38,
-        "HUMAN_REVIEW_REQUIRED": 119
+        "REQUEST_MORE_EVIDENCE": 100,
+        "HUMAN_REVIEW_REQUIRED": 110
       },
       "avgLatencyMs": 0
     },
     "agents": {
-      "totalCasesEvaluated": 300,
+      "totalCasesEvaluated": 400,
       "toolSelectionAccuracy": 1,
       "citationGroundingRate": 1,
       "hallucinationRate": 0,
@@ -147,7 +147,7 @@
           "estimatedTokens": 620
         }
       },
-      "avgOrchestrationLatencyMs": 0.04
+      "avgOrchestrationLatencyMs": 0.03
     }
   },
   "baselineComparisons": [

@@ -60,7 +60,7 @@ export function generateBenchmarkDataset(): BenchmarkDataset {
   let globalIndex = 1;
 
   for (const category of CATEGORIES) {
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 20; i++) {
       const caseNumber = `RC-${String(globalIndex).padStart(4, '0')}`;
       const perspective = PERSPECTIVES[(globalIndex + i) % PERSPECTIVES.length];
       const basePrice = 3000 + ((globalIndex * 197) % 75000); // $30.00 to $780.00
@@ -554,7 +554,7 @@ export function generateBenchmarkDataset(): BenchmarkDataset {
   }
 
   return {
-    version: '1.0.0',
+    version: '2.0.0',
     createdAt: new Date().toISOString(),
     totalCases: cases.length,
     categories: categoryCounts,
@@ -571,8 +571,10 @@ export function saveBenchmarkDataset(): void {
   }
 
   const targetPath = path.join(targetDir, 'recourse-bench.json');
+  const targetPath400 = path.join(targetDir, 'recourse-bench-400.json');
   fs.writeFileSync(targetPath, JSON.stringify(dataset, null, 2), 'utf-8');
-  console.log(`[RECOURSE-BENCH] Successfully generated ${dataset.totalCases} benchmark cases at ${targetPath}`);
+  fs.writeFileSync(targetPath400, JSON.stringify(dataset, null, 2), 'utf-8');
+  console.log(`[RECOURSE-BENCH] Successfully generated ${dataset.totalCases} benchmark cases at ${targetPath} and ${targetPath400}`);
 }
 
 if (require.main === module || process.argv[1]?.endsWith('generate-recourse-bench.ts')) {

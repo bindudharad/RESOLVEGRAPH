@@ -220,6 +220,14 @@ model User {
   agentApprovalsRequested AgentApprovalRequest[]   @relation("RequestedApprovals")
   agentApprovalsSigned    AgentApprovalRequest[]   @relation("SignedApprovals")
 
+  // Version 2.0 Preventive Commerce Relations
+  purchaseMemories        PurchaseMemory[]         @relation("BuyerPurchaseMemories")
+  notifications           NotificationMessage[]    @relation("UserNotifications")
+  cameraSessions          CameraSession[]          @relation("BuyerCameraSessions")
+  appliedSeals            PackageSeal[]            @relation("UserAppliedSeals")
+  sentSharedMessages      SharedRoomMessage[]      @relation("SentSharedMessages")
+  deliveryReminders       DeliveryReminder[]       @relation("UserDeliveryReminders")
+
   @@index([role])
   @@index([isPlatformAdmin])
   @@index([isActive])
@@ -381,6 +389,15 @@ model CaseRecord {
   // Step 8 Multi-Agent System Relations
   agentRuns            AgentRun[]
 
+  // Version 2.0 Preventive Commerce Relations
+  purchaseMemoryId     String?
+  purchaseMemory       PurchaseMemory?           @relation(fields: [purchaseMemoryId], references: [id], onDelete: SetNull)
+  packagePassportId    String?
+  packagePassport      PackagePassport?          @relation(fields: [packagePassportId], references: [id], onDelete: SetNull)
+  cameraSessions       CameraSession[]
+  sharedMessages       SharedRoomMessage[]
+  paymentComplaints    PaymentComplaint[]
+
   @@index([caseNumber])
   @@index([status])
   @@index([priority])
@@ -456,6 +473,11 @@ model Evidence {
   // Step 5 Graph & Temporal Relations
   sourceForPolicies ResolutionPolicy[]
   timelineEvents    CaseTimelineEvent[]
+
+  // Version 2.0 Preventive Commerce Relations
+  packagePassportId String?
+  packagePassport   PackagePassport?         @relation(fields: [packagePassportId], references: [id], onDelete: SetNull)
+  analysisResults   EvidenceAnalysisResult[]
 
   @@index([caseId])
   @@index([uploadedById])
@@ -953,6 +975,10 @@ model CommerceOrder {
   items                CommerceOrderItem[]
   payments             PayPalPayment[]
 
+  // Version 2.0 Preventive Commerce Relations
+  purchaseMemory       PurchaseMemory?
+  packagePassports     PackagePassport[]
+
   @@index([orderNumber])
   @@index([buyerId])
   @@index([merchantOrganizationId])
@@ -1247,4 +1273,379 @@ model AgentArtifact {
   @@index([runId])
   @@index([artifactType])
   @@index([createdAt])
+}
+
+// ============================================================================
+// VERSION 2.0: PREVENTIVE COMMERCE PROTECTION & EVIDENCE INFRASTRUCTURE
+// ============================================================================
+
+model PurchaseMemory {
+  id                   String                  @id @default(cuid())
+  orderId              String?                 @unique
+  buyerId              String
+  merchantOrganizationId String?
+  marketplace          String                  @default("DIRECT") // AMAZON, FLIPKART, SHOPIFY, DIRECT, EBAY, OLX, OTHER
+  externalOrderId      String
+  listingTitle         String
+  productModel         String?
+  sku                  String?
+  quantity             Int                     @default(1)
+  priceMinor           Int
+  currency             String                  @default("USD")
+  discountMinor        Int                     @default(0)
+  deliveryPromiseSla   String?
+  returnConditions     String?
+  refundConditions     String?
+  sellerName           String?
+  purchaseDate         DateTime
+  expectedDeliveryDate DateTime?
+  shippingAddressJson  String?
+  sourceType           String                  @default("MANUAL") // MANUAL, EMAIL_FORWARD, EMAIL_OAUTH, CSV_IMPORT, MERCHANT_API
+  sourceReference      String?
+  snapshotHash         String                  // SHA-256 integrity hash of original snapshot
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+
+  order                CommerceOrder?          @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  buyer                User                    @relation("BuyerPurchaseMemories", fields: [buyerId], references: [id])
+  specifications       PurchaseSpecification[]
+  promises             PurchasePromise[]
+  snapshots            PurchaseSnapshot[]
+  packages             PackagePassport[]
+  disputes             CaseRecord[]
+  deliveryEvents       DeliveryEvent[]
+  deliveryReminders    DeliveryReminder[]
+
+  @@index([buyerId])
+  @@index([externalOrderId])
+  @@index([marketplace])
+  @@index([snapshotHash])
+  @@index([createdAt])
+}
+
+model PurchaseSpecification {
+  id               String         @id @default(cuid())
+  purchaseMemoryId String
+  specKey          String         // storage_capacity, ram, processor, color, screen_size, condition, etc.
+  specValue        String         // 1 TB, 16 GB, Apple M3, Space Gray, etc.
+  isGuaranteed     Boolean        @default(true)
+  sourceExcerpt    String?
+  confidence       Float          @default(1.0)
+  createdAt        DateTime       @default(now())
+
+  purchaseMemory   PurchaseMemory @relation(fields: [purchaseMemoryId], references: [id], onDelete: Cascade)
+
+  @@index([purchaseMemoryId])
+  @@index([specKey])
+}
+
+model PurchasePromise {
+  id               String         @id @default(cuid())
+  purchaseMemoryId String
+  promiseType      String         // RETURN_WINDOW, REPLACEMENT_WINDOW, DELIVERY_SLA, WARRANTY, REFUND_POLICY
+  description      String
+  windowDays       Int?
+  conditions       String?
+  createdAt        DateTime       @default(now())
+
+  purchaseMemory   PurchaseMemory @relation(fields: [purchaseMemoryId], references: [id], onDelete: Cascade)
+
+  @@index([purchaseMemoryId])
+  @@index([promiseType])
+}
+
+model PurchaseSnapshot {
+  id               String         @id @default(cuid())
+  purchaseMemoryId String
+  snapshotType     String         // HTML_LISTING, JSON_API, EMAIL_MIME, INVOICE_PDF
+  rawPayload       String
+  sha256           String
+  capturedAt       DateTime       @default(now())
+
+  purchaseMemory   PurchaseMemory @relation(fields: [purchaseMemoryId], references: [id], onDelete: Cascade)
+
+  @@index([purchaseMemoryId])
+  @@index([sha256])
+}
+
+model PackagePassport {
+  id                     String            @id @default(cuid())
+  packageNumber          String            @unique // PKG-2026-XXXXX
+  orderId                String?
+  purchaseMemoryId       String?
+  merchantOrganizationId String
+  carrierName            String?
+  trackingNumber         String?
+  status                 String            @default("REGISTERED") // REGISTERED, PACKING, SEALED, DISPATCHED, IN_TRANSIT, OUT_FOR_DELIVERY, DELIVERED, TAMPER_REPORTED
+  qrToken                String            @unique
+  qrCodeSvg              String?
+  packingVideoUrl        String?
+  integrityHash          String            // SHA-256 over items + seals + declared specs
+  dispatchedAt           DateTime?
+  deliveredAt            DateTime?
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+
+  order                  CommerceOrder?    @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  purchaseMemory         PurchaseMemory?   @relation(fields: [purchaseMemoryId], references: [id], onDelete: SetNull)
+  items                  PackageItem[]
+  seals                  PackageSeal[]
+  events                 PackageEvent[]
+  evidence               Evidence[]
+  deliveryEvents         DeliveryEvent[]
+  cameraSessions         CameraSession[]
+  disputes               CaseRecord[]
+
+  @@index([packageNumber])
+  @@index([qrToken])
+  @@index([merchantOrganizationId])
+  @@index([status])
+  @@index([trackingNumber])
+}
+
+model PackageItem {
+  id               String          @id @default(cuid())
+  packageId        String
+  productName      String
+  modelNumber      String?
+  sku              String?
+  serialNumber     String?
+  quantity         Int             @default(1)
+  condition        String          @default("NEW_SEALED")
+  declaredCapacity String?         // 1 TB, 512 GB, etc.
+  photoUrl         String?
+  createdAt        DateTime        @default(now())
+
+  package          PackagePassport @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@index([packageId])
+  @@index([sku])
+  @@index([serialNumber])
+}
+
+model PackageSeal {
+  id                 String          @id @default(cuid())
+  packageId          String
+  sealNumber         String          // SEAL-TECH-88912
+  sealType           String          // TAMPER_EVIDENT_TAPE, HOLOGRAPHIC_LABEL, BARCODE_STRIP, SECURITY_VOID_LABEL
+  appliedAt          DateTime        @default(now())
+  appliedByUserId    String
+  photoStorageKey    String?
+  verificationStatus String          @default("INTACT") // INTACT, BROKEN, VOID_INDICATOR_VISIBLE, RESEALED, UNVERIFIED
+  createdAt          DateTime        @default(now())
+
+  package            PackagePassport @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  appliedByUser      User            @relation("UserAppliedSeals", fields: [appliedByUserId], references: [id])
+
+  @@index([packageId])
+  @@index([sealNumber])
+  @@index([verificationStatus])
+}
+
+model PackageEvent {
+  id           String          @id @default(cuid())
+  packageId    String
+  eventType    String          // CREATED, ITEM_PACKED, SEAL_ATTACHED, DISPATCHED, CARRIER_ACCEPTED, IN_TRANSIT, OUT_FOR_DELIVERY, DELIVERED, TAMPER_OBSERVED
+  description  String
+  location     String?
+  actorId      String?
+  metadataJson String?
+  createdAt    DateTime        @default(now())
+
+  package      PackagePassport @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@index([packageId])
+  @@index([eventType])
+  @@index([createdAt])
+}
+
+model DeliveryEvent {
+  id               String          @id @default(cuid())
+  packageId        String?
+  purchaseMemoryId String?
+  eventType        String          // ORDER_CONFIRMED, PACKAGE_REGISTERED, DISPATCHED, IN_TRANSIT, OUT_FOR_DELIVERY, DELIVERED, DELIVERY_FAILED, RETURNED
+  carrier          String?
+  checkpoint       String?
+  isEstimated      Boolean         @default(false)
+  eventTimestamp   DateTime
+  rawSource        String?
+  createdAt        DateTime        @default(now())
+
+  package          PackagePassport? @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  purchaseMemory   PurchaseMemory?  @relation(fields: [purchaseMemoryId], references: [id], onDelete: SetNull)
+
+  @@index([packageId])
+  @@index([purchaseMemoryId])
+  @@index([eventType])
+  @@index([eventTimestamp])
+}
+
+model DeliveryReminder {
+  id               String          @id @default(cuid())
+  userId           String
+  packageId        String?
+  purchaseMemoryId String?
+  reminderType     String          // PRE_DELIVERY_PREP, OUT_FOR_DELIVERY_ALERT, UNBOXING_EVIDENCE_PROMPT, POST_DELIVERY_INSPECTION
+  scheduledFor     DateTime
+  status           String          @default("SCHEDULED") // SCHEDULED, SENT, CANCELLED, FAILED, COMPLETED
+  channel          String          @default("IN_APP") // IN_APP, EMAIL, PUSH
+  messageText      String
+  sentAt           DateTime?
+  createdAt        DateTime        @default(now())
+
+  user             User            @relation("UserDeliveryReminders", fields: [userId], references: [id], onDelete: Cascade)
+  purchaseMemory   PurchaseMemory? @relation(fields: [purchaseMemoryId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([scheduledFor])
+  @@index([status])
+}
+
+model NotificationMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  linkUrl   String?
+  isRead    Boolean  @default(false)
+  type      String   @default("INFO") // INFO, WARNING, SUCCESS, URGENT
+  createdAt DateTime @default(now())
+
+  user      User     @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model CameraSession {
+  id                       String               @id @default(cuid())
+  sessionToken             String               @unique
+  buyerId                  String
+  orderId                  String?
+  packageId                String?
+  caseId                   String?
+  deviceInfo               String?
+  captureMode              String               @default("DUAL_CONCURRENT") // DUAL_CONCURRENT, REAR_ONLY_FALLBACK
+  hasFrontCamera           Boolean              @default(true)
+  hasRearCamera            Boolean              @default(true)
+  isFrontOptionalAccepted  Boolean              @default(false)
+  status                   String               @default("INITIALIZED") // INITIALIZED, RECORDING, UPLOADING, VERIFYING, COMPLETED, ABORTED, EXPIRED
+  startedAt                DateTime?
+  completedAt              DateTime?
+  expiresAt                DateTime
+  createdAt                DateTime             @default(now())
+
+  buyer                    User                 @relation("BuyerCameraSessions", fields: [buyerId], references: [id])
+  package                  PackagePassport?     @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  case                     CaseRecord?          @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  challenges               CaptureChallenge[]
+  streams                  CameraStreamRecord[]
+
+  @@index([sessionToken])
+  @@index([buyerId])
+  @@index([packageId])
+  @@index([caseId])
+  @@index([status])
+}
+
+model CaptureChallenge {
+  id                     String        @id @default(cuid())
+  sessionId              String
+  challengeCode          String        // 6-digit dynamic challenge
+  challengeType          String        @default("NUMERIC_SEQUENCE")
+  issuedAt               DateTime      @default(now())
+  expiresAt              DateTime
+  isVerifiedInVideo      Boolean       @default(false)
+  verificationConfidence Float?
+
+  session                CameraSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([challengeCode])
+}
+
+model CameraStreamRecord {
+  id              String        @id @default(cuid())
+  sessionId       String
+  streamType      String        // REAR_PACKAGE_STREAM, FRONT_VERIFIER_STREAM
+  durationSeconds Float?
+  fps             Float?
+  codec           String?
+  fileSize        Int?
+  sha256          String?
+  storageKey      String?
+  createdAt       DateTime      @default(now())
+
+  session         CameraSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([streamType])
+}
+
+model EvidenceAnalysisResult {
+  id                               String   @id @default(cuid())
+  evidenceId                       String
+  assessmentState                  String   @default("INCONCLUSIVE") // VERIFIED_SOURCE, CONSISTENT, SUSPICIOUS, INCONCLUSIVE
+  confidence                       Float    @default(0.5)
+  exifMetadataJson                 String?
+  perceptualHash                   String?
+  isDuplicateImage                 Boolean  @default(false)
+  duplicateEvidenceId              String?
+  videoFrameSamplingJson           String?
+  suspiciousTransitionsDetected    Boolean  @default(false)
+  aiGenerationIndicatorsDetected  Boolean  @default(false)
+  invoiceOcrCrossCheckJson         String?
+  findingsSummary                  String
+  humanReviewRecommended          Boolean  @default(false)
+  analysisMethod                   String   @default("MULTI_SIGNAL_FORENSICS_V2")
+  createdAt                        DateTime @default(now())
+
+  evidence                         Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+
+  @@index([evidenceId])
+  @@index([assessmentState])
+  @@index([createdAt])
+}
+
+model SharedRoomMessage {
+  id                    String      @id @default(cuid())
+  caseId                String
+  senderId              String
+  senderRole            String      // BUYER, MERCHANT, MANAGER, SYSTEM
+  content               String
+  attachmentEvidenceId  String?
+  isInternalOnly        Boolean     @default(false)
+  readAt                DateTime?
+  createdAt             DateTime    @default(now())
+
+  case                  CaseRecord  @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  sender                User        @relation("SentSharedMessages", fields: [senderId], references: [id])
+
+  @@index([caseId])
+  @@index([senderId])
+  @@index([createdAt])
+}
+
+model PaymentComplaint {
+  id                           String      @id @default(cuid())
+  caseId                       String?
+  paymentProvider              String      // PAYPAL, PHONEPE, GOOGLE_PAY, PAYTM, BHIM, OTHER_UPI, BANK_TRANSFER
+  transactionReference         String      // UTR, RRN, PayPal Capture ID
+  amountMinor                  Int
+  currency                     String      @default("INR")
+  complaintCategory            String      // FAILED_PAYMENT, PENDING_PAYMENT, DEBITED_NOT_CREDITED, DUPLICATE_PAYMENT, WRONG_RECIPIENT, UNAUTHORIZED_TRANSACTION, REFUND_PENDING, MERCHANT_DISAGREEMENT
+  senderVpa                    String?
+  recipientVpa                 String?
+  receiptEvidenceId            String?
+  providerVerificationStatus   String      @default("CUSTOMER_SUBMITTED") // CUSTOMER_SUBMITTED, PENDING_PROVIDER, VERIFIED_BY_PROVIDER, REJECTED_BY_PROVIDER
+  escalationGuidanceProvided   Boolean     @default(false)
+  createdAt                    DateTime    @default(now())
+
+  case                         CaseRecord? @relation(fields: [caseId], references: [id], onDelete: SetNull)
+
+  @@index([caseId])
+  @@index([transactionReference])
+  @@index([paymentProvider])
+  @@index([complaintCategory])
 }

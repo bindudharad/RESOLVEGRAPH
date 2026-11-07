@@ -8,9 +8,12 @@ import {
   Inbox,
   LayoutDashboard,
   Library,
+  MessageSquare,
+  Package,
   PlayCircle,
   Settings,
   ShieldAlert,
+  ShoppingCart,
   Sparkles,
   type LucideIcon,
 } from "lucide-react";
@@ -63,6 +66,24 @@ export const NAV_GROUPS: NavGroup[] = [
         label: "All Cases",
         href: "/cases",
         icon: FolderOpen,
+        availability: "live",
+      },
+      {
+        label: "Purchase Memory",
+        href: "/purchases",
+        icon: ShoppingCart,
+        availability: "live",
+      },
+      {
+        label: "Package Passports",
+        href: "/packages",
+        icon: Package,
+        availability: "live",
+      },
+      {
+        label: "Shared Resolution Room",
+        href: "/resolution-room",
+        icon: MessageSquare,
         availability: "live",
       },
       {
