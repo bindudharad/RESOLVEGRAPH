@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useMemo, useCallback } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
 /* ---------------------------------------------------------------------------
@@ -17,6 +17,12 @@ const ORBIT_POINT_COUNT = 6;
 
 const BRAND_PURPLE = new THREE.Color("#7c5cff");
 const BRAND_CYAN = new THREE.Color("#38bdf8");
+
+/** Deterministic pseudo-random float generator in [0, 1) to ensure React 19 render purity */
+function pseudoRandom(seed: number): number {
+  const x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+  return x - Math.floor(x);
+}
 
 /* ---------------------------------------------------------------------------
    Geometry helpers
@@ -59,7 +65,7 @@ function GlobeParticles() {
       col[i * 3] = color.r;
       col[i * 3 + 1] = color.g;
       col[i * 3 + 2] = color.b;
-      phases[i] = Math.random() * Math.PI * 2;
+      phases[i] = pseudoRandom(i + 1) * Math.PI * 2;
     }
 
     return { positions: pos, colors: col, pulsePhases: phases };
@@ -91,10 +97,6 @@ function GlobeParticles() {
     mesh.instanceMatrix.needsUpdate = true;
   });
 
-  const colorAttr = useMemo(() => {
-    return new THREE.InstancedBufferAttribute(colors, 3);
-  }, [colors]);
-
   return (
     <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]}>
       <sphereGeometry args={[1, 8, 8]}>
@@ -112,7 +114,7 @@ function GlobeParticles() {
 function ConnectionLines() {
   const lineRef = useRef<THREE.LineSegments>(null);
 
-  const { positions: spherePositions, linePositions, lineColors } = useMemo(() => {
+  const { linePositions, lineColors } = useMemo(() => {
     const sPos = fibonacciSphere(PARTICLE_COUNT, GLOBE_RADIUS);
     const linePosArr: number[] = [];
     const lineColArr: number[] = [];
@@ -209,16 +211,22 @@ function OrbitingPoints() {
     }> = [];
 
     for (let i = 0; i < ORBIT_POINT_COUNT; i++) {
+      const r1 = pseudoRandom(i * 6 + 1);
+      const r2 = pseudoRandom(i * 6 + 2);
+      const r3 = pseudoRandom(i * 6 + 3);
+      const r4 = pseudoRandom(i * 6 + 4);
+      const r5 = pseudoRandom(i * 6 + 5);
+      const r6 = pseudoRandom(i * 6 + 6);
       data.push({
-        inclination: (Math.random() - 0.5) * Math.PI * 0.7,
-        phase: (Math.PI * 2 * i) / ORBIT_POINT_COUNT + Math.random() * 0.5,
-        speed: 0.15 + Math.random() * 0.2,
-        radius: ORBIT_RADIUS + Math.random() * 0.4,
-        size: 0.035 + Math.random() * 0.025,
+        inclination: (r1 - 0.5) * Math.PI * 0.7,
+        phase: (Math.PI * 2 * i) / ORBIT_POINT_COUNT + r2 * 0.5,
+        speed: 0.15 + r3 * 0.2,
+        radius: ORBIT_RADIUS + r4 * 0.4,
+        size: 0.035 + r5 * 0.025,
         color: new THREE.Color().lerpColors(
           BRAND_CYAN,
           BRAND_PURPLE,
-          Math.random(),
+          r6,
         ),
       });
     }
@@ -374,7 +382,6 @@ function AtmosphereGlow() {
 
 function GlobeScene() {
   const groupRef = useRef<THREE.Group>(null);
-  const { viewport } = useThree();
 
   // Track mouse position for tilt
   const mouse = useRef({ x: 0, y: 0 });
