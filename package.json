@@ -1,0 +1,63 @@
+{
+  "name": "rg-scaffold",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "db:reset": "prisma migrate reset --force",
+    "auth:bootstrap": "tsx scripts/bootstrap-admin.ts",
+    "db:drill": "tsx scripts/db-backup-restore-drill.ts",
+    "storage:reconcile": "tsx scripts/reconcile-storage.ts",
+    "payments:reconcile": "tsx scripts/reconcile-payments.ts",
+    "ai:worker": "tsx scripts/ai-worker.ts",
+    "ai:worker:once": "tsx scripts/ai-worker.ts --once",
+    "ai:eval": "tsx scripts/run-ai-eval.ts",
+    "ai:agent-eval": "tsx scripts/run-agent-eval.ts",
+    "benchmark": "tsx scripts/evaluation/run-benchmark.ts",
+    "test": "tsx --test --test-concurrency=1 tests/**/*.test.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@paypal/react-paypal-js": "^10.6.1",
+    "@prisma/adapter-better-sqlite3": "^7.10.1",
+    "@prisma/client": "^7.10.1",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/three": "^0.187.0",
+    "better-auth": "^1.7.15",
+    "better-sqlite3": "^13.0.3",
+    "dotenv": "^18.0.9",
+    "framer-motion": "^14.9.1",
+    "lucide-react": "^1.66.0",
+    "next": "16.4.4",
+    "openai": "^7.47.0",
+    "prisma": "^7.10.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "recharts": "^3.10.1",
+    "three": "^0.187.0",
+    "unpdf": "^2.1.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.4",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  }
+}

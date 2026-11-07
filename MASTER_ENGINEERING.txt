@@ -1,0 +1,689 @@
+# MASTER ENGINEERING DIRECTIVE: CIVICOS ULTIMATE INTEGRATION
+
+## PROJECT MISSION
+
+Transform the existing CivicOS project into a unified, production-quality AI-powered Urban Intelligence and Predictive City Management Platform.
+
+We have limited development time. We have already downloaded six GitHub projects that contain implementations of features relevant to CivicOS.
+
+Your responsibility is to deeply inspect all six projects, identify the strongest working implementations, integrate the valuable components into our existing CivicOS architecture, fix conflicts, complete missing integrations, test everything, and deliver one unified final product.
+
+**Do not start building another project from scratch. Do not waste time recreating features that already work. Reuse, adapt, integrate, optimize and improve existing implementations.**
+
+---
+
+# PART 1 — WORKSPACE DISCOVERY
+
+Workspace root:
+
+C:\Projects\CivicOS
+
+Existing main project:
+
+C:\Projects\CivicOS\CivicOS_Person3
+
+Six downloaded reference projects:
+
+1. C:\Projects\CivicOS\CascadeX
+2. C:\Projects\CivicOS\CivicAI
+3. C:\Projects\CivicOS\Civic-Resolve
+4. C:\Projects\CivicOS\civicsentinel-ai
+5. C:\Projects\CivicOS\digital-city
+6. C:\Projects\CivicOS\smartcivic
+
+First inspect the complete directory structure of all seven projects.
+
+Exclude the duplicate compressed ZIP archive from the source integration process.
+
+Do not assume repository contents are complete, tested or production-ready merely because their README claims so.
+
+## Required repository audit
+
+For each reference project:
+
+- Inspect README and documentation.
+- Inspect the complete source structure.
+- Identify frontend framework and backend framework.
+- Inspect database schema and migrations.
+- Identify all implemented API endpoints.
+- Inspect AI/ML models and algorithms.
+- Inspect datasets and their provenance.
+- Inspect authentication and security.
+- Inspect tests and test coverage.
+- Identify hardcoded data, mock data and placeholders.
+- Identify incomplete modules and broken integrations.
+- Check the repository license before copying or adapting code.
+- Preserve required copyright and attribution notices.
+- Never copy code in violation of its license.
+
+Produce:
+
+INTEGRATION_PLAN.md
+
+Include a capability comparison matrix, source file references, technology conflicts, licensing findings and a decision on what to reuse, adapt, replace or exclude.
+
+---
+
+# PART 2 — FEATURE ACQUISITION MATRIX
+
+Study each project for the following capabilities.
+
+## A. CascadeX — Infrastructure Intelligence
+
+Extract and adapt the strongest applicable implementations:
+
+- Multilayer infrastructure dependency graph.
+- NetworkX graph construction.
+- Physical asset relationships.
+- Cascading failure propagation.
+- Infrastructure impact scoring.
+- Critical asset identification.
+- Single points of failure.
+- What-if scenario simulation.
+- Dependency-aware recovery planning.
+- Budget-constrained mitigation optimization.
+
+Goal: Build CivicOS's infrastructure intelligence and cascading impact engine.
+
+## B. CivicAI — Multimodal Urban Intelligence
+
+Evaluate and reuse:
+
+- Text-based incident classification.
+- Image-based complaint understanding.
+- Voice-based complaint intake.
+- AI-assisted categorization.
+- Ward-level risk prediction.
+- Historical complaint analysis.
+- Predictive risk briefings.
+- Municipal data integration.
+
+Goal: Build a practical multimodal city intelligence engine.
+
+## C. Civic-Resolve — Municipal Operations Intelligence
+
+Evaluate and reuse:
+
+- Citizen reporting workflow.
+- Duplicate detection.
+- Incident grouping.
+- Dynamic priority scoring.
+- Emerging problem detection.
+- Geographic hotspots.
+- Resolution verification.
+- Municipal command center.
+- Field officer workflow.
+- Grounded municipal AI assistant.
+- Role-based access and authorization.
+
+Goal: Build reliable municipal operational intelligence.
+
+## D. CivicSentinel AI — Contextual AI Intelligence
+
+Evaluate and reuse:
+
+- Knowledge graph implementation.
+- Issue-location-department relationships.
+- RAG pipeline.
+- Grounded AI responses.
+- Real-time event streaming.
+- WebSocket updates.
+- Risk heatmaps.
+- Anomaly detection.
+- Explainable intelligence.
+
+Goal: Build CivicOS's contextual knowledge and AI interaction layer.
+
+## E. Digital City — Geospatial City Intelligence
+
+Evaluate and reuse:
+
+- Bengaluru-related GIS data.
+- Ward-level mapping.
+- Traffic intelligence.
+- Flood risk analysis.
+- Weather integration.
+- AQI and environmental information.
+- Geographic incident layers.
+- Emergency routing.
+- Geospatial visualization.
+
+Goal: Build the city context and live intelligence layer.
+
+## F. SmartCivic — Complaint-to-Resolution Workflow
+
+Evaluate and reuse:
+
+- Citizen reporting.
+- AI text and image classification.
+- Duplicate identification.
+- SLA management.
+- Department assignment.
+- Worker assignment.
+- Field operations.
+- Route navigation.
+- Resolution photo verification.
+- Citizen feedback.
+
+Goal: Build a complete operational lifecycle from incident reporting to verified resolution.
+
+IMPORTANT: Treat all six projects as candidate implementations, not mandatory dependencies. Do not force every feature into the final system.
+
+---
+
+# PART 3 — FINAL CIVICOS ARCHITECTURE
+
+Create ONE integrated product.
+
+Do not create six separate applications.
+
+Do not create six separate databases.
+
+Do not create multiple competing APIs.
+
+Establish clear module boundaries.
+
+Target architecture:
+
+1. Citizen Experience
+2. Incident Intake and Verification
+3. AI and Multimodal Intelligence
+4. Geospatial Intelligence
+5. Infrastructure Knowledge Graph
+6. Risk Prediction Engine
+7. Cascading Impact Simulation
+8. Decision and Priority Engine
+9. Municipal Operations
+10. Preventive Recommendation Engine
+11. Analytics and Learning
+12. Security and Governance
+
+Use the existing CivicOS_Person3 stack wherever practical.
+
+Do not introduce unnecessary frameworks or rewrite stable modules just to make the architecture look modern.
+
+Select one canonical database, one authentication mechanism, one API contract and one frontend application.
+
+Where incompatible technologies exist, build adapters rather than duplicating functionality.
+
+---
+
+# PART 4 — UNIFIED INCIDENT INTELLIGENCE PIPELINE
+
+The complete system must support this flow:
+
+CITIZEN / SENSOR / OPEN DATA
+          |
+          v
+MULTIMODAL INCIDENT INTAKE
+          |
+          v
+DATA VALIDATION
+          |
+          v
+AI CLASSIFICATION
+          |
+          v
+DUPLICATE DETECTION
+          |
+          v
+INCIDENT CLUSTERING
+          |
+          v
+GEOSPATIAL ENRICHMENT
+          |
+          v
+INFRASTRUCTURE GRAPH
+          |
+          v
+RISK ESTIMATION
+          |
+          v
+CASCADE SIMULATION
+          |
+          v
+SEVERITY & IMPACT SCORING
+          |
+          v
+PRIORITY ENGINE
+          |
+          v
+PREVENTIVE RECOMMENDATIONS
+          |
+          v
+DEPARTMENT ASSIGNMENT
+          |
+          v
+FIELD ACTION
+          |
+          v
+RESOLUTION VERIFICATION
+          |
+          v
+MODEL FEEDBACK AND LEARNING
+
+Ensure this pipeline is implemented through real API integrations, not merely illustrated in the UI.
+
+---
+
+# PART 5 — HIGHEST-PRIORITY FEATURES
+
+Because development time is limited, work in this order.
+
+## Priority 1: Unified Foundation
+
+- Integrate the existing backend.
+- Resolve dependency conflicts.
+- Standardize database models.
+- Standardize API responses.
+- Consolidate authentication.
+- Consolidate configuration.
+- Ensure all required modules can start.
+- Remove duplicate implementations.
+
+## Priority 2: Core Intelligence
+
+- Incident classification.
+- Duplicate detection.
+- Incident grouping.
+- Geospatial enrichment.
+- Relationship graph.
+- Risk scoring.
+- Cascade simulation.
+- Priority scoring.
+
+Preserve the already-working CivicOS Person 3 intelligence engines wherever possible.
+
+## Priority 3: Municipal Operations
+
+- Unified incident dashboard.
+- Department routing.
+- Incident assignment.
+- Work order tracking.
+- Preventive recommendations.
+- Resolution evidence.
+- Notifications.
+
+## Priority 4: Intelligence Visualization
+
+- Live city map.
+- Geographic hotspots.
+- Infrastructure relationship graph.
+- Risk heatmap.
+- Cascading impact visualization.
+- Risk explanations.
+- What-if scenario interface.
+- Analytics dashboard.
+
+## Priority 5: Advanced Capabilities
+
+Only integrate these when the core workflow is stable:
+
+- Voice interactions.
+- RAG assistant.
+- Advanced image understanding.
+- Real-time event streaming.
+- Advanced budget optimization.
+- Additional predictive models.
+
+Do not sacrifice working core functionality to implement optional advanced features.
+
+---
+
+# PART 6 — UI/UX: CIVICOS FINAL DESIGN
+
+IMPORTANT: We do not have time to develop a completely new frontend.
+
+Select the most suitable existing frontend as the foundation. Preserve its working interactions and adapt it to our CivicOS identity.
+
+Build ONE cohesive, premium-quality interface.
+
+## Design direction
+
+Product: CIVIC OS
+
+Positioning: AI-Powered Urban Intelligence and Predictive City Management Platform.
+
+Visual direction:
+
+- Premium dark command-center interface.
+- Deep navy and near-black surfaces.
+- Cyan and teal intelligence accents.
+- Controlled green, amber and red risk indicators.
+- Modern professional typography.
+- Consistent spacing and visual hierarchy.
+- Responsive desktop and mobile layouts.
+- Smooth but restrained animations.
+- Clear operational information density.
+
+## Main navigation
+
+1. Overview
+2. Live City Map
+3. Incidents
+4. AI Intelligence
+5. Infrastructure Graph
+6. Risk & Predictions
+7. Cascade Simulation
+8. Preventive Actions
+9. Work Orders
+10. Analytics
+11. AI Assistant
+12. Settings
+
+## Dashboard requirements
+
+Create a cohesive command center containing:
+
+- Total incidents.
+- Active critical incidents.
+- Predicted risk locations.
+- High-risk infrastructure assets.
+- Unresolved work orders.
+- Department response metrics.
+- City-wide risk overview.
+- Recent incident activity.
+- Risk hotspots.
+- Predicted cascade warnings.
+- Recommended preventive actions.
+
+All metrics must come from actual backend data.
+
+Never display fabricated live statistics.
+
+Clearly label sample and simulated data.
+
+## Important visualization requirements
+
+### City map
+
+Display:
+- Incident markers.
+- Ward boundaries.
+- Infrastructure assets.
+- Risk levels.
+- Hotspots.
+- Affected locations.
+
+### Infrastructure graph
+
+Display:
+- Infrastructure nodes.
+- Dependency edges.
+- Active failures.
+- Downstream effects.
+- Critical infrastructure.
+
+### Risk panel
+
+Display:
+- Risk score.
+- Severity.
+- Confidence.
+- Main contributing factors.
+- Predicted impact.
+- Affected assets.
+- Recommended action.
+
+### Cascade simulation
+
+Allow a user to:
+- Select an infrastructure asset.
+- Choose a failure scenario.
+- Run the simulation.
+- View affected nodes.
+- Inspect causal chains.
+- Compare baseline versus simulated outcomes.
+- Review mitigation options.
+
+Do not build decorative buttons or fake interactions.
+
+Every visible control must either work or be clearly marked as not yet available.
+
+---
+
+# PART 7 — DATA AND AI REQUIREMENTS
+
+This is a critical requirement.
+
+Do not merge datasets blindly.
+
+For every dataset, document:
+
+- Original source.
+- License and usage restrictions.
+- Geographic coverage.
+- Number of records.
+- Time range.
+- Available features.
+- Data format.
+- Data quality.
+- Synthetic versus real classification.
+
+Normalize datasets into a consistent internal schema.
+
+Keep source provenance.
+
+Do not train on test data.
+
+Prevent data leakage.
+
+Separate training, validation and testing.
+
+Validate predictions using independent data where available.
+
+Do not report artificial accuracy improvements.
+
+Distinguish between:
+
+1. Actual measured observations.
+2. Model predictions.
+3. Simulated events.
+4. Recommendations.
+5. Uncertain estimates.
+
+The AI assistant must explain which data supports its answers.
+
+Never claim live sensor integration unless a real authorized feed is configured.
+
+---
+
+# PART 8 — BACKEND AND INTEGRATION REQUIREMENTS
+
+For every integrated module:
+
+- Use typed input and output schemas.
+- Add validation.
+- Add exception handling.
+- Add structured logging.
+- Avoid circular imports.
+- Avoid duplicate business logic.
+- Avoid hardcoded absolute paths.
+- Use environment configuration.
+- Implement suitable API timeouts.
+- Add fallback behavior.
+- Protect sensitive information.
+- Maintain data consistency.
+
+Create a module integration registry documenting:
+
+| Module | Source | Adaptation | API | Test |
+|---|---|---|---|---|
+
+Every selected implementation must have a reason for being included.
+
+Do not import entire projects just because they contain useful features.
+
+---
+
+# PART 9 — COMPLETE TESTING
+
+Testing is mandatory.
+
+Run every relevant existing test suite after integration.
+
+Do not change existing assertions merely to make tests pass.
+
+## Required testing
+
+### A. Environment
+- Dependency installation.
+- Backend startup.
+- Frontend startup.
+- Database initialization.
+- Configuration validation.
+
+### B. Unit tests
+- AI classification.
+- Duplicate detection.
+- Incident clustering.
+- Geospatial calculations.
+- Risk prediction.
+- Graph construction.
+- Cascade simulation.
+- Severity scoring.
+- Priority calculations.
+- Recommendation generation.
+
+### C. API integration tests
+- Incident submission.
+- Incident retrieval.
+- Geospatial queries.
+- Risk analysis.
+- Cascade simulation.
+- Priority output.
+- Work order lifecycle.
+- Resolution verification.
+
+### D. End-to-end test
+
+Execute this complete scenario:
+
+A heavy rainfall event is approaching Bengaluru.
+
+A historical waterlogging hotspot has a known drain blockage.
+
+The system:
+
+1. Receives weather and incident information.
+2. Identifies the relevant drain.
+3. Finds the nearby road and affected assets.
+4. Calculates the elevated risk.
+5. Simulates possible downstream effects.
+6. Identifies affected infrastructure.
+7. Calculates impact and priority.
+8. Recommends drain inspection.
+9. Generates an operational work order.
+10. Records the eventual resolution evidence.
+
+Verify the complete chain with real test execution.
+
+### E. UI testing
+- Navigation.
+- Forms.
+- Maps.
+- Filters.
+- Charts.
+- Responsive layout.
+- Error states.
+- Loading states.
+- API connectivity.
+
+Fix all critical errors.
+
+Do not claim a test passed unless it was actually executed.
+
+---
+
+# PART 10 — FINAL DELIVERY REQUIREMENTS
+
+The final project must remain inside:
+
+C:\Projects\CivicOS\CivicOS_Person3
+
+Keep the six reference projects separate and untouched.
+
+Do not overwrite source repositories.
+
+Create these documents:
+
+1. INTEGRATION_PLAN.md
+2. FINAL_ARCHITECTURE.md
+3. INTEGRATION_REPORT.md
+4. TEST_REPORT.md
+5. DATA_PROVENANCE.md
+6. KNOWN_LIMITATIONS.md
+7. RUN_INSTRUCTIONS.md
+
+The final report must include:
+
+- Features integrated from each repository.
+- Original files reused or adapted.
+- Files created or modified.
+- Architecture changes.
+- Database changes.
+- API changes.
+- Test results.
+- UI improvements.
+- Security issues fixed.
+- Remaining limitations.
+- Exact commands to start the final product.
+
+---
+
+# PART 11 — STRICT EXECUTION RULES
+
+1. Start by inspecting all seven project folders.
+2. Create a backup or Git checkpoint before modifications.
+3. Do not delete original working features.
+4. Do not rewrite the entire project unnecessarily.
+5. Do not replace working algorithms with superficial placeholders.
+6. Do not keep duplicated modules.
+7. Do not create multiple frontends.
+8. Do not create multiple databases.
+9. Do not use mock responses for features presented as complete.
+10. Do not claim an API works without testing it.
+11. Do not claim an ML model is accurate without evaluation.
+12. Do not invent external data.
+13. Do not expose API keys or credentials.
+14. Do not silently ignore integration failures.
+15. Fix actual errors rather than hiding them.
+16. Prioritize a complete working vertical slice over many unfinished features.
+17. Keep a clear changelog of all modifications.
+18. Preserve the current working project throughout integration.
+
+If a module cannot be safely integrated in the available development scope, isolate it and document the reason instead of breaking the product.
+
+Do not stop after preparing the audit or architecture plan. Continue through implementation, integration, testing and final verification.
+
+---
+
+# FINAL SUCCESS CRITERIA
+
+CivicOS must emerge as ONE unified product, not six repositories placed inside one folder.
+
+A successful final build must provide:
+
+- One coherent frontend.
+- One backend.
+- One canonical database.
+- One authentication system.
+- Integrated urban intelligence.
+- Working geospatial visualization.
+- Working infrastructure dependency graph.
+- Working cascade simulation.
+- Explainable risk analysis.
+- Actionable operational recommendations.
+- Complete incident-to-resolution workflow.
+- Passing relevant automated tests.
+- Reproducible startup instructions.
+
+## FINAL INSTRUCTION
+
+Work as a senior software architect, integration engineer, AI/ML engineer, GIS engineer, backend engineer and product UI engineer.
+
+Make engineering decisions autonomously.
+
+Inspect first. Select carefully. Integrate intelligently. Test rigorously. Fix completely. Deliver the best stable CivicOS version possible within the existing development scope.
+
+**BUILD THE PRODUCT — NOT ANOTHER DEMO.**
