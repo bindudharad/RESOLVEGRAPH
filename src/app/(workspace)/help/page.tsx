@@ -60,8 +60,8 @@ const FAQS = [
     a: "No. All cases, merchant names, amounts, and activity timeline events shown are purely fictional demonstration records created for architectural evaluation.",
   },
   {
-    q: "How does the Create Case button work?",
-    a: "The Create Case interaction is completely functional in the browser: it validates your input, generates a new case record in local React state, shows a confirmation notification, and navigates you to inspect your newly created case.",
+    q: "How does case creation and management work?",
+    a: "The case creation flow validates buyer and transaction inputs, generates a persistent CaseRecord in the SQLite database via Prisma, assigns audit logs, and redirects to the newly created case dossier with full evidence and resolution workflows.",
   },
 ];
 
