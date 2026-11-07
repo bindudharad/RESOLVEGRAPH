@@ -31,7 +31,7 @@ const pillars: Pillar[] = [
     title: "BERR AI Reasoning",
     tagline: "Rule-Based & Specialist Models",
     description:
-      "Five specialist personas analyze policy alignment, fact consistency, and missing elements with transparent reasoning chains and zero hallucinated facts.",
+      "Five specialist personas analyze policy alignment, fact consistency, and missing elements with transparent reasoning chains and strict evidence citation gates.",
     icon: Cpu,
     badge: "5 Specialist Agents",
     accentColor: "from-cyan-500 to-blue-500",

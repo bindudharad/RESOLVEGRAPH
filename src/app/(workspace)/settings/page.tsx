@@ -516,7 +516,7 @@ export default function SettingsPage() {
                   </div>
                   <div className="flex items-start gap-2">
                     <Cpu className="h-4 w-4 text-[#38bdf8] mt-0.5 shrink-0" />
-                    <span><strong>AI Intelligence:</strong> BERR 5-agent specialist reasoning with zero hallucinated facts.</span>
+                    <span><strong>AI Intelligence:</strong> BERR 5-agent specialist reasoning with cryptographic evidence citation gating.</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <CreditCard className="h-4 w-4 text-[#34d399] mt-0.5 shrink-0" />
