@@ -371,9 +371,9 @@ export default function PaymentDetailPage({
                         {item.sku && <div className="font-mono text-[10px] text-muted">{item.sku}</div>}
                       </td>
                       <td className="py-2.5 text-muted">{item.quantity}</td>
-                      <td className="py-2.5 font-mono text-muted">{formatCurrency(item.unitAmountMinor / 100, (order.currency as Currency) || "USD")}</td>
+                      <td className="py-2.5 font-mono text-muted">{formatCurrency(item.unitAmountMinor / 100, (payment.currency as Currency) || "USD")}</td>
                       <td className="py-2.5 text-right font-mono font-medium text-fg">
-                        {formatCurrency(item.totalAmountMinor / 100, (order.currency as Currency) || "USD")}
+                        {formatCurrency(item.totalAmountMinor / 100, (payment.currency as Currency) || "USD")}
                       </td>
                     </tr>
                   ))}

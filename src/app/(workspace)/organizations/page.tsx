@@ -88,6 +88,11 @@ export default function OrganizationsPage() {
       setLoading(true);
       setError(null);
       const res = await fetch("/api/organizations");
+      if (res.status === 401) {
+        setError("Authentication required: Please sign in with a merchant or administrator account.");
+        setOrgs([]);
+        return;
+      }
       if (!res.ok) throw new Error("Failed to load organizations");
       const data = await res.json();
       setOrgs(data.organizations || []);
@@ -313,91 +318,123 @@ export default function OrganizationsPage() {
       )}
 
       {/* Organization Tabs / Grid */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {orgs.map((org) => {
-          const isSelected = selectedOrgId === org.id;
-          return (
-            <button
-              key={org.id}
-              type="button"
-              onClick={() => setSelectedOrgId(org.id)}
-              className={`flex flex-col items-start rounded-xl border p-4 text-left transition-all ${
-                isSelected
-                  ? "border-[var(--color-brand)] bg-[color-mix(in_srgb,var(--color-brand)_12%,transparent)] shadow-md"
-                  : "border-line bg-surface hover:border-line-2 hover:bg-surface-2"
-              }`}
-            >
-              <div className="flex w-full items-center justify-between">
-                <span className="font-semibold text-fg text-[14.5px]">{org.name}</span>
-                {org.userRole && (
-                  <Badge tone={org.userRole === "OWNER" ? "warning" : "brand"}>
-                    {org.userRole}
-                  </Badge>
-                )}
-              </div>
-              <p className="mt-1 text-[12px] text-muted line-clamp-2">
-                {org.description || "No description provided."}
-              </p>
-              <div className="mt-3 flex items-center gap-4 text-[11.5px] text-faint">
-                <span className="flex items-center gap-1">
-                  <Users className="h-3 w-3" />
-                  <span>{org.memberCount} members</span>
-                </span>
-                <span className="flex items-center gap-1">
-                  <FolderOpen className="h-3 w-3" />
-                  <span>{org.caseCount} cases</span>
-                </span>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Selected Organization Details & Member Management */}
-      {activeOrg && (
-        <div className="flex flex-col gap-6">
-          <Card>
-            <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-line pb-4">
-              <div>
-                <div className="flex items-center gap-2">
-                  <CardTitle className="text-lg">{activeOrg.name}</CardTitle>
-                  <code className="rounded border border-line bg-[#090f1e] px-2 py-0.5 text-[11px] text-faint font-mono">
-                    slug: {activeOrg.slug}
-                  </code>
-                </div>
-                <CardDescription className="mt-1">
-                  {activeOrg.description || "Enterprise workspace domain"}
-                </CardDescription>
-              </div>
-
-              {activeOrg.canManage && (
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => setInviteModalOpen(true)}
-                  className="text-[12.5px]"
+      {orgs.length === 0 ? (
+        <Card className="border-line bg-surface/50 p-8 text-center">
+          <CardContent className="flex flex-col items-center justify-center gap-3 pt-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
+              <Building2 className="h-6 w-6" />
+            </div>
+            <h3 className="text-base font-semibold text-fg">No Merchant Workspaces Found</h3>
+            <p className="max-w-md text-xs text-muted">
+              You are currently signed in as an individual user or buyer without merchant organization memberships. Multi-tenant workspaces are scoped to merchant accounts and organization administrators.
+            </p>
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => setCreateModalOpen(true)}
+              >
+                <Plus className="h-3.5 w-3.5 mr-1.5" />
+                <span>Create Merchant Organization</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchOrganizations}
+              >
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                <span>Refresh Status</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {orgs.map((org) => {
+              const isSelected = selectedOrgId === org.id;
+              return (
+                <button
+                  key={org.id}
+                  type="button"
+                  onClick={() => setSelectedOrgId(org.id)}
+                  className={`flex flex-col items-start rounded-xl border p-4 text-left transition-all ${
+                    isSelected
+                      ? "border-[var(--color-brand)] bg-[color-mix(in_srgb,var(--color-brand)_12%,transparent)] shadow-md"
+                      : "border-line bg-surface hover:border-line-2 hover:bg-surface-2"
+                  }`}
                 >
-                  <UserPlus className="h-3.5 w-3.5 mr-1.5" />
-                  <span>Invite Team Member</span>
-                </Button>
-              )}
-            </CardHeader>
+                  <div className="flex w-full items-center justify-between">
+                    <span className="font-semibold text-fg text-[14.5px]">{org.name}</span>
+                    {org.userRole && (
+                      <Badge tone={org.userRole === "OWNER" ? "warning" : "brand"}>
+                        {org.userRole}
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="mt-1 text-[12px] text-muted line-clamp-2">
+                    {org.description || "No description provided."}
+                  </p>
+                  <div className="mt-3 flex items-center gap-4 text-[11.5px] text-faint">
+                    <span className="flex items-center gap-1">
+                      <Users className="h-3 w-3" />
+                      <span>{org.memberCount} members</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <FolderOpen className="h-3 w-3" />
+                      <span>{org.caseCount} cases</span>
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
 
-            <CardContent className="pt-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-[14px] font-semibold text-fg flex items-center gap-2">
-                  <Users className="h-4 w-4 text-[var(--color-brand)]" />
-                  <span>Organization Members ({activeOrg.members.length})</span>
-                </h3>
-                <span className="text-[11.5px] text-faint">
-                  Tenant Access Scoped to {activeOrg.name}
-                </span>
-              </div>
+          {/* Selected Organization Details & Member Management */}
+          {activeOrg && (
+            <div className="flex flex-col gap-6">
+              <Card>
+                <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-line pb-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <CardTitle className="text-lg">{activeOrg.name}</CardTitle>
+                      <code className="rounded border border-line bg-[#090f1e] px-2 py-0.5 text-[11px] text-faint font-mono">
+                        slug: {activeOrg.slug}
+                      </code>
+                    </div>
+                    <CardDescription className="mt-1">
+                      {activeOrg.description || "Enterprise workspace domain"}
+                    </CardDescription>
+                  </div>
 
-              {/* Members Table */}
-              <div className="overflow-x-auto rounded-lg border border-line bg-[#080d1a]">
-                <table className="w-full text-left text-[12.5px]">
-                  <thead className="border-b border-line bg-[#0c1424] text-[11.5px] font-medium text-muted">
+                  {activeOrg.canManage && (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => setInviteModalOpen(true)}
+                      className="text-[12.5px]"
+                    >
+                      <UserPlus className="h-3.5 w-3.5 mr-1.5" />
+                      <span>Invite Team Member</span>
+                    </Button>
+                  )}
+                </CardHeader>
+
+                <CardContent className="pt-6">
+                  <div className="mb-4 flex items-center justify-between">
+                    <h3 className="text-[14px] font-semibold text-fg flex items-center gap-2">
+                      <Users className="h-4 w-4 text-[var(--color-brand)]" />
+                      <span>Organization Members ({activeOrg.members.length})</span>
+                    </h3>
+                    <span className="text-[11.5px] text-faint">
+                      Tenant Access Scoped to {activeOrg.name}
+                    </span>
+                  </div>
+
+                  {/* Members Table */}
+                  <div className="overflow-x-auto rounded-lg border border-line bg-[#080d1a]">
+                    <table className="w-full text-left text-[12.5px]">
+                      <thead className="border-b border-line bg-[#0c1424] text-[11.5px] font-medium text-muted">
                     <tr>
                       <th className="px-4 py-3">Member</th>
                       <th className="px-4 py-3">Global Role</th>
@@ -504,6 +541,8 @@ export default function OrganizationsPage() {
             </CardContent>
           </Card>
         </div>
+      )}
+      </>
       )}
 
       {/* Invite Member Modal */}
