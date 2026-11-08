@@ -1,135 +1,196 @@
 # RESOLVEGRAPH — Production Deployment Architecture & Guide
-
-This document describes the enterprise production deployment specifications for **RESOLVEGRAPH** (Evidence-First Commerce Resolution Infrastructure).
+**Document ID:** RG-DEP-2026-V2  
+**Classification:** Enterprise Systems & Infrastructure Standard  
+**Runtime:** Next.js 16 (Turbopack) on Node.js 20+ LTS  
+**Process Topology:** Dual-Tier (Web API Cluster + Persistent Background Worker)
 
 ---
 
 ## 1. System Topology Overview
 
 ```
-                                [ Cloudflare Edge / WAF ]
-                                          │
-                  ┌───────────────────────┴───────────────────────┐
-                  ▼                                               ▼
-       [ Next.js Web App / API ]                     [ Background Analysis Worker ]
-          (Vercel / AWS ECS)                           (Persistent Node.js / Docker)
-                  │                                               │
-        ┌─────────┴─────────┐                           ┌─────────┴─────────┐
-        ▼                   ▼                           ▼                   ▼
-[ Neon PostgreSQL ]  [ AWS S3 / R2 ]            [ Neon PostgreSQL ]  [ OpenAI API ]
- (Database & Read)   (Evidence Vault)            (BERR Queue / DB)   (Multimodal Vision)
-        │
-        ▼
-[ PayPal Sandbox / REST API ]
-  - Orders V2 & Captures
-  - Refunds & Webhooks
-  - Customer Disputes V1
+                                [ Cloudflare Edge / WAF / SSL ]
+                                               │
+                       ┌───────────────────────┴───────────────────────┐
+                       ▼                                               ▼
+          [ Nginx Reverse Proxy (Rate Limiting) ]             [ Direct Webhooks ]
+                       │                                               │
+                       ▼                                               ▼
+          [ Next.js Web App / API ] (PM2 Cluster)       [ Background Analysis Worker ]
+             - Port 3000                                   - ai-worker.ts (Durable Queue)
+             - 67 Routes                                   - payments:reconcile cron
+                       │                                               │
+             ┌─────────┴─────────┐                           ┌─────────┴─────────┐
+             ▼                   ▼                           ▼                   ▼
+     [ PostgreSQL 16+ ]   [ S3 / R2 Vault ]          [ PostgreSQL 16+ ]   [ OpenAI API ]
+      (or SQLite WAL)     (SHA-256 Vault)             (BERR Queue / DB)    (Vision/Embeddings)
+             │
+             ▼
+    [ Payment Gateways ]
+      - PayPal Orders V2 / Webhooks / Disputes
+      - UPI / NPCI UDIR Switch Simulation
+      - Card Network Gateways
 ```
 
 ---
 
-## 2. Infrastructure Requirements
+## 2. Production Environment Variables Reference
 
-| Component | Technology | Recommended Production Provider | Minimum Spec |
-| :--- | :--- | :--- | :--- |
-| **Frontend & API** | Next.js 16 (App Router) | Vercel Pro or AWS ECS Fargate | 2 vCPU, 4GB RAM (autoscaling) |
-| **Database** | PostgreSQL 16+ | Neon, Supabase, or AWS Aurora RDS | 2 vCPU, 4GB RAM, PgBouncer pool |
-| **Evidence Storage** | S3-Compatible Object Store | AWS S3 or Cloudflare R2 | Private bucket, SSE-S3 encryption |
-| **Background Worker** | Node.js TSX Runner | Render, Railway, or AWS ECS | 1 vCPU, 2GB RAM |
-| **Payments Gateway** | PayPal REST V2 / Webhooks | PayPal Developer Platform | Sandbox for evaluation; Live partner |
-| **AI Inference** | Multimodal LLM + Embeddings | OpenAI API (`gpt-4o`, `text-embedding-3`) | Tier 2+ API limits |
+| Variable Name | Required | Default / Example | Purpose / Security Guard |
+|---|:---:|---|---|
+| `NODE_ENV` | Yes | `production` | Enables production optimizations and disables debug traces. |
+| `DATABASE_URL` | Yes | `file:./dev.db` or `postgresql://...` | Prisma database connection string. |
+| `BETTER_AUTH_SECRET` | Yes | `[256-bit cryptographically secure string]` | Signs session cookies and auth tokens. |
+| `BETTER_AUTH_URL` | Yes | `https://resolvegraph.internal` | Canonical app URL for callback validation. |
+| `PAYPAL_CLIENT_ID` | Yes | `sb-client-id-...` | PayPal REST API client identifier. |
+| `PAYPAL_CLIENT_SECRET` | Yes | `sb-secret-...` | PayPal REST API client secret. |
+| `PAYPAL_MODE` | Yes | `sandbox` | `sandbox` or `live`. |
+| `PAYPAL_LIVE_ENABLED` | **CRITICAL** | `false` | **MUST BE FALSE** in non-live environments to prevent live charges. |
+| `PAYPAL_WEBHOOK_ID` | Yes | `WH-...` | Verifies incoming PayPal dispute webhooks. |
+| `OPENAI_API_KEY` | Optional | `sk-...` | Multimodal fact extraction and BERR reasoning. |
+| `EVIDENCE_STORAGE_DIR` | Yes | `C:\Projects\resolvegraph\.private\evidence` | Local directory or mount for Evidence Vault. |
+| `S3_BUCKET_NAME` | Optional | `resolvegraph-vault` | S3 bucket name if using object storage. |
+| `S3_REGION` | Optional | `us-east-1` | AWS region for evidence bucket. |
+| `ADMIN_MASTER_SECRET` | Yes | `[HMAC secret]` | Required to toggle the Administrative Kill-Switch. |
+| `PORT` | Optional | `3000` | HTTP port for the Next.js server. |
 
 ---
 
-## 3. Database Migration: SQLite to Managed PostgreSQL
+## 3. Reverse Proxy Configuration (Nginx)
 
-In development, ResolveGraph uses SQLite (`dev.db`). For high-concurrency production deployments:
+For self-hosted Linux or Windows deployments, place Nginx in front of Next.js for TLS termination, compression, and request buffering:
 
-### Step 3.1: Switch Prisma Datasource Provider
-In `prisma/schema.prisma`, update the datasource:
-```prisma
-datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+```nginx
+upstream resolvegraph_web {
+    server 127.0.0.1:3000 max_fails=3 fail_timeout=10s;
+    keepalive 32;
+}
+
+server {
+    listen 80;
+    server_name resolvegraph.internal;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name resolvegraph.internal;
+
+    ssl_certificate /etc/ssl/certs/resolvegraph.crt;
+    ssl_certificate_key /etc/ssl/private/resolvegraph.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    client_max_body_size 50M;
+
+    # Rate Limiting
+    limit_req_zone $binary_remote_addr zone=api_limit:10m rate=30r/s;
+    limit_req zone=api_limit burst=50 nodelay;
+
+    # Security Headers
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.paypal.com; connect-src 'self' https://api.openai.com https://api.sandbox.paypal.com;" always;
+
+    location / {
+        proxy_pass http://resolvegraph_web;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 90s;
+    }
 }
 ```
 
-### Step 3.2: Run Prisma Migrations
-Execute against your production database using `DIRECT_URL`:
-```bash
-npx prisma migrate deploy
+---
+
+## 4. Process Management (PM2)
+
+ResolveGraph requires two managed processes in production:
+1. The **Next.js Web Server** (`npm start`).
+2. The **Durable Background AI Worker** (`npm run ai:worker`).
+
+Create `ecosystem.config.cjs`:
+```javascript
+module.exports = {
+  apps: [
+    {
+      name: 'resolvegraph-web',
+      script: 'node_modules/next/dist/bin/next',
+      args: 'start -p 3000',
+      instances: 'max',
+      exec_mode: 'cluster',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3000
+      },
+      max_memory_restart: '1G'
+    },
+    {
+      name: 'resolvegraph-worker',
+      script: 'node_modules/tsx/dist/cli.mjs',
+      args: 'scripts/ai-worker.ts',
+      instances: 1,
+      exec_mode: 'fork',
+      env: {
+        NODE_ENV: 'production'
+      },
+      max_memory_restart: '1G'
+    }
+  ]
+};
 ```
 
-### Step 3.3: Verify Connection & Indexes
-Run the automated database health verification:
-```bash
-curl -I https://your-domain.com/api/health
+Run with:
+```powershell
+pm2 start ecosystem.config.cjs
+pm2 save
 ```
 
 ---
 
-## 4. Private Evidence Locker (S3 / R2 Setup)
+## 5. Health Checks & Verification Endpoints
 
-Evidence uploaded to ResolveGraph contains sensitive commercial documents, receipts, and condition photos.
-
-1. **Bucket Privacy:** Set S3 bucket policy to **Private** (`Block all public access = ON`).
-2. **Access Control:** Generate an IAM User or Role with scoped permissions:
-   - `s3:GetObject`
-   - `s3:PutObject`
-   - `s3:DeleteObject` (optional for retention pruning)
-3. **Signed URLs:** All evidence previews and downloads are streamed through signed authorization handlers (`/api/evidence/[evidenceId]/download`) requiring validated Better Auth sessions and multi-tenant permission checks (`canViewEvidence`).
-4. **Magic Byte Inspection:** File uploads are checked against binary headers (JPEG, PNG, WEBP, PDF) before saving. Executables and scripts are rejected upfront.
-
----
-
-## 5. PayPal Production Configuration & Security
-
-### Hard-Coded Live Safety Guard
-To eliminate accidental live monetary charges during hackathons and testing, `src/server/paypal/paypal-config.ts` enforces:
-```ts
-if (env === 'live' && process.env.PAYPAL_LIVE_ENABLED !== 'true') {
-  throw new Error("CRITICAL SAFETY BLOCK: Live PayPal mode requested but PAYPAL_LIVE_ENABLED is not 'true'.");
-}
-```
-
-### Webhook Verification
-PayPal webhooks are validated by `WebhookVerificationService`:
-- Validates transmission headers: `paypal-transmission-id`, `paypal-transmission-time`, `paypal-transmission-sig`, `paypal-cert-url`.
-- SSRF Prevention: Confirms `paypal-cert-url` host matches `api.paypal.com` or `api.sandbox.paypal.com`.
-- Webhooks are stored in `PayPalWebhookEvent` and processed idempotently via unique `paypalEventId`.
+- **System Health:** `GET /api/health`
+  - Validates SQLite / PostgreSQL database connectivity.
+  - Verifies Evidence Vault read/write capability.
+  - Returns HTTP 200 `{"status": "healthy", "timestamp": "...", "database": "connected"}`.
+- **Audit Verification:** `GET /api/audit/chained`
+  - Verifies cryptographic continuity of the hash-chained audit ledger.
+- **Admin Kill-Switch Status:** `GET /api/admin/kill-switch`
+  - Reports operational status of individual payment provider connectors.
 
 ---
 
-## 6. Zero-Downtime Deployment Steps (Vercel / Railway)
+## 6. Zero-Downtime Deployment Runbook
 
-1. **Configure Environment Variables:**
-   Populate all keys defined in `.env.production.example`.
-2. **Build Verification:**
-   Ensure zero TypeScript compilation errors and clean Turbopack build:
-   ```bash
+1. **Pull and Install Dependencies:**
+   ```powershell
+   git checkout main && git pull
+   npm ci
+   ```
+2. **Build and Validate Quality Gates:**
+   ```powershell
+   npx tsc --noEmit
+   npm run lint
+   npm test
    npm run build
    ```
-3. **Run Automated Test Suite:**
-   ```bash
-   npm test
+3. **Database Migration:**
+   ```powershell
+   npm run db:drill
+   npx prisma migrate deploy
    ```
-4. **Deploy Application:**
-   ```bash
-   vercel --prod
-   # or
-   railway up
+4. **Reload PM2 Cluster:**
+   ```powershell
+   pm2 reload ecosystem.config.cjs --update-env
    ```
-5. **Verify Endpoint Health:**
-   ```bash
-   curl https://resolvegraph.com/api/health
-   # Expected response: 200 OK {"status":"healthy"}
+5. **Verify Live Health:**
+   ```powershell
+   curl http://localhost:3000/api/health
    ```
-
----
-
-## 7. Secrets Rotation & Security Best Practices
-
-- **Quarterly Rotation:** Rotate `PAYPAL_CLIENT_SECRET`, `BETTER_AUTH_SECRET`, and `OPENAI_API_KEY` every 90 days.
-- **Idempotency Keys:** Every refund operation generates a unique idempotency key (`PayPal-Request-Id`). If network latency causes retries, the payment gateway safely returns the existing transaction without double-debiting.
-- **Data Redaction:** Credit card numbers (Luhn checked), CVVs, and API keys are automatically masked by `DataRedactor` before being passed to AI inference or stored in metadata fields.
