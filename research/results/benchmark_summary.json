@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-07T19:00:36.184Z",
+  "timestamp": "2026-11-08T02:31:25.050Z",
   "datasetMetadata": {
     "name": "RECOURSE-BENCH: Commerce Dispute Bilateral Reasoning Benchmark",
     "version": "2.0.0",
@@ -62,7 +62,7 @@
         "meanAbsoluteError": 0.2953
       },
       "relationshipClassificationAccuracy": 0.5875,
-      "avgLatencyMs": 0.06
+      "avgLatencyMs": 0.04
     },
     "temporal": {
       "totalCasesEvaluated": 400,
@@ -78,7 +78,7 @@
         "f1": 0.3333,
         "avgDriftScore": 0.3
       },
-      "avgLatencyMs": 0.01
+      "avgLatencyMs": 0.02
     },
     "fairness": {
       "totalCasesEvaluated": 400,

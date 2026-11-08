@@ -30,7 +30,6 @@ import { GraphValidator } from '../src/server/graph/graph-validator';
 describe('RESOLVEGRAPH Hackathon Expansion: Payment Investigation Platform Suite', () => {
   let testCaseId: string;
   let testBuyerId: string;
-  let testMerchantOrgId: string;
 
   it('Setup: retrieves or initializes target test case with buyer and merchant organization', async () => {
     const existingCase = await prisma.caseRecord.findFirst({
@@ -41,7 +40,6 @@ describe('RESOLVEGRAPH Hackathon Expansion: Payment Investigation Platform Suite
     assert.ok(existingCase, 'Baseline database must have at least one test case');
     testCaseId = existingCase.id;
     testBuyerId = existingCase.buyerId;
-    testMerchantOrgId = existingCase.organizationId || 'org-techstore';
   });
 
   // --------------------------------------------------------------------------
