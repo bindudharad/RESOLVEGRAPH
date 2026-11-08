@@ -55,6 +55,10 @@ export class GraphBuilder {
       purchaseMemory,
       packagePassport,
       cameraSessions,
+      canonicalTransactions,
+      sourceRecords,
+      mismatches,
+      paymentIncident,
     ] = await Promise.all([
       prisma.extractedFact.findMany({
         where: { caseId: actualCaseId },
@@ -97,6 +101,20 @@ export class GraphBuilder {
         : Promise.resolve(null),
       prisma.cameraSession.findMany({
         where: { caseId: actualCaseId },
+      }),
+      prisma.canonicalTransaction.findMany({
+        where: { caseId: actualCaseId },
+        include: { sourceRecords: true, mismatches: true },
+      }),
+      prisma.transactionSourceRecord.findMany({
+        where: { caseId: actualCaseId },
+      }),
+      prisma.reconciliationMismatch.findMany({
+        where: { caseId: actualCaseId },
+      }),
+      prisma.paymentIncident.findUnique({
+        where: { caseId: actualCaseId },
+        include: { findings: true },
       }),
     ]);
 
@@ -528,6 +546,122 @@ export class GraphBuilder {
         label: "UNBOXED_IN_SESSION",
         provenance: "SYSTEM_AUDIT",
       });
+    }
+
+    // --- Hackathon Expansion: Payment & Reconciliation Graph Network ---
+    for (const ctx of canonicalTransactions) {
+      const txNodeId = `tx:${ctx.id}`;
+      nodes.push({
+        id: txNodeId,
+        type: "CANONICAL_TRANSACTION",
+        label: `${ctx.provider} Transaction`,
+        sublabel: `${ctx.currency} ${(ctx.grossAmountMinor / 100).toFixed(2)} [${ctx.normalizedStatus}]`,
+        party: "NEUTRAL",
+        status: ctx.normalizedStatus,
+        timestamp: ctx.transactionTimestamp.toISOString(),
+        metadata: {
+          provider: ctx.provider,
+          externalReference: ctx.externalReference,
+          providerTxId: ctx.providerTxId,
+          grossAmountMinor: ctx.grossAmountMinor,
+          reconciliationState: ctx.reconciliationState,
+        },
+      });
+
+      edges.push({
+        id: `edge:case->tx:${actualCaseId}_${ctx.id}`,
+        source: `case:${actualCaseId}`,
+        target: txNodeId,
+        type: "PROCESSED_THROUGH",
+        label: "PROCESSED_THROUGH",
+        provenance: "SYSTEM_AUDIT",
+      });
+    }
+
+    for (const src of sourceRecords) {
+      const srcNodeId = `src:${src.id}`;
+      nodes.push({
+        id: srcNodeId,
+        type: "TRANSACTION_SOURCE",
+        label: `${src.sourceName} Record`,
+        sublabel: `${src.currency} ${(src.amountMinor / 100).toFixed(2)} [${src.reportedStatus}]`,
+        party: src.sourceType.includes("MERCHANT") ? "MERCHANT" : "BUYER",
+        status: src.reportedStatus,
+        timestamp: src.reportedAt.toISOString(),
+        metadata: {
+          referenceId: src.referenceId,
+          sourceType: src.sourceType,
+          confidence: src.confidence,
+        },
+      });
+
+      if (src.canonicalTransactionId) {
+        edges.push({
+          id: `edge:tx->src:${src.canonicalTransactionId}_${src.id}`,
+          source: `tx:${src.canonicalTransactionId}`,
+          target: srcNodeId,
+          type: "RECONCILED_FROM",
+          label: "RECONCILED_FROM",
+          provenance: "RULE",
+        });
+      }
+    }
+
+    for (const mis of mismatches) {
+      const misNodeId = `mismatch:${mis.id}`;
+      nodes.push({
+        id: misNodeId,
+        type: "RECONCILIATION_MISMATCH",
+        label: mis.mismatchType.replace(/_/g, " "),
+        sublabel: `Severity: ${mis.severity}`,
+        party: "NEUTRAL",
+        status: mis.status,
+        timestamp: mis.createdAt.toISOString(),
+        metadata: {
+          severity: mis.severity,
+          suggestedAction: mis.suggestedAction,
+          description: mis.description,
+        },
+      });
+
+      if (mis.canonicalTransactionId) {
+        edges.push({
+          id: `edge:mis->tx:${mis.id}_${mis.canonicalTransactionId}`,
+          source: misNodeId,
+          target: `tx:${mis.canonicalTransactionId}`,
+          type: "CONTRADICTED_BY",
+          label: "CONTRADICTS",
+          provenance: "RULE",
+        });
+      }
+    }
+
+    if (paymentIncident && paymentIncident.findings) {
+      for (const find of paymentIncident.findings) {
+        const findNodeId = `finding:${find.id}`;
+        nodes.push({
+          id: findNodeId,
+          type: "INCIDENT_FINDING",
+          label: find.findingTitle,
+          sublabel: `[${find.findingType}]`,
+          party: "NEUTRAL",
+          timestamp: find.createdAt.toISOString(),
+          metadata: {
+            confidence: find.confidence,
+            findingType: find.findingType,
+            description: find.description,
+          },
+        });
+
+        edges.push({
+          id: `edge:find->case:${find.id}_${actualCaseId}`,
+          source: findNodeId,
+          target: `case:${actualCaseId}`,
+          type: "EXPLAINS_INCIDENT",
+          label: "EXPLAINS_INCIDENT",
+          provenance: "RULE",
+        });
+      }
     }
 
     const graphData: GraphData = {

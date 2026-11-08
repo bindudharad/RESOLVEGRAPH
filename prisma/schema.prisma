@@ -398,6 +398,14 @@ model CaseRecord {
   sharedMessages       SharedRoomMessage[]
   paymentComplaints    PaymentComplaint[]
 
+  // Hackathon Expansion Relations
+  canonicalTransactions    CanonicalTransaction[]
+  transactionSourceRecords TransactionSourceRecord[]
+  matchingDecisions        MatchingDecision[]
+  reconciliationMismatches ReconciliationMismatch[]
+  paymentIncident          PaymentIncident?
+  multilingualComplaints   MultilingualComplaint[]
+
   @@index([caseNumber])
   @@index([status])
   @@index([priority])
@@ -478,6 +486,8 @@ model Evidence {
   packagePassportId String?
   packagePassport   PackagePassport?         @relation(fields: [packagePassportId], references: [id], onDelete: SetNull)
   analysisResults   EvidenceAnalysisResult[]
+  sourceRecords     TransactionSourceRecord[]
+  fieldExtractions  EvidenceFieldExtraction[]
 
   @@index([caseId])
   @@index([uploadedById])
@@ -1648,4 +1658,237 @@ model PaymentComplaint {
   @@index([transactionReference])
   @@index([paymentProvider])
   @@index([complaintCategory])
+}
+
+// ============================================================================
+// HACKATHON EXPANSION: CROSS-PROVIDER PAYMENT INVESTIGATION & EVIDENCE ENGINE
+// ============================================================================
+
+model CanonicalTransaction {
+  id                   String   @id @default(cuid())
+  caseId               String?
+  provider             String   // PAYPAL, PHONEPE, GOOGLE_PAY, PAYTM, BHIM, HDFC_BANK, ICICI_BANK, STRIPE, RAZORPAY, CASHFREE, OTHER
+  providerTxId         String?  // Original transaction ID from provider
+  externalReference    String?  // UTR / RRN / Bank Ref
+  payerReference       String?  // Payer VPA, email, or masked account
+  payeeReference       String?  // Payee VPA, merchant ID, or account
+  merchantName         String?
+  orderReference       String?  // Associated commerce or cart order number
+  grossAmountMinor     Int      // Financial amount in minor units
+  feeAmountMinor       Int      @default(0)
+  netAmountMinor       Int      // gross - fee
+  currency             String   @default("INR")
+  originalStatus       String   // Provider's verbatim status string (e.g. COMPLETED, PAID, SUCCESS, DEBITED)
+  normalizedStatus     String   @default("PENDING") // CREATED, INITIATED, PENDING, AUTHORIZED, CAPTURED, COMPLETED, FAILED, CANCELLED, REVERSED, REFUND_INITIATED, PARTIALLY_REFUNDED, REFUNDED, DISPUTED
+  reconciliationState  String   @default("UNMATCHED") // UNMATCHED, MATCHED, REVIEW, CONFLICT
+  transactionTimestamp DateTime
+  recordedTimestamp    DateTime @default(now())
+  metadataJson         String?  // FX rates, conversion notes, provider payload snapshot
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  case                 CaseRecord?              @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  sourceRecords        TransactionSourceRecord[]
+  matchingDecisions    MatchingDecision[]
+  mismatches           ReconciliationMismatch[]
+
+  @@index([caseId])
+  @@index([provider])
+  @@index([providerTxId])
+  @@index([externalReference])
+  @@index([orderReference])
+  @@index([normalizedStatus])
+  @@index([reconciliationState])
+  @@index([transactionTimestamp])
+}
+
+model TransactionSourceRecord {
+  id                     String   @id @default(cuid())
+  caseId                 String?
+  canonicalTransactionId String?
+  evidenceId             String?
+  sourceType             String   // UPI_APP, BANK_STATEMENT, MERCHANT_PORTAL, GATEWAY_API, EMAIL_RECEIPT, SMS_NOTIFICATION, MANUAL_ENTRY
+  sourceName             String   // PhonePe, Google Pay, Paytm, HDFC Bank, TechStore Portal, PayPal Sandbox
+  referenceId            String   // UTR, order ID, payment ref
+  amountMinor            Int
+  currency               String   @default("INR")
+  reportedStatus         String   // Status reported by this specific source
+  reportedAt             DateTime
+  confidence             Float    @default(1.0)
+  extractedFieldsJson    String?  // Raw OCR or structured parsed payload
+  createdAt              DateTime @default(now())
+
+  case                   CaseRecord?           @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  canonicalTransaction   CanonicalTransaction? @relation(fields: [canonicalTransactionId], references: [id], onDelete: SetNull)
+  evidence               Evidence?             @relation(fields: [evidenceId], references: [id], onDelete: SetNull)
+
+  @@index([caseId])
+  @@index([canonicalTransactionId])
+  @@index([sourceType])
+  @@index([referenceId])
+  @@index([reportedAt])
+}
+
+model MatchingDecision {
+  id                     String   @id @default(cuid())
+  caseId                 String?
+  canonicalTransactionId String
+  targetRecordId         String   // ID of matched source record or secondary transaction
+  matchTier              String   // EXACT_TX_ID, EXACT_UTR, EXACT_REF, ORDER_REF, AMOUNT_TIMESTAMP, HEURISTIC
+  outcome                String   // MATCHED, REVIEW, UNMATCHED, CONFLICT
+  score                  Float    @default(1.0)
+  matchedFieldsJson      String   // e.g. ["amount", "currency", "externalReference"]
+  conflictingFieldsJson  String?  // e.g. ["status: SUCCESS vs PENDING"]
+  explanation            String   // Human-readable deterministic explanation
+  reviewedById           String?
+  reviewedAt             DateTime?
+  createdAt              DateTime @default(now())
+
+  case                   CaseRecord?           @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  canonicalTransaction   CanonicalTransaction @relation(fields: [canonicalTransactionId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([canonicalTransactionId])
+  @@index([targetRecordId])
+  @@index([outcome])
+  @@index([matchTier])
+}
+
+model ReconciliationMismatch {
+  id                     String   @id @default(cuid())
+  caseId                 String?
+  canonicalTransactionId String?
+  mismatchType           String   // DUPLICATE_DEBIT, MISSING_CAPTURE, MISSING_SETTLEMENT, MISSING_REFUND, PARTIAL_REFUND_GAP, AMOUNT_DISCREPANCY, FEE_DISCREPANCY, FX_MISMATCH, STATUS_MISMATCH, DELAYED_CONFIRMATION
+  severity               String   @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  description            String
+  sourceAJson            String   // Details of Source A
+  sourceBJson            String   // Details of Source B
+  suggestedAction        String
+  status                 String   @default("OPEN") // OPEN, RESOLVED, DISMISSED
+  resolvedAt             DateTime?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  case                   CaseRecord?           @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  canonicalTransaction   CanonicalTransaction? @relation(fields: [canonicalTransactionId], references: [id], onDelete: SetNull)
+
+  @@index([caseId])
+  @@index([canonicalTransactionId])
+  @@index([mismatchType])
+  @@index([severity])
+  @@index([status])
+}
+
+model PaymentIncident {
+  id                   String   @id @default(cuid())
+  caseId               String   @unique
+  incidentCategory     String   // DEBITED_NOT_CREDITED, PAYMENT_PENDING, DUPLICATE_DEBIT, REFUND_NOT_RECEIVED, REVERSAL_PENDING, MERCHANT_UNPAID, INCORRECT_AMOUNT, WRONG_BENEFICIARY, FAILED_BUT_DEBITED, DELAYED_SETTLEMENT, PAYMENT_SUCCEEDED_ORDER_FAILED, PARTIAL_REFUND, PROVIDER_STATUS_MISMATCH, INCORRECT_INVOICE, UNRECOGNIZED_TX, CROSS_BORDER_MISMATCH, MISSING_CONFIRMATION, DUPLICATE_CAPTURE
+  primaryProvider      String
+  amountMinor          Int
+  currency             String   @default("INR")
+  rootCauseHypothesis  String?
+  uncertaintyNotes     String?
+  statutoryTatGuidance String?  // RBI / NPCI Turnaround Time and penalty rules
+  investigationStage   String   @default("INTAKE") // INTAKE, TRIAGE, EVIDENCE_COLLECTION, MATCHING, ROOT_CAUSE_ANALYSIS, RESOLUTION_PROPOSED, RESOLVED, CLOSED
+  resolutionSummary    String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  case                 CaseRecord @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  findings             InvestigationFinding[]
+
+  @@index([caseId])
+  @@index([incidentCategory])
+  @@index([primaryProvider])
+  @@index([investigationStage])
+}
+
+model InvestigationFinding {
+  id                           String          @id @default(cuid())
+  incidentId                   String
+  findingTitle                 String
+  findingType                  String          // VERIFIED_FACT, SOURCE_SUPPORTED_CLAIM, HYPOTHESIS, CONTRADICTION, MISSING_INFORMATION
+  confidence                   Float           @default(1.0)
+  description                  String
+  supportingEvidenceIdsJson    String?         // IDs of evidence backing this finding
+  contradictoryEvidenceIdsJson String?         // IDs of conflicting evidence
+  recommendedAction            String?
+  isHumanReviewed              Boolean         @default(false)
+  createdAt                    DateTime        @default(now())
+
+  incident                     PaymentIncident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+
+  @@index([incidentId])
+  @@index([findingType])
+}
+
+model EvidenceFieldExtraction {
+  id                 String   @id @default(cuid())
+  evidenceId         String
+  fieldName          String   // transactionId, utr, amount, currency, fee, transactionDate, payer, payee, merchant, status, orderRef
+  extractedValue     String
+  confidence         Float    @default(1.0)
+  extractionMethod   String   @default("REGEX_AND_LAYOUT") // OCR_VISION, REGEX_AND_LAYOUT, CSV_PARSER, METADATA_PARSER, MANUAL_CONFIRMATION
+  userCorrectedValue String?
+  isVerifiedByUser   Boolean  @default(false)
+  sourceSnippet      String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  evidence           Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+
+  @@index([evidenceId])
+  @@index([fieldName])
+}
+
+model HashChainedAuditRecord {
+  id             String   @id @default(cuid())
+  sequenceNumber Int      @unique
+  previousHash   String   // SHA-256 of prior record
+  currentHash    String   // SHA-256(previousHash + payloadHash + timestamp + action)
+  payloadHash    String   // SHA-256 of detailsJson
+  action         String
+  actorId        String?
+  resourceType   String
+  resourceId     String?
+  detailsJson    String
+  createdAt      DateTime @default(now())
+
+  @@index([sequenceNumber])
+  @@index([currentHash])
+  @@index([action])
+  @@index([resourceType, resourceId])
+}
+
+model KillSwitchConfig {
+  id                       String   @id @default("global_kill_switch")
+  isOutboundPayPalKilled   Boolean  @default(false)
+  isExternalProviderKilled Boolean  @default(false)
+  isAutonomousAgentKilled  Boolean  @default(false)
+  isNotificationKilled     Boolean  @default(false)
+  reason                   String?
+  updatedById              String?
+  updatedAt                DateTime @updatedAt
+}
+
+model MultilingualComplaint {
+  id                  String   @id @default(cuid())
+  userId              String?
+  caseId              String?
+  inputLanguage       String   @default("en") // en, kn (Kannada), hi (Hindi)
+  originalStatement   String
+  transcribedText     String?
+  translatedTextEn    String?
+  identifiedCategory  String?
+  extractedFieldsJson String?
+  missingFieldsJson   String?
+  isConfirmed         Boolean  @default(false)
+  generatedComplaint  String?
+  createdAt           DateTime @default(now())
+
+  case                CaseRecord? @relation(fields: [caseId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([caseId])
+  @@index([inputLanguage])
 }

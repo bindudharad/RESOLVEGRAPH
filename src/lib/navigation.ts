@@ -13,8 +13,13 @@ import {
   PlayCircle,
   Settings,
   ShieldAlert,
+  ShieldCheck,
   ShoppingCart,
   Sparkles,
+  UploadCloud,
+  FileSearch,
+  Layers,
+  Languages,
   type LucideIcon,
 } from "lucide-react";
 
@@ -113,6 +118,41 @@ export const NAV_GROUPS: NavGroup[] = [
         availability: "preview",
         previewNote:
           "Remedy queues are illustrative. The resolution engine and payment actions are not built yet.",
+      },
+    ],
+  },
+  {
+    label: "Payment Investigation",
+    items: [
+      {
+        label: "Payment Incidents",
+        href: "/incidents",
+        icon: FileSearch,
+        availability: "live",
+      },
+      {
+        label: "Universal Intake",
+        href: "/intake",
+        icon: UploadCloud,
+        availability: "live",
+      },
+      {
+        label: "Cross-Reconciliation",
+        href: "/reconciliation",
+        icon: Layers,
+        availability: "live",
+      },
+      {
+        label: "Multilingual Voice",
+        href: "/multilingual",
+        icon: Languages,
+        availability: "live",
+      },
+      {
+        label: "Security & Kill Switch",
+        href: "/admin/security",
+        icon: ShieldCheck,
+        availability: "live",
       },
     ],
   },
@@ -228,6 +268,26 @@ export const PAGE_META: Record<string, { title: string; description: string }> =
   "/cases": {
     title: "Case Management",
     description: "Track, review and manage commerce resolution cases.",
+  },
+  "/incidents": {
+    title: "Payment Incidents",
+    description: "Cross-provider payment failure and dispute investigation pipeline.",
+  },
+  "/intake": {
+    title: "Universal Payment Intake",
+    description: "Extract, validate, and verify multi-source payment evidence.",
+  },
+  "/reconciliation": {
+    title: "Cross-Platform Reconciliation",
+    description: "10-tier deterministic transaction matching and discrepancy analysis.",
+  },
+  "/multilingual": {
+    title: "Multilingual Voice Intake",
+    description: "Assisted voice and conversational complaint creation in English, Kannada, and Hindi.",
+  },
+  "/admin/security": {
+    title: "Security & Kill Switch",
+    description: "Administrative emergency controls, prompt injection defense, and hash-chained audit ledger.",
   },
   "/evidence": {
     title: "Evidence Library",

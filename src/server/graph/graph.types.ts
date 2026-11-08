@@ -17,7 +17,11 @@ export type GraphNodeType =
   | "PACKAGE_PASSPORT"
   | "PACKAGE_SEAL"
   | "CAMERA_SESSION"
-  | "DELIVERY_EVENT";
+  | "DELIVERY_EVENT"
+  | "CANONICAL_TRANSACTION"
+  | "TRANSACTION_SOURCE"
+  | "RECONCILIATION_MISMATCH"
+  | "INCIDENT_FINDING";
 
 export type GraphEdgeType =
   | "ASSERTS_CLAIM"
@@ -34,7 +38,12 @@ export type GraphEdgeType =
   | "PACKED_IN"
   | "SEALED_WITH"
   | "TRANSIT_VERIFIED"
-  | "UNBOXED_IN_SESSION";
+  | "UNBOXED_IN_SESSION"
+  | "PROCESSED_THROUGH"
+  | "MATCHED_WITH"
+  | "RECONCILED_FROM"
+  | "CONTRADICTED_BY"
+  | "EXPLAINS_INCIDENT";
 
 export type FactRelationType =
   | "EQUIVALENT"

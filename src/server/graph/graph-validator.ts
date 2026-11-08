@@ -93,6 +93,26 @@ const ALLOWED_EDGE_CONNECTIONS: Record<
     allowedSources: ["CASE"],
     allowedTargets: ["CAMERA_SESSION"],
   },
+  PROCESSED_THROUGH: {
+    allowedSources: ["CASE", "BUYER", "MERCHANT"],
+    allowedTargets: ["CANONICAL_TRANSACTION"],
+  },
+  MATCHED_WITH: {
+    allowedSources: ["CANONICAL_TRANSACTION"],
+    allowedTargets: ["TRANSACTION_SOURCE", "EVIDENCE"],
+  },
+  RECONCILED_FROM: {
+    allowedSources: ["CANONICAL_TRANSACTION"],
+    allowedTargets: ["TRANSACTION_SOURCE"],
+  },
+  CONTRADICTED_BY: {
+    allowedSources: ["RECONCILIATION_MISMATCH"],
+    allowedTargets: ["CANONICAL_TRANSACTION", "TRANSACTION_SOURCE"],
+  },
+  EXPLAINS_INCIDENT: {
+    allowedSources: ["INCIDENT_FINDING"],
+    allowedTargets: ["CASE", "CANONICAL_TRANSACTION"],
+  },
 };
 
 export class GraphValidator {
