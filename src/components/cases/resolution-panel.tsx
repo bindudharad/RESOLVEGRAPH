@@ -284,7 +284,7 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-purple-400" />
+                      <FileText className="h-4 w-4 text-amber-400" />
                       <span className="text-[13px] font-bold text-fg">{prop.title}</span>
                     </div>
 
@@ -386,7 +386,7 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
                     </div>
 
                     {option.recommended && (
-                      <span className="shrink-0 rounded bg-[color-mix(in_srgb,var(--color-brand)_20%,transparent)] px-1.5 py-0.5 text-[10px] font-semibold uppercase text-[#b3a1ff]">
+                      <span className="shrink-0 rounded bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-300">
                         Recommended
                       </span>
                     )}

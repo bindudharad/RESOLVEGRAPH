@@ -745,7 +745,7 @@ export default function CopilotPage() {
                   onClick={() => loadRunDetails(r.id)}
                   className={`flex items-center justify-between rounded px-2.5 py-2 text-left text-xs transition-colors ${
                     activeRun?.id === r.id
-                      ? "bg-[color-mix(in_srgb,var(--color-brand)_20%,transparent)] font-semibold text-[#b3a1ff]"
+                      ? "bg-amber-500/10 font-semibold text-amber-400"
                       : "text-subtle hover:bg-surface-2 hover:text-fg"
                   }`}
                 >

@@ -123,7 +123,7 @@ export function CaseAuditTab({ caseId }: CaseAuditTabProps) {
         );
       case "TIMELINE_EVENT":
         return (
-          <span className="rounded bg-purple-500/10 px-2 py-0.5 text-[11px] font-semibold text-purple-400 flex items-center gap-1">
+          <span className="rounded bg-slate-500/15 px-2 py-0.5 text-[11px] font-semibold text-slate-300 border border-slate-700/40 flex items-center gap-1">
             <Clock className="h-3 w-3" /> Timeline Milestone
           </span>
         );

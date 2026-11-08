@@ -156,7 +156,7 @@ export default function SettingsPage() {
             onClick={() => setActiveTab("workspace")}
             className={`flex items-center gap-2.5 rounded-md px-3.5 py-2.5 text-[13px] font-medium transition-colors text-left ${
               activeTab === "workspace"
-                ? "bg-[color-mix(in_srgb,var(--color-brand)_15%,transparent)] text-[#b3a1ff]"
+                ? "bg-amber-500/10 font-semibold text-amber-400"
                 : "text-subtle hover:bg-surface-2 hover:text-fg"
             }`}
           >
@@ -169,7 +169,7 @@ export default function SettingsPage() {
             onClick={() => setActiveTab("profile")}
             className={`flex items-center gap-2.5 rounded-md px-3.5 py-2.5 text-[13px] font-medium transition-colors text-left ${
               activeTab === "profile"
-                ? "bg-[color-mix(in_srgb,var(--color-brand)_15%,transparent)] text-[#b3a1ff]"
+                ? "bg-amber-500/10 font-semibold text-amber-400"
                 : "text-subtle hover:bg-surface-2 hover:text-fg"
             }`}
           >
@@ -182,7 +182,7 @@ export default function SettingsPage() {
             onClick={() => setActiveTab("appearance")}
             className={`flex items-center gap-2.5 rounded-md px-3.5 py-2.5 text-[13px] font-medium transition-colors text-left ${
               activeTab === "appearance"
-                ? "bg-[color-mix(in_srgb,var(--color-brand)_15%,transparent)] text-[#b3a1ff]"
+                ? "bg-amber-500/10 font-semibold text-amber-400"
                 : "text-subtle hover:bg-surface-2 hover:text-fg"
             }`}
           >
@@ -195,7 +195,7 @@ export default function SettingsPage() {
             onClick={() => setActiveTab("notifications")}
             className={`flex items-center gap-2.5 rounded-md px-3.5 py-2.5 text-[13px] font-medium transition-colors text-left ${
               activeTab === "notifications"
-                ? "bg-[color-mix(in_srgb,var(--color-brand)_15%,transparent)] text-[#b3a1ff]"
+                ? "bg-amber-500/10 font-semibold text-amber-400"
                 : "text-subtle hover:bg-surface-2 hover:text-fg"
             }`}
           >
@@ -208,7 +208,7 @@ export default function SettingsPage() {
             onClick={() => setActiveTab("about")}
             className={`flex items-center gap-2.5 rounded-md px-3.5 py-2.5 text-[13px] font-medium transition-colors text-left ${
               activeTab === "about"
-                ? "bg-[color-mix(in_srgb,var(--color-brand)_15%,transparent)] text-[#b3a1ff]"
+                ? "bg-amber-500/10 font-semibold text-amber-400"
                 : "text-subtle hover:bg-surface-2 hover:text-fg"
             }`}
           >
@@ -387,7 +387,7 @@ export default function SettingsPage() {
                     onClick={() => setDensity("default")}
                     className={`rounded-md border px-3 py-1.5 text-[12px] font-medium transition-colors ${
                       density === "default"
-                        ? "border-[var(--color-brand)] bg-[color-mix(in_srgb,var(--color-brand)_15%,transparent)] text-[#b3a1ff]"
+                        ? "border-amber-500/40 bg-amber-500/10 text-amber-400 font-semibold"
                         : "border-line bg-surface-2 text-subtle"
                     }`}
                   >
@@ -398,7 +398,7 @@ export default function SettingsPage() {
                     onClick={() => setDensity("compact")}
                     className={`rounded-md border px-3 py-1.5 text-[12px] font-medium transition-colors ${
                       density === "compact"
-                        ? "border-[var(--color-brand)] bg-[color-mix(in_srgb,var(--color-brand)_15%,transparent)] text-[#b3a1ff]"
+                        ? "border-amber-500/40 bg-amber-500/10 text-amber-400 font-semibold"
                         : "border-line bg-surface-2 text-subtle"
                     }`}
                   >
@@ -504,26 +504,26 @@ export default function SettingsPage() {
                 </div>
               </dl>
 
-              <div className="rounded-lg border border-[color-mix(in_srgb,var(--color-brand)_30%,transparent)] bg-[color-mix(in_srgb,var(--color-brand)_6%,transparent)] p-4 text-[12px] leading-relaxed text-muted">
+              <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-[12px] leading-relaxed text-muted">
                 <p className="font-semibold text-fg flex items-center gap-1.5 mb-2">
-                  <ShieldCheck className="h-4 w-4 text-[#34d399]" />
+                  <ShieldCheck className="h-4 w-4 text-emerald-400" />
                   Verified Engineering Capabilities:
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[12px]">
                   <div className="flex items-start gap-2">
-                    <Server className="h-4 w-4 text-[#b3a1ff] mt-0.5 shrink-0" />
+                    <Server className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
                     <span><strong>Database:</strong> SQLite with 40 Prisma schema models & immutable audit events.</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Cpu className="h-4 w-4 text-[#38bdf8] mt-0.5 shrink-0" />
+                    <Cpu className="h-4 w-4 text-sky-400 mt-0.5 shrink-0" />
                     <span><strong>AI Intelligence:</strong> BERR 5-agent specialist reasoning with cryptographic evidence citation gating.</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <CreditCard className="h-4 w-4 text-[#34d399] mt-0.5 shrink-0" />
+                    <CreditCard className="h-4 w-4 text-emerald-400 mt-0.5 shrink-0" />
                     <span><strong>Payment Gateway:</strong> PayPal Sandbox Orders v2 capture, disputes, and refund workflows.</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Users className="h-4 w-4 text-[#fbbf24] mt-0.5 shrink-0" />
+                    <Users className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
                     <span><strong>Governance:</strong> Dual-key human approval safeguards on all financial settlements.</span>
                   </div>
                 </div>

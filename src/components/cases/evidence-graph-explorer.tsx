@@ -20,14 +20,14 @@ interface EvidenceGraphExplorerProps {
 }
 
 const TYPE_COLORS: Record<string, { bg: string; border: string; text: string; dot: string }> = {
-  CASE: { bg: "bg-purple-950/60", border: "border-purple-500", text: "text-purple-300", dot: "#a855f7" },
+  CASE: { bg: "bg-amber-950/40", border: "border-amber-500", text: "text-amber-300", dot: "#f59e0b" },
   BUYER: { bg: "bg-blue-950/60", border: "border-blue-500", text: "text-blue-300", dot: "#3b82f6" },
   MERCHANT: { bg: "bg-emerald-950/60", border: "border-emerald-500", text: "text-emerald-300", dot: "#10b981" },
   CLAIM: { bg: "bg-amber-950/60", border: "border-amber-500", text: "text-amber-300", dot: "#f59e0b" },
   EVIDENCE: { bg: "bg-cyan-950/60", border: "border-cyan-500", text: "text-cyan-300", dot: "#06b6d4" },
   FACT: { bg: "bg-indigo-950/60", border: "border-indigo-500", text: "text-indigo-300", dot: "#6366f1" },
   FINDING: { bg: "bg-rose-950/60", border: "border-rose-500", text: "text-rose-300", dot: "#ef4444" },
-  TIMELINE_EVENT: { bg: "bg-violet-950/60", border: "border-violet-500", text: "text-violet-300", dot: "#8b5cf6" },
+  TIMELINE_EVENT: { bg: "bg-slate-900/60", border: "border-slate-500", text: "text-slate-300", dot: "#94a3b8" },
   RESOLUTION_PROPOSAL: { bg: "bg-teal-950/60", border: "border-teal-500", text: "text-teal-300", dot: "#14b8a6" },
 };
 
@@ -151,7 +151,7 @@ export function EvidenceGraphExplorer({ caseId }: EvidenceGraphExplorerProps) {
       {/* Header Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line p-4">
         <div className="flex items-center gap-2.5">
-          <div className="rounded-md bg-purple-500/10 p-2 text-purple-400">
+          <div className="rounded-md bg-amber-500/10 p-2 text-amber-400 border border-amber-500/20">
             <Network className="h-4 w-4" />
           </div>
           <div>
@@ -320,7 +320,7 @@ export function EvidenceGraphExplorer({ caseId }: EvidenceGraphExplorerProps) {
                       markerHeight="6"
                       orient="auto-start-reverse"
                     >
-                      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b3a1ff" />
+                      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b" />
                     </marker>
                   </defs>
 

@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 
 /**
- * RESOLVEGRAPH mark — a resolution check built from connected evidence nodes.
- * Vector only, so it stays crisp at any size and needs no asset pipeline.
+ * RESOLVEGRAPH mark — a precision geometric check built from connected evidence nodes.
+ * Art-directed vector SVG combining cryptographic proof, network edges, and resolution verification.
  */
 export function Logo({ className }: { className?: string }) {
   return (
@@ -14,35 +14,31 @@ export function Logo({ className }: { className?: string }) {
     >
       <defs>
         <linearGradient id="rg-mark" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#8b6cff" />
-          <stop offset="55%" stopColor="#7c5cff" />
-          <stop offset="100%" stopColor="#38bdf8" />
+          <stop offset="0%" stopColor="#f59e0b" />
+          <stop offset="55%" stopColor="#d97706" />
+          <stop offset="100%" stopColor="#10b981" />
         </linearGradient>
       </defs>
 
       <rect
-        x="1.25"
-        y="1.25"
-        width="29.5"
-        height="29.5"
-        rx="9"
-        fill="#0b1120"
-        stroke="url(#rg-mark)"
-        strokeWidth="1.5"
+        x="1.5"
+        y="1.5"
+        width="29"
+        height="29"
+        rx="6"
+        fill="#0b0e14"
+        stroke="var(--color-line-2)"
+        strokeWidth="1.2"
       />
 
-      <path
-        d="M7.5 16.6 L13.2 22.3 L24.5 9.8"
-        fill="none"
-        stroke="url(#rg-mark)"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      {/* Network connector lines */}
+      <line x1="8" y1="16.5" x2="13.5" y2="22" stroke="#f59e0b" strokeWidth="1.8" strokeLinecap="round" />
+      <line x1="13.5" y1="22" x2="24" y2="10" stroke="#10b981" strokeWidth="2.2" strokeLinecap="round" />
 
-      <circle cx="7.5" cy="16.6" r="2.35" fill="#0b1120" stroke="#8b6cff" strokeWidth="1.6" />
-      <circle cx="13.2" cy="22.3" r="2.35" fill="#0b1120" stroke="#7c5cff" strokeWidth="1.6" />
-      <circle cx="24.5" cy="9.8" r="2.6" fill="#38bdf8" />
+      {/* Verified Nodes */}
+      <circle cx="8" cy="16.5" r="2.4" fill="#0b0e14" stroke="#f59e0b" strokeWidth="1.8" />
+      <circle cx="13.5" cy="22" r="2.4" fill="#0b0e14" stroke="#f59e0b" strokeWidth="1.8" />
+      <circle cx="24" cy="10" r="2.8" fill="#10b981" />
     </svg>
   );
 }

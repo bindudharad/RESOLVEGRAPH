@@ -82,7 +82,7 @@ export function Dropdown({
           role="menu"
           aria-label={label}
           className={cn(
-            "rg-anim-pop absolute top-[calc(100%+7px)] z-80 overflow-hidden rounded-lg border border-line-2 bg-[#0b1220] py-1.5 shadow-[0_18px_48px_-12px_rgba(0,0,0,0.9)]",
+            "rg-anim-pop absolute top-[calc(100%+7px)] z-80 overflow-hidden rounded-lg border border-line-2 bg-[#0B0F17] py-1.5 shadow-[0_18px_48px_-12px_rgba(0,0,0,0.9)]",
             align === "end" ? "right-0" : "left-0",
             width,
           )}

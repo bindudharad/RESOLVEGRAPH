@@ -1,191 +1,99 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowRight, Play, ChevronDown } from "lucide-react";
-import { AnimatedText, MagneticButton, FadeIn } from "@/components/landing/motion-primitives";
-import { cn } from "@/lib/utils";
-
-/* SSR-safe dynamic import for the 3D globe (heavy WebGL content) */
-const HeroGlobe = dynamic(() => import("@/components/landing/hero-globe"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-full w-full items-center justify-center">
-      <div className="h-48 w-48 animate-pulse rounded-full bg-[var(--color-brand)]/5 blur-xl" />
-    </div>
-  ),
-});
-
-/* -------------------------------------------------------------------------- */
-/*  Trust logos                                                                */
-/* -------------------------------------------------------------------------- */
-
-const platformCapabilities = [
-  "Bilateral Evidence Graph",
-  "PayPal Sandbox Verified",
-  "Cryptographic Provenance",
-  "Human-in-the-Loop Safeguards",
-  "Multi-Tenant Workspaces",
-];
-
-function TrustBar() {
-  return (
-    <FadeIn delay={0.8}>
-      <div className="mt-16 flex flex-col items-center gap-4">
-        <p className="text-xs font-medium uppercase tracking-[0.15em] text-[var(--color-faint)]">
-          Architectural Foundation & Compliance Safeguards
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          {platformCapabilities.map((name) => (
-            <span
-              key={name}
-              className="rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-1 text-xs font-medium tracking-wide text-[var(--color-subtle)] transition-colors hover:text-white"
-            >
-              {name}
-            </span>
-          ))}
-        </div>
-      </div>
-    </FadeIn>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/*  HeroSection                                                               */
-/* -------------------------------------------------------------------------- */
+import { ArrowRight, FileSearch, ShieldCheck, Layers, Sparkles } from "lucide-react";
+import { HeroInvestigationDemo } from "./hero-investigation-demo";
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen overflow-hidden">
-      {/* ── Background layers ── */}
-      <div className="absolute inset-0 rg-mesh-bg" />
-      <div className="absolute inset-0 rg-landing-grid" />
+    <section className="relative min-h-[92vh] pt-32 pb-20 overflow-hidden border-b border-[var(--color-line)] bg-[var(--color-app)]">
+      {/* Background Architectural Grid & Subtle Radial Glow */}
+      <div className="absolute inset-0 rg-landing-grid pointer-events-none" />
+      <div className="absolute inset-0 rg-mesh-bg pointer-events-none" />
 
-      {/* Radial fade vignette at bottom */}
-      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[var(--color-app)] to-transparent" />
-
-      {/* ── Main content: split layout ── */}
-      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center px-6 pt-32 lg:flex-row lg:gap-8 lg:pt-40">
-        {/* ─── Left: Copy ─── */}
-        <div className="flex-1 text-center lg:text-left">
-          {/* Social proof badge */}
-          <FadeIn delay={0.1}>
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[var(--color-brand)]/20 bg-[var(--color-brand)]/[0.06] px-4 py-1.5 text-[13px] font-medium text-[var(--color-brand-2)]">
-              <motion.span
-                className="h-2 w-2 rounded-full bg-emerald-400"
-                animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-              v2.0 — AI-Powered Resolution Engine
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+          
+          {/* Left Column: Editorial Headline & Value Narrative */}
+          <div className="lg:col-span-7 space-y-6">
+            
+            {/* Architectural Status Pill */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--color-line-2)] bg-[var(--color-shell)] px-3 py-1 text-xs font-mono text-[var(--color-muted)]">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>PAYMENT INVESTIGATION & COMMERCE RESOLUTION INFRASTRUCTURE</span>
             </div>
-          </FadeIn>
 
-          {/* Main headline */}
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl xl:text-7xl">
-            <AnimatedText
-              text="Resolve Commerce"
-              mode="word"
-              className="text-white"
-            />
-            <br />
-            <AnimatedText
-              text="Disputes with"
-              mode="word"
-              className="text-white"
-              delay={0.3}
-            />
-            <br />
-            <span className="rg-gradient-text">
-              <AnimatedText
-                text="Evidence-First AI"
-                mode="word"
-                delay={0.55}
-              />
-            </span>
-          </h1>
+            {/* Main Editorial Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[var(--color-fg)] leading-[1.08]">
+              One Payment. <span className="font-editorial italic text-amber-300">Every Source.</span><br />
+              One Explainable Resolution.
+            </h1>
 
-          {/* Subtitle */}
-          <FadeIn delay={0.7}>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--color-muted)] lg:text-xl">
-              From the first complaint to a fair resolution. Connect buyers,
-              merchants, evidence, and AI-powered investigation in one
-              enterprise platform.
+            {/* Concise Value Description */}
+            <p className="text-base sm:text-lg text-[var(--color-fg-muted)] leading-relaxed max-w-xl font-normal">
+              When buyer screenshots, bank debits, gateway webhooks, and merchant orders disagree, RESOLVEGRAPH reconstructs the truth. Reconcile cross-provider transactions with integer minor units precision and diagnose root causes under statutory turnaround timelines.
             </p>
-          </FadeIn>
 
-          {/* CTA buttons */}
-          <FadeIn delay={0.85}>
-            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start">
-              <MagneticButton strength={0.15}>
-                <Link
-                  href="/sign-up"
-                  className={cn(
-                    "group relative inline-flex items-center gap-2 overflow-hidden rounded-full",
-                    "px-8 py-3.5 text-[15px] font-semibold text-white",
-                    "bg-gradient-to-r from-[var(--color-brand)] via-[var(--color-brand-solid)] to-[#38bdf8]",
-                    "shadow-[0_0_30px_rgba(124,92,255,0.3)]",
-                    "transition-all duration-300",
-                    "hover:shadow-[0_0_40px_rgba(124,92,255,0.45)] hover:scale-[1.02]",
-                  )}
-                >
-                  {/* Shine sweep */}
-                  <span
-                    className={cn(
-                      "absolute inset-0 -translate-x-full bg-gradient-to-r",
-                      "from-transparent via-white/20 to-transparent",
-                      "transition-transform duration-700 group-hover:translate-x-full",
-                    )}
-                  />
-                  <span className="relative z-10">Start Free Trial</span>
-                  <ArrowRight className="relative z-10 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </Link>
-              </MagneticButton>
+            {/* Direct Action Controls */}
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-2 rounded border border-amber-500/40 bg-amber-500/15 px-5 py-2.5 text-sm font-medium text-amber-300 transition-all hover:bg-amber-500/25 hover:border-amber-500/60 shadow-lg shadow-amber-950/20"
+              >
+                <span>Launch Operational Workspace</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
 
-              <MagneticButton strength={0.15}>
-                <Link
-                  href="/demo"
-                  className={cn(
-                    "group inline-flex items-center gap-2 rounded-full",
-                    "border border-white/10 px-7 py-3.5 text-[15px] font-medium text-[var(--color-muted)]",
-                    "transition-all duration-300",
-                    "hover:border-white/20 hover:bg-white/[0.04] hover:text-white",
-                  )}
-                >
-                  <Play className="h-4 w-4 text-[var(--color-brand-2)]" />
-                  Watch Demo
-                </Link>
-              </MagneticButton>
+              <Link
+                href="/incidents"
+                className="inline-flex items-center gap-2 rounded border border-[var(--color-line-2)] bg-[var(--color-shell)] px-4 py-2.5 text-sm font-medium text-[var(--color-fg-muted)] hover:text-[var(--color-fg)] hover:border-[var(--color-line-highlight)] transition-colors"
+              >
+                <FileSearch className="h-4 w-4 text-amber-400" />
+                <span>12-Stage Investigation</span>
+              </Link>
+
+              <Link
+                href="/methodology"
+                className="inline-flex items-center gap-2 px-3 py-2 text-xs font-mono text-[var(--color-subtle)] hover:text-amber-300 transition-colors"
+              >
+                <span>Read BERR v2 Methodology &rarr;</span>
+              </Link>
             </div>
-          </FadeIn>
 
-          {/* Trust bar */}
-          <TrustBar />
-        </div>
-
-        {/* ─── Right: 3D Globe ─── */}
-        <div className="relative mt-12 flex-1 lg:mt-0">
-          <FadeIn delay={0.3} direction="right">
-            <div className="relative mx-auto aspect-square max-w-[600px]">
-              {/* Ambient glow behind globe */}
-              <div
-                aria-hidden
-                className="absolute inset-0 -z-10 scale-110 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(124,92,255,0.12),transparent_60%)] blur-2xl"
-              />
-              <HeroGlobe className="h-full w-full" />
+            {/* Architecture Standards Bar */}
+            <div className="pt-6 border-t border-[var(--color-line)] grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs font-mono text-[var(--color-subtle)]">
+              <div className="space-y-1">
+                <div className="text-[var(--color-fg-muted)] font-medium flex items-center gap-1.5">
+                  <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
+                  <span>RBI DPSS.CO.PD</span>
+                </div>
+                <div>Statutory TAT T+1 Auto-Reversal</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-[var(--color-fg-muted)] font-medium flex items-center gap-1.5">
+                  <Layers className="h-3.5 w-3.5 text-sky-400" />
+                  <span>10-Tier Matching</span>
+                </div>
+                <div>Deterministic Hierarchy</div>
+              </div>
+              <div className="space-y-1 col-span-2 sm:col-span-1">
+                <div className="text-[var(--color-fg-muted)] font-medium flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>Zero Leakage</span>
+                </div>
+                <div>Paise-Safe Minor Units</div>
+              </div>
             </div>
-          </FadeIn>
+
+          </div>
+
+          {/* Right Column: Live Interactive Investigation Walkthrough */}
+          <div className="lg:col-span-5 flex justify-center">
+            <HeroInvestigationDemo />
+          </div>
+
         </div>
       </div>
-
-      {/* ── Scroll indicator ── */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <ChevronDown className="h-6 w-6 text-[var(--color-faint)]" />
-      </motion.div>
     </section>
   );
 }

@@ -34,7 +34,7 @@ export function PreviewState({
         <CardHeader className="items-center px-6 pb-5 pt-7">
           <span
             aria-hidden="true"
-            className="mb-1 flex h-12 w-12 items-center justify-center rounded-xl border border-line-2 bg-[#0a1120] text-[#b3a1ff] shadow-[0_0_0_1px_color-mix(in_srgb,var(--color-brand)_18%,transparent),0_10px_30px_-14px_var(--color-brand)]"
+            className="mb-1 flex h-12 w-12 items-center justify-center rounded-xl border border-amber-500/30 bg-[#0B0F17] text-amber-400 shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
           >
             <Icon className="h-5.5 w-5.5" />
           </span>
@@ -53,9 +53,9 @@ export function PreviewState({
         </CardHeader>
 
         <CardContent className="pb-6">
-          <div className="rounded-lg border border-line bg-[#0a1120] p-4">
+          <div className="rounded-lg border border-line bg-[#0B0F17] p-4">
             <div className="flex items-center gap-2 text-[12.5px] font-medium text-muted">
-              <Construction className="h-3.5 w-3.5 text-[#f7c95c]" aria-hidden="true" />
+              <Construction className="h-3.5 w-3.5 text-amber-400" aria-hidden="true" />
               {title} is intentionally not implemented in Step 1
             </div>
             <ul className="mt-3 grid gap-2 sm:grid-cols-2">

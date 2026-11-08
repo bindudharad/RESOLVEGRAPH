@@ -198,7 +198,7 @@ export function CasePayPalDisputeTab({
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-line">
           <div>
             <h3 className="text-sm font-semibold text-fg flex items-center gap-2">
-              <FileText className="h-4 w-4 text-purple-400" />
+              <FileText className="h-4 w-4 text-amber-400" />
               <span>Evidence Submission Package for PayPal</span>
             </h3>
             <p className="text-xs text-subtle mt-0.5">

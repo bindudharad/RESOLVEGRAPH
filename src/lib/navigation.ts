@@ -107,17 +107,13 @@ export const NAV_GROUPS: NavGroup[] = [
         label: "Evidence Library",
         href: "/evidence",
         icon: Library,
-        availability: "preview",
-        previewNote:
-          "Sample evidence records are shown. Persistent upload and storage arrive in a later phase.",
+        availability: "live",
       },
       {
         label: "Resolution Center",
         href: "/resolution",
         icon: Inbox,
-        availability: "preview",
-        previewNote:
-          "Remedy queues are illustrative. The resolution engine and payment actions are not built yet.",
+        availability: "live",
       },
     ],
   },
@@ -169,17 +165,13 @@ export const NAV_GROUPS: NavGroup[] = [
         label: "Investigation Insights",
         href: "/investigation",
         icon: Sparkles,
-        availability: "preview",
-        previewNote:
-          "AI evidence analysis and reasoning are deferred to the next development phase.",
+        availability: "live",
       },
       {
         label: "Analytics",
         href: "/analytics",
         icon: BarChart3,
-        availability: "preview",
-        previewNote:
-          "Analytics will be computed from persisted case data once the backend phase lands.",
+        availability: "live",
       },
     ],
   },
@@ -299,11 +291,11 @@ export const PAGE_META: Record<string, { title: string; description: string }> =
   },
   "/investigation": {
     title: "Investigation Insights",
-    description: "AI-assisted investigation support (coming in a later phase).",
+    description: "Bilateral evidence-to-remedy reasoning (BERR) engine, contradiction analysis, and knowledge graph intelligence.",
   },
   "/analytics": {
     title: "Analytics",
-    description: "Workspace resolution analytics (coming in a later phase).",
+    description: "Workspace resolution performance, statutory SLA turnaround, and AI accuracy metrics.",
   },
   "/organizations": {
     title: "Organizations",

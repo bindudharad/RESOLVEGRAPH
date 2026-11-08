@@ -179,7 +179,7 @@ export function TemporalTimelineExplorer({ caseId }: TemporalTimelineExplorerPro
         <div className="rounded-lg border border-line bg-surface-2/60 p-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
-              <Play className="h-4 w-4 text-purple-400" />
+              <Play className="h-4 w-4 text-amber-400" />
               <span className="text-[12.5px] font-semibold text-fg">
                 Counterfactual Case Replay (Milestone {replayIndex + 1} of {timeline.length})
               </span>
@@ -247,7 +247,7 @@ export function TemporalTimelineExplorer({ caseId }: TemporalTimelineExplorerPro
                   item.isContradictory
                     ? "border-rose-500 bg-rose-950 text-rose-400"
                     : isSelected
-                    ? "border-purple-400 bg-purple-950 text-purple-300"
+                    ? "border-amber-400 bg-amber-950 text-amber-300"
                     : "border-line bg-surface text-faint"
                 }`}
               >
@@ -256,7 +256,7 @@ export function TemporalTimelineExplorer({ caseId }: TemporalTimelineExplorerPro
 
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-[11px] font-bold uppercase text-purple-300">
+                  <span className="font-mono text-[11px] font-bold uppercase text-amber-400">
                     {item.eventType.replace("_", " ")}
                   </span>
                   <span className="font-semibold text-[13.5px] text-fg">{item.title}</span>

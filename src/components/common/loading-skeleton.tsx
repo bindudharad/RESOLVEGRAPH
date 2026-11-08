@@ -18,7 +18,7 @@ export function MetricCardSkeleton() {
 export function TableSkeleton({ rows = 6, columns = 5 }: { rows?: number; columns?: number }) {
   return (
     <div className="overflow-hidden rounded-lg border border-line">
-      <div className="flex gap-4 border-b border-line bg-[#0a1120] px-4 py-3">
+      <div className="flex gap-4 border-b border-line bg-[#0B0F17] px-4 py-3">
         {Array.from({ length: columns }).map((_, index) => (
           <Skeleton key={index} className="h-3 flex-1 opacity-60" />
         ))}

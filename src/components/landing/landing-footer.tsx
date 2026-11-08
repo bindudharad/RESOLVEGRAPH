@@ -1,244 +1,112 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { FadeIn } from "@/components/landing/motion-primitives";
 import { Logo } from "@/components/layout/logo";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import {
-  GitBranch as GithubIcon,
-  MessageCircle as TwitterIcon,
-  Briefcase as LinkedinIcon,
-  Mail,
-  ArrowUpRight,
-} from "lucide-react";
-import { useState } from "react";
 
-/* -------------------------------------------------------------------------- */
-/*  Footer link columns                                                       */
-/* -------------------------------------------------------------------------- */
-
-interface FooterLink {
-  label: string;
-  href: string;
-  external?: boolean;
-}
-
-interface FooterColumn {
-  title: string;
-  links: FooterLink[];
-}
-
-const columns: FooterColumn[] = [
+const footerColumns = [
   {
-    title: "Product",
+    title: "Investigation Workspaces",
     links: [
-      { label: "Dashboard", href: "/dashboard" },
-      { label: "Cases", href: "/cases" },
-      { label: "Evidence Library", href: "/evidence" },
-      { label: "Resolution Center", href: "/resolution" },
-      { label: "AI Copilot", href: "/copilot" },
-      { label: "Analytics", href: "/analytics" },
+      { label: "Executive Dashboard", href: "/dashboard" },
+      { label: "12-Stage Incidents", href: "/incidents" },
+      { label: "Multi-Source Reconciliation", href: "/reconciliation" },
+      { label: "Universal Evidence Intake", href: "/intake" },
+      { label: "Vernacular Voice Assistant", href: "/multilingual" },
     ],
   },
   {
-    title: "Company",
+    title: "Commerce Protection",
     links: [
-      { label: "About", href: "#about" },
-      { label: "Careers", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Press", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "All Cases Queue", href: "/cases" },
+      { label: "Purchase Memory Snapshots", href: "/purchases" },
+      { label: "Package Passport & Seals", href: "/packages" },
+      { label: "Shared Resolution Room", href: "/resolution-room" },
+      { label: "PayPal Disputes Desk", href: "/paypal/disputes" },
     ],
   },
   {
-    title: "Resources",
+    title: "Methodology & Architecture",
     links: [
-      { label: "Documentation", href: "#" },
-      { label: "API Reference", href: "#" },
-      { label: "Changelog", href: "#" },
-      { label: "Status", href: "#", external: true },
-      { label: "Community", href: "#", external: true },
+      { label: "BERR v2 Reasoning Framework", href: "/methodology" },
+      { label: "RECOURSE-BENCH (400 Cases)", href: "/methodology#benchmark" },
+      { label: "Technical Documentation & API", href: "/docs" },
+      { label: "Interactive Guided Walkthrough", href: "/demo" },
+      { label: "Analytics & Resolution Metrics", href: "/analytics" },
     ],
   },
   {
-    title: "Legal",
+    title: "Security & Governance",
     links: [
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
-      { label: "Cookie Policy", href: "#" },
-      { label: "Security", href: "#" },
-      { label: "Compliance", href: "#" },
+      { label: "Emergency Kill Switch", href: "/admin/security" },
+      { label: "Cryptographic Audit Ledger", href: "/admin/security" },
+      { label: "RBI Statutory TAT DPSS.CO.PD", href: "/docs#rbi-tat" },
+      { label: "Financial Guardrails Invariant", href: "/docs#guardrails" },
+      { label: "Tenant Isolation Protocol", href: "/docs#tenant-isolation" },
     ],
   },
 ];
-
-const socials = [
-  { icon: GithubIcon, href: "#", label: "GitHub" },
-  { icon: TwitterIcon, href: "#", label: "X (Twitter)" },
-  { icon: LinkedinIcon, href: "#", label: "LinkedIn" },
-];
-
-/* -------------------------------------------------------------------------- */
-/*  LandingFooter                                                             */
-/* -------------------------------------------------------------------------- */
 
 export function LandingFooter() {
-  const [email, setEmail] = useState("");
-
   return (
-    <footer className="relative border-t border-white/[0.05] bg-[#030712]">
-      {/* Ambient glow at top */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-[var(--color-brand)]/30 to-transparent"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 -top-32 -translate-x-1/2 h-64 w-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(124,92,255,0.06),transparent_70%)] blur-3xl"
-      />
-
-      <div className="mx-auto max-w-7xl px-6 pt-16 pb-10 lg:pt-20">
-        {/* ── Top section: logo/tagline + newsletter ── */}
-        <FadeIn>
-          <div className="flex flex-col gap-8 border-b border-white/[0.06] pb-12 lg:flex-row lg:items-start lg:justify-between">
-            {/* Logo + tagline */}
-            <div className="max-w-md">
-              <Link href="/" className="inline-flex items-center gap-2.5">
-                <Logo className="h-9 w-9" />
-                <span className="text-[17px] font-bold tracking-tight">
-                  <span className="text-white">RESOLVE</span>
-                  <span className="text-[var(--color-brand)]">GRAPH</span>
-                </span>
-              </Link>
-              <p className="mt-4 text-sm leading-relaxed text-[var(--color-muted)]">
-                From the first complaint to a fair resolution. AI-powered
-                commerce resolution infrastructure connecting buyers, merchants,
-                and evidence in one platform.
-              </p>
-            </div>
-
-            {/* Newsletter */}
-            <div className="w-full max-w-sm">
-              <p className="text-sm font-semibold text-[var(--color-fg)] mb-3">
-                Stay updated
-              </p>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setEmail("");
-                }}
-                className="flex gap-2"
-              >
-                <div className="relative flex-1">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-faint)]" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@company.com"
-                    className={cn(
-                      "h-10 w-full rounded-lg border border-white/[0.08] bg-white/[0.04] pl-10 pr-3",
-                      "text-sm text-[var(--color-fg)] placeholder:text-[var(--color-faint)]",
-                      "outline-none transition-colors",
-                      "focus:border-[var(--color-brand)]/40 focus:ring-1 focus:ring-[var(--color-brand)]/20",
-                    )}
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className={cn(
-                    "h-10 shrink-0 rounded-lg px-5 text-sm font-semibold text-white",
-                    "bg-[var(--color-brand-solid)] transition-all",
-                    "hover:bg-[var(--color-brand)] hover:shadow-[0_0_20px_rgba(124,92,255,0.25)]",
-                  )}
-                >
-                  Subscribe
-                </button>
-              </form>
-              <p className="mt-2 text-[11px] text-[var(--color-faint)]">
-                No spam. Unsubscribe anytime.
-              </p>
+    <footer className="border-t border-[var(--color-line)] bg-[var(--color-app)] text-xs">
+      <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+        
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+          
+          {/* Brand Column */}
+          <div className="lg:col-span-1 space-y-4">
+            <Link href="/" className="flex items-center gap-2.5">
+              <Logo className="h-6 w-6" />
+              <span className="font-semibold text-sm tracking-tight text-[var(--color-fg)]">
+                RESOLVEGRAPH
+              </span>
+            </Link>
+            <p className="text-xs text-[var(--color-muted)] leading-relaxed font-normal">
+              AI-Powered Cross-Provider Payment Investigation & Evidence-Based Resolution Platform.
+            </p>
+            <div className="pt-2 font-mono text-[10px] text-[var(--color-subtle)] space-y-1">
+              <div>ONE PAYMENT. EVERY SOURCE.</div>
+              <div className="text-amber-400">ONE EXPLAINABLE RESOLUTION.</div>
             </div>
           </div>
-        </FadeIn>
 
-        {/* ── Link columns ── */}
-        <FadeIn delay={0.1}>
-          <div className="grid grid-cols-2 gap-8 py-12 md:grid-cols-4 lg:gap-12">
-            {columns.map((col) => (
-              <div key={col.title}>
-                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-subtle)]">
-                  {col.title}
-                </p>
-                <ul className="mt-4 flex flex-col gap-2.5">
-                  {col.links.map((link) => (
-                    <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        className={cn(
-                          "group inline-flex items-center gap-1 text-sm text-[var(--color-muted)]",
-                          "transition-colors hover:text-[var(--color-fg)]",
-                        )}
-                      >
-                        {link.label}
-                        {link.external && (
-                          <ArrowUpRight className="h-3 w-3 opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                        )}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </FadeIn>
-
-        {/* ── Bottom bar ── */}
-        <FadeIn delay={0.2}>
-          <div className="flex flex-col gap-4 border-t border-white/[0.06] pt-8 sm:flex-row sm:items-center sm:justify-between">
-            {/* Copyright + social */}
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-              <p className="text-xs text-[var(--color-faint)]">
-                © 2026 RESOLVEGRAPH. All rights reserved.
-              </p>
-              <div className="flex items-center gap-3">
-                {socials.map((s) => {
-                  const Icon = s.icon;
-                  return (
+          {/* Nav Columns */}
+          {footerColumns.map((col) => (
+            <div key={col.title} className="space-y-3">
+              <h4 className="font-mono text-[11px] font-semibold uppercase tracking-wider text-[var(--color-fg-muted)]">
+                {col.title}
+              </h4>
+              <ul className="space-y-2">
+                {col.links.map((link) => (
+                  <li key={link.label}>
                     <Link
-                      key={s.label}
-                      href={s.href}
-                      aria-label={s.label}
-                      className={cn(
-                        "flex h-8 w-8 items-center justify-center rounded-lg",
-                        "text-[var(--color-faint)] transition-all",
-                        "hover:bg-white/[0.06] hover:text-[var(--color-fg)]",
-                      )}
+                      href={link.href}
+                      className="text-[var(--color-muted)] hover:text-amber-300 transition-colors inline-flex items-center gap-1 font-normal"
                     >
-                      <Icon className="h-4 w-4" />
+                      <span>{link.label}</span>
                     </Link>
-                  );
-                })}
-              </div>
+                  </li>
+                ))}
+              </ul>
             </div>
+          ))}
 
-            {/* Status */}
-            <div className="flex items-center gap-4">
-              <span className="text-xs text-[var(--color-faint)]">
-                Built with ❤️ for fair commerce
-              </span>
-              <span className="flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1 text-[11px] text-[var(--color-muted)]">
-                <motion.span
-                  className="h-1.5 w-1.5 rounded-full bg-emerald-400"
-                  animate={{ opacity: [1, 0.4, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-                All systems operational
-              </span>
-            </div>
+        </div>
+
+        {/* Bottom Integrity Bar */}
+        <div className="mt-14 pt-8 border-t border-[var(--color-line)] flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px] text-[var(--color-subtle)]">
+          <div className="flex items-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            <span>RESOLVEGRAPH Production Infrastructure · V2.0+</span>
           </div>
-        </FadeIn>
+          <div className="flex items-center gap-4">
+            <span>PayPal Sandbox Active (Live Disabled)</span>
+            <span>·</span>
+            <span>Zero Autonomous Disbursements</span>
+          </div>
+        </div>
+
       </div>
     </footer>
   );

@@ -262,16 +262,10 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
 
   return (
     <div className="relative overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--color-brand)_40%,transparent)] bg-[radial-gradient(ellipse_at_top,_var(--color-surface-2),_var(--color-surface))] p-5 shadow-[0_12px_36px_-12px_rgba(124,92,255,0.15)]">
-      {/* Background radial highlight */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,_rgba(124,92,255,0.25)_0%,_transparent_70%)] blur-2xl"
-      />
-
       {/* Header & Controls */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-3.5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--color-brand)] bg-[color-mix(in_srgb,var(--color-brand)_20%,transparent)] text-[#b3a1ff] shadow-[0_0_16px_rgba(124,92,255,0.35)]">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.2)]">
             <Sparkles className="h-5 w-5" />
           </div>
 
@@ -280,11 +274,11 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
               <h3 className="text-[15px] font-semibold tracking-[-0.01em] text-fg">
                 AI Investigation Centre — BERR Engine
               </h3>
-              <span className="rounded-full border border-[color-mix(in_srgb,var(--color-brand)_50%,transparent)] bg-[color-mix(in_srgb,var(--color-brand)_15%,transparent)] px-2.5 py-0.5 text-[10.5px] font-semibold text-[#c3b4ff]">
+              <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold text-amber-300">
                 Research Engine v1.0
               </span>
-              <span className="inline-flex items-center gap-1 rounded bg-[#0f172a] px-2 py-0.5 text-[10.5px] font-mono text-faint">
-                <ShieldCheck className="h-3 w-3 text-[#34d399]" />
+              <span className="inline-flex items-center gap-1 rounded bg-[#0B0F17] px-2 py-0.5 text-[10.5px] font-mono text-faint border border-line">
+                <ShieldCheck className="h-3 w-3 text-emerald-400" />
                 Consent Gated
               </span>
             </div>
@@ -314,7 +308,7 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
           onClick={() => setActiveTab("overview")}
           className={`flex items-center gap-2 border-b-2 px-3.5 py-2 text-[12.5px] font-medium transition-colors ${
             activeTab === "overview"
-              ? "border-[var(--color-brand)] font-semibold text-[#b3a1ff]"
+              ? "border-amber-400 font-semibold text-amber-400"
               : "border-transparent text-muted hover:text-fg"
           }`}
         >
@@ -327,7 +321,7 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
           onClick={() => setActiveTab("matrix")}
           className={`flex items-center gap-2 border-b-2 px-3.5 py-2 text-[12.5px] font-medium transition-colors ${
             activeTab === "matrix"
-              ? "border-[var(--color-brand)] font-semibold text-[#b3a1ff]"
+              ? "border-amber-400 font-semibold text-amber-400"
               : "border-transparent text-muted hover:text-fg"
           }`}
         >
@@ -341,7 +335,7 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
           onClick={() => setActiveTab("facts")}
           className={`flex items-center gap-2 border-b-2 px-3.5 py-2 text-[12.5px] font-medium transition-colors ${
             activeTab === "facts"
-              ? "border-[var(--color-brand)] font-semibold text-[#b3a1ff]"
+              ? "border-amber-400 font-semibold text-amber-400"
               : "border-transparent text-muted hover:text-fg"
           }`}
         >
@@ -355,13 +349,13 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
           onClick={() => setActiveTab("findings")}
           className={`flex items-center gap-2 border-b-2 px-3.5 py-2 text-[12.5px] font-medium transition-colors ${
             activeTab === "findings"
-              ? "border-[var(--color-brand)] font-semibold text-[#b3a1ff]"
+              ? "border-amber-400 font-semibold text-amber-400"
               : "border-transparent text-muted hover:text-fg"
           }`}
         >
           <AlertTriangle className="h-3.5 w-3.5 text-[#fbbf24]" />
           <span>Findings & Human Review</span>
-          <span className="rounded bg-[color-mix(in_srgb,var(--color-brand)_20%,transparent)] px-1.5 py-0.2 text-[10px] font-semibold text-[#b3a1ff]">
+          <span className="rounded bg-amber-500/10 px-1.5 py-0.2 text-[10px] font-semibold text-amber-400">
             {findings.length}
           </span>
         </button>
@@ -407,7 +401,7 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
                 <Cpu className="h-4 w-4 text-[#38bdf8]" />
                 <span className="text-[12.5px] font-semibold text-fg">BERR Mathematical Reconciliation Model</span>
               </div>
-              <span className="font-mono text-[11px] text-[#b3a1ff]">D = 0.4(D_exact) + 0.4(D_semantic) + 0.2(D_temporal)</span>
+              <span className="font-mono text-[11px] text-amber-400">D = 0.4(D_exact) + 0.4(D_semantic) + 0.2(D_temporal)</span>
             </div>
             <p className="mt-2 text-[12px] text-muted leading-relaxed">
               BERR is a proposed experimental research methodology that systematically decomposes party statements into atomic verifiable claims, aligns facts to exact character ranges and bounding boxes, and flags evidence gaps before presenting recommendations to human resolution managers.
@@ -444,7 +438,7 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
                 </div>
 
                 <div className="rounded border border-line/50 bg-surface/60 p-2.5">
-                  <span className="text-[10.5px] font-semibold uppercase text-[#b3a1ff]">Merchant / Record Fact</span>
+                  <span className="text-[10.5px] font-semibold uppercase text-amber-400">Merchant / Record Fact</span>
                   <p className="mt-1 text-[12.5px] text-fg font-medium">{c.merchantValue}</p>
                 </div>
               </div>
@@ -474,7 +468,7 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
                   <tr key={f.id} className="hover:bg-surface-2/30">
                     <td className="px-3 py-2.5 font-medium text-fg">{f.fieldKey}</td>
                     <td className="px-3 py-2.5 font-mono text-[11px] text-muted">{f.rawValue}</td>
-                    <td className="px-3 py-2.5 font-mono text-[11px] text-[#b3a1ff]">{f.normalizedValue}</td>
+                    <td className="px-3 py-2.5 font-mono text-[11px] text-amber-400">{f.normalizedValue}</td>
                     <td className="px-3 py-2.5">
                       <span className="inline-flex items-center gap-1 text-[11px] text-muted">
                         <FileText className="h-3 w-3 text-faint" />
@@ -530,7 +524,7 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
               <p className="text-[12px] text-muted leading-relaxed">{f.explanation}</p>
 
               <div className="rounded border border-line/60 bg-surface/50 p-2.5">
-                <span className="text-[10.5px] font-semibold uppercase text-[#b3a1ff]">Recommended Next Step:</span>
+                <span className="text-[10.5px] font-semibold uppercase text-amber-400">Recommended Next Step:</span>
                 <p className="mt-0.5 text-[12px] text-fg font-medium">{f.recommendedNextStep}</p>
               </div>
 
@@ -562,9 +556,9 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
       {/* AI Processing Consent Modal */}
       {isConsentModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="w-full max-w-lg rounded-xl border border-line-2 bg-[#0c1322] p-5 shadow-2xl">
+          <div className="w-full max-w-lg rounded-xl border border-line-2 bg-[#0B0F17] p-5 shadow-2xl">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--color-brand)_20%,transparent)] text-[#b3a1ff]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30">
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div>

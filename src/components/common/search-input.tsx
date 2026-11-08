@@ -60,9 +60,9 @@ export function SearchInput({
         placeholder={placeholder}
         onChange={(event) => onValueChange(event.target.value)}
         className={cn(
-          "h-9 w-full rounded-md border border-line bg-[#0a1120] text-[13px] text-fg placeholder:text-faint",
+          "h-9 w-full rounded-md border border-line bg-[#0B0F17] text-[13px] text-fg placeholder:text-faint",
           "pl-9 transition-[border-color,box-shadow] duration-150",
-          "focus:border-[var(--color-brand)] focus:outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--color-brand)_35%,transparent)]",
+          "focus:border-amber-500/50 focus:outline-none focus:ring-2 focus:ring-amber-500/20",
           plannedChip ? "pr-[86px]" : shortcut ? "pr-16" : value ? "pr-9" : "pr-3",
           "[&::-webkit-search-cancel-button]:hidden",
         )}
@@ -83,7 +83,7 @@ export function SearchInput({
         </button>
       ) : plannedChip ? (
         <span
-          className="absolute inset-y-0 right-2 my-auto flex h-5 items-center rounded border border-[color-mix(in_srgb,var(--color-brand)_35%,transparent)] bg-[color-mix(in_srgb,var(--color-brand)_15%,transparent)] px-1.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-[#b3a1ff]"
+          className="absolute inset-y-0 right-2 my-auto flex h-5 items-center rounded border border-amber-500/30 bg-amber-500/10 px-1.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-amber-300"
           title="Global search across cases and evidence is planned for a later phase"
         >
           Planned

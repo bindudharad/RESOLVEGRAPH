@@ -67,7 +67,7 @@ const MONTHLY_VOLUME = [
 const STATUS_DATA = [
   { name: "Resolved", count: 1056, color: "#34d399", share: "82.2%" },
   { name: "Open", count: 186, color: "#38bdf8", share: "14.5%" },
-  { name: "Under Investigation", count: 48, color: "#a08bff", share: "3.7%" },
+  { name: "Under Investigation", count: 48, color: "#f59e0b", share: "3.7%" },
   { name: "Awaiting Merchant", count: 42, color: "#fbbf24", share: "3.3%" },
   { name: "Awaiting Buyer", count: 26, color: "#f97316", share: "2.0%" },
   { name: "Escalated", count: 26, color: "#f87171", share: "2.0%" },
@@ -77,7 +77,7 @@ const STATUS_DATA = [
 const OUTCOME_DATA = [
   { name: "Replacement Dispatched", count: 382, pct: 36, color: "#38bdf8" },
   { name: "Full Refund Payout", count: 328, pct: 31, color: "#34d399" },
-  { name: "Partial Settlement Offset", count: 201, pct: 19, color: "#a08bff" },
+  { name: "Partial Settlement Offset", count: 201, pct: 19, color: "#d97706" },
   { name: "Mutual Withdrawal", count: 145, pct: 14, color: "#74829b" },
 ];
 
@@ -128,7 +128,7 @@ const TREND_SERIES: Record<DateRange, Array<{ date: string; total: number; resol
 function CustomChartTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-line-2 bg-[#0b1220] px-3.5 py-2.5 shadow-xl text-[12px]">
+    <div className="rounded-lg border border-line-2 bg-[#0B0F17] px-3.5 py-2.5 shadow-xl text-[12px]">
       <p className="font-semibold text-fg mb-1.5">{label}</p>
       <div className="flex flex-col gap-1">
         {payload.map((entry, index) => (
@@ -367,8 +367,8 @@ export default function AnalyticsPage() {
                 <YAxis stroke="#5b6982" fontSize={11} tickLine={false} />
                 <Tooltip content={<CustomChartTooltip />} />
                 <Legend wrapperStyle={{ fontSize: "11.5px", paddingTop: "10px" }} />
-                <Bar dataKey="filed" name="New Complaints" fill="#7c5cff" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="resolved" name="Resolved Cases" fill="#34d399" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="filed" name="New Complaints" fill="#F59E0B" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="resolved" name="Resolved Cases" fill="#10B981" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -383,7 +383,7 @@ export default function AnalyticsPage() {
                 Tracking open case backlog against successful remedy execution.
               </p>
             </div>
-            <span className="rounded bg-surface-2 px-2 py-0.5 font-mono text-[11px] text-[#b3a1ff]">
+            <span className="rounded bg-surface-2 px-2 py-0.5 font-mono text-[11px] text-amber-400">
               Active: {range}
             </span>
           </div>
@@ -393,20 +393,20 @@ export default function AnalyticsPage() {
               <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="totalGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#7c5cff" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#7c5cff" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="resolvedGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#34d399" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="date" stroke="#5b6982" fontSize={11} tickLine={false} />
                 <YAxis stroke="#5b6982" fontSize={11} tickLine={false} />
                 <Tooltip content={<CustomChartTooltip />} />
                 <Legend wrapperStyle={{ fontSize: "11.5px", paddingTop: "10px" }} />
-                <Area type="monotone" dataKey="total" name="Total Volume" stroke="#7c5cff" strokeWidth={2} fill="url(#totalGradient)" />
-                <Area type="monotone" dataKey="resolved" name="Resolved Volume" stroke="#34d399" strokeWidth={2} fill="url(#resolvedGradient)" />
+                <Area type="monotone" dataKey="total" name="Total Volume" stroke="#F59E0B" strokeWidth={2} fill="url(#totalGradient)" />
+                <Area type="monotone" dataKey="resolved" name="Resolved Volume" stroke="#10B981" strokeWidth={2} fill="url(#resolvedGradient)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -482,7 +482,7 @@ export default function AnalyticsPage() {
               <div key={item.priority} className="rounded-lg border border-line bg-surface-2 p-3.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[13px] font-semibold text-fg">{item.priority}</span>
-                  <span className="font-mono text-[14px] font-bold text-[#b3a1ff]">{item.pct}%</span>
+                  <span className="font-mono text-[14px] font-bold text-amber-400">{item.pct}%</span>
                 </div>
                 <p className="mt-1 text-[11.5px] text-faint">{item.count} open and historical claims</p>
                 <div className="mt-2.5 h-1.5 w-full rounded-full bg-surface-3 overflow-hidden">

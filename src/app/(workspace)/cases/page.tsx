@@ -155,7 +155,7 @@ export default function CasesPage() {
           </span>
           {filters.status !== "All" && (
             <span>
-              Filtered by: <span className="font-medium text-[#b3a1ff]">{filters.status}</span>
+              Filtered by: <span className="font-medium text-amber-400">{filters.status}</span>
             </span>
           )}
         </div>

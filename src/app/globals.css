@@ -6,51 +6,51 @@
     sans-serif;
   --font-mono:
     var(--font-geist-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-editorial:
+    var(--font-editorial), "Newsreader", Georgia, serif;
 
-  /* --- Application surfaces --- */
-  --color-app: #05080f;
-  --color-shell: #070c16;
-  --color-sidebar: #080e1a;
-  --color-surface: #0c1322;
-  --color-surface-2: #111a2c;
-  --color-surface-3: #172134;
+  /* --- Professional Obsidian Surfaces --- */
+  --color-app: #07090e;
+  --color-shell: #0b0e14;
+  --color-sidebar: #090c12;
+  --color-surface: #0f141f;
+  --color-surface-2: #141b29;
+  --color-surface-3: #1a2336;
 
-  /* --- Borders --- */
-  --color-line: #182136;
-  --color-line-2: #24324e;
+  /* --- Restrained Technical Hairlines --- */
+  --color-line: #182030;
+  --color-line-2: #222d42;
+  --color-line-highlight: rgba(245, 158, 11, 0.28);
 
-  /* --- Typography --- */
-  --color-fg: #e8eefb;
-  --color-muted: #93a2bf;
-  --color-subtle: #74829b;
-  --color-faint: #5b6982;
+  /* --- Editorial Typography --- */
+  --color-fg: #f4f6fb;
+  --color-fg-muted: #cbd5e1;
+  --color-muted: #94a3b8;
+  --color-subtle: #64748b;
+  --color-faint: #475569;
 
-  /* --- Accents ---
-     brand       -> borders, glows, chart strokes on dark surfaces
-     brand-2     -> bright accent text and focus rings
-     brand-solid -> filled controls that carry white text (AA contrast) */
-  --color-brand: #7c5cff;
-  --color-brand-2: #a08bff;
-  --color-brand-solid: #6d4df7;
-  --color-brand-dim: #4c3aa8;
+  /* --- Brand Accents: Precision Technical Amber & Clean Verification States --- */
+  --color-brand: #f59e0b;
+  --color-brand-2: #fbbf24;
+  --color-brand-solid: #d97706;
+  --color-brand-dim: rgba(245, 158, 11, 0.08);
   --color-info: #38bdf8;
-  --color-success: #34d399;
-  --color-warning: #fbbf24;
-  --color-danger: #f87171;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
 
-  /* --- Motion --- */
+  /* --- Motion Curves --- */
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* --- Landing page gradients --- */
-  --gradient-brand: linear-gradient(135deg, #7c5cff 0%, #38bdf8 50%, #06b6d4 100%);
-  --gradient-brand-text: linear-gradient(135deg, #a08bff 0%, #7c5cff 40%, #38bdf8 100%);
-  --gradient-glow: radial-gradient(ellipse at center, rgba(124, 92, 255, 0.15) 0%, transparent 70%);
-  --gradient-mesh: radial-gradient(at 40% 20%, rgba(124, 92, 255, 0.12) 0px, transparent 50%),
-                   radial-gradient(at 80% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
-                   radial-gradient(at 0% 50%, rgba(124, 92, 255, 0.06) 0px, transparent 50%),
-                   radial-gradient(at 80% 50%, rgba(6, 182, 212, 0.06) 0px, transparent 50%);
+  /* --- Editorial Restrained Gradients --- */
+  --gradient-brand: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --gradient-brand-text: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+  --gradient-glow: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.08) 0%, transparent 70%);
+  --gradient-mesh: radial-gradient(at 50% 0%, rgba(245, 158, 11, 0.04) 0px, transparent 60%),
+                   radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.03) 0px, transparent 50%),
+                   radial-gradient(at 0% 50%, rgba(16, 185, 129, 0.02) 0px, transparent 50%);
 }
 
 @layer base {
@@ -80,7 +80,7 @@
   }
 
   ::selection {
-    background-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
+    background-color: color-mix(in srgb, var(--color-brand) 30%, transparent);
     color: #fff;
   }
 
@@ -102,8 +102,8 @@
   }
 
   *::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
   }
 
   *::-webkit-scrollbar-track {
@@ -112,7 +112,7 @@
 
   *::-webkit-scrollbar-thumb {
     background-color: var(--color-line-2);
-    border: 3px solid transparent;
+    border: 2px solid transparent;
     background-clip: content-box;
     border-radius: 999px;
   }
@@ -137,7 +137,7 @@
 @keyframes rg-rise {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -156,66 +156,37 @@
   }
 }
 
-@keyframes rg-drawer-in {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: none;
-  }
-}
-
-@keyframes rg-panel-in {
-  from {
-    opacity: 0;
-    transform: translateX(16px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 @keyframes rg-shimmer {
   100% {
     transform: translateX(100%);
   }
 }
 
-@keyframes rg-ping {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
+@keyframes rg-pulse-soft {
+  0%, 100% {
+    opacity: 0.9;
   }
-  80%,
-  100% {
-    transform: scale(2.4);
-    opacity: 0;
-  }
-}
-
-@keyframes rg-sweep {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
+  50% {
+    opacity: 0.4;
   }
 }
 
 /* ---------------------------------------------------------------------------
-   Component classes
+   Component & Layout Classes
    --------------------------------------------------------------------------- */
 @layer components {
+  .font-editorial {
+    font-family: var(--font-editorial);
+  }
+
   .rg-card {
     position: relative;
     background-color: var(--color-surface);
     border: 1px solid var(--color-line);
-    border-radius: 12px;
+    border-radius: 8px;
     transition:
       border-color 0.18s var(--ease-out-soft),
-      background-color 0.18s var(--ease-out-soft),
-      transform 0.18s var(--ease-out-soft);
+      background-color 0.18s var(--ease-out-soft);
   }
 
   .rg-card-hover:hover {
@@ -223,11 +194,17 @@
     background-color: var(--color-surface-2);
   }
 
+  .rg-panel {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+  }
+
   .rg-skeleton {
     position: relative;
     overflow: hidden;
     background-color: var(--color-surface-2);
-    border-radius: 6px;
+    border-radius: 4px;
   }
 
   .rg-skeleton::after {
@@ -238,46 +215,29 @@
     background-image: linear-gradient(
       90deg,
       transparent,
-      color-mix(in srgb, var(--color-fg) 7%, transparent),
+      rgba(244, 246, 251, 0.05),
       transparent
     );
-    animation: rg-shimmer 1.6s infinite;
+    animation: rg-shimmer 1.8s infinite;
   }
 
   .rg-stagger > * {
     animation: rg-rise 0.45s var(--ease-out-soft) both;
   }
 
-  .rg-stagger > *:nth-child(1) {
-    animation-delay: 0.02s;
-  }
-  .rg-stagger > *:nth-child(2) {
-    animation-delay: 0.06s;
-  }
-  .rg-stagger > *:nth-child(3) {
-    animation-delay: 0.1s;
-  }
-  .rg-stagger > *:nth-child(4) {
-    animation-delay: 0.14s;
-  }
-  .rg-stagger > *:nth-child(5) {
-    animation-delay: 0.18s;
-  }
-  .rg-stagger > *:nth-child(6) {
-    animation-delay: 0.22s;
-  }
+  .rg-stagger > *:nth-child(1) { animation-delay: 0.03s; }
+  .rg-stagger > *:nth-child(2) { animation-delay: 0.07s; }
+  .rg-stagger > *:nth-child(3) { animation-delay: 0.11s; }
+  .rg-stagger > *:nth-child(4) { animation-delay: 0.15s; }
+  .rg-stagger > *:nth-child(5) { animation-delay: 0.19s; }
+  .rg-stagger > *:nth-child(6) { animation-delay: 0.23s; }
 
   .rg-anim-fade {
-    animation: rg-fade-in 0.18s ease-out both;
+    animation: rg-fade-in 0.2s ease-out both;
   }
-  .rg-anim-pop {
-    animation: rg-pop 0.2s var(--ease-out-soft) both;
-  }
+
   .rg-anim-rise {
-    animation: rg-rise 0.4s var(--ease-out-soft) both;
-  }
-  .rg-anim-panel {
-    animation: rg-panel-in 0.28s var(--ease-out-soft) both;
+    animation: rg-rise 0.35s var(--ease-out-soft) both;
   }
 
   .rg-tabular {
@@ -285,48 +245,40 @@
     font-feature-settings: "tnum";
   }
 
-  /* Quiet grid backdrop used behind hero/empty regions. */
-  .rg-grid-bg {
+  /* Architectural hairline grid */
+  .rg-landing-grid {
     background-image:
-      linear-gradient(
-        to right,
-        color-mix(in srgb, var(--color-line) 55%, transparent) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--color-line) 55%, transparent) 1px,
-        transparent 1px
-      );
-    background-size: 44px 44px;
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 100%);
+      linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 40%, transparent 100%);
   }
 
-  .rg-tooltip {
-    position: absolute;
-    z-index: 70;
-    pointer-events: none;
-    white-space: nowrap;
-    padding: 5px 8px;
-    border-radius: 6px;
-    border: 1px solid var(--color-line-2);
-    background-color: #0b1220;
-    color: var(--color-fg);
-    font-size: 11.5px;
+  .rg-mesh-bg {
+    background-image: var(--gradient-mesh);
+  }
+
+  .rg-editorial-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
     font-weight: 500;
-    line-height: 1.35;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    transform: translateY(3px);
-    transition:
-      opacity 0.14s ease,
-      transform 0.14s ease;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid var(--color-line-2);
+    background: var(--color-surface);
+    color: var(--color-muted);
   }
 
-  .rg-tooltip-host:hover .rg-tooltip,
-  .rg-tooltip-host:focus-visible .rg-tooltip {
-    opacity: 1;
-    transform: none;
+  .rg-evidence-callout {
+    position: relative;
+    border-left: 2px solid var(--color-brand);
+    background: rgba(245, 158, 11, 0.04);
+    padding: 8px 12px;
+    border-radius: 0 4px 4px 0;
   }
 }
 
@@ -341,7 +293,7 @@
 
 .recharts-cartesian-grid line {
   stroke: var(--color-line);
-  stroke-opacity: 0.75;
+  stroke-opacity: 0.8;
 }
 
 .recharts-tooltip-wrapper {
@@ -350,179 +302,6 @@
 
 .recharts-surface:focus {
   outline: none;
-}
-
-/* ---------------------------------------------------------------------------
-   Landing page — gradient text, glow effects, glassmorphism
-   --------------------------------------------------------------------------- */
-@keyframes rg-gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-@keyframes rg-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-}
-
-@keyframes rg-pulse-glow {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
-}
-
-@keyframes rg-rotate-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes rg-gradient-border {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
-
-@keyframes rg-text-reveal {
-  from { clip-path: inset(0 100% 0 0); }
-  to { clip-path: inset(0 0 0 0); }
-}
-
-@keyframes rg-slide-up {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes rg-glow-pulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(124, 92, 255, 0.15), 0 0 60px rgba(124, 92, 255, 0.05); }
-  50% { box-shadow: 0 0 30px rgba(124, 92, 255, 0.25), 0 0 80px rgba(124, 92, 255, 0.1); }
-}
-
-@keyframes rg-border-glow {
-  0%, 100% {
-    border-color: rgba(124, 92, 255, 0.3);
-  }
-  50% {
-    border-color: rgba(124, 92, 255, 0.6);
-  }
-}
-
-@keyframes rg-marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-@layer components {
-  .rg-gradient-text {
-    background: var(--gradient-brand-text);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-  }
-
-  .rg-gradient-text-white {
-    background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.6) 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-  }
-
-  .rg-glass {
-    background: rgba(12, 19, 34, 0.6);
-    backdrop-filter: blur(20px) saturate(1.3);
-    -webkit-backdrop-filter: blur(20px) saturate(1.3);
-    border: 1px solid rgba(124, 92, 255, 0.12);
-  }
-
-  .rg-glass-strong {
-    background: rgba(12, 19, 34, 0.8);
-    backdrop-filter: blur(32px) saturate(1.4);
-    -webkit-backdrop-filter: blur(32px) saturate(1.4);
-    border: 1px solid rgba(124, 92, 255, 0.18);
-  }
-
-  .rg-glow-card {
-    position: relative;
-    border-radius: 16px;
-    background: rgba(12, 19, 34, 0.7);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(124, 92, 255, 0.1);
-    transition: all 0.4s var(--ease-out-soft);
-  }
-
-  .rg-glow-card::before {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(
-      135deg,
-      rgba(124, 92, 255, 0.3),
-      rgba(56, 189, 248, 0.1),
-      rgba(124, 92, 255, 0.1),
-      rgba(56, 189, 248, 0.3)
-    );
-    background-size: 300% 300%;
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.4s var(--ease-out-soft);
-    animation: rg-gradient-shift 6s ease infinite;
-  }
-
-  .rg-glow-card:hover::before {
-    opacity: 1;
-  }
-
-  .rg-glow-card:hover {
-    background: rgba(17, 26, 44, 0.85);
-    border-color: rgba(124, 92, 255, 0.2);
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5),
-                0 0 20px rgba(124, 92, 255, 0.08);
-  }
-
-  .rg-pill-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: 9999px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    border: 1px solid rgba(124, 92, 255, 0.25);
-    background: rgba(124, 92, 255, 0.08);
-    color: #b3a1ff;
-  }
-
-  .rg-mesh-bg {
-    background-image: var(--gradient-mesh);
-  }
-
-  .rg-landing-grid {
-    background-image:
-      linear-gradient(to right, rgba(124, 92, 255, 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(124, 92, 255, 0.04) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
-
-  .rg-animated-gradient-bg {
-    background: linear-gradient(-45deg, #0c1322, #172134, #1a1040, #0c1322, #0f1c38);
-    background-size: 400% 400%;
-    animation: rg-gradient-shift 15s ease infinite;
-  }
-
-  .rg-float {
-    animation: rg-float 6s ease-in-out infinite;
-  }
-
-  .rg-glow-pulse {
-    animation: rg-glow-pulse 4s ease-in-out infinite;
-  }
 }
 
 /* ---------------------------------------------------------------------------

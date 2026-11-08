@@ -18,43 +18,43 @@ import type { ActivityKind } from "@/lib/types";
 const KIND_STYLE: Record<ActivityKind, { icon: LucideIcon; stroke: string; ring: string }> = {
   created: {
     icon: Plus,
-    stroke: "text-[#5ccdf7]",
-    ring: "border-[color-mix(in_srgb,var(--color-info)_32%,transparent)]",
+    stroke: "text-sky-400",
+    ring: "border-sky-500/30",
   },
   "buyer-submission": {
     icon: Upload,
-    stroke: "text-[#5ccdf7]",
-    ring: "border-[color-mix(in_srgb,var(--color-info)_32%,transparent)]",
+    stroke: "text-sky-400",
+    ring: "border-sky-500/30",
   },
   "merchant-response": {
     icon: Store,
-    stroke: "text-[#f7c95c]",
-    ring: "border-[color-mix(in_srgb,var(--color-warning)_32%,transparent)]",
+    stroke: "text-amber-400",
+    ring: "border-amber-500/30",
   },
   evidence: {
     icon: Upload,
-    stroke: "text-[#b3a1ff]",
-    ring: "border-[color-mix(in_srgb,var(--color-brand)_36%,transparent)]",
+    stroke: "text-amber-400",
+    ring: "border-amber-500/30",
   },
   "ai-analysis": {
     icon: Sparkles,
-    stroke: "text-[#b3a1ff]",
-    ring: "border-[color-mix(in_srgb,var(--color-brand)_36%,transparent)]",
+    stroke: "text-amber-400",
+    ring: "border-amber-500/30",
   },
   refund: {
     icon: ReceiptText,
-    stroke: "text-[#4fdcae]",
-    ring: "border-[color-mix(in_srgb,var(--color-success)_32%,transparent)]",
+    stroke: "text-emerald-400",
+    ring: "border-emerald-500/30",
   },
   resolved: {
     icon: CheckCircle2,
-    stroke: "text-[#4fdcae]",
-    ring: "border-[color-mix(in_srgb,var(--color-success)_32%,transparent)]",
+    stroke: "text-emerald-400",
+    ring: "border-emerald-500/30",
   },
   escalated: {
     icon: TriangleAlert,
-    stroke: "text-[#fa8b8b]",
-    ring: "border-[color-mix(in_srgb,var(--color-danger)_32%,transparent)]",
+    stroke: "text-rose-400",
+    ring: "border-rose-500/30",
   },
   status: {
     icon: Activity,
@@ -91,7 +91,7 @@ export function ActivityTimeline() {
 
               <span
                 aria-hidden="true"
-                className={`z-10 flex h-[27px] w-[27px] shrink-0 items-center justify-center rounded-full border bg-[#0c1322] ${style.ring} ${style.stroke}`}
+                className={`z-10 flex h-[27px] w-[27px] shrink-0 items-center justify-center rounded-full border bg-[#0B0F17] ${style.ring} ${style.stroke}`}
               >
                 <Icon className="h-3.5 w-3.5" />
               </span>
@@ -110,7 +110,7 @@ export function ActivityTimeline() {
                       <span aria-hidden="true" className="h-2.5 w-px bg-line-2" />
                       <Link
                         href={`/cases/${event.caseId}`}
-                        className="tabular-nums underline-offset-2 transition-colors hover:text-[#b3a1ff] hover:underline"
+                        className="tabular-nums underline-offset-2 transition-colors hover:text-amber-400 hover:underline"
                       >
                         {event.caseId}
                       </Link>

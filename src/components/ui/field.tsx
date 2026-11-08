@@ -3,13 +3,13 @@ import type { ComponentPropsWithRef, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 const FIELD_BASE =
-  "w-full rounded-md border bg-[#0a1120] text-[13px] text-fg placeholder:text-faint " +
+  "w-full rounded-md border bg-[#0B0F17] text-[13px] text-fg placeholder:text-faint " +
   "transition-[border-color,box-shadow] duration-150 " +
-  "focus:border-[var(--color-brand)] focus:outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--color-brand)_35%,transparent)] " +
+  "focus:border-amber-500/50 focus:outline-none focus:ring-2 focus:ring-amber-500/20 " +
   "disabled:cursor-not-allowed disabled:opacity-60";
 
 const VALID =
-  "border-line-2 hover:border-[#33446a]";
+  "border-line-2 hover:border-[#222D42]";
 const INVALID =
   "border-[color-mix(in_srgb,var(--color-danger)_55%,transparent)] hover:border-[color-mix(in_srgb,var(--color-danger)_75%,transparent)]";
 

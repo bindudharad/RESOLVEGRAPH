@@ -77,7 +77,7 @@ export function WelcomeHeader() {
           onClick={refresh}
           disabled={refreshing}
           aria-live="polite"
-          className={cn(refreshing && "text-[#b3a1ff]")}
+          className={cn(refreshing && "text-amber-400")}
           icon={
             <RotateCw
               className={cn("h-3.5 w-3.5", refreshing && "animate-spin")}

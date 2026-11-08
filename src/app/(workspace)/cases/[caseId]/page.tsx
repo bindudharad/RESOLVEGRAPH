@@ -109,10 +109,10 @@ export default function CaseDetailsPage() {
     { id: "claims", label: "Claims", icon: <FileText className="h-4 w-4 text-sky-400" /> },
     { id: "evidence", label: "Evidence Locker", icon: <ShieldCheck className="h-4 w-4 text-amber-400" /> },
     { id: "investigation", label: "AI Investigation", icon: <Sparkles className="h-4 w-4 text-rose-400" /> },
-    { id: "graph", label: "Evidence Graph", icon: <Network className="h-4 w-4 text-purple-400" /> },
-    { id: "timeline", label: "Timeline & Replay", icon: <Clock className="h-4 w-4 text-indigo-400" /> },
+    { id: "graph", label: "Evidence Graph", icon: <Network className="h-4 w-4 text-amber-400" /> },
+    { id: "timeline", label: "Timeline & Replay", icon: <Clock className="h-4 w-4 text-sky-400" /> },
     { id: "resolution", label: "Resolution", icon: <Scale className="h-4 w-4 text-teal-400" /> },
-    { id: "copilot", label: "AI Copilot", icon: <Bot className="h-4 w-4 text-violet-400" /> },
+    { id: "copilot", label: "AI Copilot", icon: <Bot className="h-4 w-4 text-emerald-400" /> },
     { id: "paypal", label: "PayPal Dispute", icon: <ShieldAlert className="h-4 w-4 text-sky-400" /> },
     { id: "audit", label: "Audit History", icon: <History className="h-4 w-4 text-slate-400" /> },
   ];
@@ -140,7 +140,7 @@ export default function CaseDetailsPage() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2.5">
-              <span className="font-mono text-[14px] font-bold text-[#b3a1ff]">
+              <span className="font-mono text-[14px] font-bold text-amber-400">
                 {caseItem.id}
               </span>
 
@@ -157,7 +157,7 @@ export default function CaseDetailsPage() {
                 </button>
 
                 {statusMenuOpen && (
-                  <div className="absolute left-0 top-full z-30 mt-1.5 w-48 rounded-lg border border-line-2 bg-[#0c1322] p-1.5 shadow-[0_16px_36px_-8px_rgba(0,0,0,0.8)]">
+                  <div className="absolute left-0 top-full z-30 mt-1.5 w-48 rounded-lg border border-line-2 bg-[#0B0F17] p-1.5 shadow-[0_16px_36px_-8px_rgba(0,0,0,0.8)]">
                     <p className="px-2 py-1 text-[10.5px] font-semibold uppercase tracking-wider text-faint">
                       Update Case Status
                     </p>
@@ -169,7 +169,7 @@ export default function CaseDetailsPage() {
                           onClick={() => handleStatusChange(status)}
                           className={`flex w-full items-center justify-between rounded-md px-2.5 py-1.5 text-left text-[12px] transition-colors ${
                             caseItem.status === status
-                              ? "bg-[color-mix(in_srgb,var(--color-brand)_20%,transparent)] font-semibold text-[#b3a1ff]"
+                              ? "bg-amber-500/10 font-semibold text-amber-400"
                               : "text-muted hover:bg-surface-2 hover:text-fg"
                           }`}
                         >

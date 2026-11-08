@@ -175,7 +175,7 @@ export default function ResolutionRoomPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold tracking-tight text-fg">Shared Resolution Room</h1>
-            <Badge tone="brand" className="border-purple-500/30 bg-purple-500/10 text-purple-400">
+            <Badge tone="brand" className="border-amber-500/30 bg-amber-500/10 text-amber-400">
               Module 16 Live
             </Badge>
           </div>

@@ -204,7 +204,7 @@ export function CaseTable({
                     <Link
                       href={`/cases/${item.id}`}
                       onClick={(event) => event.stopPropagation()}
-                      className="font-medium tabular-nums text-fg underline-offset-2 transition-colors hover:text-[#b3a1ff] hover:underline"
+                      className="font-medium tabular-nums text-fg underline-offset-2 transition-colors hover:text-amber-400 hover:underline"
                     >
                       {item.id}
                     </Link>
@@ -260,7 +260,7 @@ export function CaseTable({
         </Table>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-[#0a1120] px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-[#0B0F17] px-4 py-3">
         <p className="text-[12px] text-subtle">
           Showing{" "}
           <span className="font-medium tabular-nums text-fg">{start + 1}</span>–

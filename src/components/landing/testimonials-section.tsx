@@ -1,146 +1,166 @@
 "use client";
 
-import { FadeIn, StaggerContainer, StaggerItem } from "@/components/landing/motion-primitives";
-import { ShieldCheck, Network, Cpu, Lock } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-/* -------------------------------------------------------------------------- */
-/*  Pillar data (Core Architectural Capabilities)                             */
-/* -------------------------------------------------------------------------- */
-
-interface Pillar {
-  title: string;
-  tagline: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  badge: string;
-  accentColor: string;
-}
-
-const pillars: Pillar[] = [
-  {
-    title: "Bilateral Evidence Graph",
-    tagline: "Cryptographic Provenance",
-    description:
-      "Ingests shipping telematics, buyer submissions, and merchant records into an immutable event graph with strict SHA-256 hashing.",
-    icon: Network,
-    badge: "Deterministic Audit Trail",
-    accentColor: "from-purple-500 to-indigo-500",
-  },
-  {
-    title: "BERR AI Reasoning",
-    tagline: "Rule-Based & Specialist Models",
-    description:
-      "Five specialist personas analyze policy alignment, fact consistency, and missing elements with transparent reasoning chains and strict evidence citation gates.",
-    icon: Cpu,
-    badge: "5 Specialist Agents",
-    accentColor: "from-cyan-500 to-blue-500",
-  },
-  {
-    title: "Human Governance & PayPal Integration",
-    tagline: "Fail-Safe Financial Controls",
-    description:
-      "Preserves mandatory human approvals for every financial transaction. Direct PayPal Sandbox capture and refund flows with real two-phase verification.",
-    icon: Lock,
-    badge: "Mandatory Human-in-the-Loop",
-    accentColor: "from-emerald-500 to-teal-500",
-  },
-];
-
-/* -------------------------------------------------------------------------- */
-/*  TestimonialsSection (Refactored to Core Resolution Capabilities)          */
-/* -------------------------------------------------------------------------- */
+import { useState } from "react";
+import { FileText, Lock, Copy, Check } from "lucide-react";
+import Link from "next/link";
 
 export function TestimonialsSection() {
+  const [copied, setCopied] = useState(false);
+
+  const sampleDossierJson = `{
+  "reportId": "DOSSIER-RG-8492-20261108",
+  "incidentCategory": "DEBITED_NOT_CREDITED",
+  "disputedAmount": "INR 4999.00",
+  "overallConfidenceScore": 0.89,
+  "statutoryTatGuidance": {
+    "framework": "RBI DPSS.CO.PD No.629/02.01.014/2019-20",
+    "turnaroundTarget": "T+1 working days",
+    "penaltyPerDayDelay": "INR 100.00",
+    "isAutoReversalMandatory": true
+  },
+  "verifiedFacts": [
+    "Bank debit of ₹4,999.00 confirmed on HDFC statement ref #987654",
+    "UPI acquirer settlement confirmed to merchant aggregator"
+  ],
+  "rootCauseHypothesis": "Merchant callback dropped due to gateway timeout 504 post-capture",
+  "auditChainBlockHash": "sha256:ca65f5c811dabdf4baad923945bd5d159ffcae16..."
+}`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(sampleDossierJson);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <section className="relative overflow-hidden py-24 lg:py-32">
-      {/* Subtle background glow */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(124,92,255,0.06),transparent_70%)] blur-3xl"
-      />
-
-      <div className="mx-auto max-w-6xl px-6">
-        {/* Heading */}
-        <FadeIn>
-          <div className="text-center">
-            <span className="rg-pill-badge mb-6 inline-flex">
-              <ShieldCheck className="h-3.5 w-3.5 text-[var(--color-brand)]" />
-              Verified Architecture
-            </span>
-            <h2
-              className={cn(
-                "mt-4 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl",
-                "bg-gradient-to-b from-white to-[var(--color-muted)] bg-clip-text text-transparent",
-              )}
-            >
-              Core Dispute Resolution Capabilities
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-[var(--color-muted)]">
-              Enterprise-grade infrastructure designed for rigorous evidence verification,
-              explainable dispute analysis, and fail-safe financial execution.
-            </p>
+    <section className="relative py-28 border-b border-[var(--color-line)] bg-[var(--color-app)]">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        
+        {/* Header */}
+        <div className="max-w-2xl mb-16 space-y-3">
+          <div className="text-xs font-mono uppercase tracking-widest text-amber-400">
+            AUDIT-READY EVIDENCE DOSSIERS
           </div>
-        </FadeIn>
+          <h2 className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-fg)]">
+            Court-Ready & Ombudsman-Compliant <span className="font-editorial italic text-amber-300">Forensic Reports.</span>
+          </h2>
+          <p className="text-sm sm:text-base text-[var(--color-muted)] leading-relaxed font-normal">
+            Every investigated incident exports into a cryptographically sealed dossier. Includes 4-dimensional evidentiary confidence scoring, statutory TAT penalties, and automated PII masking.
+          </p>
+        </div>
 
-        {/* Capability cards */}
-        <StaggerContainer
-          staggerDelay={0.12}
-          className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3"
-        >
-          {pillars.map((p) => {
-            const Icon = p.icon;
-            return (
-              <StaggerItem key={p.title}>
-                <div
-                  className={cn(
-                    "relative flex h-full flex-col rounded-2xl p-8",
-                    "bg-[var(--color-surface)]/60 backdrop-blur-xl",
-                    "border border-white/[0.06]",
-                    "transition-all duration-400 ease-[var(--ease-out-soft)]",
-                    "hover:border-[var(--color-brand)]/20 hover:bg-[var(--color-surface-2)]/80",
-                    "hover:-translate-y-1 hover:shadow-[0_20px_60px_-20px_rgba(124,92,255,0.15)]",
-                  )}
-                >
-                  {/* Badge & Icon */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div
-                      className={cn(
-                        "flex h-12 w-12 items-center justify-center rounded-xl",
-                        "bg-gradient-to-br text-white shadow-lg",
-                        p.accentColor,
-                      )}
-                    >
-                      <Icon className="h-6 w-6 text-white" />
-                    </div>
-                    <span className="text-[11px] font-mono tracking-wider text-[var(--color-muted)] uppercase border border-white/10 rounded-full px-2.5 py-0.5">
-                      {p.badge}
-                    </span>
+        {/* Dossier Terminal & Breakdown Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* Left Column: Real JSON Dossier Inspector */}
+          <div className="lg:col-span-7 rounded-lg border border-[var(--color-line-2)] bg-[var(--color-shell)] overflow-hidden">
+            <div className="flex items-center justify-between border-b border-[var(--color-line)] px-4 py-3 bg-[var(--color-surface)]">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-amber-400" />
+                <span className="font-mono text-xs text-[var(--color-fg)]">
+                  forensic_dossier_rg_8492.json
+                </span>
+              </div>
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-[var(--color-line)] bg-[var(--color-shell)] text-[11px] font-mono text-[var(--color-muted)] hover:text-[var(--color-fg)] transition-colors"
+              >
+                {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+                <span>{copied ? "Copied" : "Copy JSON"}</span>
+              </button>
+            </div>
+
+            <div className="p-4 font-mono text-[11.5px] leading-relaxed text-[var(--color-fg-muted)] overflow-x-auto bg-[var(--color-app)]">
+              <pre className="text-[var(--color-fg-muted)]">
+                <code>{sampleDossierJson}</code>
+              </pre>
+            </div>
+
+            <div className="p-3 border-t border-[var(--color-line)] bg-[var(--color-surface)] flex items-center justify-between text-xs font-mono text-[var(--color-subtle)]">
+              <span>Export Formats: JSON · Markdown / PDF · CSV Ledger</span>
+              <span className="text-emerald-400 font-medium">PII MASKING: ACTIVE</span>
+            </div>
+          </div>
+
+          {/* Right Column: 4D Confidence & Cryptographic Proof */}
+          <div className="lg:col-span-5 space-y-6">
+            
+            {/* 4D Confidence Metric */}
+            <div className="rounded-lg border border-[var(--color-line-2)] bg-[var(--color-shell)] p-6 space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--color-line)] pb-3">
+                <h3 className="text-sm font-semibold text-[var(--color-fg)]">
+                  4-Dimensional Evidentiary Scoring
+                </h3>
+                <span className="font-mono text-xs text-amber-400 font-bold">
+                  Composite: 89.0%
+                </span>
+              </div>
+
+              <div className="space-y-3 font-mono text-xs">
+                <div>
+                  <div className="flex justify-between text-[var(--color-muted)] mb-1">
+                    <span>Source Authenticity (30% weight)</span>
+                    <span className="text-[var(--color-fg)]">95.0%</span>
                   </div>
-
-                  {/* Title & Tagline */}
-                  <h3 className="text-xl font-bold text-[var(--color-fg)]">
-                    {p.title}
-                  </h3>
-                  <p className="text-xs font-medium text-[var(--color-brand)] mt-1 mb-4">
-                    {p.tagline}
-                  </p>
-
-                  {/* Description */}
-                  <p className="flex-1 text-[14px] leading-relaxed text-[var(--color-muted)]">
-                    {p.description}
-                  </p>
-
-                  {/* Verification indicator */}
-                  <div className="mt-6 flex items-center gap-2 border-t border-white/[0.06] pt-4 text-xs text-emerald-400/90 font-mono">
-                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-                    Audited Implementation
+                  <div className="h-1.5 w-full bg-[var(--color-surface)] rounded-full overflow-hidden">
+                    <div className="h-full bg-emerald-400 rounded-full w-[95%]" />
                   </div>
                 </div>
-              </StaggerItem>
-            );
-          })}
-        </StaggerContainer>
+
+                <div>
+                  <div className="flex justify-between text-[var(--color-muted)] mb-1">
+                    <span>Cross-Source Consistency (30% weight)</span>
+                    <span className="text-[var(--color-fg)]">90.0%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-[var(--color-surface)] rounded-full overflow-hidden">
+                    <div className="h-full bg-emerald-400 rounded-full w-[90%]" />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between text-[var(--color-muted)] mb-1">
+                    <span>Temporal Plausibility (20% weight)</span>
+                    <span className="text-[var(--color-fg)]">85.0%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-[var(--color-surface)] rounded-full overflow-hidden">
+                    <div className="h-full bg-amber-400 rounded-full w-[85%]" />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between text-[var(--color-muted)] mb-1">
+                    <span>Document Completeness (20% weight)</span>
+                    <span className="text-[var(--color-fg)]">85.0%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-[var(--color-surface)] rounded-full overflow-hidden">
+                    <div className="h-full bg-amber-400 rounded-full w-[85%]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Cryptographic Ledger Verification */}
+            <div className="rounded-lg border border-[var(--color-line-2)] bg-[var(--color-shell)] p-6 space-y-3">
+              <div className="flex items-center gap-2 text-xs font-semibold text-[var(--color-fg)]">
+                <Lock className="h-4 w-4 text-emerald-400" />
+                <span>Cryptographic SHA-256 Block Chain</span>
+              </div>
+              <p className="text-xs text-[var(--color-muted)] leading-relaxed font-normal">
+                Every investigative finding and supervisor sign-off is hashed into an immutable block sequence. If any historical record is tampered with, the ledger breaks instantly.
+              </p>
+              <Link
+                href="/admin/security"
+                className="inline-flex items-center gap-1.5 text-xs font-mono text-amber-400 hover:text-amber-300 transition-colors pt-1"
+              >
+                <span>Verify Live Ledger Integrity</span>
+                <span>&rarr;</span>
+              </Link>
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
     </section>
   );

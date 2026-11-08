@@ -323,12 +323,12 @@ export default function MultilingualPage() {
 
               {/* Missing Information Clarification */}
               {result.complaint.missingFields && result.complaint.missingFields.length > 0 && (
-                <div className="rounded-lg border border-purple-500/30 bg-purple-500/10 p-3 text-xs space-y-1">
-                  <span className="font-semibold text-purple-300 flex items-center gap-1">
+                <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs space-y-1">
+                  <span className="font-semibold text-amber-300 flex items-center gap-1">
                     <HelpCircle className="h-3.5 w-3.5" />
                     Additional Details Needed to Finalize Investigation:
                   </span>
-                  <ul className="list-disc list-inside text-purple-200/90 text-[11px] pt-1">
+                  <ul className="list-disc list-inside text-amber-200/90 text-[11px] pt-1">
                     {result.complaint.missingFields.map((field) => (
                       <li key={field}>{field.replace(/_/g, " ")}</li>
                     ))}

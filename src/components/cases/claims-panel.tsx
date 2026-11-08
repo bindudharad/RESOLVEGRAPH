@@ -56,8 +56,8 @@ export function ClaimsPanel({ caseItem }: ClaimsPanelProps) {
                     <span
                       className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold ${
                         isBuyer
-                          ? "bg-[color-mix(in_srgb,var(--color-brand)_20%,transparent)] text-[#b3a1ff]"
-                          : "bg-surface-3 text-[#38bdf8]"
+                          ? "bg-amber-500/10 text-amber-400"
+                          : "bg-surface-3 text-sky-400"
                       }`}
                     >
                       {isBuyer ? <User className="h-4 w-4" /> : <Store className="h-4 w-4" />}
@@ -70,8 +70,8 @@ export function ClaimsPanel({ caseItem }: ClaimsPanelProps) {
                         <span
                           className={`rounded px-1.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-wider ${
                             isBuyer
-                              ? "bg-[color-mix(in_srgb,var(--color-brand)_18%,transparent)] text-[#a08bff]"
-                              : "bg-[color-mix(in_srgb,var(--color-info)_18%,transparent)] text-[#38bdf8]"
+                              ? "bg-amber-500/10 text-amber-300"
+                              : "bg-sky-500/15 text-sky-400"
                           }`}
                         >
                           {claim.party}

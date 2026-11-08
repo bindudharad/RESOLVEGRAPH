@@ -290,9 +290,9 @@ export default function ResolutionPage() {
       </section>
 
       {/* Dual-Key Governance Architecture Banner */}
-      <div className="rounded-lg border border-[color-mix(in_srgb,var(--color-brand)_35%,transparent)] bg-[color-mix(in_srgb,var(--color-brand)_8%,transparent)] p-4">
+      <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
         <div className="flex items-start gap-3">
-          <HelpCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#b3a1ff]" />
+          <HelpCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
           <div className="text-[12.5px] leading-relaxed text-muted">
             <strong className="text-fg font-semibold">Dual-Key Governance Policy:</strong> All proposed remedies require bilateral acceptance and explicit human sign-off before financial execution. Every approval transitions through real two-phase verification and records an immutable cryptographic event to the audit ledger.
           </div>
@@ -543,8 +543,8 @@ export default function ResolutionPage() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-[color-mix(in_srgb,var(--color-brand)_30%,transparent)] bg-[color-mix(in_srgb,var(--color-brand)_8%,transparent)] p-3 text-[11.5px] leading-relaxed text-muted">
-              <div className="flex items-center gap-1.5 font-semibold text-[#b3a1ff]">
+            <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-[11.5px] leading-relaxed text-muted">
+              <div className="flex items-center gap-1.5 font-semibold text-amber-400">
                 <ShieldCheck className="h-3.5 w-3.5" />
                 <span>Governance Check</span>
               </div>

@@ -45,14 +45,9 @@ export default function InvestigationPage() {
       </section>
 
       {/* Prominent Architectural Banner */}
-      <div className="relative overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--color-brand)_40%,transparent)] bg-[radial-gradient(ellipse_at_top,_var(--color-surface-2),_var(--color-surface))] p-6 shadow-[0_16px_40px_-16px_rgba(124,92,255,0.2)]">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-12 -top-12 h-56 w-56 rounded-full bg-[radial-gradient(circle,_rgba(124,92,255,0.25)_0%,_transparent_70%)] blur-2xl"
-        />
-
+      <div className="relative overflow-hidden rounded-xl border border-amber-500/30 bg-[#0B0F17] p-6 shadow-[0_16px_40px_-16px_rgba(0,0,0,0.7)]">
         <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[var(--color-brand)] bg-[color-mix(in_srgb,var(--color-brand)_20%,transparent)] text-[#b3a1ff] shadow-[0_0_20px_rgba(124,92,255,0.4)]">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
             <Brain className="h-6 w-6" />
           </div>
 
@@ -73,7 +68,7 @@ export default function InvestigationPage() {
                 <span>Multimodal Vision & unpdf OCR Active</span>
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-md border border-line bg-app px-2.5 py-1">
-                <GitGraph className="h-3.5 w-3.5 text-[#a08bff]" />
+                <GitGraph className="h-3.5 w-3.5 text-amber-400" />
                 <span>Bilateral Directed Graph Generated</span>
               </span>
             </div>
@@ -85,7 +80,7 @@ export default function InvestigationPage() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="rg-card flex flex-col justify-between p-5">
           <div>
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-surface-3 text-[#a08bff]">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-surface-3 text-amber-400">
               <Network className="h-5 w-5" />
             </div>
             <h3 className="mt-3.5 text-[14px] font-semibold text-fg">
@@ -148,7 +143,7 @@ export default function InvestigationPage() {
           </div>
           <Link
             href="/cases/RG-1001"
-            className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-[#b3a1ff] hover:underline"
+            className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-amber-400 hover:underline"
           >
             <span>Open Case RG-1001 Dossier</span>
             <ArrowRight className="h-3.5 w-3.5" />

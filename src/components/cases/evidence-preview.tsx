@@ -39,7 +39,7 @@ export function EvidencePreview({ caseId }: EvidencePreviewProps) {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-[14px] font-semibold text-fg">Evidence Vault</h3>
-              <span className="rounded bg-[color-mix(in_srgb,var(--color-brand)_15%,transparent)] px-2 py-0.5 text-[10.5px] font-medium text-[#b3a1ff]">
+              <span className="rounded bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[10.5px] font-medium text-amber-300">
                 Demo Records
               </span>
             </div>
@@ -87,7 +87,7 @@ export function EvidencePreview({ caseId }: EvidencePreviewProps) {
                     <div
                       className={`flex h-9 w-9 items-center justify-center rounded-md border ${
                         slot.present
-                          ? "border-line-2 bg-[#0c1527] text-[#a08bff]"
+                          ? "border-line-2 bg-[#0B0F17] text-amber-400"
                           : "border-line bg-surface text-faint"
                       }`}
                     >
@@ -107,7 +107,7 @@ export function EvidencePreview({ caseId }: EvidencePreviewProps) {
                     )}
                   </div>
 
-                  <h4 className="mt-3 text-[13px] font-semibold text-fg group-hover:text-[#b3a1ff] transition-colors">
+                  <h4 className="mt-3 text-[13px] font-semibold text-fg group-hover:text-amber-400 transition-colors">
                     {slot.label}
                   </h4>
                   <p className="mt-1 text-[11.5px] text-faint">{slot.note}</p>
@@ -115,7 +115,7 @@ export function EvidencePreview({ caseId }: EvidencePreviewProps) {
 
                 <div className="mt-4 flex items-center justify-between border-t border-line/60 pt-2.5 text-[11px]">
                   <span className="text-subtle font-mono">{slot.type}</span>
-                  <span className="inline-flex items-center gap-1 text-[#a08bff] opacity-80 group-hover:opacity-100">
+                  <span className="inline-flex items-center gap-1 text-amber-400 opacity-80 group-hover:opacity-100">
                     <Eye className="h-3 w-3" />
                     Inspect
                   </span>

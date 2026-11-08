@@ -176,7 +176,7 @@ export function Dialog({
         <div className={cn("px-5 py-4.5", bodyClassName)}>{children}</div>
 
         {footer ? (
-          <footer className="flex flex-wrap items-center justify-end gap-2 rounded-b-xl border-t border-line bg-[#0a1120] px-5 py-3.5">
+          <footer className="flex flex-wrap items-center justify-end gap-2 rounded-b-xl border-t border-line bg-[#0B0F17] px-5 py-3.5">
             {footer}
           </footer>
         ) : null}

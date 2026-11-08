@@ -12,13 +12,13 @@ import { formatNumber } from "@/lib/utils";
 
 /** Ordered so adjacent slices stay visually distinct on a dark surface. */
 const SLICE_COLORS = [
-  "#7c5cff",
-  "#38bdf8",
-  "#f59e0b",
-  "#34d399",
-  "#f87171",
-  "#ec4899",
-  "#64748b",
+  "#F59E0B",
+  "#38BDF8",
+  "#10B981",
+  "#D97706",
+  "#F87171",
+  "#A855F7",
+  "#64748B",
 ];
 
 const COLOR_BY_CATEGORY = new Map(
@@ -39,7 +39,7 @@ function SliceTooltip(props: unknown) {
   if (!active || !entry) return null;
 
   return (
-    <div className="min-w-[180px] rounded-lg border border-line-2 bg-[#0b1220] px-3 py-2.5 shadow-[0_18px_44px_-14px_rgba(0,0,0,0.9)]">
+    <div className="min-w-[180px] rounded-lg border border-line-2 bg-[#0B0F17] px-3 py-2.5 shadow-[0_18px_44px_-14px_rgba(0,0,0,0.9)]">
       <p className="text-[12.5px] font-medium text-fg">{entry.category}</p>
       <p className="mt-1.5 flex items-center justify-between gap-4 text-[12px] text-subtle">
         <span>Cases</span>

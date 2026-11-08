@@ -113,7 +113,7 @@ function ToastViewport({
           <div
             key={item.id}
             role="status"
-            className="rg-anim-rise pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-lg border border-line-2 bg-[#0b1220] px-4 py-3 shadow-[0_20px_48px_-14px_rgba(0,0,0,0.9)]"
+            className="rg-anim-rise pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-lg border border-line-2 bg-[#0B0F17] px-4 py-3 shadow-[0_20px_48px_-14px_rgba(0,0,0,0.9)]"
           >
             <Icon
               className={cn("mt-0.5 h-4 w-4 shrink-0", TONE_STROKE[item.tone])}

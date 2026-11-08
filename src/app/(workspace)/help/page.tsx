@@ -113,7 +113,7 @@ export default function HelpPage() {
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-[11px] font-bold text-[#b3a1ff]">
+                    <span className="font-mono text-[11px] font-bold text-amber-400">
                       STAGE {ws.step}
                     </span>
                     <CheckCircle2 className="h-3.5 w-3.5 text-faint" />

@@ -54,7 +54,7 @@ const STAGES: StageInfo[] = [
     title: "Evidence Upload",
     shortDesc: "Parties submit invoice and drive label photograph",
     technicalSummary: "Inspects magic bytes (image/jpeg, application/pdf), verifies SHA-256 hashes, registers AI processing consents.",
-    icon: <FileText className="h-5 w-5 text-purple-400" />,
+    icon: <FileText className="h-5 w-5 text-amber-400" />,
   },
   {
     number: 5,
@@ -145,7 +145,7 @@ export default function GuidedDemoPage() {
               <span className="rounded-full bg-rose-500/20 px-2.5 py-0.5 text-xs font-semibold text-rose-300 border border-rose-500/30">
                 LIVE PAYMENTS HARD-BLOCKED
               </span>
-              <span className="rounded-full bg-purple-500/20 px-2.5 py-0.5 text-xs font-semibold text-purple-300 border border-purple-500/30">
+              <span className="rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-semibold text-amber-300 border border-amber-500/30">
                 HACKATHON GUIDED WALKTHROUGH
               </span>
             </div>
@@ -436,7 +436,7 @@ export default function GuidedDemoPage() {
                 <Link href="/payments" className="text-emerald-400 hover:underline flex items-center gap-1">
                   <span>View Payments & Refunds Ledger</span> <ExternalLink className="h-3 w-3" />
                 </Link>
-                <Link href="/paypal/disputes" className="text-purple-400 hover:underline flex items-center gap-1">
+                <Link href="/paypal/disputes" className="text-amber-400 hover:underline flex items-center gap-1">
                   <span>PayPal Dispute Console</span> <ExternalLink className="h-3 w-3" />
                 </Link>
               </div>

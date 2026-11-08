@@ -15,7 +15,7 @@ const DEMO_PERSONAS = [
     email: "admin@resolvegraph.demo",
     password: "Admin@ResolveGraph2026!",
     scope: "Full Platform Scope",
-    badgeColor: "border-purple-500/30 bg-purple-500/10 text-purple-300",
+    badgeColor: "border-amber-500/30 bg-amber-500/10 text-amber-300",
   },
   {
     role: "Buyer (Consumer)",
@@ -114,7 +114,7 @@ export default function SignInPage() {
                 className={`flex flex-col items-start rounded-lg border p-2.5 text-left transition-all ${
                   isSelected
                     ? "border-[var(--color-brand)] bg-[color-mix(in_srgb,var(--color-brand)_15%,transparent)] shadow-sm"
-                    : "border-line/70 bg-[#0c1424] hover:border-line hover:bg-surface-2"
+                    : "border-line/70 bg-[#0B0F17] hover:border-line hover:bg-surface-2"
                 }`}
               >
                 <div className="flex w-full items-center justify-between">
@@ -181,7 +181,7 @@ export default function SignInPage() {
               <input
                 type="checkbox"
                 defaultChecked
-                className="rounded border-line bg-[#0a1120] text-[var(--color-brand)] focus:ring-[var(--color-brand)]"
+                className="rounded border-line bg-[#0B0F17] text-[var(--color-brand)] focus:ring-[var(--color-brand)]"
               />
               <span>Remember this session</span>
             </label>

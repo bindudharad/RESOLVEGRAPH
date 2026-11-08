@@ -17,10 +17,10 @@ const KIND_ICON = {
 } as const;
 
 const KIND_STROKE = {
-  info: "text-[#5ccdf7]",
-  warning: "text-[#f7c95c]",
-  success: "text-[#4fdcae]",
-  ai: "text-[#b3a1ff]",
+  info: "text-sky-400",
+  warning: "text-amber-400",
+  success: "text-emerald-400",
+  ai: "text-amber-400",
 } as const;
 
 function strokeFor(kind: NotificationKind): string {
@@ -71,7 +71,7 @@ export function NotificationPanel() {
           type="button"
           onClick={markAllRead}
           disabled={unread === 0}
-          className="rounded px-1.5 py-1 text-[11px] font-medium text-[#b3a1ff] transition-colors hover:bg-surface-2 disabled:pointer-events-none disabled:opacity-45"
+          className="rounded px-1.5 py-1 text-[11px] font-medium text-amber-400 transition-colors hover:bg-surface-2 disabled:pointer-events-none disabled:opacity-45"
         >
           Mark all read
         </button>
@@ -85,7 +85,7 @@ export function NotificationPanel() {
           const body = (
             <span className="flex w-full items-start gap-3 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-surface-2">
               <span
-                className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-line bg-[#0a1120] ${strokeFor(item.kind)}`}
+                className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-line bg-[#0B0F17] ${strokeFor(item.kind)}`}
               >
                 <Icon className="h-3.5 w-3.5" aria-hidden="true" />
               </span>

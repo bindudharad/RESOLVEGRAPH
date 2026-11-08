@@ -259,7 +259,7 @@ export function CommandPalette({ open, onClose, onCreateCase }: CommandPalettePr
                         </span>
                       )}
                       {isSelected && (
-                        <ArrowRight className="h-3.5 w-3.5 text-[#b3a1ff]" />
+                        <ArrowRight className="h-3.5 w-3.5 text-amber-400" />
                       )}
                     </div>
                   </button>

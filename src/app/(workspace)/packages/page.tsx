@@ -216,7 +216,7 @@ export default function PackagesPage() {
         <div className="rounded-lg border border-border bg-surface-1 p-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-muted">HMAC-SHA256 Status</span>
-            <QrCode className="h-4 w-4 text-purple-400" />
+            <QrCode className="h-4 w-4 text-amber-400" />
           </div>
           <div className="mt-2 text-2xl font-bold text-emerald-400">Secured</div>
           <p className="mt-1 text-[11px] text-faint">Unique signed QR tokens active</p>

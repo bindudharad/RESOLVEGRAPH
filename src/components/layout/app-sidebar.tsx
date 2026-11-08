@@ -109,7 +109,7 @@ function NavLink({
       <Icon
         className={cn(
           "h-4 w-4 shrink-0 transition-colors duration-150",
-          active ? "text-[#b3a1ff]" : "text-subtle group-hover:text-muted",
+          active ? "text-amber-400" : "text-subtle group-hover:text-muted",
         )}
         aria-hidden="true"
       />
@@ -177,7 +177,7 @@ export function WorkspaceSwitcher({ collapsed }: { collapsed: boolean }) {
         <Tooltip label={WORKSPACE.name} side="right" className="flex w-full">
           <button
             type="button"
-            className="flex h-10 w-full items-center justify-center rounded-md border border-line bg-[#0a1120] text-subtle transition-colors hover:border-line-2 hover:text-fg"
+            className="flex h-10 w-full items-center justify-center rounded-md border border-line bg-[#0B0F17] text-subtle transition-colors hover:border-line-2 hover:text-fg"
           >
             <Building2 className="h-4 w-4" aria-hidden="true" />
             <span className="sr-only">{WORKSPACE.name}</span>
@@ -196,9 +196,9 @@ export function WorkspaceSwitcher({ collapsed }: { collapsed: boolean }) {
           <button
             type="button"
             {...props}
-            className="flex w-full items-center gap-2.5 rounded-md border border-line bg-[#0a1120] px-2.5 py-2 text-left transition-colors hover:border-line-2 hover:bg-surface-2"
+            className="flex w-full items-center gap-2.5 rounded-md border border-line bg-[#0B0F17] px-2.5 py-2 text-left transition-colors hover:border-line-2 hover:bg-surface-2"
           >
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[color-mix(in_srgb,var(--color-brand)_40%,transparent)] bg-[color-mix(in_srgb,var(--color-brand)_18%,transparent)] text-[#b3a1ff]">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-amber-500/30 bg-amber-500/10 text-amber-400">
               <Building2 className="h-3.5 w-3.5" aria-hidden="true" />
             </span>
             <span className="min-w-0 flex-1">
@@ -215,9 +215,9 @@ export function WorkspaceSwitcher({ collapsed }: { collapsed: boolean }) {
       >
         <DropdownLabel>Workspaces</DropdownLabel>
         <div className="flex items-center gap-2.5 px-3 py-2 text-[13px] text-fg">
-          <Building2 className="h-4 w-4 shrink-0 text-[#b3a1ff]" aria-hidden="true" />
+          <Building2 className="h-4 w-4 shrink-0 text-amber-400" aria-hidden="true" />
           <span className="min-w-0 flex-1 truncate">{WORKSPACE.name}</span>
-          <Check className="h-3.5 w-3.5 shrink-0 text-[#4fdcae]" aria-hidden="true" />
+          <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400" aria-hidden="true" />
         </div>
         <DropdownSeparator />
         <div className="flex items-start gap-2 px-3 py-2 text-[11.5px] leading-relaxed text-faint">
@@ -271,7 +271,7 @@ export function AppSidebar() {
       className={cn(
         "sticky top-0 z-50 hidden h-screen shrink-0 flex-col border-r border-line bg-sidebar lg:flex",
         "transition-[width] duration-300 ease-[var(--ease-out-expo)]",
-        "shadow-[1px_0_20px_-8px_rgba(124,92,255,0.08)]",
+        "shadow-[1px_0_24px_rgba(0,0,0,0.5)] border-r border-[#182030]",
         collapsed ? "w-[76px]" : "w-[264px]",
       )}
     >

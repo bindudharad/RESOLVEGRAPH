@@ -346,7 +346,7 @@ export default function EvidencePage() {
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-line bg-surface-3">
                         {getExtensionIcon(item.extension)}
                       </div>
-                      <span className="font-medium text-fg hover:text-[#b3a1ff] transition-colors truncate max-w-[200px]">
+                      <span className="font-medium text-fg hover:text-amber-400 transition-colors truncate max-w-[200px]">
                         {item.name}
                       </span>
                     </div>
@@ -356,7 +356,7 @@ export default function EvidencePage() {
                     <Link
                       href={`/cases/${item.caseId}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="text-[#a08bff] hover:underline"
+                      className="text-amber-400 hover:underline"
                     >
                       {item.caseId}
                     </Link>

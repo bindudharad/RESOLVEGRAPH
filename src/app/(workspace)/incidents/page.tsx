@@ -369,7 +369,7 @@ export default function IncidentsPage() {
                       : f.findingType === "WORKING_HYPOTHESIS"
                       ? "border-amber-500/30 bg-amber-500/5"
                       : f.findingType === "MISSING_INFORMATION"
-                      ? "border-purple-500/30 bg-purple-500/5"
+                      ? "border-sky-500/30 bg-sky-500/5"
                       : "border-blue-500/30 bg-blue-500/5"
                   }`}
                 >

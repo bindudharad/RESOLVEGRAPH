@@ -23,10 +23,10 @@ const ICONS: Record<string, LucideIcon> = {
 };
 
 const TONES: Record<MetricCardData["tone"], { icon: string; ring: string }> = {
-  neutral: { icon: "text-[#b3a1ff]", ring: "border-[color-mix(in_srgb,var(--color-brand)_30%,transparent)] bg-[color-mix(in_srgb,var(--color-brand)_13%,transparent)]" },
-  info: { icon: "text-[#5ccdf7]", ring: "border-[color-mix(in_srgb,var(--color-info)_30%,transparent)] bg-[color-mix(in_srgb,var(--color-info)_13%,transparent)]" },
-  warning: { icon: "text-[#f7c95c]", ring: "border-[color-mix(in_srgb,var(--color-warning)_30%,transparent)] bg-[color-mix(in_srgb,var(--color-warning)_13%,transparent)]" },
-  success: { icon: "text-[#4fdcae]", ring: "border-[color-mix(in_srgb,var(--color-success)_30%,transparent)] bg-[color-mix(in_srgb,var(--color-success)_13%,transparent)]" },
+  neutral: { icon: "text-amber-400", ring: "border-amber-500/30 bg-amber-500/10" },
+  info: { icon: "text-sky-400", ring: "border-sky-500/30 bg-sky-500/10" },
+  warning: { icon: "text-amber-400", ring: "border-amber-500/30 bg-amber-500/10" },
+  success: { icon: "text-emerald-400", ring: "border-emerald-500/30 bg-emerald-500/10" },
 };
 
 function MetricCard({ metric }: { metric: MetricCardData }) {
@@ -37,7 +37,7 @@ function MetricCard({ metric }: { metric: MetricCardData }) {
 
   return (
     <article
-      className="rg-card rg-card-hover group px-5 py-4.5 transition-all duration-300 hover:shadow-[0_8px_30px_-8px_rgba(124,92,255,0.12)]"
+      className="rg-card rg-card-hover group px-5 py-4.5 transition-all duration-300 hover:shadow-[0_8px_30px_-8px_rgba(0,0,0,0.5)] hover:border-amber-500/30"
       aria-label={`${metric.label}: ${formatNumber(metric.value)}`}
     >
       <div className="flex items-start justify-between gap-3">
@@ -62,7 +62,7 @@ function MetricCard({ metric }: { metric: MetricCardData }) {
         <span
           className={cn(
             "inline-flex items-center gap-1 text-[12px] font-semibold tabular-nums",
-            positive ? "text-[#4fdcae]" : "text-[#fa8b8b]",
+            positive ? "text-emerald-400" : "text-rose-400",
           )}
           title={`${formatTrend(metric.trend)} versus the previous period (demo data)`}
         >

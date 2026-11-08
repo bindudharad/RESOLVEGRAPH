@@ -61,7 +61,7 @@ export function CaseTimeline({ caseId }: CaseTimelineProps) {
                   <div className="flex flex-wrap items-center justify-between gap-1">
                     <h4
                       className={`text-[13px] font-semibold ${
-                        isCurrent ? "text-[#b3a1ff]" : "text-fg"
+                        isCurrent ? "text-amber-400" : "text-fg"
                       }`}
                     >
                       {event.label}

@@ -149,7 +149,7 @@ export function Topbar() {
             <button
               type="button"
               onClick={() => setCommandPaletteOpen(true)}
-              className="hidden h-9 w-64 items-center justify-between rounded-md border border-line bg-[#0a1120] px-3 text-[13px] text-faint transition-all hover:border-[var(--color-brand)] hover:text-muted md:flex lg:w-72 xl:w-80"
+              className="hidden h-9 w-64 items-center justify-between rounded-md border border-line bg-[#0B0F17] px-3 text-[13px] text-faint transition-all hover:border-amber-500/50 hover:text-muted md:flex lg:w-72 xl:w-80"
               aria-label="Open universal command search"
             >
               <div className="flex items-center gap-2">
@@ -196,7 +196,7 @@ export function Topbar() {
                   aria-label="Account menu"
                   className="flex items-center gap-2 rounded-md border border-transparent py-1 pl-1 pr-1.5 transition-colors hover:border-line hover:bg-surface-2 sm:gap-2.5"
                 >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[color-mix(in_srgb,var(--color-brand)_38%,transparent)] bg-[color-mix(in_srgb,var(--color-brand)_20%,transparent)] text-[11.5px] font-semibold text-[#c4b6ff]">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-amber-500/30 bg-amber-500/10 text-[11.5px] font-semibold text-amber-300">
                     {initials}
                   </span>
                   <span className="hidden min-w-0 text-left sm:block">
@@ -211,7 +211,7 @@ export function Topbar() {
               )}
             >
               <div className="flex items-center gap-3 px-3 py-2.5">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[color-mix(in_srgb,var(--color-brand)_38%,transparent)] bg-[color-mix(in_srgb,var(--color-brand)_20%,transparent)] text-[12px] font-semibold text-[#c4b6ff]">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-amber-500/30 bg-amber-500/10 text-[12px] font-semibold text-amber-300">
                   {initials}
                 </span>
                 <span className="min-w-0">

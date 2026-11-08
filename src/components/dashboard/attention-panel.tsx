@@ -23,7 +23,7 @@ export function AttentionPanel() {
           title={<span id="attention-title">Needs Attention</span>}
           description="Cases closest to breaching their response window."
           actions={
-            <span className="rounded border border-[color-mix(in_srgb,var(--color-danger)_32%,transparent)] bg-[color-mix(in_srgb,var(--color-danger)_11%,transparent)] px-2 py-0.5 text-[11px] font-semibold tabular-nums text-[#fa8b8b]">
+            <span className="rounded border border-rose-500/30 bg-rose-500/10 px-2 py-0.5 text-[11px] font-semibold tabular-nums text-rose-400">
               {ATTENTION_ITEMS.length} open
             </span>
           }
@@ -43,7 +43,7 @@ export function AttentionPanel() {
 
             <span
               aria-hidden="true"
-              className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-line bg-[#0a1120] text-subtle"
+              className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-line bg-[#0B0F17] text-subtle"
             >
               <TriangleAlert className="h-3.5 w-3.5" />
             </span>
@@ -52,7 +52,7 @@ export function AttentionPanel() {
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <Link
                   href={`/cases/${item.caseId}`}
-                  className="text-[12.5px] font-semibold tabular-nums text-fg underline-offset-2 transition-colors hover:text-[#b3a1ff] hover:underline"
+                  className="text-[12.5px] font-semibold tabular-nums text-fg underline-offset-2 transition-colors hover:text-amber-400 hover:underline"
                 >
                   {item.caseId}
                 </Link>

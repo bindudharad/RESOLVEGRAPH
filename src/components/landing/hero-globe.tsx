@@ -15,8 +15,8 @@ const GLOBE_RADIUS = 2.2;
 const ORBIT_RADIUS = 3.0;
 const ORBIT_POINT_COUNT = 6;
 
-const BRAND_PURPLE = new THREE.Color("#7c5cff");
-const BRAND_CYAN = new THREE.Color("#38bdf8");
+const BRAND_AMBER = new THREE.Color("#F59E0B");
+const BRAND_CYAN = new THREE.Color("#10B981");
 
 /** Deterministic pseudo-random float generator in [0, 1) to ensure React 19 render purity */
 function pseudoRandom(seed: number): number {
@@ -59,9 +59,9 @@ function GlobeParticles() {
     const phases = new Float32Array(PARTICLE_COUNT);
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
-      // Mix purple and cyan based on vertical position
+      // Mix amber and emerald based on vertical position
       const t = (pos[i * 3 + 1] / GLOBE_RADIUS + 1) * 0.5; // 0..1
-      const color = new THREE.Color().lerpColors(BRAND_CYAN, BRAND_PURPLE, t);
+      const color = new THREE.Color().lerpColors(BRAND_CYAN, BRAND_AMBER, t);
       col[i * 3] = color.r;
       col[i * 3 + 1] = color.g;
       col[i * 3 + 2] = color.b;
@@ -147,8 +147,8 @@ function ConnectionLines() {
           const alpha = 1 - dist / CONNECTION_DISTANCE;
           const tA = (ay / GLOBE_RADIUS + 1) * 0.5;
           const tB = (by / GLOBE_RADIUS + 1) * 0.5;
-          const cA = new THREE.Color().lerpColors(BRAND_CYAN, BRAND_PURPLE, tA);
-          const cB = new THREE.Color().lerpColors(BRAND_CYAN, BRAND_PURPLE, tB);
+          const cA = new THREE.Color().lerpColors(BRAND_CYAN, BRAND_AMBER, tA);
+          const cB = new THREE.Color().lerpColors(BRAND_CYAN, BRAND_AMBER, tB);
 
           lineColArr.push(
             cA.r * alpha,
@@ -225,7 +225,7 @@ function OrbitingPoints() {
         size: 0.035 + r5 * 0.025,
         color: new THREE.Color().lerpColors(
           BRAND_CYAN,
-          BRAND_PURPLE,
+          BRAND_AMBER,
           r6,
         ),
       });
@@ -305,7 +305,7 @@ function OrbitRings() {
         <mesh key={i} rotation={[...ring.rotation]}>
           <ringGeometry args={[ring.radius, ring.radius + 0.003, 128]} />
           <meshBasicMaterial
-            color={i === 0 ? BRAND_PURPLE : BRAND_CYAN}
+            color={i === 0 ? BRAND_AMBER : BRAND_CYAN}
             transparent
             opacity={0.08}
             side={THREE.DoubleSide}
@@ -326,7 +326,7 @@ function AtmosphereGlow() {
 
   const uniforms = useMemo(
     () => ({
-      uColor1: { value: BRAND_PURPLE },
+      uColor1: { value: BRAND_AMBER },
       uColor2: { value: BRAND_CYAN },
       uTime: { value: 0 },
     }),

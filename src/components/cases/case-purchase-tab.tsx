@@ -188,7 +188,7 @@ export function CasePurchaseTab({
 
         <div className="rg-card p-4">
           <div className="flex items-center gap-2 text-xs font-semibold text-faint uppercase tracking-wider">
-            <ShieldCheck className="h-4 w-4 text-purple-400" />
+            <ShieldCheck className="h-4 w-4 text-sky-400" />
             <span>Gross Authorized</span>
           </div>
           <p className="mt-2 text-base font-bold text-fg tabular-nums">

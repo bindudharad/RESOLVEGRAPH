@@ -20,9 +20,9 @@ import { formatNumber, cn } from "@/lib/utils";
 import type { ResolutionPoint, ResolutionRange } from "@/lib/types";
 
 const SERIES = [
-  { key: "total", label: "Total Cases", color: "#7c5cff" },
-  { key: "resolved", label: "Resolved Cases", color: "#34d399" },
-  { key: "open", label: "Open Cases", color: "#38bdf8" },
+  { key: "total", label: "Total Cases", color: "#F59E0B" },
+  { key: "resolved", label: "Resolved Cases", color: "#10B981" },
+  { key: "open", label: "Open Cases", color: "#38BDF8" },
 ] as const;
 
 const RANGES: { value: ResolutionRange; label: string }[] = [
@@ -48,7 +48,7 @@ function ChartTooltip(props: unknown) {
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="min-w-[168px] rounded-lg border border-line-2 bg-[#0b1220] px-3 py-2.5 shadow-[0_18px_44px_-14px_rgba(0,0,0,0.9)]">
+    <div className="min-w-[168px] rounded-lg border border-line-2 bg-[#0B0F17] px-3 py-2.5 shadow-[0_18px_44px_-14px_rgba(0,0,0,0.9)]">
       <p className="mb-2 text-[10.5px] font-semibold uppercase tracking-[0.07em] text-faint">
         {label}
       </p>
@@ -106,7 +106,7 @@ export function ResolutionChart() {
           <div
             role="group"
             aria-label="Time period"
-            className="flex items-center rounded-md border border-line bg-[#0a1120] p-0.5"
+            className="flex items-center rounded-md border border-line bg-[#0B0F17] p-0.5"
           >
             {RANGES.map((range) => (
               <button
@@ -174,7 +174,7 @@ export function ResolutionChart() {
                   allowDecimals={false}
                 />
                 <Tooltip
-                  cursor={{ stroke: "#33446a", strokeWidth: 1 }}
+                  cursor={{ stroke: "#222D42", strokeWidth: 1 }}
                   content={<ChartTooltip />}
                 />
 
@@ -188,7 +188,7 @@ export function ResolutionChart() {
                     strokeWidth={2}
                     fill={`url(#${gradientId}-${series.key})`}
                     hide={Boolean(hidden[series.key])}
-                    activeDot={{ r: 4, strokeWidth: 2, stroke: "#0b1220" }}
+                    activeDot={{ r: 4, strokeWidth: 2, stroke: "#0B0F17" }}
                     animationDuration={520}
                   />
                 ))}

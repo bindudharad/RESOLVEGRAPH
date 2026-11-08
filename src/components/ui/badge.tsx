@@ -13,17 +13,12 @@ export type BadgeTone =
 const TONES: Record<BadgeTone, string> = {
   neutral:
     "bg-[color-mix(in_srgb,var(--color-fg)_7%,transparent)] text-muted border-[color-mix(in_srgb,var(--color-fg)_11%,transparent)]",
-  info: "bg-[color-mix(in_srgb,var(--color-info)_13%,transparent)] text-[#5ccdf7] border-[color-mix(in_srgb,var(--color-info)_30%,transparent)]",
-  brand:
-    "bg-[color-mix(in_srgb,var(--color-brand)_16%,transparent)] text-[#b3a1ff] border-[color-mix(in_srgb,var(--color-brand)_36%,transparent)]",
-  success:
-    "bg-[color-mix(in_srgb,var(--color-success)_13%,transparent)] text-[#4fdcae] border-[color-mix(in_srgb,var(--color-success)_30%,transparent)]",
-  warning:
-    "bg-[color-mix(in_srgb,var(--color-warning)_13%,transparent)] text-[#f7c95c] border-[color-mix(in_srgb,var(--color-warning)_30%,transparent)]",
-  danger:
-    "bg-[color-mix(in_srgb,var(--color-danger)_13%,transparent)] text-[#fa8b8b] border-[color-mix(in_srgb,var(--color-danger)_30%,transparent)]",
-  accent:
-    "bg-[color-mix(in_srgb,var(--color-info)_8%,transparent)] text-info border-[color-mix(in_srgb,var(--color-info)_22%,transparent)]",
+  info: "bg-sky-500/10 text-sky-400 border-sky-500/30",
+  brand: "bg-amber-500/10 text-amber-300 border-amber-500/30",
+  success: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+  warning: "bg-amber-500/10 text-amber-400 border-amber-500/30",
+  danger: "bg-rose-500/10 text-rose-400 border-rose-500/30",
+  accent: "bg-sky-500/10 text-sky-300 border-sky-500/25",
 };
 
 export interface BadgeProps extends ComponentPropsWithRef<"span"> {
