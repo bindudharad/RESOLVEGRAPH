@@ -91,6 +91,9 @@ export class PurchaseDetectionService {
    * Extracts purchase facts from forwarded confirmation emails.
    */
   public static parseEmailText(text: string, sourceType: string): DetectedPurchaseResult {
+    if (!text || text.trim().length === 0) {
+      throw new Error("Cannot parse empty email or text confirmation.");
+    }
     let marketplace = "DIRECT";
     let externalOrderId = `ORD-${Date.now()}`;
     let listingTitle = "General Electronic Product";
@@ -308,6 +311,9 @@ export class PurchaseDetectionService {
    * Parses direct merchant API / Webhook payload.
    */
   public static parseMerchantApiPayload(data: Record<string, unknown>): DetectedPurchaseResult {
+    if (!data || typeof data !== "object" || Object.keys(data).length === 0) {
+      throw new Error("Invalid or empty merchant API payload.");
+    }
     const marketplace = "MERCHANT_API";
     const externalOrderId = String(data.orderId || `ORD-API-${Date.now()}`);
     const listingTitle = String(data.title || data.productName || "Direct Merchant Order");
@@ -359,6 +365,9 @@ export class PurchaseDetectionService {
    * Parses manual entry form data.
    */
   public static parseManualEntry(data: Record<string, unknown>): DetectedPurchaseResult {
+    if (!data || typeof data !== "object") {
+      throw new Error("Invalid or empty manual entry data.");
+    }
     const marketplace = String(data.marketplace || "DIRECT").toUpperCase();
     const externalOrderId = String(data.orderId || data.externalOrderId || `ORD-MANUAL-${Date.now()}`);
     const listingTitle = String(data.title || data.listingTitle || "Registered Purchase");

@@ -123,6 +123,14 @@ export class CameraSessionService {
       throw new Error(`Cannot upload stream to session in status ${session.status}.`);
     }
 
+    if (new Date() > session.expiresAt) {
+      await prisma.cameraSession.update({
+        where: { id: session.id },
+        data: { status: "EXPIRED" },
+      });
+      throw new Error("Cannot upload stream: unboxing session challenge has expired.");
+    }
+
     const sha256 = createHash("sha256").update(input.fileBuffer).digest("hex");
     const storageKey = `unboxing/${session.id}/${input.streamType}_${Date.now()}.mp4`;
 
@@ -162,6 +170,14 @@ export class CameraSessionService {
 
     if (!session) throw new Error(`Session ${sessionId} not found.`);
     if (session.buyerId !== userId) throw new Error("Unauthorized: Session does not belong to user.");
+
+    if (new Date() > session.expiresAt) {
+      await prisma.cameraSession.update({
+        where: { id: sessionId },
+        data: { status: "EXPIRED" },
+      });
+      throw new Error("Cannot complete session: unboxing session challenge has expired.");
+    }
 
     if (session.streams.length === 0) {
       throw new Error("Cannot complete session without at least one recorded video stream.");

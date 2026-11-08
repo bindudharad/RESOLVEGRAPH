@@ -165,6 +165,14 @@ export class PackagePassportService {
       throw new Error(`Package ${input.packageId} not found.`);
     }
 
+    if (pkg.status === "DISPATCHED" || pkg.status === "DELIVERED") {
+      throw new Error(`Cannot attach seal to package in '${pkg.status}' status.`);
+    }
+
+    if (pkg.seals.some((s) => s.sealNumber === input.sealNumber)) {
+      throw new Error(`Seal number '${input.sealNumber}' is already registered on this package.`);
+    }
+
     const seal = await prisma.packageSeal.create({
       data: {
         packageId: input.packageId,
@@ -236,6 +244,10 @@ export class PackagePassportService {
     const pkg = await prisma.packagePassport.findUnique({ where: { id: input.packageId } });
     if (!pkg) throw new Error(`Package ${input.packageId} not found.`);
 
+    if (pkg.status === "DISPATCHED" || pkg.status === "DELIVERED") {
+      throw new Error(`Package ${input.packageId} has already been dispatched.`);
+    }
+
     const now = new Date();
     const updated = await prisma.packagePassport.update({
       where: { id: input.packageId },
@@ -268,6 +280,31 @@ export class PackagePassportService {
         carrier: input.carrierName,
         eventTimestamp: now,
         checkpoint: "Merchant Fulfillment Facility",
+      },
+    });
+
+    return updated;
+  }
+
+  /**
+   * Revokes a Package Passport QR code if packaging errors or security exceptions occur.
+   */
+  public static async revokePackagePassport(packageId: string, reason: string, actorId?: string) {
+    const pkg = await prisma.packagePassport.findUnique({ where: { id: packageId } });
+    if (!pkg) throw new Error(`Package ${packageId} not found.`);
+
+    const updated = await prisma.packagePassport.update({
+      where: { id: packageId },
+      data: { status: "EXCEPTION" },
+    });
+
+    await prisma.packageEvent.create({
+      data: {
+        packageId,
+        eventType: "EXCEPTION",
+        description: `Package Passport revoked: ${reason}`,
+        actorId,
+        metadataJson: JSON.stringify({ reason }),
       },
     });
 
@@ -310,6 +347,14 @@ export class PackagePassportService {
       return {
         isValid: false,
         error: "Package Passport not found for token.",
+      };
+    }
+
+    if (pkg.status === "EXCEPTION") {
+      return {
+        isValid: false,
+        error: "Package Passport QR code has been revoked or flagged with an exception.",
+        status: pkg.status,
       };
     }
 

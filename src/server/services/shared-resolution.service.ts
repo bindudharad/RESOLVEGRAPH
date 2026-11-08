@@ -50,6 +50,10 @@ export class SharedResolutionService {
       throw new Error(`User ${input.senderId} not found.`);
     }
 
+    if (!input.content || input.content.trim().length === 0) {
+      throw new Error("Message content cannot be empty.");
+    }
+
     // Determine sender role
     let senderRole = "SYSTEM";
     if (sender.id === caseRecord.buyerId) {
@@ -58,6 +62,14 @@ export class SharedResolutionService {
       senderRole = "MERCHANT";
     } else if (sender.role === "RESOLUTION_MANAGER" || sender.isPlatformAdmin) {
       senderRole = "MANAGER";
+    }
+
+    if (senderRole === "SYSTEM") {
+      throw new Error("Forbidden: You are not an authorized participant in this dispute case.");
+    }
+
+    if (input.isInternalOnly && senderRole !== "MANAGER") {
+      throw new Error("Forbidden: Only resolution managers and admins can post internal private notes.");
     }
 
     // Verify attachment visibility if attached

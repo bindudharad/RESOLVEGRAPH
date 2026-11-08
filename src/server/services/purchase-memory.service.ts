@@ -39,6 +39,9 @@ export class PurchaseMemoryService {
    * Persists a new PurchaseMemory with full immutable specifications and promises.
    */
   public static async createPurchaseMemory(input: CreatePurchaseMemoryInput) {
+    if (!input || !input.buyerId || !input.detectedData) {
+      throw new Error("Missing required inputs: buyerId and detectedData are mandatory.");
+    }
     const { buyerId, orderId, merchantOrganizationId, detectedData } = input;
 
     // Build canonical snapshot
@@ -158,6 +161,9 @@ export class PurchaseMemoryService {
     purchaseMemoryId: string,
     claimStatement: string
   ): Promise<DisputeDivergenceResult> {
+    if (!claimStatement || claimStatement.trim().length === 0) {
+      throw new Error("Cannot compare dispute claim: claim statement cannot be empty.");
+    }
     const memory = await this.getPurchaseMemoryById(purchaseMemoryId);
     if (!memory) {
       throw new Error(`PurchaseMemory ${purchaseMemoryId} not found.`);
