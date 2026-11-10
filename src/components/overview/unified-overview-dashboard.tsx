@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   CreditCard,
   AlertTriangle,
@@ -19,6 +20,7 @@ import {
 import type { OverviewDashboardData } from "@/server/services/overview.service";
 
 export function UnifiedOverviewDashboard() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState<OverviewDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,7 +30,7 @@ export function UnifiedOverviewDashboard() {
     fetch("/api/overview/summary")
       .then((res) => {
         if (res.status === 401) {
-          window.location.href = "/sign-in?callbackUrl=/overview";
+          router.push("/sign-in?callbackUrl=/overview");
           return null;
         }
         return res.ok ? res.json() : null;

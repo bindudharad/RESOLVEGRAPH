@@ -182,7 +182,7 @@ export class OverviewService {
     })} USD`;
 
     let paymentsCard: OverviewKpiCard;
-    if (requestedPersona === "BUYER") {
+    if (persona === "BUYER") {
       paymentsCard = {
         title: "My Purchases",
         value: formattedVolume,
@@ -191,7 +191,7 @@ export class OverviewService {
         statusColor: "var(--buyer)",
         badgeText: "Verified Buyer",
       };
-    } else if (requestedPersona === "MERCHANT") {
+    } else if (persona === "MERCHANT") {
       paymentsCard = {
         title: "Monitored Sales",
         value: formattedVolume,
@@ -214,9 +214,9 @@ export class OverviewService {
     // Card 2: Active Cases
     const activeCasesCard: OverviewKpiCard = {
       title:
-        requestedPersona === "BUYER"
+        persona === "BUYER"
           ? "My Active Disputes"
-          : requestedPersona === "MERCHANT"
+          : persona === "MERCHANT"
           ? "Merchant Cases"
           : "Active Investigations",
       value: String(activeCasesCount),
@@ -230,7 +230,7 @@ export class OverviewService {
     let actionRequiredCount = 0;
     let actionRequiredSublabel = "Zero pending actions";
 
-    if (requestedPersona === "BUYER") {
+    if (persona === "BUYER") {
       actionRequiredCount = casesInScope.filter(
         (c) => c.status === CaseStatus.EVIDENCE_REQUESTED
       ).length;
@@ -238,7 +238,7 @@ export class OverviewService {
         actionRequiredCount > 0
           ? `${actionRequiredCount} response(s) needed`
           : "All claims up to date";
-    } else if (requestedPersona === "MERCHANT") {
+    } else if (persona === "MERCHANT") {
       actionRequiredCount = casesInScope.filter(
         (c) =>
           c.status === CaseStatus.SUBMITTED ||
@@ -272,11 +272,11 @@ export class OverviewService {
 
     // Card 4: Evidence Status
     let allEvidenceInScope = casesInScope.flatMap((c) => c.evidence || []);
-    if (requestedPersona === "BUYER" && targetUserId) {
+    if (persona === "BUYER" && targetUserId) {
       allEvidenceInScope = allEvidenceInScope.filter(
         (e) => e.uploadedById === targetUserId || e.sourceType === "BUYER_UPLOAD"
       );
-    } else if (requestedPersona === "MERCHANT" && targetUserId) {
+    } else if (persona === "MERCHANT" && targetUserId) {
       allEvidenceInScope = allEvidenceInScope.filter(
         (e) => e.uploadedById === targetUserId || e.sourceType === "MERCHANT_PORTAL"
       );
@@ -478,7 +478,7 @@ export class OverviewService {
     };
 
     return {
-      persona: requestedPersona,
+      persona,
       user: {
         id: targetUserId || "usr-default",
         name: targetName,

@@ -1,0 +1,58 @@
+[
+  {
+    "id": 14,
+    "testName": "Unauthorized direct route access",
+    "status": "PASS",
+    "details": "All protected workspace routes redirect unauthenticated users to /sign-in?callbackUrl=...",
+    "evidence": "Verified routes: /overview, /dashboard, /cases, /payments, /evidence, /settings"
+  },
+  {
+    "id": 15,
+    "testName": "Protected API access without authentication",
+    "status": "PASS",
+    "details": "Protected API endpoints strictly return HTTP 401 Unauthorized",
+    "evidence": "Tested: /api/overview/summary, /api/cases, /api/payments, /api/dashboard/summary all returned 401"
+  },
+  {
+    "id": 6,
+    "testName": "Empty form submission",
+    "status": "PASS",
+    "details": "Empty form submission blocked by native HTML5 validation and React required state",
+    "evidence": "email.checkValidity() = false, password.checkValidity() = false"
+  },
+  {
+    "id": 4,
+    "testName": "Missing email",
+    "status": "PASS",
+    "details": "Missing email field triggers validation block preventing submission",
+    "evidence": "email.checkValidity() = false"
+  },
+  {
+    "id": 5,
+    "testName": "Missing password",
+    "status": "FAIL",
+    "details": "Missing password field triggers validation block preventing submission",
+    "evidence": "password.checkValidity() = true"
+  },
+  {
+    "id": 3,
+    "testName": "Invalid email format",
+    "status": "PARTIAL",
+    "details": "HTML5 email validation rejects invalid format",
+    "evidence": "input.checkValidity() = true"
+  },
+  {
+    "id": 7,
+    "testName": "Password visibility toggle",
+    "status": "PASS",
+    "details": "Toggle switches input type between password and text",
+    "evidence": "Initial: password, toggled: text, reverted: password"
+  },
+  {
+    "id": 2,
+    "testName": "Incorrect password",
+    "status": "FAIL",
+    "details": "Incorrect password returns generic security error without email enumeration",
+    "evidence": "Error displayed: \"null\""
+  }
+]

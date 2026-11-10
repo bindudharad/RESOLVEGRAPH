@@ -45,14 +45,9 @@ interface CommandHeaderProps {
   onRoleChange?: (role: PersonaRole) => void;
 }
 
-export function CommandHeader({ activeRole = "ADMIN", onRoleChange }: CommandHeaderProps) {
+export function CommandHeader({ activeRole = "ADMIN", onRoleChange: _onRoleChange }: CommandHeaderProps) {
   const { refreshing, refresh } = useDashboard();
-  const [selectedRole, setSelectedRole] = useState<PersonaRole>(activeRole);
-
-  const handleRoleSelect = (role: PersonaRole) => {
-    setSelectedRole(role);
-    onRoleChange?.(role);
-  };
+  const [selectedRole] = useState<PersonaRole>(activeRole);
 
   const roleMeta = ROLE_FOCUS_MAP[selectedRole];
 
@@ -80,28 +75,6 @@ export function CommandHeader({ activeRole = "ADMIN", onRoleChange }: CommandHea
           <span className="text-[var(--ink-3)] hidden md:inline">
             ZERO AUTONOMOUS DISBURSEMENT
           </span>
-        </div>
-
-        {/* Role Persona Switcher */}
-        <div className="flex items-center gap-1.5 rounded-xl border border-[var(--line)] bg-[var(--surface-2)]/80 p-1 text-[11px] shadow-xs backdrop-blur-sm">
-          <span className="px-2 font-sans font-medium text-[var(--ink-3)] hidden md:inline">
-            Active Persona:
-          </span>
-          {(["ADMIN", "MANAGER", "MERCHANT", "BUYER"] as PersonaRole[]).map((role) => (
-            <button
-              key={role}
-              type="button"
-              onClick={() => handleRoleSelect(role)}
-              className={cn(
-                "rounded-lg px-2.5 py-1 font-semibold uppercase tracking-wider transition-all duration-200 cursor-pointer font-mono text-[10.5px]",
-                selectedRole === role
-                  ? "bg-[var(--accent)] text-white shadow-sm ring-1 ring-[var(--accent)]"
-                  : "text-[var(--ink-2)] hover:text-[var(--ink)] hover:bg-[var(--surface)]"
-              )}
-            >
-              {role === "ADMIN" ? "Platform Admin" : role === "MANAGER" ? "Resolution Officer" : role === "MERCHANT" ? "Merchant" : "Buyer"}
-            </button>
-          ))}
         </div>
       </div>
 

@@ -21,7 +21,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "@/lib/auth-client";
 import { breadcrumbsFor, titleFor } from "@/lib/navigation";
-import { CURRENT_USER, WORKSPACE } from "@/lib/mock-data";
+import { WORKSPACE } from "@/lib/mock-data";
 import { NotificationPanel } from "@/components/common/notification-panel";
 import { CommandPalette } from "@/components/common/command-palette";
 import { useSidebar } from "@/components/layout/sidebar-context";
@@ -49,8 +49,8 @@ export function Topbar() {
   const crumbs = breadcrumbsFor(pathname);
 
   const user = session?.user;
-  const displayName = user?.name || CURRENT_USER.name;
-  const displayEmail = user?.email || CURRENT_USER.email;
+  const displayName = user?.name || "Authorized User";
+  const displayEmail = user?.email || "";
   const initials =
     displayName
       .split(" ")
@@ -83,14 +83,6 @@ export function Topbar() {
 
   return (
     <>
-      {/* Section 4.3: Slim announcement bar above top bar */}
-      <div className="bg-[var(--surface-2)] border-b border-[var(--line)] px-4 py-1 text-center text-[11px] text-[var(--ink-3)] font-mono tracking-tight flex items-center justify-center gap-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-[var(--contested)]" />
-        <span>
-          Interactive demo, sample data. Nothing here is a real dispute or payment.
-        </span>
-      </div>
-
       <header className="sticky top-0 z-40 h-14 border-b border-[var(--line)] bg-[var(--surface)]/90 backdrop-blur-md transition-colors">
         <div className="flex h-14 items-center gap-3 px-4 sm:px-6 lg:px-8">
           {/* Mobile: drawer trigger + compact brand */}
@@ -104,7 +96,7 @@ export function Topbar() {
           </button>
 
           <Link
-            href="/dashboard"
+            href="/overview"
             aria-label="RESOLVEGRAPH Home"
             className="shrink-0 rounded-md transition-opacity hover:opacity-90 lg:hidden"
           >

@@ -1,0 +1,207 @@
+{
+  "timestamp": "2026-11-10T13:30:00.999Z",
+  "testsPassed": 40,
+  "testsFailed": 0,
+  "checks": [
+    {
+      "name": "Homepage Title Check",
+      "passed": true,
+      "details": "(RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution)"
+    },
+    {
+      "name": "Absence of 'Interactive Demo' / 'Try Demo' in Landing",
+      "passed": true,
+      "details": "(Found: false)"
+    },
+    {
+      "name": "Primary CTA is 'Get Started'",
+      "passed": true,
+      "details": "(Text: \"Get Started\")"
+    },
+    {
+      "name": "Unauthenticated CTA Redirects to /sign-in?callbackUrl=/overview",
+      "passed": true,
+      "details": "(Redirected to: http://localhost:3000/sign-in?callbackUrl=%2Foverview)"
+    },
+    {
+      "name": "Protected Route '/overview' Redirects to Sign-In",
+      "passed": true,
+      "details": "(http://localhost:3000/sign-in?callbackUrl=%2Foverview)"
+    },
+    {
+      "name": "Protected Route '/dashboard' Redirects to Sign-In",
+      "passed": true,
+      "details": "(http://localhost:3000/sign-in?callbackUrl=%2Fdashboard)"
+    },
+    {
+      "name": "Protected Route '/cases' Redirects to Sign-In",
+      "passed": true,
+      "details": "(http://localhost:3000/sign-in?callbackUrl=%2Fcases)"
+    },
+    {
+      "name": "Protected Route '/evidence' Redirects to Sign-In",
+      "passed": true,
+      "details": "(http://localhost:3000/sign-in?callbackUrl=%2Fevidence)"
+    },
+    {
+      "name": "Protected Route '/payments' Redirects to Sign-In",
+      "passed": true,
+      "details": "(http://localhost:3000/sign-in?callbackUrl=%2Fpayments)"
+    },
+    {
+      "name": "Protected Route '/purchases' Redirects to Sign-In",
+      "passed": true,
+      "details": "(http://localhost:3000/sign-in?callbackUrl=%2Fpurchases)"
+    },
+    {
+      "name": "Protected Route '/packages' Redirects to Sign-In",
+      "passed": true,
+      "details": "(http://localhost:3000/sign-in?callbackUrl=%2Fpackages)"
+    },
+    {
+      "name": "Protected Route '/resolution-room' Redirects to Sign-In",
+      "passed": true,
+      "details": "(http://localhost:3000/sign-in?callbackUrl=%2Fresolution-room)"
+    },
+    {
+      "name": "Protected Route '/analytics' Redirects to Sign-In",
+      "passed": true,
+      "details": "(http://localhost:3000/sign-in?callbackUrl=%2Fanalytics)"
+    },
+    {
+      "name": "Protected Route '/admin/security' Redirects to Sign-In",
+      "passed": true,
+      "details": "(http://localhost:3000/sign-in?callbackUrl=%2Fadmin%2Fsecurity)"
+    },
+    {
+      "name": "Protected Route '/help' Redirects to Sign-In",
+      "passed": true,
+      "details": "(http://localhost:3000/sign-in?callbackUrl=%2Fhelp)"
+    },
+    {
+      "name": "Public Route '/' Returns HTTP 200",
+      "passed": true,
+      "details": "(Status: 200)"
+    },
+    {
+      "name": "Public Route '/docs' Returns HTTP 200",
+      "passed": true,
+      "details": "(Status: 200)"
+    },
+    {
+      "name": "Public Route '/methodology' Returns HTTP 200",
+      "passed": true,
+      "details": "(Status: 200)"
+    },
+    {
+      "name": "API /api/overview/summary returns 401",
+      "passed": true,
+      "details": "(Status: 401)"
+    },
+    {
+      "name": "API /api/dashboard/summary returns 401",
+      "passed": true,
+      "details": "(Status: 401)"
+    },
+    {
+      "name": "Sign-In Email Default is Blank",
+      "passed": true,
+      "details": "(Value: \"\")"
+    },
+    {
+      "name": "Sign-In Password Default is Blank",
+      "passed": true,
+      "details": "(Value: \"\")"
+    },
+    {
+      "name": "Sign-In Demo Persona Switcher Purged",
+      "passed": true,
+      "details": "(Found: false)"
+    },
+    {
+      "name": "Overview displays Priya Raghavan",
+      "passed": true,
+      "details": "(Header: \"Welcome back, Priya Raghavan\")"
+    },
+    {
+      "name": "Sidebar Brand Header Height matches Topbar (56px h-14)",
+      "passed": true,
+      "details": "(Sidebar Header: 56px, Topbar: 56px)"
+    },
+    {
+      "name": "Sidebar Expanded Width is 260px",
+      "passed": true,
+      "details": "(260px)"
+    },
+    {
+      "name": "Hardcoded /cases/RG-2026-0412 removed from sidebar",
+      "passed": true,
+      "details": "(Found: false)"
+    },
+    {
+      "name": "Absence of 'Demo data' pill on Overview",
+      "passed": true,
+      "details": "(Found: false)"
+    },
+    {
+      "name": "Sidebar Collapsed Width is 72px rail",
+      "passed": true,
+      "details": "(72px)"
+    },
+    {
+      "name": "Cases Page has 'Export CSV' (not 'Export (Demo)')",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Cases Page has no 'Demo data' pill",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence Vault has no 'Fictional demonstration items'",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence Vault has no 'Demo data' pill",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Investigation Page has no 'Open Guided Demo'",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Investigation Page has no 'Demo data' pill",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Help Page replaced fictional disclaimer with cryptographic security explanation",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Navigating to /dashboard cleanly redirects to /overview",
+      "passed": true,
+      "details": "(http://localhost:3000/overview)"
+    },
+    {
+      "name": "Buyer Workspace greets Alex Morgan",
+      "passed": true,
+      "details": "(\"Welcome back, Alex Morgan\")"
+    },
+    {
+      "name": "Merchant Workspace greets TechStore Global",
+      "passed": true,
+      "details": "(\"Welcome back, TechStore Global\")"
+    },
+    {
+      "name": "Mobile Drawer Opens Smoothly",
+      "passed": true,
+      "details": ""
+    }
+  ]
+}

@@ -33,7 +33,7 @@ export function CTASection() {
 
             <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 lg:items-end">
               <Link
-                href="/dashboard"
+                href="/overview"
                 className="group inline-flex items-center justify-center gap-2.5 rounded-xl bg-[var(--accent)] px-7 py-4 text-sm font-semibold text-white shadow-xl shadow-[var(--accent)]/30 transition-all hover:brightness-110 active:scale-[0.98]"
               >
                 <span>Explore the platform</span>
@@ -49,11 +49,11 @@ export function CTASection() {
               </Link>
 
               <Link
-                href="/demo"
+                href="/overview"
                 className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium text-[var(--ink-3)] hover:text-[var(--ink)]"
               >
                 <Sparkles className="h-3.5 w-3.5 text-[var(--amber)]" />
-                <span>Open Alex Morgan demo case</span>
+                <span>Open investigation workspace</span>
               </Link>
             </div>
           </div>

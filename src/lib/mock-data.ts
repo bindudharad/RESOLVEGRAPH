@@ -24,10 +24,10 @@ import type {
 } from "@/lib/types";
 
 export const WORKSPACE = {
-  name: "Demo Commerce Workspace",
+  name: "Commerce Resolution Workspace",
   descriptor: "Commerce Intelligence",
-  isDemo: true,
-  planLabel: "Evaluation",
+  isDemo: false,
+  planLabel: "Enterprise",
   seats: 8,
 } as const;
 

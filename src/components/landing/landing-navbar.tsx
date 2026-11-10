@@ -126,11 +126,11 @@ const RESOURCE_ITEMS: MegaMenuItem[] = [
     icon: FileSearch,
   },
   {
-    title: "Interactive Demo Case",
-    description: "Walk through the Alex Morgan vs. Apex Tech Labs bilateral investigation.",
-    href: "/demo",
+    title: "Workspace Overview",
+    description: "Multi-persona evidentiary command center with live case metrics.",
+    href: "/overview",
     icon: Sparkles,
-    badge: "Live",
+    badge: "Core",
   },
   {
     title: "Help & Triage Manual",
@@ -380,11 +380,11 @@ export function LandingNavbar() {
                         </p>
                       </div>
                       <Link
-                        href="/demo"
+                        href="/overview"
                         onClick={() => setActiveMenu(null)}
                         className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-[var(--accent)] hover:underline"
                       >
-                        Launch interactive demo case <ArrowRight className="h-3.5 w-3.5" />
+                        Launch investigation workspace <ArrowRight className="h-3.5 w-3.5" />
                       </Link>
                     </div>
                   </div>
@@ -589,11 +589,11 @@ export function LandingNavbar() {
                     Methodology Specification
                   </Link>
                   <Link
-                    href="/demo"
+                    href="/overview"
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-sm font-medium text-[var(--accent)] py-2"
                   >
-                    Interactive Demo Case
+                    Workspace Overview
                   </Link>
                   <Link
                     href="/sign-in"
@@ -603,7 +603,7 @@ export function LandingNavbar() {
                     Sign in to Account
                   </Link>
                   <Link
-                    href="/dashboard"
+                    href="/overview"
                     onClick={() => setMobileMenuOpen(false)}
                     className="mt-2 flex items-center justify-center gap-2 rounded-xl bg-[var(--accent)] py-3 text-sm font-semibold text-white shadow-md"
                   >

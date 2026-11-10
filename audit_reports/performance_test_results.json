@@ -1,0 +1,133 @@
+{
+  "webVitals": [
+    {
+      "route": "/overview",
+      "loadTimeMs": 1292,
+      "vitals": {
+        "fcp": 372,
+        "lcp": 372,
+        "cls": 0.1363,
+        "domContentLoaded": 306,
+        "duration": 385
+      },
+      "assetTransfer": {
+        "totalJsKb": "0.0",
+        "totalCssKb": "0.0",
+        "largeAssetsCount": 0,
+        "largeAssets": []
+      }
+    },
+    {
+      "route": "/payments",
+      "loadTimeMs": 1320,
+      "vitals": {
+        "fcp": 428,
+        "lcp": 428,
+        "cls": 0.0266,
+        "domContentLoaded": 200,
+        "duration": 395
+      },
+      "assetTransfer": {
+        "totalJsKb": "0.7",
+        "totalCssKb": "0.0",
+        "largeAssetsCount": 0,
+        "largeAssets": []
+      }
+    },
+    {
+      "route": "/cases",
+      "loadTimeMs": 1637,
+      "vitals": {
+        "fcp": 492,
+        "lcp": 492,
+        "cls": 0.0045,
+        "domContentLoaded": 440,
+        "duration": 736
+      },
+      "assetTransfer": {
+        "totalJsKb": "0.7",
+        "totalCssKb": "0.0",
+        "largeAssetsCount": 0,
+        "largeAssets": []
+      }
+    },
+    {
+      "route": "/evidence",
+      "loadTimeMs": 1762,
+      "vitals": {
+        "fcp": 656,
+        "lcp": 656,
+        "cls": 0.0003,
+        "domContentLoaded": 311,
+        "duration": 367
+      },
+      "assetTransfer": {
+        "totalJsKb": "0.6",
+        "totalCssKb": "0.0",
+        "largeAssetsCount": 0,
+        "largeAssets": []
+      }
+    },
+    {
+      "route": "/dashboard",
+      "loadTimeMs": 1411,
+      "vitals": {
+        "fcp": 488,
+        "lcp": 488,
+        "cls": 0.1363,
+        "domContentLoaded": 428,
+        "duration": 501
+      },
+      "assetTransfer": {
+        "totalJsKb": "0.0",
+        "totalCssKb": "0.0",
+        "largeAssetsCount": 0,
+        "largeAssets": []
+      }
+    }
+  ],
+  "apiLatencies": {
+    "/api/health": {
+      "avgMs": 39.7,
+      "minMs": 30.2,
+      "maxMs": 66,
+      "samples": 5
+    },
+    "/api/overview/summary": {
+      "avgMs": 73.9,
+      "minMs": 59.6,
+      "maxMs": 102.8,
+      "samples": 5
+    },
+    "/api/cases?limit=10": {
+      "avgMs": 35.5,
+      "minMs": 32.8,
+      "maxMs": 43.6,
+      "samples": 5
+    },
+    "/api/payments?limit=10": {
+      "avgMs": 34.6,
+      "minMs": 31.9,
+      "maxMs": 37.8,
+      "samples": 5
+    },
+    "/api/evidence?limit=10": {
+      "avgMs": 31.2,
+      "minMs": 29.7,
+      "maxMs": 33.4,
+      "samples": 5
+    },
+    "/api/dashboard/summary": {
+      "avgMs": 84.4,
+      "minMs": 67.3,
+      "maxMs": 114.2,
+      "samples": 5
+    }
+  },
+  "concurrencyTest": {
+    "all200": true,
+    "totalDurationMs": 987,
+    "avgPerReqMs": 66,
+    "statusesSummary": "15/15 passed"
+  }
+}

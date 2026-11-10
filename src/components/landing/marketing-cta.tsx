@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Sparkles, BookOpen, ShieldCheck } from "lucide-react";
+import { ArrowRight, BookOpen, ShieldCheck } from "lucide-react";
 
 export function MarketingCTA() {
   return (
@@ -31,19 +31,18 @@ export function MarketingCTA() {
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
-              href="/demo"
+              href="/overview"
               className="group inline-flex items-center gap-2.5 rounded-xl bg-[var(--accent)] px-6 py-3.5 text-sm font-semibold text-white shadow-xl shadow-[var(--accent)]/20 transition-all hover:brightness-110 active:scale-[0.98]"
             >
-              <Sparkles className="h-4 w-4" />
-              <span>Try Interactive Demo</span>
+              <span>Get Started</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
 
             <Link
-              href="/overview"
+              href="/sign-in"
               className="inline-flex items-center gap-2 rounded-xl border border-[var(--line-strong)] bg-[var(--surface)] px-6 py-3.5 text-sm font-medium text-[var(--ink)] shadow-xs transition-all hover:border-[var(--ink-3)] hover:bg-[var(--surface-2)] active:scale-[0.98]"
             >
-              <span>Explore 3D Overview</span>
+              <span>Sign In to Workspace</span>
               <ArrowRight className="h-4 w-4 text-[var(--ink-3)]" />
             </Link>
 

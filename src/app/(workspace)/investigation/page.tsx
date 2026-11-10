@@ -33,9 +33,9 @@ export default function InvestigationPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href="/demo">
+          <Link href="/cases/RG-1001">
             <Button variant="primary" size="sm" icon={<Zap className="h-3.5 w-3.5" />}>
-              Open Guided Demo
+              Inspect Case RG-1001
             </Button>
           </Link>
           <span className="rounded-full border border-emerald-500/30 bg-emerald-500/15 px-3 py-1 text-[11.5px] font-medium text-emerald-300">

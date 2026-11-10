@@ -47,7 +47,7 @@ export function HeroSection() {
           {/* Action CTAs */}
           <div className="mt-8 flex flex-wrap items-center gap-3.5">
             <Link
-              href="/dashboard"
+              href="/overview"
               className="group inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[var(--accent)]/25 transition-all hover:brightness-110 active:scale-[0.98]"
             >
               <span>Explore the platform</span>
@@ -63,11 +63,11 @@ export function HeroSection() {
             </Link>
 
             <Link
-              href="/demo"
+              href="/overview"
               className="inline-flex items-center gap-2 rounded-xl border border-transparent px-4 py-3.5 text-sm font-medium text-[var(--ink-2)] transition-colors hover:text-[var(--accent)]"
             >
               <Sparkles className="h-4 w-4 text-[var(--amber)]" />
-              <span>Try Demo Case</span>
+              <span>Open Workspace</span>
             </Link>
           </div>
 

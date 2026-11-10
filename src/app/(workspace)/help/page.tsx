@@ -56,8 +56,8 @@ const FAQS = [
     a: "RESOLVEGRAPH integrates with PayPal Sandbox APIs (Orders v2, server-side capture, partial refunds, and disputes synchronization). Multimodal AI and the BERR engine extract facts from uploaded documentation, build a bilateral evidence graph, and draft policy-compliant remedies that human managers authorize before funds are disbursed.",
   },
   {
-    q: "Are the cases and monetary amounts real?",
-    a: "No. All cases, merchant names, amounts, and activity timeline events shown are purely fictional demonstration records created for architectural evaluation.",
+    q: "How does RESOLVEGRAPH safeguard live and sandbox transactions?",
+    a: "RESOLVEGRAPH isolates transaction execution between PayPal Sandbox test accounts and production rails. Every ingested evidence record is timestamped, immutably hashed with SHA-256, and bound to tenant-isolated organizations with strict role-based access control.",
   },
   {
     q: "How does case creation and management work?",

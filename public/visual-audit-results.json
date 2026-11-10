@@ -1,0 +1,598 @@
+{
+  "timestamp": "2026-11-10T11:57:13.143Z",
+  "environment": {
+    "devicePixelRatio": 1,
+    "windowInnerWidth": 1440,
+    "windowInnerHeight": 900,
+    "windowOuterWidth": 1920,
+    "windowOuterHeight": 1080,
+    "visualViewportScale": 1,
+    "visualViewportWidth": 1440,
+    "visualViewportHeight": 900,
+    "htmlFontSize": "16px",
+    "htmlZoom": "1",
+    "bodyFontSize": "14px",
+    "bodyLineHeight": "21px",
+    "bodyFontFamily": "\"Hanken Grotesk\", system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "documentScrollWidth": 1440,
+    "documentScrollHeight": 2226,
+    "hasHorizontalOverflow": false
+  },
+  "zoomAnalysis": {
+    "zoom-90": {
+      "factor": 0.9,
+      "screenshot": "C:\\Projects\\resolvegraph\\public\\visual-audit-screenshots\\overview-zoom-90.png",
+      "metrics": {
+        "sidebarWidth": 234,
+        "mainWidth": 1206,
+        "headerHeight": 198.15625
+      }
+    },
+    "zoom-100": {
+      "factor": 1,
+      "screenshot": "C:\\Projects\\resolvegraph\\public\\visual-audit-screenshots\\overview-zoom-100.png",
+      "metrics": {
+        "sidebarWidth": 260,
+        "mainWidth": 1180,
+        "headerHeight": 219.5
+      }
+    },
+    "zoom-110": {
+      "factor": 1.1,
+      "screenshot": "C:\\Projects\\resolvegraph\\public\\visual-audit-screenshots\\overview-zoom-110.png",
+      "metrics": {
+        "sidebarWidth": 286,
+        "mainWidth": 1154,
+        "headerHeight": 240.65625
+      }
+    }
+  },
+  "viewports": {
+    "1920x1080": {
+      "viewportWidth": 1920,
+      "sidebarWidth": 260,
+      "topbarHeight": 56,
+      "brandHeight": 64,
+      "headerHeightMismatch": 8,
+      "containerWidth": 1440,
+      "containerLeft": 370,
+      "containerRightMargin": 110,
+      "overviewDivWidth": 1280,
+      "overviewLeftMargin": 450,
+      "hasHorizontalScroll": false,
+      "kpiCardDimensions": [
+        {
+          "width": 183,
+          "height": 34
+        },
+        {
+          "width": 308,
+          "height": 192
+        },
+        {
+          "width": 308,
+          "height": 192
+        },
+        {
+          "width": 308,
+          "height": 192
+        }
+      ],
+      "screenshot": "C:\\Projects\\resolvegraph\\public\\visual-audit-screenshots\\desktop-1920x1080.png"
+    },
+    "1600x900": {
+      "viewportWidth": 1600,
+      "sidebarWidth": 260,
+      "topbarHeight": 56,
+      "brandHeight": 64,
+      "headerHeightMismatch": 8,
+      "containerWidth": 1340,
+      "containerLeft": 260,
+      "containerRightMargin": 0,
+      "overviewDivWidth": 1276,
+      "overviewLeftMargin": 292,
+      "hasHorizontalScroll": false,
+      "kpiCardDimensions": [
+        {
+          "width": 183,
+          "height": 34
+        },
+        {
+          "width": 307,
+          "height": 192
+        },
+        {
+          "width": 307,
+          "height": 192
+        },
+        {
+          "width": 307,
+          "height": 192
+        }
+      ],
+      "screenshot": "C:\\Projects\\resolvegraph\\public\\visual-audit-screenshots\\desktop-1600x900.png"
+    },
+    "1440x900": {
+      "viewportWidth": 1440,
+      "sidebarWidth": 260,
+      "topbarHeight": 56,
+      "brandHeight": 64,
+      "headerHeightMismatch": 8,
+      "containerWidth": 1180,
+      "containerLeft": 260,
+      "containerRightMargin": 0,
+      "overviewDivWidth": 1116,
+      "overviewLeftMargin": 292,
+      "hasHorizontalScroll": false,
+      "kpiCardDimensions": [
+        {
+          "width": 183,
+          "height": 34
+        },
+        {
+          "width": 267,
+          "height": 208
+        },
+        {
+          "width": 267,
+          "height": 208
+        },
+        {
+          "width": 267,
+          "height": 208
+        }
+      ],
+      "screenshot": "C:\\Projects\\resolvegraph\\public\\visual-audit-screenshots\\desktop-1440x900.png"
+    },
+    "1366x768": {
+      "viewportWidth": 1366,
+      "sidebarWidth": 260,
+      "topbarHeight": 56,
+      "brandHeight": 64,
+      "headerHeightMismatch": 8,
+      "containerWidth": 1106,
+      "containerLeft": 260,
+      "containerRightMargin": 0,
+      "overviewDivWidth": 1042,
+      "overviewLeftMargin": 292,
+      "hasHorizontalScroll": false,
+      "kpiCardDimensions": [
+        {
+          "width": 183,
+          "height": 34
+        },
+        {
+          "width": 249,
+          "height": 240
+        },
+        {
+          "width": 249,
+          "height": 240
+        },
+        {
+          "width": 249,
+          "height": 240
+        }
+      ],
+      "screenshot": "C:\\Projects\\resolvegraph\\public\\visual-audit-screenshots\\desktop-1366x768.png"
+    },
+    "1280x720": {
+      "viewportWidth": 1280,
+      "sidebarWidth": 260,
+      "topbarHeight": 56,
+      "brandHeight": 64,
+      "headerHeightMismatch": 8,
+      "containerWidth": 1020,
+      "containerLeft": 260,
+      "containerRightMargin": 0,
+      "overviewDivWidth": 956,
+      "overviewLeftMargin": 292,
+      "hasHorizontalScroll": false,
+      "kpiCardDimensions": [
+        {
+          "width": 183,
+          "height": 34
+        },
+        {
+          "width": 227,
+          "height": 240
+        },
+        {
+          "width": 227,
+          "height": 240
+        },
+        {
+          "width": 227,
+          "height": 240
+        }
+      ],
+      "screenshot": "C:\\Projects\\resolvegraph\\public\\visual-audit-screenshots\\desktop-1280x720.png"
+    }
+  },
+  "components": {
+    "cards": [
+      {
+        "tag": "a",
+        "className": "group relative flex h-10 items-center gap-3 rounde",
+        "borderRadius": "12px",
+        "borderWidth": "0px",
+        "padding": "0px 12px"
+      },
+      {
+        "tag": "a",
+        "className": "group relative flex h-10 items-center gap-3 rounde",
+        "borderRadius": "12px",
+        "borderWidth": "0px",
+        "padding": "0px 12px"
+      },
+      {
+        "tag": "a",
+        "className": "group relative flex h-10 items-center gap-3 rounde",
+        "borderRadius": "12px",
+        "borderWidth": "0px",
+        "padding": "0px 12px"
+      },
+      {
+        "tag": "a",
+        "className": "group relative flex h-10 items-center gap-3 rounde",
+        "borderRadius": "12px",
+        "borderWidth": "0px",
+        "padding": "0px 12px"
+      },
+      {
+        "tag": "a",
+        "className": "group relative flex h-10 items-center gap-3 rounde",
+        "borderRadius": "12px",
+        "borderWidth": "0px",
+        "padding": "0px 12px"
+      },
+      {
+        "tag": "a",
+        "className": "group relative flex h-10 items-center gap-3 rounde",
+        "borderRadius": "12px",
+        "borderWidth": "0px",
+        "padding": "0px 12px"
+      },
+      {
+        "tag": "a",
+        "className": "group relative flex h-10 items-center gap-3 rounde",
+        "borderRadius": "12px",
+        "borderWidth": "0px",
+        "padding": "0px 12px"
+      },
+      {
+        "tag": "a",
+        "className": "group relative flex h-10 items-center gap-3 rounde",
+        "borderRadius": "12px",
+        "borderWidth": "0px",
+        "padding": "0px 12px"
+      },
+      {
+        "tag": "a",
+        "className": "group relative flex h-10 items-center gap-3 rounde",
+        "borderRadius": "12px",
+        "borderWidth": "0px",
+        "padding": "0px 12px"
+      },
+      {
+        "tag": "a",
+        "className": "group relative flex h-10 items-center gap-3 rounde",
+        "borderRadius": "12px",
+        "borderWidth": "0px",
+        "padding": "0px 12px"
+      },
+      {
+        "tag": "a",
+        "className": "group relative flex h-10 items-center gap-3 rounde",
+        "borderRadius": "12px",
+        "borderWidth": "0px",
+        "padding": "0px 12px"
+      },
+      {
+        "tag": "a",
+        "className": "group relative flex h-10 items-center gap-3 rounde",
+        "borderRadius": "12px",
+        "borderWidth": "0px",
+        "padding": "0px 12px"
+      },
+      {
+        "tag": "a",
+        "className": "group relative flex h-10 items-center gap-3 rounde",
+        "borderRadius": "12px",
+        "borderWidth": "0px",
+        "padding": "0px 12px"
+      },
+      {
+        "tag": "div",
+        "className": "flex items-center justify-between gap-2.5 rounded-",
+        "borderRadius": "12px",
+        "borderWidth": "1px",
+        "padding": "10px"
+      },
+      {
+        "tag": "div",
+        "className": "flex h-9 w-9 shrink-0 items-center justify-center ",
+        "borderRadius": "12px",
+        "borderWidth": "1px",
+        "padding": "0px"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "",
+        "width": 28,
+        "height": 28,
+        "borderRadius": "8px",
+        "fontSize": "14px",
+        "padding": "6px"
+      },
+      {
+        "text": "",
+        "width": 28,
+        "height": 28,
+        "borderRadius": "8px",
+        "fontSize": "14px",
+        "padding": "6px"
+      },
+      {
+        "text": "",
+        "width": 0,
+        "height": 0,
+        "borderRadius": "8px",
+        "fontSize": "14px",
+        "padding": "0px"
+      },
+      {
+        "text": "Search cases, evidence, g",
+        "width": 272,
+        "height": 32,
+        "borderRadius": "8px",
+        "fontSize": "12px",
+        "padding": "0px 10px"
+      },
+      {
+        "text": "",
+        "width": 0,
+        "height": 0,
+        "borderRadius": "8px",
+        "fontSize": "14px",
+        "padding": "0px"
+      },
+      {
+        "text": "",
+        "width": 36,
+        "height": 36,
+        "borderRadius": "6px",
+        "fontSize": "14px",
+        "padding": "0px"
+      },
+      {
+        "text": "",
+        "width": 32,
+        "height": 32,
+        "borderRadius": "8px",
+        "fontSize": "14px",
+        "padding": "0px"
+      },
+      {
+        "text": "PRPriya Raghavan",
+        "width": 129,
+        "height": 34,
+        "borderRadius": "8px",
+        "fontSize": "14px",
+        "padding": "4px 8px 4px 6px"
+      },
+      {
+        "text": "Refresh",
+        "width": 87,
+        "height": 34,
+        "borderRadius": "12px",
+        "fontSize": "12px",
+        "padding": "8px 12px"
+      },
+      {
+        "text": "More",
+        "width": 0,
+        "height": 0,
+        "borderRadius": "0px",
+        "fontSize": "11px",
+        "padding": "4px 0px"
+      }
+    ],
+    "typography": {
+      "h1": {
+        "fontSize": "30px",
+        "fontWeight": "600",
+        "lineHeight": "36px",
+        "fontFamily": "\"Space Grotesk\"",
+        "letterSpacing": "-0.75px",
+        "color": "rgb(244, 241, 232)"
+      },
+      "h2": {
+        "fontSize": "18px",
+        "fontWeight": "600",
+        "lineHeight": "28px",
+        "fontFamily": "\"Space Grotesk\"",
+        "letterSpacing": "-0.45px",
+        "color": "rgb(244, 241, 232)"
+      },
+      "h3": {
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "lineHeight": "24px",
+        "fontFamily": "\"Space Grotesk\"",
+        "letterSpacing": "-0.4px",
+        "color": "rgb(244, 241, 232)"
+      },
+      "body": {
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "lineHeight": "20px",
+        "fontFamily": "\"Hanken Grotesk\"",
+        "letterSpacing": "normal",
+        "color": "rgb(166, 176, 172)"
+      },
+      "mono": {
+        "fontSize": "10.5px",
+        "fontWeight": "400",
+        "lineHeight": "15.75px",
+        "fontFamily": "\"IBM Plex Mono\"",
+        "letterSpacing": "-0.2625px",
+        "color": "oklab(0.999994 0.0000455678 0.0000200868 / 0.5)"
+      }
+    }
+  },
+  "typography": {},
+  "headerSidebarGeometry": {
+    "brand": {
+      "height": 64,
+      "computedPadding": "0px 14px",
+      "computedBg": "rgb(8, 11, 17)"
+    },
+    "topbar": {
+      "height": 56,
+      "computedPadding": "0px",
+      "computedBorderBottom": "1px"
+    },
+    "heightDeltaPx": 8,
+    "navPadding": "12px",
+    "footerHeight": 83,
+    "links": [
+      {
+        "label": "Overview",
+        "height": 40,
+        "width": 235,
+        "iconWidth": 18,
+        "iconHeight": 18,
+        "fontSize": "13px",
+        "lineHeight": "19.5px",
+        "isWrapped": false
+      },
+      {
+        "label": "Payments",
+        "height": 40,
+        "width": 235,
+        "iconWidth": 18,
+        "iconHeight": 18,
+        "fontSize": "13px",
+        "lineHeight": "19.5px",
+        "isWrapped": false
+      },
+      {
+        "label": "Investigations",
+        "height": 40,
+        "width": 235,
+        "iconWidth": 18,
+        "iconHeight": 18,
+        "fontSize": "13px",
+        "lineHeight": "19.5px",
+        "isWrapped": false
+      },
+      {
+        "label": "Evidence Vault",
+        "height": 40,
+        "width": 235,
+        "iconWidth": 18,
+        "iconHeight": 18,
+        "fontSize": "13px",
+        "lineHeight": "19.5px",
+        "isWrapped": false
+      },
+      {
+        "label": "Evidence Graph",
+        "height": 40,
+        "width": 235,
+        "iconWidth": 18,
+        "iconHeight": 18,
+        "fontSize": "13px",
+        "lineHeight": "19.5px",
+        "isWrapped": false
+      },
+      {
+        "label": "Purchase Memory",
+        "height": 40,
+        "width": 235,
+        "iconWidth": 18,
+        "iconHeight": 18,
+        "fontSize": "13px",
+        "lineHeight": "19.5px",
+        "isWrapped": false
+      },
+      {
+        "label": "Package & Delivery",
+        "height": 40,
+        "width": 235,
+        "iconWidth": 18,
+        "iconHeight": 18,
+        "fontSize": "13px",
+        "lineHeight": "19.5px",
+        "isWrapped": false
+      },
+      {
+        "label": "Resolution Room",
+        "height": 40,
+        "width": 235,
+        "iconWidth": 18,
+        "iconHeight": 18,
+        "fontSize": "13px",
+        "lineHeight": "19.5px",
+        "isWrapped": false
+      },
+      {
+        "label": "Reports & Analytics",
+        "height": 40,
+        "width": 235,
+        "iconWidth": 18,
+        "iconHeight": 18,
+        "fontSize": "13px",
+        "lineHeight": "19.5px",
+        "isWrapped": false
+      },
+      {
+        "label": "AI Copilot",
+        "height": 40,
+        "width": 235,
+        "iconWidth": 18,
+        "iconHeight": 18,
+        "fontSize": "13px",
+        "lineHeight": "19.5px",
+        "isWrapped": false
+      },
+      {
+        "label": "Organizations & Roles",
+        "height": 40,
+        "width": 235,
+        "iconWidth": 18,
+        "iconHeight": 18,
+        "fontSize": "13px",
+        "lineHeight": "19.5px",
+        "isWrapped": false
+      },
+      {
+        "label": "Security & Audit",
+        "height": 40,
+        "width": 235,
+        "iconWidth": 18,
+        "iconHeight": 18,
+        "fontSize": "13px",
+        "lineHeight": "19.5px",
+        "isWrapped": false
+      },
+      {
+        "label": "Settings",
+        "height": 40,
+        "width": 235,
+        "iconWidth": 18,
+        "iconHeight": 18,
+        "fontSize": "13px",
+        "lineHeight": "19.5px",
+        "isWrapped": false
+      }
+    ]
+  },
+  "canvas3D": {
+    "present": false
+  },
+  "pageByPage": {},
+  "mobileResponsive": {}
+}

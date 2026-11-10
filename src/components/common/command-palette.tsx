@@ -29,7 +29,6 @@ import {
   Languages,
   Bot,
   Building2,
-  PlayCircle,
   BookOpen,
   GraduationCap,
 } from "lucide-react";
@@ -141,7 +140,6 @@ export function CommandPalette({ open, onClose, onOpenChange, onCreateCase }: Co
       { title: "Security & Kill Switch", href: "/admin/security", icon: ShieldCheck },
       { title: "Analytics & Reporting", href: "/analytics", icon: BarChart3 },
       { title: "Organizations & Team", href: "/organizations", icon: Building2 },
-      { title: "Guided Interactive Demo", href: "/demo", icon: PlayCircle },
       { title: "Documentation & API Reference", href: "/docs", icon: BookOpen },
       { title: "BERR Methodology & Benchmarks", href: "/methodology", icon: GraduationCap },
       { title: "Settings & Profile", href: "/settings", icon: Settings },

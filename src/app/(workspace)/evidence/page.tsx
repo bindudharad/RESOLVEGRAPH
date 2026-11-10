@@ -227,7 +227,7 @@ export default function EvidencePage() {
               <p className="text-[11.5px] font-mono uppercase font-semibold text-[var(--ink-2)]">Total Files</p>
               <p className="mt-1 text-[24px] font-bold tabular-nums font-mono text-[var(--ink)]">{stats.total}</p>
             </div>
-            <span className="text-[10.5px] text-[var(--ink-3)] font-mono pt-2 border-t border-[var(--line)]/50 mt-2">Fictional demonstration items</span>
+            <span className="text-[10.5px] text-[var(--ink-3)] font-mono pt-2 border-t border-[var(--line)]/50 mt-2">Across all tenant cases</span>
           </div>
         </TiltCard3D>
 

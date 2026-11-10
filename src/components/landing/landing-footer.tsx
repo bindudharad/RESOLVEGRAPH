@@ -31,7 +31,7 @@ const FOOTER_GROUPS = [
     title: "Forensic Methodology",
     links: [
       { label: "10-Tier Evidentiary Standard", href: "/methodology" },
-      { label: "Alex Morgan Interactive Demo", href: "/demo" },
+      { label: "Workspace Overview", href: "/overview" },
       { label: "API & SDK Documentation", href: "/docs" },
       { label: "Multilingual Ingestion", href: "/multilingual" },
       { label: "Dispute Analytics", href: "/analytics" },
@@ -117,10 +117,10 @@ export function LandingFooter() {
                 Open Workspace <ArrowUpRight className="h-3.5 w-3.5" />
               </Link>
               <Link
-                href="/demo"
+                href="/overview"
                 className="inline-flex items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-medium text-[var(--ink)] hover:bg-[var(--surface-2)]"
               >
-                Launch Demo Case
+                Workspace Overview
               </Link>
             </div>
           </div>

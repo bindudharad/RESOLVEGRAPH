@@ -273,7 +273,7 @@ export default function ResolutionPage() {
               }`}
             >
               <span className={`h-1.5 w-1.5 rounded-full ${isLiveDb ? "bg-emerald-400" : "bg-amber-400"}`} />
-              {isLiveDb ? "Database Backed" : "Demo Workspace"}
+              {isLiveDb ? "Database Backed" : "Protected Resolution Workspace"}
             </span>
           </div>
           <p className="mt-1 text-[13.5px] text-subtle">

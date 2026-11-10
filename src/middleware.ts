@@ -14,7 +14,6 @@ const PUBLIC_PATHS = [
   "/access-denied",
   "/docs",
   "/methodology",
-  "/help",
   "/api/auth",
   "/api/health",
   "/api/webhooks/paypal",

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Menu, X, Sparkles } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 
 interface NavLink {
@@ -16,8 +16,8 @@ const NAV_LINKS: NavLink[] = [
   { label: "How It Works", href: "#how-it-works" },
   { label: "Investigation", href: "#investigation-showcase" },
   { label: "Security & Trust", href: "#trust-safety" },
-  { label: "3D Overview", href: "/overview", badge: "3D Lab" },
-  { label: "Demo", href: "/demo", badge: "Live" },
+  { label: "Methodology", href: "/methodology" },
+  { label: "Documentation", href: "/docs" },
 ];
 
 export function MarketingNavbar() {
@@ -84,11 +84,10 @@ export function MarketingNavbar() {
           </Link>
 
           <Link
-            href="/demo"
+            href="/overview"
             className="group inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:brightness-110 active:scale-[0.98]"
           >
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Try Demo</span>
+            <span>Get Started</span>
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
@@ -135,12 +134,12 @@ export function MarketingNavbar() {
                 Sign In
               </Link>
               <Link
-                href="/demo"
+                href="/overview"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm"
               >
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Try Interactive Demo</span>
+                <span>Get Started</span>
+                <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
           </nav>

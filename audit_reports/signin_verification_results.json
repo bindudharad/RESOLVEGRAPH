@@ -1,0 +1,142 @@
+[
+  {
+    "viewport": "desktop-1440x900",
+    "width": 1440,
+    "height": 900,
+    "type": "Desktop",
+    "audit": {
+      "iconsPresent": {
+        "shieldCheck": true,
+        "userRound": true,
+        "store": true,
+        "allVisible": true
+      },
+      "labelsPresent": {
+        "platform": true,
+        "buyer": true,
+        "merchant": true
+      },
+      "docWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "docHeight": 900,
+      "clientHeight": 900,
+      "needsVerticalScroll": false,
+      "submitRect": {},
+      "isSubmitVisibleWithoutScroll": true
+    },
+    "screenshotPath": "C:\\Projects\\resolvegraph\\public\\screenshots\\auth-audit\\after-desktop-1440x900.png"
+  },
+  {
+    "viewport": "laptop-1366x768",
+    "width": 1366,
+    "height": 768,
+    "type": "Laptop",
+    "audit": {
+      "iconsPresent": {
+        "shieldCheck": true,
+        "userRound": true,
+        "store": true,
+        "allVisible": true
+      },
+      "labelsPresent": {
+        "platform": true,
+        "buyer": true,
+        "merchant": true
+      },
+      "docWidth": 1366,
+      "clientWidth": 1366,
+      "hasHorizontalOverflow": false,
+      "docHeight": 851,
+      "clientHeight": 768,
+      "needsVerticalScroll": true,
+      "submitRect": {},
+      "isSubmitVisibleWithoutScroll": true
+    },
+    "screenshotPath": "C:\\Projects\\resolvegraph\\public\\screenshots\\auth-audit\\after-laptop-1366x768.png"
+  },
+  {
+    "viewport": "tablet-768x1024",
+    "width": 768,
+    "height": 1024,
+    "type": "Tablet",
+    "audit": {
+      "iconsPresent": {
+        "shieldCheck": true,
+        "userRound": true,
+        "store": true,
+        "allVisible": true
+      },
+      "labelsPresent": {
+        "platform": true,
+        "buyer": true,
+        "merchant": true
+      },
+      "docWidth": 768,
+      "clientWidth": 768,
+      "hasHorizontalOverflow": false,
+      "docHeight": 1024,
+      "clientHeight": 1024,
+      "needsVerticalScroll": false,
+      "submitRect": {},
+      "isSubmitVisibleWithoutScroll": true
+    },
+    "screenshotPath": "C:\\Projects\\resolvegraph\\public\\screenshots\\auth-audit\\after-tablet-768x1024.png"
+  },
+  {
+    "viewport": "mobile-390x844",
+    "width": 390,
+    "height": 844,
+    "type": "Mobile",
+    "audit": {
+      "iconsPresent": {
+        "shieldCheck": true,
+        "userRound": true,
+        "store": true,
+        "allVisible": true
+      },
+      "labelsPresent": {
+        "platform": true,
+        "buyer": true,
+        "merchant": true
+      },
+      "docWidth": 390,
+      "clientWidth": 390,
+      "hasHorizontalOverflow": false,
+      "docHeight": 844,
+      "clientHeight": 844,
+      "needsVerticalScroll": false,
+      "submitRect": {},
+      "isSubmitVisibleWithoutScroll": true
+    },
+    "screenshotPath": "C:\\Projects\\resolvegraph\\public\\screenshots\\auth-audit\\after-mobile-390x844.png"
+  },
+  {
+    "viewport": "small-mobile-360x740",
+    "width": 360,
+    "height": 740,
+    "type": "Small Mobile",
+    "audit": {
+      "iconsPresent": {
+        "shieldCheck": true,
+        "userRound": true,
+        "store": true,
+        "allVisible": true
+      },
+      "labelsPresent": {
+        "platform": true,
+        "buyer": true,
+        "merchant": true
+      },
+      "docWidth": 360,
+      "clientWidth": 360,
+      "hasHorizontalOverflow": false,
+      "docHeight": 818,
+      "clientHeight": 740,
+      "needsVerticalScroll": true,
+      "submitRect": {},
+      "isSubmitVisibleWithoutScroll": true
+    },
+    "screenshotPath": "C:\\Projects\\resolvegraph\\public\\screenshots\\auth-audit\\after-small-mobile-360x740.png"
+  }
+]

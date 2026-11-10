@@ -257,10 +257,10 @@ export function HowItWorksFlowSection() {
         <div className="mt-8 flex items-center justify-between border-t border-[var(--line)] pt-6 text-xs text-[var(--ink-2)]">
           <span>Supported payment channels: PayPal, Stripe, SEPA, Visa, Mastercard, and India UPI.</span>
           <Link
-            href="/demo"
+            href="/overview"
             className="inline-flex items-center gap-1.5 font-semibold text-[var(--accent)] hover:text-[var(--ink)] transition-colors"
           >
-            <span>See live flow in demo</span>
+            <span>Explore Resolution Workspace</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>

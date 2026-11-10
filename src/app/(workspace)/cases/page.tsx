@@ -136,7 +136,7 @@ export default function CasesPage() {
             onClick={handleExport}
             icon={<Download className="h-4 w-4" />}
           >
-            Export (Demo)
+            Export CSV
           </Button>
 
           <CreateCaseAction />

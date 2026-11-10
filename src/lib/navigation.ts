@@ -1,37 +1,24 @@
 import {
-  Home,
   BarChart3,
   Bot,
   Building2,
   CreditCard,
   FolderOpen,
-  HelpCircle,
-  Inbox,
   LayoutDashboard,
   Library,
   MessageSquare,
   Package,
-  PlayCircle,
   Settings,
-  ShieldAlert,
   ShieldCheck,
   ShoppingCart,
-  Sparkles,
-  UploadCloud,
-  FileSearch,
-  Layers,
-  Languages,
-  BookOpen,
-  GraduationCap,
   type LucideIcon,
 } from "lucide-react";
 
 /**
  * Navigation availability.
  *
- * `live`    — fully designed and interactive in Step 1.
- * `preview` — routed, but renders an explicit placeholder so it can never be
- *             mistaken for finished backend functionality.
+ * `live`    — fully designed and interactive.
+ * `preview` — routed with informational context.
  */
 export type NavAvailability = "live" | "preview";
 
@@ -40,42 +27,56 @@ export interface NavItem {
   href: string;
   icon: LucideIcon;
   availability: NavAvailability;
+  adminOnly?: boolean;
+  merchantOnly?: boolean;
   /** Short explanation shown on preview routes. */
   previewNote?: string;
 }
 
 export interface NavGroup {
   label: string;
+  adminOnly?: boolean;
   items: NavItem[];
 }
 
 export const NAV_GROUPS: NavGroup[] = [
   {
-    label: "Overview",
+    label: "Main",
     items: [
       {
-        label: "Home",
-        href: "/dashboard",
-        icon: Home,
+        label: "Overview",
+        href: "/overview",
+        icon: LayoutDashboard,
         availability: "live",
       },
       {
-        label: "Guided Demo",
-        href: "/demo",
-        icon: PlayCircle,
+        label: "Payments",
+        href: "/payments",
+        icon: CreditCard,
+        availability: "live",
+      },
+      {
+        label: "Investigations",
+        href: "/cases",
+        icon: FolderOpen,
         availability: "live",
       },
     ],
   },
   {
-    label: "Operations",
+    label: "Evidence",
     items: [
       {
-        label: "All Cases",
-        href: "/cases",
-        icon: FolderOpen,
+        label: "Evidence Vault",
+        href: "/evidence",
+        icon: Library,
         availability: "live",
       },
+    ],
+  },
+  {
+    label: "Commerce",
+    items: [
       {
         label: "Purchase Memory",
         href: "/purchases",
@@ -83,137 +84,58 @@ export const NAV_GROUPS: NavGroup[] = [
         availability: "live",
       },
       {
-        label: "Package Passports",
+        label: "Package & Delivery",
         href: "/packages",
         icon: Package,
         availability: "live",
       },
+    ],
+  },
+  {
+    label: "Workspace",
+    items: [
       {
-        label: "Shared Resolution Room",
+        label: "Resolution Room",
         href: "/resolution-room",
         icon: MessageSquare,
         availability: "live",
       },
       {
-        label: "Payments & Refunds",
-        href: "/payments",
-        icon: CreditCard,
+        label: "Reports & Analytics",
+        href: "/analytics",
+        icon: BarChart3,
         availability: "live",
       },
-      {
-        label: "PayPal Disputes",
-        href: "/paypal/disputes",
-        icon: ShieldAlert,
-        availability: "live",
-      },
-      {
-        label: "Evidence Library",
-        href: "/evidence",
-        icon: Library,
-        availability: "live",
-      },
-      {
-        label: "Resolution Center",
-        href: "/resolution",
-        icon: Inbox,
-        availability: "live",
-      },
-    ],
-  },
-  {
-    label: "Payment Investigation",
-    items: [
-      {
-        label: "Payment Incidents",
-        href: "/incidents",
-        icon: FileSearch,
-        availability: "live",
-      },
-      {
-        label: "Universal Intake",
-        href: "/intake",
-        icon: UploadCloud,
-        availability: "live",
-      },
-      {
-        label: "Cross-Reconciliation",
-        href: "/reconciliation",
-        icon: Layers,
-        availability: "live",
-      },
-      {
-        label: "Multilingual Voice",
-        href: "/multilingual",
-        icon: Languages,
-        availability: "live",
-      },
-      {
-        label: "Security & Kill Switch",
-        href: "/admin/security",
-        icon: ShieldCheck,
-        availability: "live",
-      },
-    ],
-  },
-  {
-    label: "Intelligence",
-    items: [
       {
         label: "AI Copilot",
         href: "/copilot",
         icon: Bot,
         availability: "live",
       },
-      {
-        label: "Investigation Insights",
-        href: "/investigation",
-        icon: Sparkles,
-        availability: "live",
-      },
-      {
-        label: "Analytics",
-        href: "/analytics",
-        icon: BarChart3,
-        availability: "live",
-      },
     ],
   },
   {
-    label: "Reference",
+    label: "Administration",
+    adminOnly: true,
     items: [
       {
-        label: "Documentation & APIs",
-        href: "/docs",
-        icon: BookOpen,
-        availability: "live",
-      },
-      {
-        label: "BERR Methodology",
-        href: "/methodology",
-        icon: GraduationCap,
-        availability: "live",
-      },
-    ],
-  },
-  {
-    label: "System",
-    items: [
-      {
-        label: "Organizations",
+        label: "Organizations & Roles",
         href: "/organizations",
         icon: Building2,
         availability: "live",
+        adminOnly: true,
+      },
+      {
+        label: "Security & Audit",
+        href: "/admin/security",
+        icon: ShieldCheck,
+        availability: "live",
+        adminOnly: true,
       },
       {
         label: "Settings",
         href: "/settings",
         icon: Settings,
-        availability: "live",
-      },
-      {
-        label: "Help & Support",
-        href: "/help",
-        icon: HelpCircle,
         availability: "live",
       },
     ],
@@ -243,16 +165,18 @@ export interface Breadcrumb {
  * Home is always a clickable link back to /dashboard on any subpage.
  */
 export function breadcrumbsFor(pathname: string): Breadcrumb[] {
-  // Canonical Home route
+  if (pathname === "/overview") {
+    return [{ label: "Overview" }];
+  }
   if (pathname === "/dashboard" || pathname === "/") {
-    return [{ label: "Home" }];
+    return [{ label: "Overview", href: "/overview" }, { label: "Command Center" }];
   }
 
   const segments = pathname.split("/").filter(Boolean);
-  if (segments.length === 0) return [{ label: "Home" }];
+  if (segments.length === 0) return [{ label: "Overview" }];
 
-  // Every subpage breadcrumb trail begins with Home linking to /dashboard
-  const crumbs: Breadcrumb[] = [{ label: "Home", href: "/dashboard" }];
+  // Every subpage breadcrumb trail begins with Overview linking to /overview
+  const crumbs: Breadcrumb[] = [{ label: "Overview", href: "/overview" }];
   const root = segments[0];
   const rootPath = `/${root}`;
 
@@ -262,7 +186,7 @@ export function breadcrumbsFor(pathname: string): Breadcrumb[] {
 
   let rootLabel: string;
   if (rootItem) {
-    rootLabel = rootItem.label === "All Cases" ? "Cases" : rootItem.label;
+    rootLabel = rootItem.label;
   } else if (root === "incidents") {
     rootLabel = "Payment Incidents";
   } else if (root === "resolution-room") {
@@ -271,7 +195,7 @@ export function breadcrumbsFor(pathname: string): Breadcrumb[] {
     rootLabel = capitalize(root);
   }
 
-  // If on the root page itself (e.g. /cases, /evidence, /reconciliation)
+  // If on the root page itself (e.g. /cases, /evidence, /payments)
   if (segments.length === 1) {
     crumbs.push({ label: rootLabel });
     return crumbs;
@@ -295,7 +219,8 @@ export function breadcrumbsFor(pathname: string): Breadcrumb[] {
 
 /** Route title used in the top bar and document metadata. */
 export function titleFor(pathname: string): string {
-  if (pathname === "/dashboard" || pathname === "/") return "Home";
+  if (pathname === "/overview") return "Overview";
+  if (pathname === "/dashboard" || pathname === "/") return "Command Center";
   const item = findNavItem(pathname);
   if (item) return item.label;
   if (pathname.startsWith("/cases/")) return "Case Details";

@@ -33,8 +33,8 @@ export function MarketingFooter() {
             </h4>
             <ul className="space-y-2 text-xs text-[var(--ink-2)]">
               <li>
-                <Link href="/demo" className="hover:text-[var(--accent)] transition-colors">
-                  Interactive Demo
+                <Link href="/overview" className="hover:text-[var(--accent)] transition-colors">
+                  Workspace Overview
                 </Link>
               </li>
               <li>

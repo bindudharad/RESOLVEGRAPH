@@ -39,13 +39,13 @@ export default function SignUpPage() {
         name: fullName.trim(),
         email: email.trim().toLowerCase(),
         password,
-        callbackURL: "/dashboard",
+        callbackURL: "/overview",
       });
 
       if (res.error) {
         setError(res.error.message || "Failed to create account. Email may already be registered.");
       } else {
-        router.push("/dashboard");
+        router.push("/overview");
         router.refresh();
       }
     } catch (err: unknown) {
@@ -57,7 +57,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 w-full max-w-md mx-auto">
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold tracking-tight text-fg">
@@ -105,7 +105,7 @@ export default function SignUpPage() {
             <Input
               id="email"
               type="email"
-              placeholder="e.g. alex.morgan@consumer.demo"
+              placeholder="e.g. alex.morgan@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               icon={<Mail className="h-4 w-4" />}

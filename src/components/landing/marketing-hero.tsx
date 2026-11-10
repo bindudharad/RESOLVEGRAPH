@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
-  Sparkles,
   ShieldCheck,
   CreditCard,
   Building2,
@@ -119,11 +118,10 @@ export function MarketingHero() {
             {/* Primary & Secondary CTAs */}
             <div className="mt-8 flex flex-wrap items-center gap-3.5">
               <Link
-                href="/demo"
+                href="/overview"
                 className="group inline-flex items-center gap-2.5 rounded-xl bg-[var(--accent)] px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[var(--accent)]/20 transition-all hover:brightness-110 active:scale-[0.98]"
               >
-                <Sparkles className="h-4 w-4" />
-                <span>Try Interactive Demo</span>
+                <span>Get Started</span>
                 <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
               </Link>
 
@@ -136,10 +134,10 @@ export function MarketingHero() {
               </a>
 
               <Link
-                href="/overview"
+                href="/sign-in"
                 className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-mono text-[var(--ink-3)] hover:text-[var(--accent)] transition-colors"
               >
-                <span>3D Evidence Graph Overview →</span>
+                <span>Sign In to Workspace →</span>
               </Link>
             </div>
 
