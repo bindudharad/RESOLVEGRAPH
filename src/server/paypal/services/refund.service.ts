@@ -6,6 +6,8 @@ import { calculateRemainingRefundable } from '../utils/money';
 import { CaseService } from '@/server/services/case.service';
 import { EventType, UserRole, OrganizationRole } from '@/generated/prisma/client';
 import { AuthenticatedUser } from '@/server/auth/session';
+import { PayPalSyncService } from './paypal-sync.service';
+import { KillSwitchService } from '@/server/services/kill-switch.service';
 
 export interface ExecuteRefundInput {
   paymentId: string;
@@ -70,6 +72,12 @@ export class RefundService {
       throw new Error(
         `Cannot refund payment with status "${payment.paymentStatus}". Capture must be COMPLETED.`
       );
+    }
+
+    // Emergency Kill-Switch Guard
+    const killSwitch = await KillSwitchService.getStatus();
+    if (killSwitch.isOutboundPayPalKilled) {
+      throw new Error('Emergency Kill Switch is ACTIVE: Outbound PayPal operations are administratively blocked.');
     }
 
     // Authorization Guard: Check if actor is authorized merchant/admin
@@ -222,6 +230,22 @@ export class RefundService {
       }
 
       await IdempotencyService.completeOperation(idempotency.requestId, paypalRefund.id);
+
+      // Synchronize with Canonical Transaction Engine
+      try {
+        await PayPalSyncService.syncRefund({
+          refundId: paypalRefund.id,
+          captureId: payment.captureId,
+          amountMinor: refundAmountMinor,
+          currency: payment.currency,
+          status: 'COMPLETED',
+          reason: input.reason,
+          caseId: payment.commerceOrder.caseId,
+          timestamp: completedRefund.completedAt || new Date(),
+        });
+      } catch (syncErr) {
+        console.warn('[RefundService] Canonical refund sync notice:', syncErr);
+      }
 
       // Log audit events on case if linked
       if (payment.commerceOrder.caseId) {

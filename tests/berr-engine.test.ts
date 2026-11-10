@@ -51,6 +51,7 @@ describe('ResolveGraph BERR Reasoning Engine Suite', () => {
 
   test('BerrEngine runs full 8-stage pipeline with consent and produces structured findings', async () => {
     const caseRecord = await prisma.caseRecord.findFirst({
+      where: { caseNumber: 'RG-1001' },
       include: { evidence: true, claims: true }
     });
     assert.ok(caseRecord);
@@ -65,7 +66,7 @@ describe('ResolveGraph BERR Reasoning Engine Suite', () => {
         targetId: ev.id,
         grantedById: user.id,
         caseId: caseRecord.id,
-        provider: 'test'
+        provider: 'test',
       });
     }
     for (const cl of caseRecord.claims) {
@@ -74,7 +75,7 @@ describe('ResolveGraph BERR Reasoning Engine Suite', () => {
         targetId: cl.id,
         grantedById: user.id,
         caseId: caseRecord.id,
-        provider: 'test'
+        provider: 'test',
       });
     }
 
@@ -82,7 +83,7 @@ describe('ResolveGraph BERR Reasoning Engine Suite', () => {
     const run = await AnalysisQueue.enqueueAnalysis({
       caseId: caseRecord.id,
       requestedById: user.id,
-      provider: 'test'
+      provider: 'test',
     });
 
     assert.strictEqual(run.status, 'QUEUED');

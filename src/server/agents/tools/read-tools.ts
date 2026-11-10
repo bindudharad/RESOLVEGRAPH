@@ -10,6 +10,12 @@ import { prisma } from '@/lib/prisma';
 import { ToolDefinition } from '../types/agent.types';
 import { GraphBuilder } from '@/server/graph/graph-builder';
 
+async function resolveCaseRecord(identifier: string) {
+  return prisma.caseRecord.findFirst({
+    where: { OR: [{ id: identifier }, { caseNumber: identifier }] },
+  });
+}
+
 export const getCaseSummaryTool: ToolDefinition<{ caseId: string }> = {
   name: 'get_case_summary',
   description: 'Retrieves core case summary including status, stage, category, dispute amount, buyer, and merchant info.',
@@ -18,8 +24,8 @@ export const getCaseSummaryTool: ToolDefinition<{ caseId: string }> = {
     caseId: z.string().min(1, 'caseId is required')
   }),
   execute: async (args) => {
-    const caseRecord = await prisma.caseRecord.findUnique({
-      where: { id: args.caseId },
+    const caseRecord = await prisma.caseRecord.findFirst({
+      where: { OR: [{ id: args.caseId }, { caseNumber: args.caseId }] },
       include: {
         buyer: { select: { id: true, fullName: true, email: true } },
         merchant: { select: { id: true, fullName: true, email: true, organization: true } },
@@ -60,8 +66,10 @@ export const getCaseClaimsTool: ToolDefinition<{ caseId: string }> = {
     caseId: z.string().min(1, 'caseId is required')
   }),
   execute: async (args) => {
+    const caseRecord = await resolveCaseRecord(args.caseId);
+    if (!caseRecord) throw new Error(`Case ${args.caseId} not found.`);
     const claims = await prisma.claim.findMany({
-      where: { caseId: args.caseId },
+      where: { caseId: caseRecord.id },
       include: {
         author: { select: { id: true, fullName: true, role: true } },
         evidence: { select: { id: true, filename: true, evidenceType: true } }
@@ -91,8 +99,10 @@ export const getCaseEvidenceMetadataTool: ToolDefinition<{ caseId: string }> = {
     caseId: z.string().min(1, 'caseId is required')
   }),
   execute: async (args) => {
+    const caseRecord = await resolveCaseRecord(args.caseId);
+    if (!caseRecord) throw new Error(`Case ${args.caseId} not found.`);
     const items = await prisma.evidence.findMany({
-      where: { caseId: args.caseId },
+      where: { caseId: caseRecord.id },
       select: {
         id: true,
         filename: true,
@@ -124,8 +134,10 @@ export const getCaseTimelineTool: ToolDefinition<{ caseId: string }> = {
     caseId: z.string().min(1, 'caseId is required')
   }),
   execute: async (args) => {
+    const caseRecord = await resolveCaseRecord(args.caseId);
+    if (!caseRecord) throw new Error(`Case ${args.caseId} not found.`);
     const timelineEvents = await prisma.caseTimelineEvent.findMany({
-      where: { caseId: args.caseId },
+      where: { caseId: caseRecord.id },
       include: { actor: { select: { fullName: true, role: true } } },
       orderBy: { recordedAt: 'asc' }
     });
@@ -151,9 +163,11 @@ export const getCaseFindingsTool: ToolDefinition<{ caseId: string }> = {
     caseId: z.string().min(1, 'caseId is required')
   }),
   execute: async (args) => {
+    const caseRecord = await resolveCaseRecord(args.caseId);
+    if (!caseRecord) throw new Error(`Case ${args.caseId} not found.`);
     const [facts, findings] = await Promise.all([
       prisma.extractedFact.findMany({
-        where: { caseId: args.caseId },
+        where: { caseId: caseRecord.id },
         select: {
           id: true,
           factType: true,
@@ -209,7 +223,9 @@ export const getCaseGraphTool: ToolDefinition<{ caseId: string }> = {
   }),
   execute: async (args) => {
     try {
-      const graph = await GraphBuilder.buildGraph(args.caseId);
+      const caseRecord = await resolveCaseRecord(args.caseId);
+      const dbId = caseRecord ? caseRecord.id : args.caseId;
+      const graph = await GraphBuilder.buildGraph(dbId);
       return {
         nodeCount: graph.nodes.length,
         edgeCount: graph.edges.length,
@@ -238,8 +254,8 @@ export const getApplicablePolicyTool: ToolDefinition<{ caseId: string; category?
     category: z.string().optional()
   }),
   execute: async (args) => {
-    const caseRecord = await prisma.caseRecord.findUnique({
-      where: { id: args.caseId },
+    const caseRecord = await prisma.caseRecord.findFirst({
+      where: { OR: [{ id: args.caseId }, { caseNumber: args.caseId }] },
       select: { organizationId: true, category: true }
     });
 
@@ -289,8 +305,10 @@ export const getResolutionHistoryTool: ToolDefinition<{ caseId: string }> = {
     caseId: z.string().min(1, 'caseId is required')
   }),
   execute: async (args) => {
+    const caseRecord = await resolveCaseRecord(args.caseId);
+    if (!caseRecord) throw new Error(`Case ${args.caseId} not found.`);
     const proposals = await prisma.resolutionProposal.findMany({
-      where: { caseId: args.caseId },
+      where: { caseId: caseRecord.id },
       include: {
         responses: { select: { responderId: true, response: true, comment: true, createdAt: true } }
       },
@@ -317,8 +335,10 @@ export const getPaymentStatusTool: ToolDefinition<{ caseId: string }> = {
     caseId: z.string().min(1, 'caseId is required')
   }),
   execute: async (args) => {
+    const caseRecord = await resolveCaseRecord(args.caseId);
+    const dbId = caseRecord ? caseRecord.id : args.caseId;
     const order = await prisma.commerceOrder.findFirst({
-      where: { caseId: args.caseId },
+      where: { OR: [{ caseId: dbId }, { orderNumber: args.caseId }] },
       include: {
         payments: {
           include: {

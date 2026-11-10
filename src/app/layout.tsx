@@ -1,8 +1,16 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Hanken_Grotesk, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, Instrument_Serif, IBM_Plex_Mono, Hanken_Grotesk } from "next/font/google";
 import { ThemeProvider } from "@/components/common/theme-provider";
 import "./globals.css";
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-heading",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+  fallback: ["system-ui", "-apple-system", "sans-serif"],
+});
 
 const hankenGrotesk = Hanken_Grotesk({
   variable: "--font-sans",
@@ -21,9 +29,10 @@ const instrumentSerif = Instrument_Serif({
   fallback: ["Georgia", "Cambria", "Times New Roman", "serif"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
   fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
 });
@@ -34,7 +43,7 @@ export const metadata: Metadata = {
     template: "%s · RESOLVEGRAPH",
   },
   description:
-    "From the first complaint to a fair resolution. Connecting buyers, merchants, and evidence into an explainable bilateral convergence ledger.",
+    "A dispute is a story told in fragments. We connect the evidence. RESOLVEGRAPH brings buyer claims, merchant records and payment events into one source-linked investigation space.",
   applicationName: "RESOLVEGRAPH",
   keywords: [
     "payment investigation",
@@ -51,7 +60,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={`dark ${hankenGrotesk.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`dark ${spaceGrotesk.variable} ${hankenGrotesk.variable} ${instrumentSerif.variable} ${ibmPlexMono.variable} h-full antialiased`}
       data-theme="dark"
       suppressHydrationWarning
     >

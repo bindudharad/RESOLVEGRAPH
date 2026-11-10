@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
-import { LandingPage } from "@/components/landing/landing-page";
+import { AppShell } from "@/components/layout/app-shell";
+import { UnifiedOverviewDashboard } from "@/components/overview/unified-overview-dashboard";
 
 export const metadata: Metadata = {
-  title: "Platform Overview — RESOLVEGRAPH",
+  title: "Overview Dashboard — RESOLVEGRAPH",
   description:
-    "AI-powered commerce resolution infrastructure connecting buyers, merchants, payment records and evidence in one platform.",
+    "Unified role-based overview dashboard connecting payments, active investigations, and evidence intelligence.",
 };
 
 export default function OverviewPage() {
-  return <LandingPage />;
+  return (
+    <AppShell>
+      <UnifiedOverviewDashboard />
+    </AppShell>
+  );
 }

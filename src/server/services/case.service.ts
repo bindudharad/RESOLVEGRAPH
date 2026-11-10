@@ -272,7 +272,7 @@ export class CaseService {
       });
 
       return formatCaseResponse(newCase);
-    });
+    }, { maxWait: 10000, timeout: 20000 });
   }
 
   /**

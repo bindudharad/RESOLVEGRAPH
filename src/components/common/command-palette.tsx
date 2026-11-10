@@ -50,16 +50,24 @@ interface CommandItem {
 
 interface CommandPaletteProps {
   open: boolean;
-  onClose: () => void;
+  onClose?: () => void;
+  onOpenChange?: (open: boolean) => void;
   onCreateCase?: () => void;
 }
 
-export function CommandPalette({ open, onClose, onCreateCase }: CommandPaletteProps) {
+export function CommandPalette({ open, onClose, onOpenChange, onCreateCase }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const { cases } = useDemoCases();
+
+  const handleClose = () => {
+    setQuery("");
+    setSelectedIndex(0);
+    onClose?.();
+    onOpenChange?.(false);
+  };
 
   const items = useMemo<CommandItem[]>(() => {
     const list: CommandItem[] = [];
@@ -72,7 +80,7 @@ export function CommandPalette({ open, onClose, onCreateCase }: CommandPalettePr
       subtitle: "Open interactive dispute registration form",
       icon: Plus,
       action: () => {
-        onClose();
+        handleClose();
         onCreateCase?.();
       },
     });
@@ -84,7 +92,7 @@ export function CommandPalette({ open, onClose, onCreateCase }: CommandPalettePr
       subtitle: "Switch between light-first and calibrated dark theme",
       icon: Settings,
       action: () => {
-        onClose();
+        handleClose();
         const root = document.documentElement;
         const current = root.getAttribute("data-theme") || "light";
         const next = current === "dark" ? "light" : "dark";
@@ -102,7 +110,7 @@ export function CommandPalette({ open, onClose, onCreateCase }: CommandPalettePr
       subtitle: "Disable parallax and clamp transitions to 120ms fades",
       icon: Settings,
       action: () => {
-        onClose();
+        handleClose();
         const root = document.documentElement;
         const current = root.getAttribute("data-motion") || "full";
         const next = current === "reduced" ? "full" : "reduced";
@@ -191,20 +199,12 @@ export function CommandPalette({ open, onClose, onCreateCase }: CommandPalettePr
   const safeIndex = items.length === 0 ? 0 : Math.min(selectedIndex, items.length - 1);
 
   const handleSelect = (item: CommandItem) => {
-    setQuery("");
-    setSelectedIndex(0);
-    onClose();
+    handleClose();
     if (item.action) {
       item.action();
     } else if (item.href) {
       router.push(item.href);
     }
-  };
-
-  const handleClose = () => {
-    setQuery("");
-    setSelectedIndex(0);
-    onClose();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

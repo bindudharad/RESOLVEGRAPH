@@ -15,6 +15,8 @@ import {
 import { registerAllTools } from '../tools';
 import { CaseTriageAgent } from '../specialists/case-triage.agent';
 import { EvidenceInvestigatorAgent } from '../specialists/evidence-investigator.agent';
+import { PaymentInvestigationAgent } from '../specialists/payment-investigation.agent';
+import { RootCauseInvestigationAgent } from '../specialists/root-cause-investigation.agent';
 import { PolicyRemedyAgent } from '../specialists/policy-remedy.agent';
 import { CommunicationDrafterAgent } from '../specialists/communication-drafter.agent';
 import { QualityReviewAgent } from '../specialists/quality-review.agent';
@@ -142,6 +144,14 @@ export class AgentOrchestrator {
           switch (planStep.agentName as AgentRoleName) {
             case 'EvidenceInvestigatorAgent':
               stepOutput = await EvidenceInvestigatorAgent.execute(ctx, stepRecord.id);
+              break;
+
+            case 'PaymentInvestigationAgent':
+              stepOutput = await PaymentInvestigationAgent.execute(ctx);
+              break;
+
+            case 'RootCauseInvestigationAgent':
+              stepOutput = await RootCauseInvestigationAgent.execute(ctx);
               break;
 
             case 'PolicyRemedyAgent':

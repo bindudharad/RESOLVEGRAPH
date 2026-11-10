@@ -4,6 +4,8 @@ import { PayPalProviderFactory } from '../paypal-provider.factory';
 import { IdempotencyService } from '../utils/idempotency';
 import { CaseService } from '@/server/services/case.service';
 import { EventType } from '@/generated/prisma/client';
+import { PayPalSyncService } from './paypal-sync.service';
+import { KillSwitchService } from '@/server/services/kill-switch.service';
 
 export interface CaptureOrderInput {
   providerOrderId: string; // PayPal order ID (e.g. 5O190127TN364715T or MOCK-ORD-...)
@@ -38,6 +40,12 @@ export class CaptureService {
         payment,
         isAlreadyCaptured: true,
       };
+    }
+
+    // Emergency Kill-Switch Guard
+    const killSwitch = await KillSwitchService.getStatus();
+    if (killSwitch.isOutboundPayPalKilled) {
+      throw new Error('Emergency Kill Switch is ACTIVE: Outbound PayPal operations are administratively blocked.');
     }
 
     const idempotency = await IdempotencyService.startOperation(
@@ -77,6 +85,25 @@ export class CaptureService {
       });
 
       await IdempotencyService.completeOperation(idempotency.requestId, captureResult.id);
+
+      // Synchronize with Canonical Transaction Engine & Matching Engine
+      try {
+        await PayPalSyncService.syncCapture({
+          captureId: captureResult.id,
+          providerOrderId: input.providerOrderId,
+          orderNumber: payment.commerceOrder.orderNumber,
+          amountMinor: updatedPayment.amountMinor,
+          currency: updatedPayment.currency,
+          status: captureResult.status,
+          caseId: payment.commerceOrder.caseId,
+          payerReference: payment.payerReference,
+          payeeReference: payment.payeeReference,
+          timestamp: capturedAt,
+          rawPayload: captureResult as unknown as Record<string, unknown>,
+        });
+      } catch (syncErr) {
+        console.warn('[CaptureService] Canonical transaction sync notice:', syncErr);
+      }
 
       // If linked to a case, emit audit event
       if (payment.commerceOrder.caseId) {

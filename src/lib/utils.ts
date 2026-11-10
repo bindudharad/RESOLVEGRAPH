@@ -21,12 +21,16 @@ export function cn(
   return out.join(" ");
 }
 
-const CURRENCY_SYMBOLS: Record<Currency, string> = {
+const CURRENCY_SYMBOLS: Record<string, string> = {
   INR: "₹",
   USD: "$",
+  EUR: "€",
+  GBP: "£",
+  CAD: "CA$",
+  AUD: "AU$",
 };
 
-const CURRENCY_FORMATTERS: Record<Currency, Intl.NumberFormat> = {
+const CURRENCY_FORMATTERS: Record<string, Intl.NumberFormat> = {
   INR: new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }),
   USD: new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 2,
@@ -34,10 +38,17 @@ const CURRENCY_FORMATTERS: Record<Currency, Intl.NumberFormat> = {
   }),
 };
 
-/** ₹6,499 / $149.00 — symbol + locale-correct grouping, no decimals for INR. */
-export function formatCurrency(amount: number, currency: Currency): string {
-  const symbol = CURRENCY_SYMBOLS[currency];
-  const body = CURRENCY_FORMATTERS[currency].format(amount);
+/** ₹6,499 / $149.00 — symbol + locale-correct grouping, no decimals for INR. Safe against unmapped/undefined currencies. */
+export function formatCurrency(amount: number = 0, currency: Currency | string = "USD"): string {
+  const code = (currency || "USD").toUpperCase();
+  const symbol = CURRENCY_SYMBOLS[code] || (code === "EUR" ? "€" : code === "GBP" ? "£" : `${code} `);
+  const formatter =
+    CURRENCY_FORMATTERS[code] ||
+    new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  const body = formatter.format(amount || 0);
   return `${symbol}${body}`;
 }
 

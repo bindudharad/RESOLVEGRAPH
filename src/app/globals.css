@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 @theme {
+  --font-heading: var(--font-heading), "Space Grotesk", system-ui, -apple-system, sans-serif;
   --font-sans: var(--font-sans), "Hanken Grotesk", system-ui, -apple-system, sans-serif;
   --font-display: var(--font-display), "Instrument Serif", Georgia, serif;
-  --font-mono: var(--font-mono), "JetBrains Mono", ui-monospace, monospace;
+  --font-mono: var(--font-mono), "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
 
   /* Convergence Ledger Base System Tokens */
   --color-bg: var(--bg);
@@ -25,6 +26,8 @@
   --color-contested: var(--contested);
   --color-missing: var(--missing);
   --color-verified: var(--verified);
+  --color-copper: var(--copper);
+  --color-amber: var(--amber);
   --color-danger: var(--danger);
 
   /* Legacy workspace bindings */
@@ -51,47 +54,49 @@
 }
 
 :root {
-  /* --- The Convergence Ledger (Light First) --- */
-  --bg: #F6F6F3;
+  /* --- The Convergence Ledger (Warm Paper First) --- */
+  --bg: #F4F1E8;
   --surface: #FFFFFF;
-  --surface-2: #F0F1F5;
-  --line: #E3E5EB;
-  --line-strong: #CBD0DB;
-  --ink: #0E1220;
-  --ink-2: #474E63;
-  --ink-3: #667089;
-  --nav-bg: #0A0F1E;
-  --nav-ink: #C8CEDF;
+  --surface-2: #EAE6DB;
+  --line: #DCD7C9;
+  --line-strong: #C8C2B3;
+  --ink: #11191A;
+  --ink-2: #525C58;
+  --ink-3: #747D79;
+  --nav-bg: #11191A;
+  --nav-ink: #EAE6DB;
   --accent: #4350E5;       /* primary action and focus ring ONLY */
-  --buyer: #2B7BD6;        /* non-judgmental azure */
-  --merchant: #0C9A8A;     /* non-judgmental teal */
-  --ai: #7A5AE0;           /* always paired with dashed outline */
-  --payment: #1B2340;
-  --agreed: #1F9D6B;
-  --contested: #D4871A;
-  --missing: #8A91A5;      /* neutral hatched, never red */
-  --verified: #4350E5;
+  --buyer: #4C91C8;        /* buyer blue */
+  --merchant: #388F7D;     /* merchant sage */
+  --ai: #8875B5;           /* AI violet */
+  --copper: #BC7355;       /* copper accent */
+  --amber: #C18B45;        /* soft amber */
+  --payment: #172020;
+  --agreed: #378D70;
+  --contested: #C18B45;
+  --missing: #929A96;      /* neutral missing evidence */
+  --verified: #378D70;
   --danger: #C8372D;       /* destructive only */
 
   /* Legacy variable mappings */
-  --color-app: #F6F6F3;
-  --color-shell: #F6F6F3;
-  --color-sidebar: #0A0F1E;
+  --color-app: #F4F1E8;
+  --color-shell: #F4F1E8;
+  --color-sidebar: #11191A;
   --color-surface: #FFFFFF;
-  --color-surface-2: #F0F1F5;
-  --color-surface-3: #E3E5EB;
-  --color-line: #E3E5EB;
-  --color-line-2: #CBD0DB;
-  --color-fg: #0E1220;
-  --color-muted: #474E63;
-  --color-subtle: #667089;
-  --color-faint: #8E96AB;
+  --color-surface-2: #EAE6DB;
+  --color-surface-3: #DCD7C9;
+  --color-line: #DCD7C9;
+  --color-line-2: #C8C2B3;
+  --color-fg: #11191A;
+  --color-muted: #525C58;
+  --color-subtle: #747D79;
+  --color-faint: #929A96;
   --color-brand: #4350E5;
   --color-brand-2: #6370F5;
   --color-brand-solid: #4350E5;
-  --color-info: #2B7BD6;
-  --color-success: #1F9D6B;
-  --color-warning: #D4871A;
+  --color-info: #4C91C8;
+  --color-success: #378D70;
+  --color-warning: #C18B45;
   --color-danger: #C8372D;
 
   --duration-instant: 90ms;
@@ -102,46 +107,48 @@
 }
 
 .dark, [data-theme="dark"] {
-  /* --- Calibrated Dark Theme (Value Lift rather than Shadow) --- */
-  --bg: #0D1018;
-  --surface: #141824;
-  --surface-2: #1B2030;
-  --line: #262C3E;
-  --line-strong: #363E56;
-  --ink: #EDEEF4;
-  --ink-2: #A3ABC0;
-  --ink-3: #757E97;
-  --nav-bg: #080B12;
-  --nav-ink: #B8BFD4;
-  --accent: #5C68FA;       /* lifted 10% for dark contrast */
-  --buyer: #3D8CE6;
-  --merchant: #12B3A1;
-  --ai: #8F72ED;
-  --payment: #2B3559;
-  --agreed: #28B37C;
-  --contested: #E89625;
-  --missing: #7C849B;
-  --verified: #5C68FA;
+  /* --- The Convergence Ledger (Editorial Graphite & Paper Contrast) --- */
+  --bg: #11191A;           /* Graphite */
+  --surface: #182223;       /* Deep graphite */
+  --surface-2: #202B2B;     /* Raised surface */
+  --line: #2A3636;
+  --line-strong: #3A4848;
+  --ink: #F4F1E8;           /* Warm paper text */
+  --ink-2: #A6B0AC;
+  --ink-3: #747D79;         /* Muted text */
+  --nav-bg: #0D1415;
+  --nav-ink: #EAE6DB;
+  --accent: #5C68FA;
+  --buyer: #4C91C8;        /* Buyer blue */
+  --merchant: #388F7D;     /* Merchant sage */
+  --ai: #8875B5;           /* AI violet */
+  --copper: #BC7355;       /* Copper accent */
+  --amber: #C18B45;        /* Soft amber */
+  --payment: #202B2B;
+  --agreed: #378D70;       /* Verified green */
+  --contested: #C18B45;    /* Contested amber */
+  --missing: #929A96;      /* Missing evidence */
+  --verified: #378D70;
   --danger: #E04539;
 
-  --color-app: #0D1018;
-  --color-shell: #0D1018;
-  --color-sidebar: #080B12;
-  --color-surface: #141824;
-  --color-surface-2: #1B2030;
-  --color-surface-3: #22293D;
-  --color-line: #262C3E;
-  --color-line-2: #363E56;
-  --color-fg: #EDEEF4;
-  --color-muted: #A3ABC0;
-  --color-subtle: #757E97;
-  --color-faint: #59627A;
+  --color-app: #11191A;
+  --color-shell: #11191A;
+  --color-sidebar: #0D1415;
+  --color-surface: #182223;
+  --color-surface-2: #202B2B;
+  --color-surface-3: #2A3636;
+  --color-line: #2A3636;
+  --color-line-2: #3A4848;
+  --color-fg: #F4F1E8;
+  --color-muted: #A6B0AC;
+  --color-subtle: #747D79;
+  --color-faint: #929A96;
   --color-brand: #5C68FA;
   --color-brand-2: #7A84FB;
   --color-brand-solid: #5C68FA;
-  --color-info: #3D8CE6;
-  --color-success: #28B37C;
-  --color-warning: #E89625;
+  --color-info: #4C91C8;
+  --color-success: #378D70;
+  --color-warning: #C18B45;
   --color-danger: #E04539;
 }
 
@@ -193,6 +200,11 @@
   .font-display {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
+  }
+
+  .font-heading {
+    font-family: var(--font-heading);
+    letter-spacing: -0.025em;
   }
 }
 

@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   Calendar,
   ChevronDown,
-  CreditCard,
   Download,
   Mail,
   Receipt,
@@ -24,19 +23,16 @@ import {
   History,
   ShoppingBag,
   Bot,
-  AlertCircle,
   CheckCircle2,
   Lock,
 } from "lucide-react";
 import { useDemoCases } from "@/hooks/use-demo-cases";
-import { DEMO_CASES } from "@/lib/mock-data";
 import { CANONICAL_DEMO_CASE } from "@/lib/demo-fixture";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { CaseStatusBadge } from "@/components/cases/case-status-badge";
 import { PriorityBadge } from "@/components/cases/priority-badge";
 import { DemoBadge } from "@/components/common/demo-badge";
 import { Button } from "@/components/ui/button";
-import { Chip } from "@/components/ui/chip";
 import { ActionConfirmationDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/common/toast";
 import { ConvergenceTimeline } from "@/components/cases/convergence-timeline";
@@ -53,7 +49,7 @@ import { CasePurchaseTab } from "@/components/cases/case-purchase-tab";
 import { CasePayPalDisputeTab } from "@/components/cases/case-paypal-dispute-tab";
 import { CaseAuditTab } from "@/components/cases/case-audit-tab";
 import { CaseCopilotTab } from "@/components/cases/case-copilot-tab";
-import { CASE_STATUSES, type CaseStatus } from "@/lib/types";
+import { CASE_STATUSES, type CaseStatus, type ResolutionCase } from "@/lib/types";
 
 export type ActiveTab =
   | "overview"
@@ -97,15 +93,49 @@ export default function CaseDetailsPage() {
     window.history.replaceState({}, "", url.toString());
   };
 
+  const [fetchedCase, setFetchedCase] = useState<ResolutionCase | null>(null);
+
+  useEffect(() => {
+    if (!caseId) return;
+    let active = true;
+    fetch(`/api/cases/${encodeURIComponent(caseId)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!active || !data) return;
+        const formatted: ResolutionCase = {
+          id: data.caseNumber || data.id,
+          title: data.title || `Dispute ${data.caseNumber || data.id}`,
+          customer: data.buyer?.name || data.buyer?.fullName || "Alex Morgan",
+          merchant: data.merchant?.name || data.merchantOrganization?.name || "Apex Tech Retail",
+          category: "Refund Pending",
+          amount: typeof data.amountMinor === "number" ? data.amountMinor / 100 : (data.amount || 49.99),
+          currency: (data.currency as "USD" | "INR") || "USD",
+          priority: "High",
+          status: data.status === "RESOLVED" ? "Resolved" : data.status === "UNDER_ANALYSIS" ? "Under Investigation" : "Open",
+          createdAt: data.createdAt ? new Date(data.createdAt).toISOString() : new Date().toISOString(),
+          updatedAt: data.updatedAt ? new Date(data.updatedAt).toISOString() : new Date().toISOString(),
+          description: data.description || "",
+          expectedProduct: data.expectedProduct,
+          reportedProduct: data.reportedProduct,
+        };
+        setFetchedCase(formatted);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [caseId]);
+
   // Find matching case or default to canonical demo fixture
   const caseItem = useMemo(() => {
+    if (fetchedCase) return fetchedCase;
     if (caseId.toUpperCase() === CANONICAL_DEMO_CASE.id.toUpperCase()) {
       return CANONICAL_DEMO_CASE;
     }
     const found = cases.find((c) => c.id.toLowerCase() === caseId.toLowerCase());
     if (found) return found;
     return CANONICAL_DEMO_CASE;
-  }, [cases, caseId]);
+  }, [fetchedCase, cases, caseId]);
 
   const handleStatusChange = (newStatus: CaseStatus) => {
     updateCaseStatus(caseItem.id, newStatus);

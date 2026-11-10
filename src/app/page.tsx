@@ -1,20 +1,12 @@
-import { redirect } from "next/navigation";
-import { getSessionContext } from "@/server/auth/session";
+import type { Metadata } from "next";
+import { MarketingHomePage } from "@/components/landing/marketing-home-page";
 
-export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+  description:
+    "ONE PAYMENT. EVERY SOURCE. ONE EXPLAINABLE RESOLUTION. Connect buyer, merchant, PayPal, bank and delivery evidence into one explainable investigation.",
+};
 
-/**
- * Root Route '/'
- * Unambiguous canonical routing:
- * - Authenticated users are redirected to the Home Investigation Command Center: /dashboard
- * - Unauthenticated visitors are redirected to the public overview landing page: /overview
- */
-export default async function RootPage() {
-  const { user } = await getSessionContext();
-
-  if (user) {
-    redirect("/dashboard");
-  } else {
-    redirect("/overview");
-  }
+export default function RootPage() {
+  return <MarketingHomePage />;
 }

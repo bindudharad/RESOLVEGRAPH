@@ -94,8 +94,64 @@ const ALLOWED_EDGE_CONNECTIONS: Record<
     allowedTargets: ["CAMERA_SESSION"],
   },
   PROCESSED_THROUGH: {
-    allowedSources: ["CASE", "BUYER", "MERCHANT"],
-    allowedTargets: ["CANONICAL_TRANSACTION"],
+    allowedSources: ["CASE", "BUYER", "MERCHANT", "CANONICAL_TRANSACTION", "PAYPAL_CAPTURE", "PAYPAL_ORDER"],
+    allowedTargets: ["CANONICAL_TRANSACTION", "PAYMENT_PROVIDER", "BANK"],
+  },
+  INITIATED_BY: {
+    allowedSources: ["BUYER", "PAYPAL_ORDER", "CANONICAL_TRANSACTION"],
+    allowedTargets: ["PAYPAL_ORDER", "CASE", "BUYER"],
+  },
+  PAID_TO: {
+    allowedSources: ["PAYPAL_CAPTURE", "CANONICAL_TRANSACTION", "BUYER"],
+    allowedTargets: ["MERCHANT", "PAYMENT_PROVIDER"],
+  },
+  CAPTURED_AS: {
+    allowedSources: ["PAYPAL_ORDER", "CANONICAL_TRANSACTION"],
+    allowedTargets: ["PAYPAL_CAPTURE", "CANONICAL_TRANSACTION"],
+  },
+  DEBITED_FROM: {
+    allowedSources: ["CANONICAL_TRANSACTION", "TRANSACTION_SOURCE"],
+    allowedTargets: ["BUYER", "BANK"],
+  },
+  CREDITED_TO: {
+    allowedSources: ["CANONICAL_TRANSACTION", "TRANSACTION_SOURCE"],
+    allowedTargets: ["MERCHANT", "BANK"],
+  },
+  REFUNDED_BY: {
+    allowedSources: ["PAYPAL_REFUND", "CANONICAL_TRANSACTION"],
+    allowedTargets: ["PAYPAL_CAPTURE", "CANONICAL_TRANSACTION", "CASE"],
+  },
+  SUPPORTED_BY: {
+    allowedSources: ["CLAIM", "FINDING", "INCIDENT_FINDING"],
+    allowedTargets: ["EVIDENCE", "FACT", "CANONICAL_TRANSACTION"],
+  },
+  CONTRADICTED_BY: {
+    allowedSources: ["RECONCILIATION_MISMATCH", "PAYPAL_DISPUTE", "CLAIM", "FACT"],
+    allowedTargets: ["CANONICAL_TRANSACTION", "TRANSACTION_SOURCE", "PAYPAL_CAPTURE", "CLAIM", "FACT"],
+  },
+  BELONGS_TO_ORDER: {
+    allowedSources: ["PAYPAL_CAPTURE", "CANONICAL_TRANSACTION", "PACKAGE_PASSPORT"],
+    allowedTargets: ["CASE", "PURCHASE_MEMORY", "PAYPAL_ORDER"],
+  },
+  VERIFIED_BY: {
+    allowedSources: ["EVIDENCE", "FACT", "CANONICAL_TRANSACTION"],
+    allowedTargets: ["PAYMENT_PROVIDER", "BANK", "CASE"],
+  },
+  INVESTIGATED_IN: {
+    allowedSources: ["CLAIM", "EVIDENCE", "CANONICAL_TRANSACTION"],
+    allowedTargets: ["CASE"],
+  },
+  PROPOSED_FOR: {
+    allowedSources: ["RESOLUTION_PROPOSAL"],
+    allowedTargets: ["CASE"],
+  },
+  APPROVED_BY: {
+    allowedSources: ["APPROVAL", "RESOLUTION_PROPOSAL"],
+    allowedTargets: ["MERCHANT", "BUYER"],
+  },
+  EXECUTED_AS: {
+    allowedSources: ["APPROVAL", "RESOLUTION_PROPOSAL"],
+    allowedTargets: ["PAYPAL_REFUND", "CANONICAL_TRANSACTION"],
   },
   MATCHED_WITH: {
     allowedSources: ["CANONICAL_TRANSACTION"],
@@ -104,10 +160,6 @@ const ALLOWED_EDGE_CONNECTIONS: Record<
   RECONCILED_FROM: {
     allowedSources: ["CANONICAL_TRANSACTION"],
     allowedTargets: ["TRANSACTION_SOURCE"],
-  },
-  CONTRADICTED_BY: {
-    allowedSources: ["RECONCILIATION_MISMATCH"],
-    allowedTargets: ["CANONICAL_TRANSACTION", "TRANSACTION_SOURCE"],
   },
   EXPLAINS_INCIDENT: {
     allowedSources: ["INCIDENT_FINDING"],

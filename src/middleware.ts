@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * Public routes accessible without authentication.
+ * All other routes strictly require an authenticated session.
+ */
 const PUBLIC_PATHS = [
-  "/overview",
+  "/",
   "/sign-in",
   "/sign-up",
   "/forgot-password",
@@ -10,43 +14,40 @@ const PUBLIC_PATHS = [
   "/access-denied",
   "/docs",
   "/methodology",
+  "/help",
   "/api/auth",
   "/api/health",
+  "/api/webhooks/paypal",
 ];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 1. Allow static files, Next.js internals, and images
+  // 1. Allow static files, Next.js internals, and image assets
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/avatars") ||
-    pathname.includes(".") // favicon.ico, etc.
+    pathname.includes(".") // favicon.ico, images, fonts, etc.
   ) {
     return NextResponse.next();
   }
 
   const sessionToken =
     request.cookies.get("better-auth.session_token")?.value ||
-    request.cookies.get("__Secure-better-auth.session_token")?.value;
+    request.cookies.get("__Secure-better-auth.session_token")?.value ||
+    request.cookies.get("session_token")?.value;
 
-  // 2. In development mode, allow header-based demo impersonation
+  // 2. Allow automated backend tests with explicit test header in non-production
   const isDemoHeaderPresent =
     process.env.NODE_ENV !== "production" &&
     Boolean(request.headers.get("x-demo-user-email"));
 
   const isAuthenticated = Boolean(sessionToken || isDemoHeaderPresent);
 
-  // 3. Root route '/' routing:
-  //    - Authenticated users go to canonical Home: /dashboard
-  //    - Unauthenticated visitors go to canonical public landing: /overview
+  // 3. Root route '/' serves the public marketing homepage
   if (pathname === "/") {
-    if (isAuthenticated) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    } else {
-      return NextResponse.redirect(new URL("/overview", request.url));
-    }
+    return NextResponse.next();
   }
 
   // 4. Check for public routes
@@ -54,18 +55,35 @@ export function middleware(request: NextRequest) {
     (p) => pathname === p || pathname.startsWith(`${p}/`)
   );
 
-  // 5. Redirect unauthenticated users trying to access protected workspace routes
+  // 5. Intercept unauthenticated requests to protected workspace routes & APIs
   if (!isAuthenticated && !isPublicPath) {
-    const signInUrl = new URL("/sign-in", request.url);
-    if (pathname !== "/dashboard") {
-      signInUrl.searchParams.set("redirect", pathname);
+    // API routes return JSON 401 Unauthorized
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json(
+        { error: "Unauthorized: Authentication required to access this resource" },
+        { status: 401 }
+      );
     }
+
+    // Workspace pages redirect to /sign-in?callbackUrl=<requested-path>
+    const signInUrl = new URL("/sign-in", request.url);
+    const returnUrl = pathname + request.nextUrl.search;
+    signInUrl.searchParams.set("callbackUrl", returnUrl);
     return NextResponse.redirect(signInUrl);
   }
 
-  // 6. Redirect authenticated users away from sign-in/sign-up to dashboard
+  // 6. Redirect authenticated users away from sign-in/sign-up to workspace
   if (isAuthenticated && (pathname === "/sign-in" || pathname === "/sign-up")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    const rawCallback =
+      request.nextUrl.searchParams.get("callbackUrl") ||
+      request.nextUrl.searchParams.get("redirect") ||
+      "/overview";
+    // Security check: validate same-origin relative path
+    const target =
+      rawCallback.startsWith("/") && !rawCallback.startsWith("//")
+        ? rawCallback
+        : "/overview";
+    return NextResponse.redirect(new URL(target, request.url));
   }
 
   return NextResponse.next();

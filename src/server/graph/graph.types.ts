@@ -7,12 +7,15 @@ export type GraphNodeType =
   | "CASE"
   | "BUYER"
   | "MERCHANT"
+  | "PAYMENT_PROVIDER"
+  | "BANK"
   | "CLAIM"
   | "EVIDENCE"
   | "FACT"
   | "FINDING"
   | "TIMELINE_EVENT"
   | "RESOLUTION_PROPOSAL"
+  | "APPROVAL"
   | "PURCHASE_MEMORY"
   | "PACKAGE_PASSPORT"
   | "PACKAGE_SEAL"
@@ -21,9 +24,30 @@ export type GraphNodeType =
   | "CANONICAL_TRANSACTION"
   | "TRANSACTION_SOURCE"
   | "RECONCILIATION_MISMATCH"
-  | "INCIDENT_FINDING";
+  | "INCIDENT_FINDING"
+  | "PAYPAL_ORDER"
+  | "PAYPAL_CAPTURE"
+  | "PAYPAL_REFUND"
+  | "PAYPAL_DISPUTE"
+  | "PROVIDER_EVENT";
 
 export type GraphEdgeType =
+  | "INITIATED_BY"
+  | "PROCESSED_THROUGH"
+  | "PAID_TO"
+  | "CAPTURED_AS"
+  | "MATCHED_WITH"
+  | "DEBITED_FROM"
+  | "CREDITED_TO"
+  | "REFUNDED_BY"
+  | "SUPPORTED_BY"
+  | "CONTRADICTED_BY"
+  | "BELONGS_TO_ORDER"
+  | "VERIFIED_BY"
+  | "INVESTIGATED_IN"
+  | "PROPOSED_FOR"
+  | "APPROVED_BY"
+  | "EXECUTED_AS"
   | "ASSERTS_CLAIM"
   | "SUBMITS_EVIDENCE"
   | "EXTRACTED_FROM"
@@ -39,10 +63,7 @@ export type GraphEdgeType =
   | "SEALED_WITH"
   | "TRANSIT_VERIFIED"
   | "UNBOXED_IN_SESSION"
-  | "PROCESSED_THROUGH"
-  | "MATCHED_WITH"
   | "RECONCILED_FROM"
-  | "CONTRADICTED_BY"
   | "EXPLAINS_INCIDENT";
 
 export type FactRelationType =
@@ -83,6 +104,7 @@ export interface GraphNode {
   confidence?: number;
   confidenceBand?: ConfidenceBand;
   reviewStatus?: ReviewStatus;
+  verificationState?: "VERIFIED" | "SOURCE_SUPPORTED" | "INFERRED" | "CONTESTED" | "UNVERIFIED";
   timestamp?: string; // ISO-8601
   metadata: Record<string, unknown>;
   isRedacted?: boolean;
@@ -97,6 +119,7 @@ export interface GraphEdge {
   weight?: number;
   confidenceBand?: ConfidenceBand;
   reviewStatus?: ReviewStatus;
+  verificationState?: "VERIFIED" | "SOURCE_SUPPORTED" | "INFERRED" | "CONTESTED" | "UNVERIFIED";
   provenance: "RULE" | "AI_INFERRED" | "HUMAN_ASSERTED" | "SYSTEM_AUDIT";
   explanation?: string;
   metadata?: Record<string, unknown>;

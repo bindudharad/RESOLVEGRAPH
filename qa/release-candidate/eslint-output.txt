@@ -1,0 +1,71 @@
+﻿
+> rg-scaffold@0.1.0 lint
+> eslint
+
+
+C:\Projects\resolvegraph\.agents\skills\unslop\scripts\story.mjs
+  3:55  warning  'writeFileSync' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Projects\resolvegraph\src\app\(workspace)\purchases\page.tsx
+  16:3   warning  'Clock' is defined but never used             @typescript-eslint/no-unused-vars
+  17:3   warning  'ArrowRight' is defined but never used        @typescript-eslint/no-unused-vars
+  22:10  warning  'Badge' is defined but never used             @typescript-eslint/no-unused-vars
+  56:10  warning  'loading' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Projects\resolvegraph\src\components\cases\berr-view.tsx
+   5:3  warning  'ShieldCheck' is defined but never used      @typescript-eslint/no-unused-vars
+  12:3  warning  'Maximize2' is defined but never used        @typescript-eslint/no-unused-vars
+  15:3  warning  'Layers' is defined but never used           @typescript-eslint/no-unused-vars
+  32:3  warning  'caseId' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Projects\resolvegraph\src\components\cases\case-table.tsx
+  14:3   warning  'SlidersHorizontal' is defined but never used  @typescript-eslint/no-unused-vars
+  17:3   warning  'Layers' is defined but never used             @typescript-eslint/no-unused-vars
+  19:3   warning  'ShieldCheck' is defined but never used        @typescript-eslint/no-unused-vars
+  20:3   warning  'Clock' is defined but never used              @typescript-eslint/no-unused-vars
+  21:3   warning  'Sparkles' is defined but never used           @typescript-eslint/no-unused-vars
+  29:10  warning  'Chip' is defined but never used               @typescript-eslint/no-unused-vars
+  40:42  warning  'relativeAge' is defined but never used        @typescript-eslint/no-unused-vars
+
+C:\Projects\resolvegraph\src\components\cases\convergence-timeline.tsx
+   3:10  warning  'useMemo' is defined but never used  @typescript-eslint/no-unused-vars
+   4:17  warning  'Clock' is defined but never used    @typescript-eslint/no-unused-vars
+  48:29  warning  'idx' is defined but never used      @typescript-eslint/no-unused-vars
+
+C:\Projects\resolvegraph\src\components\common\command-palette.tsx
+  13:3  warning  'LayoutDashboard' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Projects\resolvegraph\src\components\common\loading-skeleton.tsx
+  3:10  warning  'Scan' is defined but never used      @typescript-eslint/no-unused-vars
+  3:29  warning  'Sparkles' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Projects\resolvegraph\src\components\dashboard\activity-timeline.tsx
+  117:29  warning  'index' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Projects\resolvegraph\src\components\dashboard\resolution-chart.tsx
+  79:42  warning  'summary' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Projects\resolvegraph\src\components\dashboard\welcome-header.tsx
+  3:30  warning  'AlertCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Projects\resolvegraph\src\components\layout\app-sidebar.tsx
+   5:18  warning  'AnimatePresence' is defined but never used   @typescript-eslint/no-unused-vars
+  12:3   warning  'Plus' is defined but never used              @typescript-eslint/no-unused-vars
+  14:3   warning  'Clock' is defined but never used             @typescript-eslint/no-unused-vars
+  15:3   warning  'Sparkles' is defined but never used          @typescript-eslint/no-unused-vars
+  18:21  warning  'CURRENT_USER' is defined but never used      @typescript-eslint/no-unused-vars
+  97:10  warning  'hovered' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Projects\resolvegraph\src\components\layout\topbar.tsx
+   8:3   warning  'HelpCircle' is defined but never used      @typescript-eslint/no-unused-vars
+  12:3   warning  'Moon' is defined but never used            @typescript-eslint/no-unused-vars
+  15:3   warning  'Sun' is defined but never used             @typescript-eslint/no-unused-vars
+  18:3   warning  'Sparkles' is defined but never used        @typescript-eslint/no-unused-vars
+  36:15  warning  'Tooltip' is defined but never used         @typescript-eslint/no-unused-vars
+  48:9   warning  'title' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Projects\resolvegraph\src\lib\navigation.ts
+  10:3  warning  'LayoutDashboard' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 38 problems (0 errors, 38 warnings)
+

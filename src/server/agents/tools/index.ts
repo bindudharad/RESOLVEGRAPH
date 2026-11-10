@@ -1,5 +1,5 @@
 /**
- * Tools Export & Registration
+ * Tools Export & Registration — RESOLVEGRAPH 2.0
  */
 
 import { ToolRegistry } from './tool-registry';
@@ -14,7 +14,7 @@ import {
   getResolutionHistoryTool,
   getPaymentStatusTool,
   getPaypalDisputeStatusTool,
-  getOrganizationPermissionsTool
+  getOrganizationPermissionsTool,
 } from './read-tools';
 import {
   createDraftInformationRequestTool,
@@ -23,19 +23,41 @@ import {
   createDraftResolutionProposalTool,
   createInvestigationSummaryTool,
   createMissingEvidenceChecklistTool,
-  createHumanReviewRequestTool
+  createHumanReviewRequestTool,
 } from './draft-tools';
 import {
   validateClaimEvidenceLinksTool,
   validateSourceCitationsTool,
   validatePolicyConditionsTool,
-  validateAgentResultTool
+  validateAgentResultTool,
 } from './review-tools';
+import {
+  getCaseDetailsTool,
+  getCanonicalTransactionTool,
+  getPaypalOrderTool,
+  getPaypalCaptureTool,
+  getPaypalRefundTool,
+  getPaypalDisputeTool,
+  listPaypalDisputesTool,
+  searchRelatedTransactionsTool,
+  getEvidenceDetailsTool,
+  getEvidenceGraphTool,
+  runBerrInvestigationTool,
+  retrieveMissingEvidenceTool,
+  generateInvestigationReportTool,
+  prepareRefundProposalTool,
+  prepareDisputeResponseTool,
+  prepareMerchantEnquiryTool,
+  prepareCustomerResponseTool,
+  prepareEvidenceRequestTool,
+  prepareResolutionSummaryTool,
+} from './paypal-investigation-tools';
 
 export * from './tool-registry';
 export * from './read-tools';
 export * from './draft-tools';
 export * from './review-tools';
+export * from './paypal-investigation-tools';
 
 let registered = false;
 
@@ -56,6 +78,21 @@ export function registerAllTools(): ToolRegistry {
   registry.registerTool(getPaypalDisputeStatusTool);
   registry.registerTool(getOrganizationPermissionsTool);
 
+  // PayPal Investigation Read Tools
+  registry.registerTool(getCaseDetailsTool);
+  registry.registerTool(getCanonicalTransactionTool);
+  registry.registerTool(getPaypalOrderTool);
+  registry.registerTool(getPaypalCaptureTool);
+  registry.registerTool(getPaypalRefundTool);
+  registry.registerTool(getPaypalDisputeTool);
+  registry.registerTool(listPaypalDisputesTool);
+  registry.registerTool(searchRelatedTransactionsTool);
+  registry.registerTool(getEvidenceDetailsTool);
+  registry.registerTool(getEvidenceGraphTool);
+  registry.registerTool(runBerrInvestigationTool);
+  registry.registerTool(retrieveMissingEvidenceTool);
+  registry.registerTool(generateInvestigationReportTool);
+
   // Draft Tools
   registry.registerTool(createDraftInformationRequestTool);
   registry.registerTool(createDraftBuyerMessageTool);
@@ -64,6 +101,14 @@ export function registerAllTools(): ToolRegistry {
   registry.registerTool(createInvestigationSummaryTool);
   registry.registerTool(createMissingEvidenceChecklistTool);
   registry.registerTool(createHumanReviewRequestTool);
+
+  // PayPal Proposal Tools (Human Approval Required)
+  registry.registerTool(prepareRefundProposalTool);
+  registry.registerTool(prepareDisputeResponseTool);
+  registry.registerTool(prepareMerchantEnquiryTool);
+  registry.registerTool(prepareCustomerResponseTool);
+  registry.registerTool(prepareEvidenceRequestTool);
+  registry.registerTool(prepareResolutionSummaryTool);
 
   // Review Tools
   registry.registerTool(validateClaimEvidenceLinksTool);

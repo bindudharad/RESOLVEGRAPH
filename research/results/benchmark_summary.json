@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-08T02:31:25.050Z",
+  "timestamp": "2026-11-10T06:45:07.955Z",
   "datasetMetadata": {
     "name": "RECOURSE-BENCH: Commerce Dispute Bilateral Reasoning Benchmark",
     "version": "2.0.0",
@@ -147,7 +147,7 @@
           "estimatedTokens": 620
         }
       },
-      "avgOrchestrationLatencyMs": 0.03
+      "avgOrchestrationLatencyMs": 0.05
     }
   },
   "baselineComparisons": [

@@ -72,9 +72,15 @@ export class InvestigationReportService {
   /**
    * Generates a complete JSON investigation report.
    */
+  public static async generateReport(caseId: string, options: ReportGenerationOptions = {}) {
+    return this.generateJsonReport(caseId, options);
+  }
+
   public static async generateJsonReport(caseId: string, options: ReportGenerationOptions = {}) {
-    const caseRecord = await prisma.caseRecord.findUnique({
-      where: { id: caseId },
+    const caseRecord = await prisma.caseRecord.findFirst({
+      where: {
+        OR: [{ id: caseId }, { caseNumber: caseId }],
+      },
       include: {
         buyer: true,
         merchant: true,
@@ -86,11 +92,11 @@ export class InvestigationReportService {
 
     if (!caseRecord) throw new Error(`Case ${caseId} not found.`);
 
-    const investigation = await RootCauseInvestigationService.investigateCase(caseId);
-    const evidenceInventory = await this.evaluateEvidenceInventory(caseId);
+    const investigation = await RootCauseInvestigationService.investigateCase(caseRecord.id);
+    const evidenceInventory = await this.evaluateEvidenceInventory(caseRecord.id);
 
     const canonicalTxs = await prisma.canonicalTransaction.findMany({
-      where: { caseId },
+      where: { caseId: caseRecord.id },
       include: { sourceRecords: true, mismatches: true, matchingDecisions: true },
     });
 

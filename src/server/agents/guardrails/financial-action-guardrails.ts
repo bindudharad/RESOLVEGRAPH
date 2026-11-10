@@ -68,9 +68,9 @@ export class FinancialActionGuardrails {
     }
 
     // Inspect if creating a draft resolution proposal with financial remedies
-    if (actionName === 'create_draft_resolution_proposal') {
-      const remedyType = String(proposedArguments.remedyType || '').toUpperCase();
-      const isFinancial = remedyType === 'FULL_REFUND' || remedyType === 'PARTIAL_REFUND';
+    if (actionName === 'create_draft_resolution_proposal' || actionName === 'prepare_refund_proposal') {
+      const remedyType = String(proposedArguments.remedyType || 'FULL_REFUND').toUpperCase();
+      const isFinancial = remedyType === 'FULL_REFUND' || remedyType === 'PARTIAL_REFUND' || actionName === 'prepare_refund_proposal';
 
       if (isFinancial) {
         return {

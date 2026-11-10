@@ -1,0 +1,154 @@
+﻿
+> rg-scaffold@0.1.0 build
+> next build
+
+▲ Next.js 16.4.4 (Turbopack)
+- Environments: .env
+✓ Running next.config.ts took 56ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 4.9s
+  Running TypeScript ...
+  Finished TypeScript in 45s ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/68) ...
+  Generating static pages using 15 workers (17/68) 
+  Generating static pages using 15 workers (34/68) 
+  Generating static pages using 15 workers (51/68) 
+✓ Generating static pages using 15 workers (68/68) in 2.5s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ○ /access-denied
+├ ○ /admin/security
+├ ○ /analytics
+├ ƒ /api/admin/kill-switch
+├ ƒ /api/analysis/[runId]
+├ ƒ /api/analysis/[runId]/review
+├ ƒ /api/analytics
+├ ƒ /api/audit/chained
+├ ƒ /api/auth/[...all]
+├ ƒ /api/cases
+├ ƒ /api/cases/[caseId]
+├ ƒ /api/cases/[caseId]/analysis
+├ ƒ /api/cases/[caseId]/berr-v2
+├ ƒ /api/cases/[caseId]/claims
+├ ƒ /api/cases/[caseId]/events
+├ ƒ /api/cases/[caseId]/evidence
+├ ƒ /api/cases/[caseId]/financial-safeguards
+├ ƒ /api/cases/[caseId]/graph
+├ ƒ /api/cases/[caseId]/graph/expand
+├ ƒ /api/cases/[caseId]/graph/rebuild
+├ ƒ /api/cases/[caseId]/lifecycle
+├ ƒ /api/cases/[caseId]/messages
+├ ƒ /api/cases/[caseId]/relationships
+├ ƒ /api/cases/[caseId]/relationships/review
+├ ƒ /api/cases/[caseId]/replay
+├ ƒ /api/cases/[caseId]/resolution-options
+├ ƒ /api/cases/[caseId]/resolution-proposals
+├ ƒ /api/cases/[caseId]/timeline
+├ ƒ /api/cases/[caseId]/timeline/[eventId]
+├ ƒ /api/claims/[claimId]/ai-consent
+├ ƒ /api/commerce/orders
+├ ƒ /api/commerce/orders/[orderId]
+├ ƒ /api/complaints/multilingual
+├ ƒ /api/copilot/approvals
+├ ƒ /api/copilot/approvals/[approvalId]/respond
+├ ƒ /api/copilot/runs
+├ ƒ /api/copilot/runs/[runId]
+├ ƒ /api/copilot/runs/[runId]/cancel
+├ ƒ /api/dashboard/summary
+├ ƒ /api/delivery/confirm-receipt
+├ ƒ /api/delivery/events
+├ ƒ /api/demo/paypal-investigation
+├ ƒ /api/enterprise/dispatch
+├ ƒ /api/enterprise/orders
+├ ƒ /api/enterprise/packages
+├ ƒ /api/enterprise/proposals
+├ ƒ /api/evidence
+├ ƒ /api/evidence/[evidenceId]/ai-consent
+├ ƒ /api/evidence/[evidenceId]/analyze
+├ ƒ /api/evidence/[evidenceId]/download
+├ ƒ /api/evidence/extractions/[id]
+├ ƒ /api/evidence/intake
+├ ƒ /api/health
+├ ƒ /api/investigations/[caseId]
+├ ƒ /api/investigations/[caseId]/report
+├ ƒ /api/notifications
+├ ƒ /api/notifications/[id]/read
+├ ƒ /api/organizations
+├ ƒ /api/organizations/[orgId]
+├ ƒ /api/organizations/[orgId]/members/[memberId]
+├ ƒ /api/organizations/[orgId]/members/invite
+├ ƒ /api/packages
+├ ƒ /api/packages/[id]
+├ ƒ /api/packages/[id]/dispatch
+├ ƒ /api/packages/[id]/seal
+├ ƒ /api/packages/verify/[token]
+├ ƒ /api/payments
+├ ƒ /api/payments/[paymentId]
+├ ƒ /api/payments/[paymentId]/reconciliation
+├ ƒ /api/payments/[paymentId]/refund
+├ ƒ /api/payments/complaints
+├ ƒ /api/payments/complaints/upi
+├ ƒ /api/payments/paypal/orders
+├ ƒ /api/payments/paypal/orders/[orderId]/capture
+├ ƒ /api/paypal/disputes
+├ ƒ /api/paypal/disputes/[disputeId]
+├ ƒ /api/paypal/disputes/[disputeId]/evidence
+├ ƒ /api/paypal/disputes/[disputeId]/respond
+├ ƒ /api/purchases/[id]
+├ ƒ /api/purchases/[id]/compare-dispute
+├ ƒ /api/purchases/detect
+├ ƒ /api/purchases/memory
+├ ƒ /api/resolution-proposals
+├ ƒ /api/resolution-proposals/[proposalId]
+├ ƒ /api/resolution-proposals/[proposalId]/respond
+├ ƒ /api/resolution-proposals/[proposalId]/review
+├ ƒ /api/transactions/canonical
+├ ƒ /api/transactions/reconcile
+├ ƒ /api/unboxing/sessions
+├ ƒ /api/unboxing/sessions/[token]
+├ ƒ /api/unboxing/sessions/[token]/complete
+├ ƒ /api/unboxing/sessions/[token]/upload
+├ ƒ /api/users
+├ ƒ /api/webhooks/paypal
+├ ○ /cases
+├ ƒ /cases/[caseId]
+├ ○ /copilot
+├ ○ /dashboard
+├ ○ /demo
+├ ○ /docs
+├ ○ /evidence
+├ ○ /forgot-password
+├ ○ /help
+├ ○ /incidents
+├ ○ /intake
+├ ○ /investigation
+├ ○ /methodology
+├ ○ /multilingual
+├ ○ /organizations
+├ ○ /overview
+├ ○ /packages
+├ ○ /payments
+├ ƒ /payments/[paymentId]
+├ ○ /paypal/disputes
+├ ƒ /paypal/disputes/[disputeId]
+├ ○ /purchases
+├ ○ /reconciliation
+├ ○ /reset-password
+├ ○ /resolution
+├ ○ /resolution-room
+├ ○ /settings
+├ ○ /sign-in
+├ ○ /sign-up
+└ ○ /verify-email
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -4,6 +4,7 @@ import { PayPalProviderFactory } from '../paypal-provider.factory';
 import { IdempotencyService } from '../utils/idempotency';
 import { CaseService } from '@/server/services/case.service';
 import { EventType } from '@/generated/prisma/client';
+import { PayPalSyncService } from './paypal-sync.service';
 
 export interface CreateCommerceOrderItemInput {
   productReference: string;
@@ -14,6 +15,7 @@ export interface CreateCommerceOrderItemInput {
 }
 
 export interface CreateCommerceOrderInput {
+  orderNumber?: string;
   buyerId: string;
   merchantOrganizationId: string;
   currency?: string;
@@ -32,8 +34,9 @@ export class OrderService {
    */
   public static generateOrderNumber(): string {
     const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-    const rand = Math.floor(1000 + Math.random() * 9000);
-    return `ORD-${dateStr}-${rand}`;
+    const rand = Math.floor(100000 + Math.random() * 900000);
+    const ms = Date.now().toString().slice(-4);
+    return `ORD-${dateStr}-${rand}-${ms}`;
   }
 
   /**
@@ -74,7 +77,7 @@ export class OrderService {
       throw new Error('Total order amount must be greater than zero.');
     }
 
-    const orderNumber = this.generateOrderNumber();
+    const orderNumber = input.orderNumber || this.generateOrderNumber();
 
     // Start idempotency tracking if key provided
     const idempotency = await IdempotencyService.startOperation(
@@ -152,6 +155,23 @@ export class OrderService {
 
       // Complete idempotency operation
       await IdempotencyService.completeOperation(idempotency.requestId, paypalOrder.id);
+
+      // Synchronize with Canonical Transaction Engine
+      try {
+        await PayPalSyncService.syncOrder({
+          providerOrderId: paypalOrder.id,
+          orderNumber: order.orderNumber,
+          amountMinor: totalAmountMinor,
+          currency: order.currency,
+          status: 'CREATED',
+          caseId: order.caseId,
+          payerReference: buyer.email,
+          payeeReference: org.name,
+          timestamp: new Date(),
+        });
+      } catch (syncErr) {
+        console.warn('[OrderService] Canonical order sync notice:', syncErr);
+      }
 
       // Log event if tied to a case
       if (order.caseId) {

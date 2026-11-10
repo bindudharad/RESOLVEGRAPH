@@ -49,8 +49,10 @@ export class LifecycleIntelligenceService {
    * Reconstructs the end-to-end multimodal timeline and identifies where facts diverged.
    */
   public static async analyzeCaseLifecycle(caseId: string): Promise<CaseLifecycleTimelineReport> {
-    const caseRecord = await prisma.caseRecord.findUnique({
-      where: { id: caseId },
+    const caseRecord = await prisma.caseRecord.findFirst({
+      where: {
+        OR: [{ id: caseId }, { caseNumber: caseId }],
+      },
       include: {
         purchaseMemory: {
           include: {

@@ -43,7 +43,9 @@ export class CaseTriageAgent {
     let intent = 'GENERAL_ASSIST';
     let urgency: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT' = 'MEDIUM';
 
-    if (lowerPrompt.includes('discrepan') || lowerPrompt.includes('investigat') || lowerPrompt.includes('contradict') || lowerPrompt.includes('evidence')) {
+    if (lowerPrompt.includes('payment') || lowerPrompt.includes('what happened') || lowerPrompt.includes('capture')) {
+      intent = 'INVESTIGATE_PAYMENT';
+    } else if (lowerPrompt.includes('discrepan') || lowerPrompt.includes('investigat') || lowerPrompt.includes('contradict') || lowerPrompt.includes('evidence')) {
       intent = 'INVESTIGATE_DISCREPANCIES';
     } else if (lowerPrompt.includes('policy') || lowerPrompt.includes('remedy') || lowerPrompt.includes('refund') || lowerPrompt.includes('settle')) {
       intent = 'EVALUATE_POLICY';
@@ -64,6 +66,34 @@ export class CaseTriageAgent {
     const plan: AgentStepPlan[] = [];
 
     switch (intent) {
+      case 'INVESTIGATE_PAYMENT':
+        plan.push({
+          stepNumber: 1,
+          agentName: 'PaymentInvestigationAgent',
+          goal: 'Investigate cross-source payment records, PayPal captures, cancellation evidence, and BERR findings.',
+          toolNames: [
+            'get_case_details',
+            'get_canonical_transaction',
+            'get_paypal_capture',
+            'search_related_transactions',
+            'run_berr_investigation',
+            'prepare_refund_proposal'
+          ]
+        });
+        plan.push({
+          stepNumber: 2,
+          agentName: 'PolicyRemedyAgent',
+          goal: 'Evaluate merchant policies, compute remedy eligibility, and prepare draft proposal.',
+          toolNames: ['get_applicable_policy', 'create_draft_resolution_proposal']
+        });
+        plan.push({
+          stepNumber: 3,
+          agentName: 'QualityReviewAgent',
+          goal: 'Verify policy bounds, financial constraints, and check human approval requirements.',
+          toolNames: ['validate_policy_conditions', 'validate_agent_result']
+        });
+        break;
+
       case 'INVESTIGATE_DISCREPANCIES':
         plan.push({
           stepNumber: 1,

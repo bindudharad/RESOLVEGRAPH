@@ -1,0 +1,36 @@
+﻿
+> rg-scaffold@0.1.0 benchmark
+> tsx scripts/evaluation/run-benchmark.ts
+
+========================================================================
+        RECOURSE-BENCH: MASTER RESEARCH EVALUATION RUNNER              
+========================================================================
+
+[1/8] Loaded dataset with 400 cases across 20 categories.
+[2/8] Running Subsystem 1: Multimodal Fact Extraction & Normalization...
+  -> Precision: 100.0%, Recall: 100.0%, F1: 100.0%, Normalized Val: 100.0%
+[3/8] Running Subsystem 2: BERR Reasoning & Contradiction Detection...
+  -> Contradiction F1: 52.2%, Missing Evidence F1: 20.9%
+[4/8] Running Subsystem 3: Temporal Reasoning & Semantic Drift...
+  -> Temporal Ordering Acc: 100.0%, Drift F1: 33.3%
+[5/8] Running Subsystem 4: Bilateral Fairness & Order-Permutation Invariance...
+  -> Discrepancy Invariance Rate: 58.8%, Mean Divergence: 0.2042
+[6/8] Running Subsystem 5: Resolution Intelligence & Remedy Recommendation...
+  -> Remedy Acc: 63.7%, Policy Compliance: 100.0%, Financial Safety: 100.0%
+[7/8] Running Subsystem 6: Multi-Agent Orchestration & Copilot Reliability...
+  -> Tool Accuracy: 100.0%, Citation Coverage: 100.0%, Hallucination Rate: 0.0%
+[8/8] Evaluating Baselines and Ablation Variants...
+
+[SUCCESS] Master Benchmark Summary saved to: C:\Projects\resolvegraph\research\results\benchmark_summary.json
+
+========================================================================
+                 BASELINE COMPARISON EXECUTIVE SUMMARY                  
+========================================================================
+┌─────────┬──────────────┬──────────────┬───────────────┬─────────────┬─────────────┬───────────┬──────────┬───────────┐
+│ (index) │ Baseline     │ Citation Acc │ Hallucination │ Policy Comp │ Safety Comp │ Contra F1 │ Symmetry │ Latency   │
+├─────────┼──────────────┼──────────────┼───────────────┼─────────────┼─────────────┼───────────┼──────────┼───────────┤
+│ 0       │ 'Baseline A' │ '31.2%'      │ '0.0%'        │ '44.2%'     │ '100.0%'    │ '41.5%'   │ '99.5%'  │ '12 ms'   │
+│ 1       │ 'Baseline B' │ '58.4%'      │ '18.7%'       │ '71.0%'     │ '46.0%'     │ '69.4%'   │ '68.4%'  │ '1450 ms' │
+│ 2       │ 'Baseline C' │ '88.5%'      │ '0.0%'        │ '91.2%'     │ '100.0%'    │ '86.5%'   │ '94.2%'  │ '95 ms'   │
+│ 3       │ 'Baseline D' │ '98.4%'      │ '0.0%'        │ '98.8%'     │ '100.0%'    │ '96.1%'   │ '98.6%'  │ '420 ms'  │
+└─────────┴──────────────┴──────────────┴───────────────┴─────────────┴─────────────┴───────────┴──────────┴───────────┘

@@ -9,6 +9,8 @@ export type AgentRoleName =
   | 'Orchestrator'
   | 'CaseTriageAgent'
   | 'EvidenceInvestigatorAgent'
+  | 'PaymentInvestigationAgent'
+  | 'RootCauseInvestigationAgent'
   | 'PolicyRemedyAgent'
   | 'CommunicationDrafterAgent'
   | 'QualityReviewAgent';

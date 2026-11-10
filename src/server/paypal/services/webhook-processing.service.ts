@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { CaseService } from '@/server/services/case.service';
 import { EventType } from '@/generated/prisma/client';
 import { toMinorUnits } from '../utils/money';
+import { PayPalSyncService } from './paypal-sync.service';
 
 export interface ProcessWebhookResult {
   status: 'PROCESSED' | 'ALREADY_PROCESSED' | 'IGNORED' | 'FAILED';
@@ -173,6 +174,25 @@ export class WebhookProcessingService {
         data: { status: 'CAPTURED' },
       });
 
+      // Synchronize with Canonical Transaction Engine
+      try {
+        await PayPalSyncService.syncCapture({
+          captureId,
+          providerOrderId: payment.providerOrderId,
+          orderNumber: payment.commerceOrder.orderNumber,
+          amountMinor: payment.amountMinor,
+          currency: payment.currency,
+          status: 'COMPLETED',
+          caseId: payment.commerceOrder.caseId,
+          payerReference: payment.payerReference,
+          payeeReference: payment.payeeReference,
+          timestamp: resource.create_time ? new Date(resource.create_time) : new Date(),
+          rawPayload: resource,
+        });
+      } catch (syncErr) {
+        console.warn('[WebhookProcessingService] Canonical capture sync notice:', syncErr);
+      }
+
       if (payment.commerceOrder.caseId) {
         await CaseService.logEvent(
           payment.commerceOrder.caseId,
@@ -242,6 +262,22 @@ export class WebhookProcessingService {
             completedAt: resource.create_time ? new Date(resource.create_time) : new Date(),
           },
         });
+
+        // Synchronize with Canonical Transaction Engine
+        try {
+          await PayPalSyncService.syncRefund({
+            refundId,
+            captureId,
+            amountMinor,
+            currency: resource.amount?.currency_code || payment.currency,
+            status: 'COMPLETED',
+            reason: resource.note_to_payer || 'Refund recorded via PayPal webhook notification',
+            caseId: payment.commerceOrder.caseId,
+            timestamp: resource.create_time ? new Date(resource.create_time) : new Date(),
+          });
+        } catch (syncErr) {
+          console.warn('[WebhookProcessingService] Canonical refund sync notice:', syncErr);
+        }
       }
     }
   }

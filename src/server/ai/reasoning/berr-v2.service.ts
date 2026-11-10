@@ -73,8 +73,10 @@ export class BerrV2Service {
    * Executes the Version 2.0 BERR reasoning engine over a dispute case.
    */
   public static async evaluateCase(caseId: string): Promise<BerrV2ReasoningOutput> {
-    const caseRecord = await prisma.caseRecord.findUnique({
-      where: { id: caseId },
+    const caseRecord = await prisma.caseRecord.findFirst({
+      where: {
+        OR: [{ id: caseId }, { caseNumber: caseId }],
+      },
       include: {
         purchaseMemory: {
           include: { specifications: true, promises: true },

@@ -59,6 +59,7 @@ export class GraphBuilder {
       sourceRecords,
       mismatches,
       paymentIncident,
+      paypalPayments,
     ] = await Promise.all([
       prisma.extractedFact.findMany({
         where: { caseId: actualCaseId },
@@ -115,6 +116,10 @@ export class GraphBuilder {
       prisma.paymentIncident.findUnique({
         where: { caseId: actualCaseId },
         include: { findings: true },
+      }),
+      prisma.payPalPayment.findMany({
+        where: { commerceOrder: { caseId: actualCaseId } },
+        include: { refunds: true, disputes: true, commerceOrder: true },
       }),
     ]);
 
@@ -661,6 +666,135 @@ export class GraphBuilder {
           label: "EXPLAINS_INCIDENT",
           provenance: "RULE",
         });
+      }
+    }
+
+    // --- PayPal Payment Provider & Financial Operations Graph ---
+    if (paypalPayments.length > 0) {
+      const paypalProviderNodeId = "provider:paypal";
+      nodes.push({
+        id: paypalProviderNodeId,
+        type: "PAYMENT_PROVIDER",
+        label: "PayPal Gateway",
+        sublabel: "PayPal Sandbox (REST APIs)",
+        party: "SYSTEM",
+        status: "ACTIVE",
+        confidence: 1.0,
+        verificationState: "VERIFIED",
+        metadata: {
+          environment: process.env.PAYPAL_ENV || "sandbox",
+          network: "PayPal Commerce Platform",
+        },
+      });
+
+      for (const pay of paypalPayments) {
+        if (pay.captureId) {
+          const captureNodeId = `capture:${pay.captureId}`;
+          nodes.push({
+            id: captureNodeId,
+            type: "PAYPAL_CAPTURE",
+            label: `Capture ${pay.captureId.slice(0, 14)}...`,
+            sublabel: `${pay.currency} ${(pay.amountMinor / 100).toFixed(2)} [${pay.paymentStatus}]`,
+            party: "NEUTRAL",
+            status: pay.paymentStatus,
+            confidence: 1.0,
+            verificationState: "VERIFIED",
+            timestamp: (pay.capturedAt || pay.createdAt).toISOString(),
+            metadata: {
+              captureId: pay.captureId,
+              orderId: pay.providerOrderId,
+              amountMinor: pay.amountMinor,
+              currency: pay.currency,
+              status: pay.paymentStatus,
+            },
+          });
+
+          // Edge: Capture -> Provider (PROCESSED_THROUGH)
+          edges.push({
+            id: `edge:capture->provider:${pay.captureId}`,
+            source: captureNodeId,
+            target: paypalProviderNodeId,
+            type: "PROCESSED_THROUGH",
+            label: "PROCESSED_THROUGH",
+            verificationState: "VERIFIED",
+            provenance: "SYSTEM_AUDIT",
+          });
+
+          // Edge: Capture -> Case (BELONGS_TO_ORDER)
+          edges.push({
+            id: `edge:capture->case:${pay.captureId}_${actualCaseId}`,
+            source: captureNodeId,
+            target: `case:${actualCaseId}`,
+            type: "BELONGS_TO_ORDER",
+            label: "BELONGS_TO_ORDER",
+            verificationState: "VERIFIED",
+            provenance: "SYSTEM_AUDIT",
+          });
+
+          // Refunds
+          for (const ref of pay.refunds) {
+            const refundNodeId = `refund:${ref.id}`;
+            nodes.push({
+              id: refundNodeId,
+              type: "PAYPAL_REFUND",
+              label: `Refund ${ref.paypalRefundId ? ref.paypalRefundId.slice(0, 14) + '...' : ref.refundRequestId}`,
+              sublabel: `${ref.currency} ${(ref.amountMinor / 100).toFixed(2)} [${ref.status}]`,
+              party: "MERCHANT",
+              status: ref.status,
+              confidence: 1.0,
+              verificationState: "VERIFIED",
+              timestamp: (ref.completedAt || ref.createdAt).toISOString(),
+              metadata: {
+                refundId: ref.paypalRefundId,
+                amountMinor: ref.amountMinor,
+                reason: ref.reason,
+                status: ref.status,
+              },
+            });
+
+            // Edge: Refund -> Capture (REFUNDED_BY)
+            edges.push({
+              id: `edge:refund->capture:${ref.id}_${pay.captureId}`,
+              source: refundNodeId,
+              target: captureNodeId,
+              type: "REFUNDED_BY",
+              label: "REFUNDED_BY",
+              verificationState: "VERIFIED",
+              provenance: "SYSTEM_AUDIT",
+            });
+          }
+
+          // Disputes
+          for (const disp of pay.disputes) {
+            const disputeNodeId = `dispute:${disp.id}`;
+            nodes.push({
+              id: disputeNodeId,
+              type: "PAYPAL_DISPUTE",
+              label: `Dispute ${disp.paypalDisputeId}`,
+              sublabel: `${disp.currency} ${(disp.disputeAmountMinor / 100).toFixed(2)} [${disp.paypalStatus}]`,
+              party: "BUYER",
+              status: disp.paypalStatus,
+              verificationState: "CONTESTED",
+              timestamp: disp.createdAt.toISOString(),
+              metadata: {
+                disputeId: disp.paypalDisputeId,
+                reason: disp.disputeReason,
+                lifecycleStage: disp.lifecycleStage,
+              },
+            });
+
+            // Edge: Dispute -> Capture (CONTRADICTED_BY)
+            edges.push({
+              id: `edge:dispute->capture:${disp.id}_${pay.captureId}`,
+              source: disputeNodeId,
+              target: captureNodeId,
+              type: "CONTRADICTED_BY",
+              label: "CONTESTED_BY",
+              verificationState: "CONTESTED",
+              provenance: "SYSTEM_AUDIT",
+            });
+          }
+        }
       }
     }
 

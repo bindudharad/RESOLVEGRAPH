@@ -383,10 +383,28 @@ export function CasesProvider({ children }: { children: ReactNode }) {
   return <CasesContext.Provider value={value}>{children}</CasesContext.Provider>;
 }
 
+const FALLBACK_CASES_API: CasesApi = {
+  cases: [],
+  ephemeralCount: 0,
+  isLoading: false,
+  createCase: () => CANONICAL_DEMO_CASE,
+  getCase: () => undefined,
+  updateCaseStatus: () => {},
+  getCaseNotes: () => [],
+  addCaseNote: () => ({
+    id: "fallback-note",
+    caseId: "fallback",
+    author: "System",
+    text: "",
+    timestamp: new Date().toISOString(),
+  }),
+  refresh: async () => {},
+};
+
 export function useDemoCases(): CasesApi {
   const context = useContext(CasesContext);
   if (!context) {
-    throw new Error("useDemoCases must be used inside <CasesProvider>");
+    return FALLBACK_CASES_API;
   }
   return context;
 }

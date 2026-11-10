@@ -21,7 +21,8 @@
     "ai:eval": "tsx scripts/run-ai-eval.ts",
     "ai:agent-eval": "tsx scripts/run-agent-eval.ts",
     "benchmark": "tsx scripts/evaluation/run-benchmark.ts",
-    "test": "tsx --test --test-concurrency=1 tests/**/*.test.ts"
+    "test": "tsx --test --test-concurrency=1 tests/**/*.test.ts",
+    "postinstall": "node scripts/patch-drei.js"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
