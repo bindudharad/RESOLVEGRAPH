@@ -43,7 +43,7 @@ export function AttentionPanel() {
 
             <span
               aria-hidden="true"
-              className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-line bg-[#0B0F17] text-subtle"
+              className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[var(--line)] bg-[var(--surface-2)] text-[var(--ink-2)]"
             >
               <TriangleAlert className="h-3.5 w-3.5" />
             </span>
@@ -52,14 +52,14 @@ export function AttentionPanel() {
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <Link
                   href={`/cases/${item.caseId}`}
-                  className="text-[12.5px] font-semibold tabular-nums text-fg underline-offset-2 transition-colors hover:text-amber-400 hover:underline"
+                  className="text-[12.5px] font-semibold tabular-nums text-[var(--ink)] underline-offset-2 transition-colors hover:text-[var(--accent)] hover:underline"
                 >
                   {item.caseId}
                 </Link>
-                <span className="truncate text-[13px] text-fg">{item.issue}</span>
+                <span className="truncate text-[13px] text-[var(--ink)]">{item.issue}</span>
               </div>
 
-              <p className="mt-1 text-[11.5px] leading-relaxed text-faint">
+              <p className="mt-1 text-[11.5px] leading-relaxed text-[var(--ink-2)]">
                 {item.reason}
               </p>
 

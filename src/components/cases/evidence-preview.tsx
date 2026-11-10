@@ -87,27 +87,27 @@ export function EvidencePreview({ caseId }: EvidencePreviewProps) {
                     <div
                       className={`flex h-9 w-9 items-center justify-center rounded-md border ${
                         slot.present
-                          ? "border-line-2 bg-[#0B0F17] text-amber-400"
-                          : "border-line bg-surface text-faint"
+                          ? "border-[var(--line)] bg-[var(--surface)] text-[var(--accent)] shadow-xs"
+                          : "border-[var(--line)] bg-[var(--surface)] text-[var(--ink-3)]"
                       }`}
                     >
                       <IconComponent className="h-4 w-4" />
                     </div>
 
                     {slot.present ? (
-                      <span className="inline-flex items-center gap-1 rounded bg-[color-mix(in_srgb,var(--color-success)_15%,transparent)] px-1.5 py-0.5 text-[10.5px] font-medium text-[#6ee7b7]">
+                      <span className="inline-flex items-center gap-1 rounded bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 text-[10.5px] font-semibold text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40">
                         <CheckCircle2 className="h-3 w-3" />
                         Attached
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 rounded bg-[color-mix(in_srgb,var(--color-warning)_15%,transparent)] px-1.5 py-0.5 text-[10.5px] font-medium text-[#fcd34d]">
+                      <span className="inline-flex items-center gap-1 rounded bg-amber-50 dark:bg-amber-950/40 px-1.5 py-0.5 text-[10.5px] font-semibold text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/40">
                         <Clock className="h-3 w-3" />
                         Requested
                       </span>
                     )}
                   </div>
 
-                  <h4 className="mt-3 text-[13px] font-semibold text-fg group-hover:text-amber-400 transition-colors">
+                  <h4 className="mt-3 text-[13px] font-semibold text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors">
                     {slot.label}
                   </h4>
                   <p className="mt-1 text-[11.5px] text-faint">{slot.note}</p>

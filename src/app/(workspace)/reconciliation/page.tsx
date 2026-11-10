@@ -77,9 +77,10 @@ export default function ReconciliationPage() {
     fetch("/api/cases?limit=50")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data?.cases?.length > 0) {
-          setCases(data.cases);
-          setSelectedCaseId(data.cases[0].id);
+        const list = data?.cases || data?.items || [];
+        if (list.length > 0) {
+          setCases(list);
+          setSelectedCaseId(list[0].id);
         }
       })
       .catch((err) => console.error(err));
@@ -217,36 +218,36 @@ export default function ReconciliationPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 p-6">
+    <div className="flex flex-col gap-6">
       {/* Header */}
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight text-fg">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--ink)]">
               Cross-Platform Transaction Reconciliation
             </h1>
             <Badge tone="brand">10-Tier Matching Hierarchy</Badge>
           </div>
-          <p className="text-sm text-muted">
+          <p className="mt-1 text-sm text-[var(--ink-2)]">
             Reconcile multi-provider records across gateways, banking rails, UPI apps, and merchant systems to isolate status contradictions and timing gaps.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={seedMultiSourceDemo}
             disabled={reconciling}
-            className="text-xs"
+            className="text-xs shrink-0"
           >
-            <Zap className="mr-1.5 h-3.5 w-3.5 text-amber-400" />
-            Seed 4-Source Sandbox Dispute
+            <Zap className="mr-1.5 h-3.5 w-3.5 text-amber-500" />
+            Seed Sandbox Dispute
           </Button>
           <Button
             size="sm"
             onClick={handleRunReconciliation}
             disabled={reconciling || transactions.length === 0}
-            className="text-xs"
+            className="text-xs shrink-0"
           >
             {reconciling ? (
               <RefreshCw className="mr-1.5 h-3.5 w-3.5 animate-spin" />

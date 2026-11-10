@@ -3,15 +3,15 @@ import type { ComponentPropsWithRef, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 const FIELD_BASE =
-  "w-full rounded-md border bg-[#0B0F17] text-[13px] text-fg placeholder:text-faint " +
-  "transition-[border-color,box-shadow] duration-150 " +
-  "focus:border-amber-500/50 focus:outline-none focus:ring-2 focus:ring-amber-500/20 " +
-  "disabled:cursor-not-allowed disabled:opacity-60";
+  "w-full rounded-lg border border-[var(--line)] bg-[var(--surface)] text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-3)] " +
+  "transition-colors duration-150 " +
+  "focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 " +
+  "disabled:cursor-not-allowed disabled:opacity-50";
 
 const VALID =
-  "border-line-2 hover:border-[#222D42]";
+  "hover:border-[var(--line-strong)]";
 const INVALID =
-  "border-[color-mix(in_srgb,var(--color-danger)_55%,transparent)] hover:border-[color-mix(in_srgb,var(--color-danger)_75%,transparent)]";
+  "border-[var(--danger)] focus:border-[var(--danger)] focus:ring-[var(--danger)]/20";
 
 export interface InputProps extends ComponentPropsWithRef<"input"> {
   invalid?: boolean;
@@ -45,7 +45,7 @@ export function Input({
     <div className="relative">
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-0 flex w-9 items-center justify-center text-faint"
+        className="pointer-events-none absolute inset-y-0 left-0 flex w-9 items-center justify-center text-[var(--ink-3)]"
       >
         {icon}
       </span>
@@ -109,7 +109,7 @@ export function Select({
       </select>
       <ChevronDown
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 right-2.5 my-auto h-3.5 w-3.5 text-faint"
+        className="pointer-events-none absolute inset-y-0 right-2.5 my-auto h-3.5 w-3.5 text-[var(--ink-3)]"
       />
     </div>
   );
@@ -136,22 +136,22 @@ export function Field({
     <div className={cn("flex flex-col gap-1.5", className)}>
       <label
         htmlFor={htmlFor}
-        className="text-[12.5px] font-medium text-muted"
+        className="text-[12.5px] font-medium text-[var(--ink-2)]"
       >
         {label}
         {required ? (
-          <span aria-hidden="true" className="ml-1 text-[var(--color-danger)]">
+          <span aria-hidden="true" className="ml-1 text-[var(--danger)]">
             *
           </span>
         ) : null}
       </label>
       {children}
       {error ? (
-        <p id={`${htmlFor}-error`} role="alert" className="text-[11.5px] text-[#fa8b8b]">
+        <p id={`${htmlFor}-error`} role="alert" className="text-[11.5px] text-[var(--danger)] font-medium">
           {error}
         </p>
       ) : hint ? (
-        <p className="text-[11.5px] text-faint">{hint}</p>
+        <p className="text-[11.5px] text-[var(--ink-3)]">{hint}</p>
       ) : null}
     </div>
   );

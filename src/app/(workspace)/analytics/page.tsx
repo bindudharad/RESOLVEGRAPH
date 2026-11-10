@@ -128,14 +128,14 @@ const TREND_SERIES: Record<DateRange, Array<{ date: string; total: number; resol
 function CustomChartTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-line-2 bg-[#0B0F17] px-3.5 py-2.5 shadow-xl text-[12px]">
-      <p className="font-semibold text-fg mb-1.5">{label}</p>
+    <div className="rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] px-3.5 py-2.5 shadow-xl text-[12px] text-[var(--ink)]">
+      <p className="font-semibold text-[var(--ink)] mb-1.5">{label}</p>
       <div className="flex flex-col gap-1">
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span className="text-subtle">{entry.name}:</span>
-            <span className="font-mono font-medium text-fg">{entry.value}</span>
+            <span className="text-[var(--ink-2)]">{entry.name}:</span>
+            <span className="font-mono font-medium text-[var(--ink)]">{entry.value}</span>
           </div>
         ))}
       </div>
@@ -204,22 +204,33 @@ export default function AnalyticsPage() {
           </p>
         </div>
 
-        {/* Date Range Selector */}
-        <div className="flex items-center gap-1 rounded-lg border border-line bg-surface-2 p-1">
-          {(["7D", "30D", "90D", "12M"] as DateRange[]).map((r) => (
-            <button
-              key={r}
-              type="button"
-              onClick={() => setRange(r)}
-              className={`rounded-md px-3 py-1.5 text-[12px] font-medium transition-colors ${
-                range === r
-                  ? "bg-[var(--color-brand-solid)] text-white shadow-sm"
-                  : "text-subtle hover:text-fg"
-              }`}
-            >
-              {r}
-            </button>
-          ))}
+        <div className="flex items-center gap-3">
+          {/* Print A4 Report Button */}
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-[12px] font-medium text-subtle hover:text-fg hover:border-line-strong transition-colors"
+          >
+            <span>Print A4 Dossier</span>
+          </button>
+
+          {/* Date Range Selector */}
+          <div className="flex items-center gap-1 rounded-lg border border-line bg-surface-2 p-1">
+            {(["7D", "30D", "90D", "12M"] as DateRange[]).map((r) => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setRange(r)}
+                className={`rounded-md px-3 py-1.5 text-[12px] font-medium transition-colors ${
+                  range === r
+                    ? "bg-[var(--accent)] text-white shadow-xs font-semibold"
+                    : "text-subtle hover:text-fg"
+                }`}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -73,11 +73,44 @@ export default function CasesPage() {
   }, [cases]);
 
   const handleExport = () => {
-    toast({
-      tone: "info",
-      title: "Export Generated (Demo)",
-      description: `Exported ${filteredCases.length} case records to CSV format. No backend call initiated.`,
-    });
+    try {
+      const headers = ["Case ID", "Title", "Customer", "Merchant", "Amount", "Currency", "Status", "Priority", "Category", "Created At"];
+      const rows = filteredCases.map((c) => [
+        `"${c.id}"`,
+        `"${c.title.replace(/"/g, '""')}"`,
+        `"${c.customer.replace(/"/g, '""')}"`,
+        `"${c.merchant.replace(/"/g, '""')}"`,
+        c.amount,
+        c.currency,
+        c.status,
+        c.priority,
+        c.category,
+        `"${c.createdAt}"`,
+      ]);
+
+      const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `resolvegraph_cases_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast({
+        tone: "success",
+        title: "CSV Export Downloaded",
+        description: `Successfully exported ${filteredCases.length} case records to CSV format.`,
+      });
+    } catch {
+      toast({
+        tone: "error",
+        title: "Export Error",
+        description: "Failed to generate CSV export file.",
+      });
+    }
   };
 
   return (
@@ -120,10 +153,10 @@ export default function CasesPage() {
               key={statusTab}
               type="button"
               onClick={() => setFilters((f) => ({ ...f, status: statusTab }))}
-              className={`inline-flex shrink-0 items-center gap-2 rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-colors ${
+              className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 text-[12.5px] font-medium transition-colors ${
                 isActive
-                  ? "bg-[var(--color-brand-solid)] text-white shadow-sm"
-                  : "border border-line bg-surface-2 text-subtle hover:border-line-2 hover:text-fg"
+                  ? "bg-[var(--accent)] text-white shadow-sm"
+                  : "border border-line bg-surface-2 text-subtle hover:border-line-strong hover:text-fg"
               }`}
             >
               <span>{statusTab}</span>
@@ -131,7 +164,7 @@ export default function CasesPage() {
                 className={`rounded-full px-1.5 py-0.2 text-[10.5px] font-mono ${
                   isActive
                     ? "bg-white/20 text-white"
-                    : "bg-surface-3 text-faint"
+                    : "bg-surface-3 text-subtle"
                 }`}
               >
                 {count}

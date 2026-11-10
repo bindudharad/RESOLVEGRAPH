@@ -82,7 +82,7 @@ export function Dropdown({
           role="menu"
           aria-label={label}
           className={cn(
-            "rg-anim-pop absolute top-[calc(100%+7px)] z-80 overflow-hidden rounded-lg border border-line-2 bg-[#0B0F17] py-1.5 shadow-[0_18px_48px_-12px_rgba(0,0,0,0.9)]",
+            "rg-anim-pop absolute top-[calc(100%+7px)] z-80 overflow-hidden rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] py-1.5 shadow-xl text-[var(--ink)]",
             align === "end" ? "right-0" : "left-0",
             width,
           )}
@@ -113,8 +113,8 @@ export function DropdownItem({
   const className = cn(
     "flex w-full items-center gap-2.5 px-3 py-2 text-left text-[13px] transition-colors",
     danger
-      ? "text-[#fa8b8b] hover:bg-[color-mix(in_srgb,var(--color-danger)_12%,transparent)]"
-      : "text-muted hover:bg-surface-2 hover:text-fg",
+      ? "text-[var(--danger)] hover:bg-[var(--danger)]/10"
+      : "text-[var(--ink-2)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]",
     disabled && "pointer-events-none opacity-45",
   );
 
@@ -146,12 +146,12 @@ export function DropdownItem({
 
 export function DropdownLabel({ children }: { children: ReactNode }) {
   return (
-    <div className="px-3 pb-1.5 pt-2 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-faint">
+    <div className="px-3 pb-1.5 pt-2 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[var(--ink-3)]">
       {children}
     </div>
   );
 }
 
 export function DropdownSeparator() {
-  return <div className="my-1.5 h-px bg-line" role="separator" />;
+  return <div className="my-1.5 h-px bg-[var(--line)]" role="separator" />;
 }

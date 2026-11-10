@@ -85,6 +85,25 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [mobileOpen]);
 
+  // Global keyboard shortcut: '[' toggles sidebar collapse (Section 4.1)
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement ||
+        (event.target as HTMLElement)?.isContentEditable
+      ) {
+        return;
+      }
+      if (event.key === "[") {
+        event.preventDefault();
+        toggleCollapsed();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [toggleCollapsed]);
+
   const value = useMemo(
     () => ({
       collapsed,

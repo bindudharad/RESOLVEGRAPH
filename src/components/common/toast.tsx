@@ -20,10 +20,11 @@ export interface ToastRecord {
   title: string;
   description?: string;
   tone: ToastTone;
+  isDemo?: boolean;
 }
 
 interface ToastApi {
-  toast: (input: { title: string; description?: string; tone?: ToastTone }) => void;
+  toast: (input: { title: string; description?: string; tone?: ToastTone; isDemo?: boolean }) => void;
 }
 
 const ToastContext = createContext<ToastApi | null>(null);
@@ -42,6 +43,26 @@ const TONE_STROKE = {
 
 const AUTO_DISMISS_MS = 5000;
 
+let activeToastFn: ToastApi["toast"] | null = null;
+
+export const toast = {
+  success: (title: string, options?: { description?: string; isDemo?: boolean }) => {
+    if (activeToastFn) {
+      activeToastFn({ title, description: options?.description, tone: "success", isDemo: options?.isDemo });
+    }
+  },
+  error: (title: string, options?: { description?: string; isDemo?: boolean }) => {
+    if (activeToastFn) {
+      activeToastFn({ title, description: options?.description, tone: "error", isDemo: options?.isDemo });
+    }
+  },
+  info: (title: string, options?: { description?: string; isDemo?: boolean }) => {
+    if (activeToastFn) {
+      activeToastFn({ title, description: options?.description, tone: "info", isDemo: options?.isDemo });
+    }
+  },
+};
+
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastRecord[]>([]);
   const nextId = useRef(1);
@@ -56,10 +77,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const toast = useCallback<ToastApi["toast"]>(
-    ({ title, description, tone = "info" }) => {
+  const toastFn = useCallback<ToastApi["toast"]>(
+    ({ title, description, tone = "info", isDemo = true }) => {
       const id = nextId.current++;
-      setToasts((current) => [...current.slice(-3), { id, title, description, tone }]);
+      setToasts((current) => [...current.slice(-3), { id, title, description, tone, isDemo }]);
       timers.current.set(
         id,
         setTimeout(() => dismiss(id), AUTO_DISMISS_MS),
@@ -69,6 +90,13 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
+    activeToastFn = toastFn;
+    return () => {
+      activeToastFn = null;
+    };
+  }, [toastFn]);
+
+  useEffect(() => {
     const pending = timers.current;
     return () => {
       pending.forEach((timer) => clearTimeout(timer));
@@ -76,7 +104,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const api = useMemo(() => ({ toast }), [toast]);
+  const api = useMemo(() => ({ toast: toastFn }), [toastFn]);
 
   return (
     <ToastContext.Provider value={api}>
@@ -113,16 +141,23 @@ function ToastViewport({
           <div
             key={item.id}
             role="status"
-            className="rg-anim-rise pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-lg border border-line-2 bg-[#0B0F17] px-4 py-3 shadow-[0_20px_48px_-14px_rgba(0,0,0,0.9)]"
+            className="rg-anim-rise pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl border border-[var(--line-strong)] bg-[var(--surface)] px-4 py-3 shadow-2xl"
           >
             <Icon
               className={cn("mt-0.5 h-4 w-4 shrink-0", TONE_STROKE[item.tone])}
               aria-hidden="true"
             />
             <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-medium leading-snug text-fg">{item.title}</p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-[13px] font-medium leading-snug text-[var(--ink)]">{item.title}</p>
+                {item.isDemo && (
+                  <span className="rounded bg-[var(--surface-2)] border border-[var(--line-strong)] px-1.5 py-0.2 text-[10px] font-mono uppercase tracking-wider text-[var(--ink-3)]">
+                    Demo
+                  </span>
+                )}
+              </div>
               {item.description ? (
-                <p className="mt-1 text-[12px] leading-relaxed text-subtle">
+                <p className="mt-1 text-[12px] leading-relaxed text-[var(--ink-2)]">
                   {item.description}
                 </p>
               ) : null}

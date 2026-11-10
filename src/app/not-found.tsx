@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, FileQuestion, LayoutDashboard } from "lucide-react";
+import { ArrowLeft, FileQuestion, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
@@ -26,9 +26,9 @@ export default function NotFound() {
           <Button
             variant="primary"
             size="md"
-            icon={<LayoutDashboard className="h-4 w-4" />}
+            icon={<Home className="h-4 w-4" />}
           >
-            Return to Dashboard
+            Return to Home
           </Button>
         </Link>
 

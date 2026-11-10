@@ -16,14 +16,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
 
 interface KillSwitchState {
-  globalKillSwitchActive: boolean;
-  paypalAllowed: boolean;
-  providersAllowed: string[];
-  agentsAllowed: boolean;
-  notificationsAllowed: boolean;
-  reason: string;
-  updatedBy: string;
-  updatedAt: string;
+  id?: string;
+  isOutboundPayPalKilled: boolean;
+  isExternalProviderKilled: boolean;
+  isAutonomousAgentKilled: boolean;
+  isNotificationKilled: boolean;
+  reason?: string;
+  updatedBy?: string;
+  updatedAt?: string;
 }
 
 interface AuditRecord {
@@ -58,7 +58,7 @@ export default function SecurityPage() {
 
         if (ksRes.ok && mounted) {
           const ksData = await ksRes.json();
-          setKillSwitch(ksData.config);
+          setKillSwitch(ksData.data || ksData.config || null);
         }
         if (auditRes.ok && mounted) {
           const auditData = await auditRes.json();
@@ -91,7 +91,7 @@ export default function SecurityPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to update kill switch");
 
-      setKillSwitch(data.config);
+      setKillSwitch(data.data || data.config);
       setMessage("Emergency security posture updated and recorded to tamper-evident audit ledger.");
       // Reload audit chain
       const auditRes = await fetch("/api/audit/chained?limit=50");
@@ -124,7 +124,7 @@ export default function SecurityPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 p-6">
+    <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
@@ -192,120 +192,169 @@ export default function SecurityPage() {
 
       {/* Kill Switch Controls */}
       <div className="rounded-xl border border-border bg-surface-1 p-6 shadow-sm space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
-          <div>
-            <h2 className="text-base font-semibold text-fg flex items-center gap-2">
-              <Sliders className="h-5 w-5 text-primary" />
-              Administrative Emergency Circuit Breakers
-            </h2>
-            <p className="text-xs text-muted">
-              Instantly halt outbound PayPal payments, third-party provider syncs, or autonomous agents in the event of an anomaly.
-            </p>
-          </div>
-          {killSwitch && (
-            <Badge
-              tone={killSwitch.globalKillSwitchActive ? "danger" : "success"}
-            >
-              {killSwitch.globalKillSwitchActive ? "GLOBAL EMERGENCY HALT" : "NORMAL OPERATIONS"}
-            </Badge>
-          )}
-        </div>
-
-        {killSwitch && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Master Toggle */}
-            <div className="rounded-lg border border-border bg-surface-2/40 p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm text-fg">Master Kill Switch</span>
-                {killSwitch.globalKillSwitchActive ? (
-                  <Lock className="h-4 w-4 text-red-400" />
-                ) : (
-                  <Unlock className="h-4 w-4 text-emerald-400" />
+        {(() => {
+          const isMasterKilled = Boolean(
+            killSwitch &&
+            killSwitch.isOutboundPayPalKilled &&
+            killSwitch.isExternalProviderKilled &&
+            killSwitch.isAutonomousAgentKilled &&
+            killSwitch.isNotificationKilled
+          );
+          return (
+            <>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
+                <div>
+                  <h2 className="text-base font-semibold text-fg flex items-center gap-2">
+                    <Sliders className="h-5 w-5 text-primary" />
+                    Administrative Emergency Circuit Breakers
+                  </h2>
+                  <p className="text-xs text-muted">
+                    Instantly halt outbound PayPal payments, third-party provider syncs, or autonomous agents in the event of an anomaly.
+                  </p>
+                </div>
+                {killSwitch && (
+                  <Badge tone={isMasterKilled ? "danger" : "success"}>
+                    {isMasterKilled ? "GLOBAL EMERGENCY HALT" : "SYSTEM OPERATIONAL"}
+                  </Badge>
                 )}
               </div>
-              <p className="text-xs text-muted">
-                Freezes all outbound financial disbursement, provider calls, and agent executions.
-              </p>
-              <Button
-                size="sm"
-                variant={killSwitch.globalKillSwitchActive ? "primary" : "danger"}
-                disabled={updating}
-                onClick={() =>
-                  handleUpdateKillSwitch({
-                    globalKillSwitchActive: !killSwitch.globalKillSwitchActive,
-                  })
-                }
-                className="w-full text-xs"
-              >
-                {killSwitch.globalKillSwitchActive ? "Deactivate Master Halt" : "Activate Master Kill Switch"}
-              </Button>
-            </div>
 
-            {/* PayPal Sandbox Payments */}
-            <div className="rounded-lg border border-border bg-surface-2/40 p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm text-fg">PayPal Sandbox Disbursals</span>
-                <Badge
-                  tone={killSwitch.paypalAllowed ? "success" : "danger"}
-                >
-                  {killSwitch.paypalAllowed ? "Enabled" : "Blocked"}
-                </Badge>
-              </div>
-              <p className="text-xs text-muted">
-                Governs outbound refund and capture calls to PayPal Sandbox API endpoints.
-              </p>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={updating}
-                onClick={() =>
-                  handleUpdateKillSwitch({
-                    paypalAllowed: !killSwitch.paypalAllowed,
-                  })
-                }
-                className="w-full text-xs"
-              >
-                {killSwitch.paypalAllowed ? "Halt PayPal Operations" : "Allow PayPal Operations"}
-              </Button>
-            </div>
+              {killSwitch && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* Master Toggle */}
+                  <div className="rounded-lg border border-border bg-surface-2/40 p-4 space-y-3 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-semibold text-sm text-fg">Master Circuit Halt</span>
+                        {isMasterKilled ? (
+                          <Lock className="h-4 w-4 text-red-500" />
+                        ) : (
+                          <Unlock className="h-4 w-4 text-emerald-500" />
+                        )}
+                      </div>
+                      <p className="text-xs text-muted">
+                        Freezes all financial disbursals, provider calls, and autonomous agents in a single action.
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant={isMasterKilled ? "primary" : "danger"}
+                      disabled={updating}
+                      onClick={() =>
+                        handleUpdateKillSwitch({
+                          isOutboundPayPalKilled: !isMasterKilled,
+                          isExternalProviderKilled: !isMasterKilled,
+                          isAutonomousAgentKilled: !isMasterKilled,
+                          isNotificationKilled: !isMasterKilled,
+                        })
+                      }
+                      className="w-full text-xs"
+                    >
+                      {isMasterKilled ? "Deactivate Master Halt" : "Activate Master Freeze"}
+                    </Button>
+                  </div>
 
-            {/* Autonomous Copilot Agents */}
-            <div className="rounded-lg border border-border bg-surface-2/40 p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm text-fg">Agent Execution Engine</span>
-                <Badge
-                  tone={killSwitch.agentsAllowed ? "success" : "danger"}
-                >
-                  {killSwitch.agentsAllowed ? "Enabled" : "Paused"}
-                </Badge>
-              </div>
-              <p className="text-xs text-muted">
-                Controls autonomous multi-agent analysis and hypothesis formation pipelines.
-              </p>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={updating}
-                onClick={() =>
-                  handleUpdateKillSwitch({
-                    agentsAllowed: !killSwitch.agentsAllowed,
-                  })
-                }
-                className="w-full text-xs"
-              >
-                {killSwitch.agentsAllowed ? "Pause Agent Execution" : "Resume Agent Execution"}
-              </Button>
-            </div>
-          </div>
-        )}
+                  {/* PayPal Sandbox Payments */}
+                  <div className="rounded-lg border border-border bg-surface-2/40 p-4 space-y-3 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-semibold text-sm text-fg">PayPal Sandbox API</span>
+                        <Badge tone={killSwitch.isOutboundPayPalKilled ? "danger" : "success"}>
+                          {killSwitch.isOutboundPayPalKilled ? "HALTED" : "ACTIVE"}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted">
+                        Governs outbound refund, authorization, and capture calls to PayPal Sandbox API endpoints.
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={updating}
+                      onClick={() =>
+                        handleUpdateKillSwitch({
+                          isOutboundPayPalKilled: !killSwitch.isOutboundPayPalKilled,
+                        })
+                      }
+                      className="w-full text-xs"
+                    >
+                      {killSwitch.isOutboundPayPalKilled ? "Resume PayPal API" : "Halt PayPal API"}
+                    </Button>
+                  </div>
 
-        <div className="flex items-center gap-3">
+                  {/* Autonomous Copilot Agents */}
+                  <div className="rounded-lg border border-border bg-surface-2/40 p-4 space-y-3 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-semibold text-sm text-fg">Multi-Agent Engine</span>
+                        <Badge tone={killSwitch.isAutonomousAgentKilled ? "danger" : "success"}>
+                          {killSwitch.isAutonomousAgentKilled ? "PAUSED" : "ACTIVE"}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted">
+                        Controls autonomous multi-agent hypothesis generation, consensus scoring, and auto-triage.
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={updating}
+                      onClick={() =>
+                        handleUpdateKillSwitch({
+                          isAutonomousAgentKilled: !killSwitch.isAutonomousAgentKilled,
+                        })
+                      }
+                      className="w-full text-xs"
+                    >
+                      {killSwitch.isAutonomousAgentKilled ? "Resume AI Agents" : "Pause AI Agents"}
+                    </Button>
+                  </div>
+
+                  {/* External Providers & Sync */}
+                  <div className="rounded-lg border border-border bg-surface-2/40 p-4 space-y-3 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-semibold text-sm text-fg">Provider Gateways</span>
+                        <Badge tone={killSwitch.isExternalProviderKilled ? "danger" : "success"}>
+                          {killSwitch.isExternalProviderKilled ? "BLOCKED" : "ACTIVE"}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted">
+                        Governs inbound webhooks and synchronization with external card networks and clearinghouses.
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={updating}
+                      onClick={() =>
+                        handleUpdateKillSwitch({
+                          isExternalProviderKilled: !killSwitch.isExternalProviderKilled,
+                        })
+                      }
+                      className="w-full text-xs"
+                    >
+                      {killSwitch.isExternalProviderKilled ? "Resume Gateways" : "Halt Gateways"}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
+          );
+        })()}
+
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2 border-t border-border/60">
           <Input
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            placeholder="Audit reason for state modification (optional)..."
-            className="text-xs"
+            placeholder="Mandatory administrative audit reason (e.g. 'Simulated zero-day network anomaly drill')..."
+            className="text-xs flex-1"
           />
+          {killSwitch?.updatedAt && (
+            <span className="text-[11px] text-muted whitespace-nowrap self-center font-mono">
+              Last state change: {new Date(killSwitch.updatedAt).toLocaleTimeString()}
+            </span>
+          )}
         </div>
       </div>
 

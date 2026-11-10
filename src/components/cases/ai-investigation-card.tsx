@@ -274,11 +274,11 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
               <h3 className="text-[15px] font-semibold tracking-[-0.01em] text-fg">
                 AI Investigation Centre — BERR Engine
               </h3>
-              <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold text-amber-300">
+              <span className="rounded-full border border-indigo-200 dark:border-indigo-800/40 bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-0.5 text-[10.5px] font-semibold text-indigo-700 dark:text-indigo-300">
                 Research Engine v1.0
               </span>
-              <span className="inline-flex items-center gap-1 rounded bg-[#0B0F17] px-2 py-0.5 text-[10.5px] font-mono text-faint border border-line">
-                <ShieldCheck className="h-3 w-3 text-emerald-400" />
+              <span className="inline-flex items-center gap-1 rounded bg-[var(--surface-2)] px-2 py-0.5 text-[10.5px] font-mono text-[var(--ink-2)] border border-[var(--line)]">
+                <ShieldCheck className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
                 Consent Gated
               </span>
             </div>
@@ -556,7 +556,7 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
       {/* AI Processing Consent Modal */}
       {isConsentModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="w-full max-w-lg rounded-xl border border-line-2 bg-[#0B0F17] p-5 shadow-2xl">
+          <div className="w-full max-w-lg rounded-xl border border-[var(--line-strong)] bg-[var(--surface)] p-6 shadow-2xl text-[var(--ink)]">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30">
                 <ShieldCheck className="h-5 w-5" />

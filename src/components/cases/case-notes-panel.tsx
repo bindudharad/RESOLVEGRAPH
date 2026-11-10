@@ -53,7 +53,7 @@ export function CaseNotesPanel({ caseId }: CaseNotesPanelProps) {
           onChange={(e) => setNoteText(e.target.value)}
           placeholder="Add an internal observation, carrier update, or review note…"
           rows={3}
-          className="w-full rounded-md border border-line bg-[#0B0F17] p-3 text-[13px] text-fg placeholder:text-faint transition-[border-color,box-shadow] focus:border-amber-500/50 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+          className="w-full rounded-lg border border-[var(--line)] bg-[var(--surface)] p-3 text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-3)] transition-colors focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/15"
         />
         <div className="flex items-center justify-between">
           <span className="text-[11.5px] text-faint">

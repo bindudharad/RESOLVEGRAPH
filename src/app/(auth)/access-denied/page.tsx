@@ -52,7 +52,7 @@ export default function AccessDeniedPage() {
           <Link href="/dashboard" className="flex-1">
             <Button variant="primary" className="w-full justify-center text-[12.5px]">
               <ArrowLeft className="h-3.5 w-3.5 mr-1" />
-              <span>Return to Dashboard</span>
+              <span>Return to Home</span>
             </Button>
           </Link>
 

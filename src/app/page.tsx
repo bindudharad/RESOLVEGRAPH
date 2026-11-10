@@ -1,12 +1,20 @@
-import type { Metadata } from "next";
-import { LandingPage } from "@/components/landing/landing-page";
+import { redirect } from "next/navigation";
+import { getSessionContext } from "@/server/auth/session";
 
-export const metadata: Metadata = {
-  title: "RESOLVEGRAPH — AI-Powered Commerce Resolution Infrastructure",
-  description:
-    "From the first complaint to a fair resolution. AI-powered commerce resolution infrastructure connecting buyers, merchants, payment records and evidence in one platform.",
-};
+export const dynamic = "force-dynamic";
 
-export default function HomePage() {
-  return <LandingPage />;
+/**
+ * Root Route '/'
+ * Unambiguous canonical routing:
+ * - Authenticated users are redirected to the Home Investigation Command Center: /dashboard
+ * - Unauthenticated visitors are redirected to the public overview landing page: /overview
+ */
+export default async function RootPage() {
+  const { user } = await getSessionContext();
+
+  if (user) {
+    redirect("/dashboard");
+  } else {
+    redirect("/overview");
+  }
 }

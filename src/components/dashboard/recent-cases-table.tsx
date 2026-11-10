@@ -56,7 +56,7 @@ export function RecentCasesTable() {
         />
       </div>
 
-      <div className="flex flex-col gap-3 border-b border-line bg-[#0B0F17] px-5 py-3.5">
+      <div className="flex flex-col gap-3 border-b border-[var(--line)] bg-[var(--surface-2)]/60 px-5 py-3.5">
         <CaseFilters state={filters} onChange={setFilters} />
       </div>
 

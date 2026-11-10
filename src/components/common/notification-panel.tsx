@@ -85,7 +85,7 @@ export function NotificationPanel() {
           const body = (
             <span className="flex w-full items-start gap-3 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-surface-2">
               <span
-                className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-line bg-[#0B0F17] ${strokeFor(item.kind)}`}
+                className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[var(--line)] bg-[var(--surface-2)] ${strokeFor(item.kind)}`}
               >
                 <Icon className="h-3.5 w-3.5" aria-hidden="true" />
               </span>

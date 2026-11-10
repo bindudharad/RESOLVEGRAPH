@@ -13,6 +13,116 @@ import {
 import type { ResolutionRange } from "@/lib/types";
 import { useToast } from "@/components/common/toast";
 
+export interface DashboardOverviewMetric {
+  value: number;
+  label: string;
+  sublabel: string;
+  href: string;
+}
+
+export interface AttentionQueueItem {
+  id: string;
+  caseNumber: string;
+  title: string;
+  category: string;
+  status: string;
+  priority: string;
+  amount: number;
+  currency: string;
+  customer: string;
+  merchant: string;
+  provider: string;
+  reason: string;
+  nextAction: string;
+  lastUpdated: string;
+}
+
+export interface AiFindingItem {
+  id: string;
+  caseId: string;
+  caseNumber: string;
+  caseTitle: string;
+  title: string;
+  explanation: string;
+  recommendedNextStep: string;
+  category: "SUPPORTED_FINDING" | "POSSIBLE_EXPLANATION" | "CONFLICT_DETECTED" | "MISSING_INFORMATION";
+  findingType: string;
+  outcome: string;
+  severity: string;
+  reviewStatus: string;
+  createdAt: string;
+  evidenceLinks: Array<{ filename: string; verificationStatus: string }>;
+}
+
+export interface EvidenceIntelligenceData {
+  total: number;
+  verified: number;
+  suspicious: number;
+  unverified: number;
+  recent: Array<{
+    id: string;
+    filename: string;
+    caseId: string;
+    caseNumber: string;
+    caseTitle: string;
+    evidenceType: string;
+    verificationStatus: string;
+    sha256: string;
+    sizeBytes: number;
+    uploadedByName: string;
+    createdAt: string;
+  }>;
+}
+
+export interface ReconciliationIntelligenceData {
+  total: number;
+  matched: number;
+  review: number;
+  conflict: number;
+  unmatched: number;
+  recentTransactions: Array<{
+    id: string;
+    provider: string;
+    grossAmountMinor: number;
+    currency: string;
+    reconciliationState: string;
+    externalReference?: string;
+    normalizedStatus: string;
+    timestamp: string;
+  }>;
+}
+
+export interface CommerceIntelligenceData {
+  totalOrders: number;
+  purchaseMemories: number;
+  registeredPackages: number;
+  packagesInTransit: number;
+  deliveryReminders: number;
+  unboxingSessions: number;
+}
+
+export interface IntegrationHealthItem {
+  name: string;
+  status: "CONNECTED" | "AVAILABLE" | "SANDBOX" | "SIMULATED" | "NOT CONFIGURED" | "UNAVAILABLE" | "ERROR" | "ACTIVE";
+  detail: string;
+  latency: string;
+}
+
+export interface PipelineStageItem {
+  index: number;
+  name: string;
+  status: "COMPLETED" | "ACTIVE" | "PENDING" | "BLOCKED";
+  href: string;
+}
+
+export interface CanonicalPipelineData {
+  id: string;
+  caseNumber: string;
+  title: string;
+  activeStage: number;
+  stages: PipelineStageItem[];
+}
+
 export interface DashboardSummaryData {
   kpis: {
     totalCases: { value: number; trend: number; hint: string };
@@ -20,11 +130,26 @@ export interface DashboardSummaryData {
     awaitingResponse: { value: number; trend: number; hint: string };
     resolvedCases: { value: number; trend: number; hint: string };
   };
+  overviewMetrics?: {
+    activeInvestigations: DashboardOverviewMetric;
+    pendingReviews: DashboardOverviewMetric;
+    paymentConflicts: DashboardOverviewMetric;
+    evidenceRequiringReview: DashboardOverviewMetric;
+  };
   categoryDistribution: Array<{ category: string; count: number; share: number }>;
   priorityDistribution: Array<{ priority: string; count: number }>;
-  recentCases: unknown[];
-  attentionCases: unknown[];
-  recentEvents: unknown[];
+  recentCases: Record<string, unknown>[];
+  attentionCases: Record<string, unknown>[];
+  attentionQueue?: AttentionQueueItem[];
+  evidenceIntelligence?: EvidenceIntelligenceData;
+  reconciliationIntelligence?: ReconciliationIntelligenceData;
+  aiIntelligence?: {
+    findings: AiFindingItem[];
+  };
+  commerceIntelligence?: CommerceIntelligenceData;
+  integrationHealth?: IntegrationHealthItem[];
+  canonicalPipelineCase?: CanonicalPipelineData | null;
+  recentEvents: Record<string, unknown>[];
 }
 
 interface DashboardState {

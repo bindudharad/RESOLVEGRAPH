@@ -83,7 +83,7 @@ export default function ResolutionRoomPage() {
       const res = await fetch("/api/cases");
       if (res.ok) {
         const data = await res.json();
-        const list = data.cases || [];
+        const list = data?.cases || data?.items || [];
         setCases(list);
         if (list.length > 0 && !selectedCaseId) {
           setSelectedCaseId(list[0].id);
@@ -169,32 +169,33 @@ export default function ResolutionRoomPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight text-fg">Shared Resolution Room</h1>
-            <Badge tone="brand" className="border-amber-500/30 bg-amber-500/10 text-amber-400">
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--ink)]">Shared Resolution Room</h1>
+            <Badge tone="brand">
               Module 16 Live
             </Badge>
           </div>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-[var(--ink-2)]">
             Bilateral buyer-merchant workspace with internal manager shielding and 10-point financial safeguards.
           </p>
         </div>
 
         {/* Case Selector */}
         <div className="flex items-center gap-2">
-          <label className="text-xs text-muted font-medium">Active Case:</label>
+          <label className="text-xs text-[var(--ink-2)] font-medium">Active Case:</label>
           <select
             value={selectedCaseId}
             onChange={(e) => setSelectedCaseId(e.target.value)}
-            className="rounded-md border border-border bg-surface-1 px-3 py-1.5 text-xs font-mono text-fg focus:outline-none focus:ring-1 focus:ring-brand-2"
+            className="rounded-lg border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-xs font-mono text-[var(--ink)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
           >
+            {cases.length === 0 && <option value="">Loading cases...</option>}
             {cases.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.caseNumber} — {c.title.slice(0, 32)}
+              <option key={c.id} value={c.id} className="bg-[var(--surface)] text-[var(--ink)]">
+                {c.caseNumber} — {c.title.slice(0, 36)}
               </option>
             ))}
           </select>
@@ -203,9 +204,9 @@ export default function ResolutionRoomPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Bilateral Conversation Thread */}
-        <div className="lg:col-span-2 flex flex-col rounded-lg border border-border bg-surface-1 overflow-hidden h-[680px]">
+        <div className="lg:col-span-2 flex flex-col rounded-lg border border-[var(--line)] bg-[var(--surface)] overflow-hidden h-[680px]">
           {/* Thread Header */}
-          <div className="border-b border-border bg-surface-2/60 px-4 py-3 flex items-center justify-between">
+          <div className="border-b border-[var(--line)] bg-[var(--surface-2)] px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4 text-brand-2" />
               <span className="text-xs font-semibold text-fg">Bilateral Discussion Stream</span>

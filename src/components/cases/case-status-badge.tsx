@@ -1,23 +1,13 @@
-import { Badge, type BadgeTone } from "@/components/ui/badge";
+import { Chip, type ChipVariant } from "@/components/ui/chip";
 import type { CaseStatus } from "@/lib/types";
 
-export const STATUS_TONE: Record<CaseStatus, BadgeTone> = {
-  Open: "info",
-  "Under Investigation": "brand",
-  "Awaiting Merchant": "warning",
-  "Awaiting Buyer": "accent",
-  Resolved: "success",
+export const STATUS_VARIANT_MAP: Record<CaseStatus, ChipVariant> = {
+  Open: "buyer",
+  "Under Investigation": "ai",
+  "Awaiting Merchant": "merchant",
+  "Awaiting Buyer": "contested",
+  Resolved: "agreed",
   Escalated: "danger",
-};
-
-/** Short accessibility label so colour is never the only signal. */
-const STATUS_MEANING: Record<CaseStatus, string> = {
-  Open: "Open — no investigation started yet",
-  "Under Investigation": "Under investigation — evidence under review",
-  "Awaiting Merchant": "Awaiting merchant response",
-  "Awaiting Buyer": "Awaiting buyer response",
-  Resolved: "Resolved — closed with an agreed outcome",
-  Escalated: "Escalated — needs immediate attention",
 };
 
 export function CaseStatusBadge({
@@ -27,9 +17,10 @@ export function CaseStatusBadge({
   status: CaseStatus;
   withTitle?: boolean;
 }) {
+  const variant = STATUS_VARIANT_MAP[status] || "neutral";
   return (
-    <Badge tone={STATUS_TONE[status]} dot title={withTitle ? STATUS_MEANING[status] : undefined}>
+    <Chip variant={variant} title={withTitle ? `Status: ${status}` : undefined}>
       {status}
-    </Badge>
+    </Chip>
   );
 }

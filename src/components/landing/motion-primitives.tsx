@@ -141,7 +141,7 @@ interface CountUpProps {
 
 export function CountUp({
   end,
-  duration = 2,
+  duration = 1.2,
   prefix = "",
   suffix = "",
   className,
@@ -149,12 +149,13 @@ export function CountUp({
   const ref = useRef<HTMLSpanElement>(null);
   const motionVal = useMotionValue(0);
   const rounded = useTransform(motionVal, (v) => Math.round(v));
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [display, setDisplay] = useState(0);
+  const isInView = useInView(ref, { once: true, margin: "0px" });
+  const [display, setDisplay] = useState(end);
 
   useEffect(() => {
     if (!isInView) return;
 
+    motionVal.set(0);
     const controls = animate(motionVal, end, {
       duration,
       ease: [0.25, 0.4, 0.25, 1],

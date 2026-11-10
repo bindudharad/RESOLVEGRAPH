@@ -45,18 +45,18 @@ export default function InvestigationPage() {
       </section>
 
       {/* Prominent Architectural Banner */}
-      <div className="relative overflow-hidden rounded-xl border border-amber-500/30 bg-[#0B0F17] p-6 shadow-[0_16px_40px_-16px_rgba(0,0,0,0.7)]">
+      <div className="relative overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
         <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--accent)]">
             <Brain className="h-6 w-6" />
           </div>
 
           <div className="min-w-0">
-            <h2 className="text-[17px] font-bold text-fg">
+            <h2 className="text-[17px] font-bold text-[var(--ink)]">
               BERR Multimodal Reasoning & Discrepancy Scoring
             </h2>
-            <p className="mt-1 text-[13.5px] leading-relaxed text-muted max-w-3xl">
-              The Bilateral Evidence-to-Remedy Reasoning engine cross-examines buyer claims and merchant fulfillment records symmetrically. It extracts facts, normalizes commercial units, computes the multi-factor discrepancy score <code className="font-mono text-xs bg-surface-3 px-1.5 py-0.5 rounded text-fg">D = α·D_exact + β·D_semantic + γ·D_temporal</code>, and isolates agreed, contested, and missing facts.
+            <p className="mt-1 text-[13.5px] leading-relaxed text-[var(--ink-2)] max-w-3xl">
+              The Bilateral Evidence-to-Remedy Reasoning engine cross-examines buyer claims and merchant fulfillment records symmetrically. It extracts facts, normalizes commercial units, computes the multi-factor discrepancy score <code className="font-mono text-xs bg-[var(--surface-2)] px-1.5 py-0.5 rounded text-[var(--ink)] border border-[var(--line)]">D = α·D_exact + β·D_semantic + γ·D_temporal</code>, and isolates agreed, contested, and missing facts.
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-2 text-[11.5px] font-mono text-faint">
               <span className="inline-flex items-center gap-1.5 rounded-md border border-line bg-app px-2.5 py-1">

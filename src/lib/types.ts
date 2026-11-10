@@ -34,6 +34,8 @@ export const CASE_PRIORITIES = ["High", "Medium", "Low"] as const;
 
 export type CasePriority = (typeof CASE_PRIORITIES)[number];
 
+export type BerrState = "AGREED" | "CONTESTED" | "MISSING" | "VERIFIED";
+
 export const CURRENCIES = ["INR", "USD"] as const;
 
 export type Currency = (typeof CURRENCIES)[number];

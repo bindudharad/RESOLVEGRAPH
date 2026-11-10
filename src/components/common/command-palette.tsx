@@ -8,6 +8,7 @@ import {
   FileText,
   FolderOpen,
   HelpCircle,
+  Home,
   Inbox,
   LayoutDashboard,
   Library,
@@ -16,6 +17,21 @@ import {
   Settings,
   Sparkles,
   X,
+  CreditCard,
+  ShieldAlert,
+  ShieldCheck,
+  ShoppingCart,
+  Package,
+  MessageSquare,
+  FileSearch,
+  UploadCloud,
+  Layers,
+  Languages,
+  Bot,
+  Building2,
+  PlayCircle,
+  BookOpen,
+  GraduationCap,
 } from "lucide-react";
 import { useDemoCases } from "@/hooks/use-demo-cases";
 import { DEMO_EVIDENCE } from "@/lib/mock-data";
@@ -48,7 +64,7 @@ export function CommandPalette({ open, onClose, onCreateCase }: CommandPalettePr
   const items = useMemo<CommandItem[]>(() => {
     const list: CommandItem[] = [];
 
-    // Quick Actions
+    // Quick Actions (Section 4.2)
     list.push({
       id: "act-create-case",
       category: "Actions",
@@ -61,14 +77,65 @@ export function CommandPalette({ open, onClose, onCreateCase }: CommandPalettePr
       },
     });
 
+    list.push({
+      id: "act-switch-theme",
+      category: "Actions",
+      title: "Toggle Theme (Light / Dark)",
+      subtitle: "Switch between light-first and calibrated dark theme",
+      icon: Settings,
+      action: () => {
+        onClose();
+        const root = document.documentElement;
+        const current = root.getAttribute("data-theme") || "light";
+        const next = current === "dark" ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        if (next === "dark") root.classList.add("dark");
+        else root.classList.remove("dark");
+        localStorage.setItem("rg.theme", next);
+      },
+    });
+
+    list.push({
+      id: "act-reduce-motion",
+      category: "Actions",
+      title: "Reduce Motion",
+      subtitle: "Disable parallax and clamp transitions to 120ms fades",
+      icon: Settings,
+      action: () => {
+        onClose();
+        const root = document.documentElement;
+        const current = root.getAttribute("data-motion") || "full";
+        const next = current === "reduced" ? "full" : "reduced";
+        root.setAttribute("data-motion", next);
+        if (next === "reduced") root.classList.add("reduce-motion");
+        else root.classList.remove("reduce-motion");
+        localStorage.setItem("rg.motion", next);
+      },
+    });
+
     // Navigation Pages
     const pages = [
-      { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+      { title: "Home — Investigation Command Center", href: "/dashboard", icon: Home },
       { title: "Case Management", href: "/cases", icon: FolderOpen },
+      { title: "Payment Incidents & Forensics", href: "/incidents", icon: FileSearch },
+      { title: "Universal Intake", href: "/intake", icon: UploadCloud },
+      { title: "Cross-Reconciliation", href: "/reconciliation", icon: Layers },
+      { title: "Purchase Memory", href: "/purchases", icon: ShoppingCart },
+      { title: "Package Passports", href: "/packages", icon: Package },
+      { title: "Shared Resolution Room", href: "/resolution-room", icon: MessageSquare },
+      { title: "Payments & Refunds", href: "/payments", icon: CreditCard },
+      { title: "PayPal Disputes", href: "/paypal/disputes", icon: ShieldAlert },
       { title: "Evidence Library", href: "/evidence", icon: Library },
       { title: "Resolution Center", href: "/resolution", icon: Inbox },
-      { title: "Investigation Insights", href: "/investigation", icon: Sparkles },
+      { title: "AI Copilot Orchestrator", href: "/copilot", icon: Bot },
+      { title: "Investigation Insights (BERR)", href: "/investigation", icon: Sparkles },
+      { title: "Multilingual Voice Intake", href: "/multilingual", icon: Languages },
+      { title: "Security & Kill Switch", href: "/admin/security", icon: ShieldCheck },
       { title: "Analytics & Reporting", href: "/analytics", icon: BarChart3 },
+      { title: "Organizations & Team", href: "/organizations", icon: Building2 },
+      { title: "Guided Interactive Demo", href: "/demo", icon: PlayCircle },
+      { title: "Documentation & API Reference", href: "/docs", icon: BookOpen },
+      { title: "BERR Methodology & Benchmarks", href: "/methodology", icon: GraduationCap },
       { title: "Settings & Profile", href: "/settings", icon: Settings },
       { title: "Help & Support", href: "/help", icon: HelpCircle },
     ];

@@ -40,7 +40,10 @@ export async function GET(request: NextRequest) {
       sortOrder,
     });
 
-    return NextResponse.json(result);
+    return NextResponse.json({
+      ...result,
+      cases: result.items,
+    });
   } catch (error: unknown) {
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });

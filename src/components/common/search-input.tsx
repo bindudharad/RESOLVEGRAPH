@@ -47,7 +47,7 @@ export function SearchInput({
     <div className={cn("relative w-full", className)}>
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-0 flex w-9 items-center justify-center text-faint"
+        className="pointer-events-none absolute inset-y-0 left-0 flex w-9 items-center justify-center text-[var(--ink-3)]"
       >
         <Search className="h-4 w-4" />
       </span>
@@ -60,9 +60,9 @@ export function SearchInput({
         placeholder={placeholder}
         onChange={(event) => onValueChange(event.target.value)}
         className={cn(
-          "h-9 w-full rounded-md border border-line bg-[#0B0F17] text-[13px] text-fg placeholder:text-faint",
-          "pl-9 transition-[border-color,box-shadow] duration-150",
-          "focus:border-amber-500/50 focus:outline-none focus:ring-2 focus:ring-amber-500/20",
+          "h-9 w-full rounded-lg border border-[var(--line)] bg-[var(--surface)] text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-3)]",
+          "pl-9 transition-colors duration-150",
+          "focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/15",
           plannedChip ? "pr-[86px]" : shortcut ? "pr-16" : value ? "pr-9" : "pr-3",
           "[&::-webkit-search-cancel-button]:hidden",
         )}
@@ -77,7 +77,7 @@ export function SearchInput({
             inputRef.current?.focus();
           }}
           aria-label="Clear search"
-          className="absolute inset-y-0 right-2 my-auto flex h-6 w-6 items-center justify-center rounded text-faint transition-colors hover:bg-surface-2 hover:text-fg"
+          className="absolute inset-y-0 right-2 my-auto flex h-6 w-6 items-center justify-center rounded text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
         >
           <X className="h-3.5 w-3.5" aria-hidden="true" />
         </button>

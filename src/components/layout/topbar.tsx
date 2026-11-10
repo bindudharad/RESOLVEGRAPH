@@ -4,23 +4,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Building2,
+  ChevronRight,
   HelpCircle,
   LifeBuoy,
   LogOut,
   Menu,
+  Moon,
   Search,
   Settings,
+  Sun,
   User,
+  Sliders,
+  Sparkles,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "@/lib/auth-client";
 import { breadcrumbsFor, titleFor } from "@/lib/navigation";
 import { CURRENT_USER, WORKSPACE } from "@/lib/mock-data";
-import { DemoBadge } from "@/components/common/demo-badge";
 import { NotificationPanel } from "@/components/common/notification-panel";
 import { CommandPalette } from "@/components/common/command-palette";
 import { useSidebar } from "@/components/layout/sidebar-context";
+import { useTheme } from "@/components/common/theme-provider";
 import { Logo } from "@/components/layout/logo";
 import {
   Dropdown,
@@ -29,6 +34,8 @@ import {
   DropdownSeparator,
 } from "@/components/ui/dropdown";
 import { Kbd, Tooltip } from "@/components/ui/primitives";
+import { Popover } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 export function Topbar() {
   const pathname = usePathname();
@@ -36,6 +43,7 @@ export function Topbar() {
   const { openMobile } = useSidebar();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const { data: session } = useSession();
+  const { theme, setTheme, motion, setMotion } = useTheme();
 
   const title = titleFor(pathname);
   const crumbs = breadcrumbsFor(pathname);
@@ -43,12 +51,13 @@ export function Topbar() {
   const user = session?.user;
   const displayName = user?.name || CURRENT_USER.name;
   const displayEmail = user?.email || CURRENT_USER.email;
-  const initials = displayName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase() || "RG";
+  const initials =
+    displayName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "RG";
 
   const handleSignOut = async () => {
     try {
@@ -74,58 +83,59 @@ export function Topbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-line bg-shell/80 backdrop-blur-xl backdrop-saturate-150">
-        <div className="flex h-16 items-center gap-3 px-4 sm:px-6 lg:px-8">
+      {/* Section 4.3: Slim announcement bar above top bar */}
+      <div className="bg-[var(--surface-2)] border-b border-[var(--line)] px-4 py-1 text-center text-[11px] text-[var(--ink-3)] font-mono tracking-tight flex items-center justify-center gap-2">
+        <span className="h-1.5 w-1.5 rounded-full bg-[var(--contested)]" />
+        <span>
+          Interactive demo, sample data. Nothing here is a real dispute or payment.
+        </span>
+      </div>
+
+      <header className="sticky top-0 z-40 h-14 border-b border-[var(--line)] bg-[var(--surface)]/90 backdrop-blur-md transition-colors">
+        <div className="flex h-14 items-center gap-3 px-4 sm:px-6 lg:px-8">
           {/* Mobile: drawer trigger + compact brand */}
           <button
             type="button"
             onClick={openMobile}
             aria-label="Open navigation menu"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line text-muted transition-colors hover:bg-surface-2 hover:text-fg lg:hidden"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--line)] text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)] lg:hidden"
           >
-            <Menu className="h-[18px] w-[18px]" aria-hidden="true" />
+            <Menu className="h-4 w-4" aria-hidden="true" />
           </button>
 
           <Link
             href="/dashboard"
-            aria-label="RESOLVEGRAPH dashboard"
+            aria-label="RESOLVEGRAPH Home"
             className="shrink-0 rounded-md transition-opacity hover:opacity-90 lg:hidden"
           >
-            <Logo className="h-7 w-7" />
+            <Logo className="h-6 w-6" />
           </Link>
 
-          {/* Page title + breadcrumb */}
-          <div className="min-w-0 flex-1">
-            <div className="flex min-w-0 items-center gap-2.5">
-              <h1 className="truncate text-[15px] font-semibold tracking-[-0.012em] text-fg sm:text-[16px]">
-                {title}
-              </h1>
-              <span className="hidden xl:inline-flex">
-                <DemoBadge size="xs" />
-              </span>
-            </div>
-
-            <nav aria-label="Breadcrumb" className="hidden sm:block">
-              <ol className="mt-0.5 flex items-center gap-1.5 text-[11.5px] leading-none text-faint">
-                <li className="flex items-center gap-1.5">
-                  <span className="text-subtle">{WORKSPACE.name}</span>
+          {/* Page title + breadcrumb with chevron separators (Section 4.3 & Section 5) */}
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <nav aria-label="Breadcrumb">
+              <ol className="flex items-center gap-1.5 text-[12px] leading-none truncate">
+                <li className="hidden items-center gap-1.5 text-[var(--ink-3)] sm:flex shrink-0">
+                  <span>{WORKSPACE.name}</span>
                 </li>
                 {crumbs.map((crumb, index) => (
-                  <li key={`${crumb.label}-${index}`} className="flex items-center gap-1.5">
-                    <span aria-hidden="true" className="text-faint/70">
-                      /
-                    </span>
+                  <li key={`${crumb.label}-${index}`} className="flex items-center gap-1.5 min-w-0 shrink">
+                    {index === 0 ? (
+                      <ChevronRight className="hidden h-3 w-3 text-[var(--ink-3)] opacity-60 sm:inline shrink-0" />
+                    ) : (
+                      <ChevronRight className="h-3 w-3 text-[var(--ink-3)] opacity-60 inline shrink-0" />
+                    )}
                     {crumb.href ? (
                       <Link
                         href={crumb.href}
-                        className="max-w-[16ch] truncate transition-colors hover:text-muted"
+                        className="max-w-[14ch] sm:max-w-[20ch] truncate text-[var(--ink-2)] transition-colors hover:text-[var(--accent)] font-medium"
                       >
                         {crumb.label}
                       </Link>
                     ) : (
                       <span
                         aria-current="page"
-                        className="max-w-[24ch] truncate text-muted"
+                        className="max-w-[16ch] sm:max-w-[28ch] truncate text-[var(--ink)] font-semibold"
                       >
                         {crumb.label}
                       </span>
@@ -137,113 +147,160 @@ export function Topbar() {
           </div>
 
           {/* Right cluster */}
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-            <span className="hidden items-center gap-2 rounded-md border border-line bg-surface px-2.5 py-1.5 xl:flex">
-              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[var(--color-success)]" />
-              <span className="text-[11.5px] font-medium text-muted">
-                Workspace active
-              </span>
-            </span>
-
-            {/* Global Search trigger for desktop */}
+          <div className="flex shrink-0 items-center gap-2">
+            {/* Global Search trigger with Ctrl/Cmd+K hint */}
             <button
               type="button"
               onClick={() => setCommandPaletteOpen(true)}
-              className="hidden h-9 w-64 items-center justify-between rounded-md border border-line bg-[#0B0F17] px-3 text-[13px] text-faint transition-all hover:border-amber-500/50 hover:text-muted md:flex lg:w-72 xl:w-80"
+              className="hidden h-8 w-52 md:w-56 lg:w-68 items-center justify-between rounded-lg border border-[var(--line)] bg-[var(--surface-2)] px-2.5 text-[12px] text-[var(--ink-3)] transition-all hover:border-[var(--accent)] hover:text-[var(--ink)] sm:flex"
               aria-label="Open universal command search"
             >
-              <div className="flex items-center gap-2">
-                <Search className="h-3.5 w-3.5 text-faint" />
-                <span>Search cases, evidence, actions…</span>
+              <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
+                <Search className="h-3.5 w-3.5 shrink-0 text-[var(--ink-3)]" />
+                <span className="truncate whitespace-nowrap">Search cases, evidence, graph…</span>
               </div>
-              <div className="flex items-center gap-0.5">
+              <div className="flex shrink-0 items-center gap-0.5 ml-1">
                 <Kbd>⌘</Kbd>
                 <Kbd>K</Kbd>
               </div>
             </button>
 
-            {/* Search trigger for mobile */}
-            <Tooltip label="Universal search" side="bottom" className="md:hidden">
-              <button
-                type="button"
-                onClick={() => setCommandPaletteOpen(true)}
-                aria-label="Search cases and navigation"
-                className="flex h-9 w-9 items-center justify-center rounded-md border border-transparent text-muted transition-colors hover:border-line hover:bg-surface-2 hover:text-fg"
-              >
-                <Search className="h-[17px] w-[17px]" aria-hidden="true" />
-              </button>
-            </Tooltip>
+            {/* Mobile search button */}
+            <button
+              type="button"
+              onClick={() => setCommandPaletteOpen(true)}
+              aria-label="Search"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--line)] text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)] md:hidden"
+            >
+              <Search className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
 
+            {/* Notifications */}
             <NotificationPanel />
 
-            <Tooltip label="Help & support" side="bottom">
-              <Link
-                href="/help"
-                aria-label="Help and support"
-                className="hidden h-9 w-9 items-center justify-center rounded-md border border-transparent text-muted transition-colors hover:border-line hover:bg-surface-2 hover:text-fg sm:flex"
-              >
-                <HelpCircle className="h-[17px] w-[17px]" aria-hidden="true" />
-              </Link>
-            </Tooltip>
+            {/* Theme & Motion Controls Menu (Section 2 & 4.3) */}
+            <Popover
+              align="right"
+              trigger={({ onClick, ref }) => (
+                <button
+                  ref={ref}
+                  type="button"
+                  onClick={onClick}
+                  aria-label="Theme and Motion settings"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--line)] text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
+                  title="Theme & Motion Controls"
+                >
+                  <Sliders className="h-3.5 w-3.5" />
+                </button>
+              )}
+            >
+              <div className="flex flex-col gap-3 min-w-[200px]">
+                <div>
+                  <div className="text-[11px] font-semibold uppercase tracking-wider text-[var(--ink-3)] mb-1.5">
+                    Interface Theme
+                  </div>
+                  <div className="grid grid-cols-3 gap-1">
+                    {(["light", "dark", "system"] as const).map((mode) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => setTheme(mode)}
+                        className={cn(
+                          "px-2 py-1 text-[11px] font-medium rounded-md capitalize transition-colors text-center",
+                          theme === mode
+                            ? "bg-[var(--accent)] text-white"
+                            : "bg-[var(--surface-2)] text-[var(--ink-2)] hover:text-[var(--ink)]"
+                        )}
+                      >
+                        {mode}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
+                <div className="border-t border-[var(--line)] pt-2.5">
+                  <div className="text-[11px] font-semibold uppercase tracking-wider text-[var(--ink-3)] mb-1.5 flex items-center justify-between">
+                    <span>Motion Dynamics</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1">
+                    {(["full", "reduced", "off"] as const).map((mode) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => setMotion(mode)}
+                        className={cn(
+                          "px-2 py-1 text-[11px] font-medium rounded-md capitalize transition-colors text-center",
+                          motion === mode
+                            ? "bg-[var(--accent)] text-white"
+                            : "bg-[var(--surface-2)] text-[var(--ink-2)] hover:text-[var(--ink)]"
+                        )}
+                      >
+                        {mode}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-1.5 text-[10.5px] text-[var(--ink-3)] leading-tight">
+                    {motion === "reduced" && "Reduces parallax & transforms to 120ms fades."}
+                    {motion === "off" && "Disables all UI animations."}
+                    {motion === "full" && "Standard cinematic easing and 3D canvas."}
+                  </p>
+                </div>
+              </div>
+            </Popover>
+
+            {/* User Avatar Menu */}
             <Dropdown
               label="Account"
-              width="w-64"
+              width="w-60"
               trigger={(props) => (
                 <button
                   type="button"
                   {...props}
                   aria-label="Account menu"
-                  className="flex items-center gap-2 rounded-md border border-transparent py-1 pl-1 pr-1.5 transition-colors hover:border-line hover:bg-surface-2 sm:gap-2.5"
+                  className="flex items-center gap-2 rounded-lg border border-[var(--line)] py-1 pl-1.5 pr-2 transition-colors hover:bg-[var(--surface-2)]"
                 >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-amber-500/30 bg-amber-500/10 text-[11.5px] font-semibold text-amber-300">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[var(--accent)] text-[11px] font-semibold text-white">
                     {initials}
                   </span>
                   <span className="hidden min-w-0 text-left sm:block">
-                    <span className="block max-w-[12ch] truncate text-[12.5px] font-medium leading-tight text-fg">
+                    <span className="block max-w-[12ch] truncate text-[12px] font-semibold leading-tight text-[var(--ink)]">
                       {displayName}
-                    </span>
-                    <span className="block max-w-[14ch] truncate text-[10.5px] leading-tight text-faint">
-                      {WORKSPACE.name}
                     </span>
                   </span>
                 </button>
               )}
             >
-              <div className="flex items-center gap-3 px-3 py-2.5">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-amber-500/30 bg-amber-500/10 text-[12px] font-semibold text-amber-300">
+              <div className="flex items-center gap-2.5 px-3 py-2">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[var(--accent)] text-[12px] font-semibold text-white">
                   {initials}
                 </span>
-                <span className="min-w-0">
-                  <span className="block truncate text-[13px] font-medium text-fg">
+                <div className="min-w-0">
+                  <span className="block truncate text-[13px] font-semibold text-[var(--ink)]">
                     {displayName}
                   </span>
-                  <span className="block truncate text-[11.5px] text-faint">
+                  <span className="block truncate text-[11px] text-[var(--ink-3)] font-mono">
                     {displayEmail}
                   </span>
-                  <span className="mt-1 block text-[10.5px] uppercase tracking-[0.07em] text-subtle">
-                    {user ? "AUTHENTICATED" : "DEMO USER"}
-                  </span>
-                </span>
+                </div>
               </div>
 
               <DropdownSeparator />
-              <DropdownLabel>Workspace & Account</DropdownLabel>
+              <DropdownLabel>Workspace & Preferences</DropdownLabel>
               <DropdownItem href="/organizations" icon={<Building2 className="h-4 w-4" />}>
                 Organizations & Team
               </DropdownItem>
               <DropdownItem href="/settings" icon={<User className="h-4 w-4" />}>
-                Profile
+                Profile & RBAC
               </DropdownItem>
               <DropdownItem href="/settings" icon={<Settings className="h-4 w-4" />}>
                 Workspace settings
               </DropdownItem>
               <DropdownItem href="/help" icon={<LifeBuoy className="h-4 w-4" />}>
-                Help & support
+                Help & runbook
               </DropdownItem>
               <DropdownSeparator />
               <DropdownItem
-                icon={<LogOut className="h-4 w-4" />}
+                icon={<LogOut className="h-4 w-4 text-[var(--danger)]" />}
                 onClick={handleSignOut}
               >
                 Sign out

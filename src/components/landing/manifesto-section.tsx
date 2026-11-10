@@ -1,0 +1,7 @@
+import { EyeOff, Lock, Scale, ShieldCheck } from "lucide-react";
+
+const principles = [[Scale, "No side is pre-judged", "Buyer and merchant records remain distinct and equally visible."], [Lock, "No funds move autonomously", "Recommendations require an authorized human decision."], [ShieldCheck, "No claim becomes fact by default", "Facts keep their supporting source and confidence context."], [EyeOff, "No missing evidence is hidden", "Evidence gaps remain explicit until they are resolved."]] as const;
+
+export function ManifestoSection() {
+  return <section className="border-b border-[var(--line)] bg-[var(--surface-2)] py-24 sm:py-32"><div className="mx-auto max-w-7xl px-6 lg:px-8"><div className="grid gap-12 lg:grid-cols-12 lg:gap-16"><div className="lg:col-span-4"><p className="font-mono text-xs text-[var(--ink-3)]">Arbitration integrity</p><h2 className="mt-4 text-3xl font-normal tracking-tight text-[var(--ink)] sm:text-4xl">What the system does not do</h2></div><div className="grid gap-8 sm:grid-cols-2 lg:col-span-8">{principles.map(([Icon, title, text], index) => <article key={title} className="border-t border-[var(--line)] pt-5"><div className="flex items-center justify-between"><Icon className="h-4 w-4 text-[var(--ink-2)]" /><span className="font-mono text-xs text-[var(--ink-3)]">0{index + 1}</span></div><h3 className="mt-8 text-base font-medium text-[var(--ink)]">{title}</h3><p className="mt-2 text-sm leading-6 text-[var(--ink-2)]">{text}</p></article>)}</div></div></div></section>;
+}

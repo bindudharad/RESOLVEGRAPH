@@ -432,9 +432,9 @@ export default function OrganizationsPage() {
                   </div>
 
                   {/* Members Table */}
-                  <div className="overflow-x-auto rounded-lg border border-line bg-[#07090E]">
+                  <div className="overflow-x-auto rounded-lg border border-[var(--line)] bg-[var(--surface)]">
                     <table className="w-full text-left text-[12.5px]">
-                      <thead className="border-b border-line bg-[#0B0F17] text-[11.5px] font-medium text-muted">
+                      <thead className="border-b border-[var(--line)] bg-[var(--surface-2)] text-[11.5px] font-medium text-[var(--ink-2)]">
                     <tr>
                       <th className="px-4 py-3">Member</th>
                       <th className="px-4 py-3">Global Role</th>

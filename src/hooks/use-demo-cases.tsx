@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { DEMO_CASES, CURRENT_USER } from "@/lib/mock-data";
+import { CANONICAL_DEMO_CASE } from "@/lib/demo-fixture";
 import type {
   CaseCategory as FrontendCaseCategory,
   CasePriority,
@@ -183,12 +184,17 @@ function nextId(cases: ResolutionCase[]): string {
   return `${ID_PREFIX}${highest + 1}`;
 }
 
+const DEFAULT_CASES: ResolutionCase[] = [
+  CANONICAL_DEMO_CASE,
+  ...DEMO_CASES.filter((c) => c.id !== CANONICAL_DEMO_CASE.id),
+];
+
 export function CasesProvider({ children }: { children: ReactNode }) {
-  const [cases, setCases] = useState<ResolutionCase[]>(DEMO_CASES);
+  const [cases, setCases] = useState<ResolutionCase[]>(DEFAULT_CASES);
   const [notes, setNotes] = useState<Record<string, CaseNote[]>>(INITIAL_NOTES);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const casesRef = useRef<ResolutionCase[]>(DEMO_CASES);
+  const casesRef = useRef<ResolutionCase[]>(DEFAULT_CASES);
 
   const commit = useCallback((next: ResolutionCase[]) => {
     casesRef.current = next;
@@ -203,7 +209,7 @@ export function CasesProvider({ children }: { children: ReactNode }) {
       .then((data: { items?: DbCaseRecord[] } | null) => {
         if (active && data?.items && Array.isArray(data.items) && data.items.length > 0) {
           const formatted = data.items.map(formatDbCase);
-          commit(formatted);
+          commit([CANONICAL_DEMO_CASE, ...formatted.filter((c: ResolutionCase) => c.id !== CANONICAL_DEMO_CASE.id)]);
         }
       })
       .catch(() => {});
@@ -220,7 +226,7 @@ export function CasesProvider({ children }: { children: ReactNode }) {
         const data = await res.json();
         if (Array.isArray(data.items) && data.items.length > 0) {
           const formatted = data.items.map(formatDbCase);
-          commit(formatted);
+          commit([CANONICAL_DEMO_CASE, ...formatted.filter((c: ResolutionCase) => c.id !== CANONICAL_DEMO_CASE.id)]);
         }
       }
     } catch (e) {

@@ -34,7 +34,7 @@ export function PreviewState({
         <CardHeader className="items-center px-6 pb-5 pt-7">
           <span
             aria-hidden="true"
-            className="mb-1 flex h-12 w-12 items-center justify-center rounded-xl border border-amber-500/30 bg-[#0B0F17] text-amber-400 shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+            className="mb-1 flex h-12 w-12 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--surface-2)] text-[var(--accent)] shadow-xs"
           >
             <Icon className="h-5.5 w-5.5" />
           </span>
@@ -53,8 +53,8 @@ export function PreviewState({
         </CardHeader>
 
         <CardContent className="pb-6">
-          <div className="rounded-lg border border-line bg-[#0B0F17] p-4">
-            <div className="flex items-center gap-2 text-[12.5px] font-medium text-muted">
+          <div className="rounded-lg border border-[var(--line)] bg-[var(--surface-2)]/60 p-4">
+            <div className="flex items-center gap-2 text-[12.5px] font-medium text-[var(--ink-2)]">
               <Construction className="h-3.5 w-3.5 text-amber-400" aria-hidden="true" />
               {title} is intentionally not implemented in Step 1
             </div>
@@ -78,7 +78,7 @@ export function PreviewState({
 
           <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5 border-t border-line pt-4">
             <ButtonLink href="/dashboard" variant="outline" size="sm" icon={<ArrowRight className="h-3.5 w-3.5" />}>
-              Back to dashboard
+              Back to Home
             </ButtonLink>
             <ButtonLink href="/cases" variant="ghost" size="sm">
               Open working case list

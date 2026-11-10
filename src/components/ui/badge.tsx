@@ -12,13 +12,19 @@ export type BadgeTone =
 
 const TONES: Record<BadgeTone, string> = {
   neutral:
-    "bg-[color-mix(in_srgb,var(--color-fg)_7%,transparent)] text-muted border-[color-mix(in_srgb,var(--color-fg)_11%,transparent)]",
-  info: "bg-sky-500/10 text-sky-400 border-sky-500/30",
-  brand: "bg-amber-500/10 text-amber-300 border-amber-500/30",
-  success: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
-  warning: "bg-amber-500/10 text-amber-400 border-amber-500/30",
-  danger: "bg-rose-500/10 text-rose-400 border-rose-500/30",
-  accent: "bg-sky-500/10 text-sky-300 border-sky-500/25",
+    "bg-[var(--surface-2)] text-[var(--ink-2)] border-[var(--line)]",
+  info:
+    "bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/60",
+  brand:
+    "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/60",
+  success:
+    "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60",
+  warning:
+    "bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/60",
+  danger:
+    "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60",
+  accent:
+    "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/60",
 };
 
 export interface BadgeProps extends ComponentPropsWithRef<"span"> {

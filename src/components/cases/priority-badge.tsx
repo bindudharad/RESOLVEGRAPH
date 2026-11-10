@@ -1,16 +1,10 @@
-import { Badge, type BadgeTone } from "@/components/ui/badge";
+import { Chip, type ChipVariant } from "@/components/ui/chip";
 import type { CasePriority } from "@/lib/types";
 
-const PRIORITY_TONE: Record<CasePriority, BadgeTone> = {
-  High: "danger",
-  Medium: "warning",
+const PRIORITY_VARIANT_MAP: Record<CasePriority, ChipVariant> = {
+  High: "contested",
+  Medium: "neutral",
   Low: "neutral",
-};
-
-const PRIORITY_MEANING: Record<CasePriority, string> = {
-  High: "High priority — respond first",
-  Medium: "Medium priority — standard queue",
-  Low: "Low priority — no immediate action",
 };
 
 export function PriorityBadge({
@@ -20,13 +14,10 @@ export function PriorityBadge({
   priority: CasePriority;
   withTitle?: boolean;
 }) {
+  const variant = PRIORITY_VARIANT_MAP[priority] || "neutral";
   return (
-    <Badge
-      tone={PRIORITY_TONE[priority]}
-      title={withTitle ? PRIORITY_MEANING[priority] : undefined}
-      className="min-w-[68px] justify-center"
-    >
+    <Chip variant={variant} title={withTitle ? `Priority: ${priority}` : undefined}>
       {priority}
-    </Badge>
+    </Chip>
   );
 }

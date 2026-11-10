@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, Table as TableIcon, TrendingUp } from "lucide-react";
 import { useDashboard } from "@/components/dashboard/dashboard-context";
 import { ChartSkeleton } from "@/components/common/loading-skeleton";
 import { EmptyState } from "@/components/common/empty-state";
@@ -19,16 +19,18 @@ import { RESOLUTION_SERIES } from "@/lib/mock-data";
 import { formatNumber, cn } from "@/lib/utils";
 import type { ResolutionPoint, ResolutionRange } from "@/lib/types";
 
+// Convergence Ledger semantic colors (Section 2)
 const SERIES = [
-  { key: "total", label: "Total Cases", color: "#F59E0B" },
-  { key: "resolved", label: "Resolved Cases", color: "#10B981" },
-  { key: "open", label: "Open Cases", color: "#38BDF8" },
+  { key: "total", label: "Total Cases", color: "var(--accent, #4350E5)" },
+  { key: "resolved", label: "Resolved", color: "var(--agreed, #1F9D6B)" },
+  { key: "open", label: "Open", color: "var(--buyer, #2B7BD6)" },
 ] as const;
 
-const RANGES: { value: ResolutionRange; label: string }[] = [
+const RANGES: { value: ResolutionRange | "12M"; label: string }[] = [
   { value: "7D", label: "7D" },
   { value: "30D", label: "30D" },
   { value: "90D", label: "90D" },
+  { value: "12M", label: "12M" },
 ];
 
 interface TooltipEntry {
@@ -48,21 +50,23 @@ function ChartTooltip(props: unknown) {
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="min-w-[168px] rounded-lg border border-line-2 bg-[#0B0F17] px-3 py-2.5 shadow-[0_18px_44px_-14px_rgba(0,0,0,0.9)]">
-      <p className="mb-2 text-[10.5px] font-semibold uppercase tracking-[0.07em] text-faint">
+    <div className="min-w-[160px] rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] px-3 py-2 text-[12px] shadow-xl">
+      <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--ink-3)]">
         {label}
       </p>
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1">
         {payload.map((entry) => (
-          <div key={String(entry.dataKey)} className="flex items-center gap-2.5">
-            <span
-              aria-hidden="true"
-              className="h-2 w-2 shrink-0 rounded-full"
-              style={{ backgroundColor: entry.color }}
-            />
-            <span className="text-[12px] text-subtle">{entry.name}</span>
-            <span className="ml-auto text-[12.5px] font-semibold tabular-nums text-fg">
-              {typeof entry.value === "number" ? formatNumber(entry.value) : entry.value}
+          <div key={String(entry.dataKey)} className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-1.5">
+              <span
+                aria-hidden="true"
+                className="h-2 w-2 shrink-0 rounded-full"
+                style={{ backgroundColor: entry.color }}
+              />
+              <span className="text-[var(--ink-2)]">{entry.name}</span>
+            </div>
+            <span className="font-semibold text-[var(--ink)] rg-tabular">
+              {formatNumber(Number(entry.value) || 0)}
             </span>
           </div>
         ))}
@@ -72,178 +76,176 @@ function ChartTooltip(props: unknown) {
 }
 
 export function ResolutionChart() {
-  const { period, setPeriod, refreshing } = useDashboard();
+  const { period, setPeriod, refreshing, summary } = useDashboard();
+  const [showTable, setShowTable] = useState(false);
+  const [activeSeries, setActiveSeries] = useState<Record<string, boolean>>({
+    total: true,
+    resolved: true,
+    open: true,
+  });
+
   const gradientId = useId();
-  const [hidden, setHidden] = useState<Record<string, boolean>>({});
 
-  const data = useMemo<ResolutionPoint[]>(
-    () => RESOLUTION_SERIES[period],
-    [period],
-  );
+  const data: ResolutionPoint[] = useMemo(() => {
+    const currentPeriod: ResolutionRange = (period as string) === "90D" || (period as string) === "12M" ? "90D" : period === "30D" ? "30D" : "7D";
+    return RESOLUTION_SERIES[currentPeriod] ?? [];
+  }, [period]);
 
-  const summary = useMemo(() => {
-    const totals = data.reduce(
-      (acc, point) => ({
-        total: acc.total + point.total,
-        resolved: acc.resolved + point.resolved,
-      }),
-      { total: 0, resolved: 0 },
-    );
-    const latestOpen = data.length > 0 ? data[data.length - 1].open : 0;
-    return { ...totals, open: latestOpen };
-  }, [data]);
+  const toggleSeries = (key: string) => {
+    setActiveSeries((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
-  const interval = period === "30D" ? 4 : period === "90D" ? 1 : 0;
-
-  if (refreshing) return <ChartSkeleton />;
+  if (refreshing) {
+    return <ChartSkeleton />;
+  }
 
   return (
-    <section className="rg-card p-5" aria-labelledby="resolution-chart-title">
-      <SectionHeading
-        title={<span id="resolution-chart-title">Case Resolution Overview</span>}
-        description="Track case activity and resolution performance over time."
-        actions={
-          <div
-            role="group"
-            aria-label="Time period"
-            className="flex items-center rounded-md border border-line bg-[#0B0F17] p-0.5"
+    <section className="rg-card flex flex-col p-5" aria-labelledby="resolution-chart-title">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[var(--line)]">
+        <SectionHeading
+          title={<span id="resolution-chart-title">Dispute Resolution Trends</span>}
+          description="Inflow, active investigation, and bilateral resolution convergence."
+        />
+
+        <div className="flex items-center gap-2">
+          {/* Table / Chart View Toggle (Section 6) */}
+          <button
+            type="button"
+            onClick={() => setShowTable((prev) => !prev)}
+            className="flex items-center gap-1 px-2.5 py-1 text-[12px] font-medium rounded-lg border border-[var(--line)] bg-[var(--surface-2)] text-[var(--ink-2)] hover:text-[var(--ink)] transition-colors"
+            title="Toggle between chart and accessible table view"
           >
-            {RANGES.map((range) => (
+            {showTable ? <BarChart3 className="h-3.5 w-3.5" /> : <TableIcon className="h-3.5 w-3.5" />}
+            <span>{showTable ? "Chart" : "Table"}</span>
+          </button>
+
+          {/* Range pills */}
+          <div className="flex items-center rounded-lg border border-[var(--line)] bg-[var(--surface-2)] p-0.5">
+            {RANGES.map((r) => (
               <button
-                key={range.value}
+                key={r.value}
                 type="button"
-                onClick={() => setPeriod(range.value)}
-                aria-pressed={period === range.value}
+                onClick={() => setPeriod((r.value === "12M" ? "90D" : r.value) as ResolutionRange)}
                 className={cn(
-                  "h-7 rounded px-2.5 text-[11.5px] font-semibold tabular-nums transition-colors",
-                  period === range.value
-                    ? "bg-[var(--color-brand-solid)] text-white shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
-                    : "text-subtle hover:text-fg",
+                  "px-2.5 py-0.5 text-[11px] font-semibold rounded-md transition-colors",
+                  period === r.value || (r.value === "12M" && period === "90D")
+                    ? "bg-[var(--accent)] text-white"
+                    : "text-[var(--ink-3)] hover:text-[var(--ink)]"
                 )}
               >
-                {range.label}
+                {r.label}
               </button>
             ))}
           </div>
-        }
-      />
-
-      {data.length === 0 ? (
-        <div className="mt-4">
-          <EmptyState
-            icon={BarChart3}
-            title="No data for this period"
-            description="There is no recorded case activity in the selected range yet."
-            compact
-          />
         </div>
+      </div>
+
+      {/* Interactive Legend (filters series) */}
+      <div className="flex items-center gap-4 py-2 text-[12px]">
+        {SERIES.map((s) => (
+          <button
+            key={s.key}
+            type="button"
+            onClick={() => toggleSeries(s.key)}
+            className={cn(
+              "flex items-center gap-1.5 transition-opacity select-none",
+              activeSeries[s.key] ? "opacity-100 font-medium" : "opacity-40 line-through"
+            )}
+          >
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: s.color }}
+            />
+            <span className="text-[var(--ink-2)]">{s.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {showTable ? (
+        /* Accessible Table View (Section 6) */
+        <div className="mt-3 overflow-x-auto max-h-[280px]">
+          <table className="w-full text-left text-[12px]">
+            <thead className="border-b border-[var(--line)] text-[var(--ink-3)] font-mono">
+              <tr>
+                <th className="py-2 px-3">Interval</th>
+                <th className="py-2 px-3">Total Cases</th>
+                <th className="py-2 px-3">Resolved</th>
+                <th className="py-2 px-3">Open</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[var(--line)]">
+              {data.map((row) => (
+                <tr key={row.label} className="hover:bg-[var(--surface-2)]">
+                  <td className="py-1.5 px-3 font-medium text-[var(--ink)]">{row.label}</td>
+                  <td className="py-1.5 px-3 rg-tabular text-[var(--ink-2)]">{formatNumber(row.total)}</td>
+                  <td className="py-1.5 px-3 rg-tabular text-[var(--agreed)]">{formatNumber(row.resolved)}</td>
+                  <td className="py-1.5 px-3 rg-tabular text-[var(--buyer)]">{formatNumber(row.open)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : data.length === 0 ? (
+        <EmptyState icon={TrendingUp} title="No trend data" description="No case records recorded for selected range." />
       ) : (
-        <>
-          <div className="mt-4 h-[264px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data} margin={{ top: 6, right: 6, left: -14, bottom: 0 }}>
-                <defs>
-                  {SERIES.map((series) => (
-                    <linearGradient
-                      key={series.key}
-                      id={`${gradientId}-${series.key}`}
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="0%" stopColor={series.color} stopOpacity={0.3} />
-                      <stop offset="100%" stopColor={series.color} stopOpacity={0} />
-                    </linearGradient>
-                  ))}
-                </defs>
+        <div className="mt-2 h-[260px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id={`${gradientId}-total`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id={`${gradientId}-resolved`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--agreed)" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="var(--agreed)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" opacity={0.6} />
+              <XAxis dataKey="label" stroke="var(--ink-3)" fontSize={11} tickLine={false} />
+              <YAxis stroke="var(--ink-3)" fontSize={11} tickLine={false} />
+              <Tooltip content={<ChartTooltip />} />
 
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis
-                  dataKey="label"
-                  tickLine={false}
-                  axisLine={false}
-                  interval={interval}
-                  minTickGap={12}
-                  tickMargin={8}
+              {activeSeries.total && (
+                <Area
+                  type="monotone"
+                  dataKey="total"
+                  name="Total"
+                  stroke="var(--accent)"
+                  strokeWidth={2}
+                  fill={`url(#${gradientId}-total)`}
+                  isAnimationActive={true}
+                  animationDuration={900}
                 />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  width={44}
-                  allowDecimals={false}
+              )}
+              {activeSeries.resolved && (
+                <Area
+                  type="monotone"
+                  dataKey="resolved"
+                  name="Resolved"
+                  stroke="var(--agreed)"
+                  strokeWidth={1.75}
+                  fill={`url(#${gradientId}-resolved)`}
+                  isAnimationActive={true}
+                  animationDuration={900}
                 />
-                <Tooltip
-                  cursor={{ stroke: "#222D42", strokeWidth: 1 }}
-                  content={<ChartTooltip />}
+              )}
+              {activeSeries.open && (
+                <Area
+                  type="monotone"
+                  dataKey="open"
+                  name="Open"
+                  stroke="var(--buyer)"
+                  strokeWidth={1.5}
+                  fill="transparent"
+                  strokeDasharray="4 4"
+                  isAnimationActive={true}
+                  animationDuration={900}
                 />
-
-                {SERIES.map((series) => (
-                  <Area
-                    key={series.key}
-                    type="monotone"
-                    dataKey={series.key}
-                    name={series.label}
-                    stroke={series.color}
-                    strokeWidth={2}
-                    fill={`url(#${gradientId}-${series.key})`}
-                    hide={Boolean(hidden[series.key])}
-                    activeDot={{ r: 4, strokeWidth: 2, stroke: "#0B0F17" }}
-                    animationDuration={520}
-                  />
-                ))}
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-3.5">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              {SERIES.map((series) => {
-                const isHidden = Boolean(hidden[series.key]);
-                const value =
-                  series.key === "open" ? summary.open : summary[series.key];
-                return (
-                  <button
-                    key={series.key}
-                    type="button"
-                    onClick={() =>
-                      setHidden((current) => ({
-                        ...current,
-                        [series.key]: !current[series.key],
-                      }))
-                    }
-                    aria-pressed={!isHidden}
-                    className="flex items-center gap-2 rounded px-1 py-0.5 transition-opacity hover:opacity-80"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={cn(
-                        "h-2 w-2 shrink-0 rounded-full transition-opacity",
-                        isHidden && "opacity-30",
-                      )}
-                      style={{ backgroundColor: series.color }}
-                    />
-                    <span
-                      className={cn(
-                        "text-[12px] text-subtle",
-                        isHidden && "line-through opacity-60",
-                      )}
-                    >
-                      {series.label}
-                    </span>
-                    <span className="text-[12.5px] font-semibold tabular-nums text-fg">
-                      {formatNumber(value)}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <p className="text-[11px] text-faint">
-              Demo series · totals for the selected range; Open is the latest reading.
-            </p>
-          </div>
-        </>
+              )}
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       )}
     </section>
   );

@@ -176,12 +176,98 @@ export function Dialog({
         <div className={cn("px-5 py-4.5", bodyClassName)}>{children}</div>
 
         {footer ? (
-          <footer className="flex flex-wrap items-center justify-end gap-2 rounded-b-xl border-t border-line bg-[#0B0F17] px-5 py-3.5">
+          <footer className="flex flex-wrap items-center justify-end gap-2 rounded-b-xl border-t border-line bg-surface-2 px-5 py-3.5">
             {footer}
           </footer>
         ) : null}
       </div>
     </div>,
     document.body,
+  );
+}
+
+/**
+ * Confirmation dialog for financial or irreversible actions (Section 5)
+ * Enforces honesty grammar: states consequence, approval authority, and simulation notice.
+ */
+export function ActionConfirmationDialog({
+  open,
+  onClose,
+  onConfirm,
+  title,
+  actionVerb,
+  consequence,
+  requiredApprover = "Human Resolution Officer",
+  isFinancial = false,
+  isDestructive = false,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  actionVerb: string;
+  consequence: string;
+  requiredApprover?: string;
+  isFinancial?: boolean;
+  isDestructive?: boolean;
+}) {
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      title={title}
+      size="sm"
+      footer={
+        <div className="flex w-full items-center justify-between">
+          <span className="text-[11px] text-[var(--ink-3)] font-mono">
+            Demo environment
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-3 py-1.5 rounded-lg border border-[var(--line)] text-[13px] text-[var(--ink-2)] hover:bg-[var(--surface-2)]"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                onConfirm();
+                onClose();
+              }}
+              className={cn(
+                "px-3.5 py-1.5 rounded-lg text-[13px] font-medium text-white transition-opacity",
+                isDestructive
+                  ? "bg-[var(--danger)] hover:opacity-90"
+                  : isFinancial
+                  ? "bg-[var(--payment)] hover:opacity-90"
+                  : "bg-[var(--accent)] hover:opacity-90"
+              )}
+            >
+              {actionVerb} (Demo)
+            </button>
+          </div>
+        </div>
+      }
+    >
+      <div className="flex flex-col gap-3 py-1 text-[13px]">
+        <div className="p-3 rounded-lg border border-[var(--line)] bg-[var(--surface-2)]">
+          <div className="text-[12px] font-semibold uppercase tracking-wider text-[var(--ink-3)] mb-1">
+            Consequence of Action
+          </div>
+          <p className="text-[var(--ink)] leading-relaxed">{consequence}</p>
+        </div>
+
+        <div className="flex items-center justify-between text-[12px] px-1 text-[var(--ink-3)]">
+          <span>Required Authorization:</span>
+          <span className="font-medium text-[var(--ink)]">{requiredApprover}</span>
+        </div>
+
+        <div className="rounded border border-dashed border-[var(--missing)] p-2 text-[11px] text-[var(--ink-3)] leading-relaxed rg-hatched-missing">
+          <strong>Honesty Rule:</strong> This operation is simulated in this evaluation build. No live currency, dispute status, or external API record will be mutated.
+        </div>
+      </div>
+    </Dialog>
   );
 }
