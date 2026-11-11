@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth, AuthError } from '@/server/auth/require-auth';
+import { requirePlatformAdmin, AuthError } from '@/server/auth/require-auth';
 import { HashChainedAuditService } from '@/server/services/hash-chained-audit.service';
 
 export async function GET(request: NextRequest) {
   try {
-    await requireAuth(request);
+    await requirePlatformAdmin(request);
     const { searchParams } = new URL(request.url);
 
     const shouldVerify = searchParams.get('verify') === 'true';

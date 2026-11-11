@@ -17,9 +17,13 @@ export async function POST(
       return NextResponse.json({ error: "Missing required field: 'proposalId'." }, { status: 400 });
     }
 
-    await getCaseByIdAuthorized(user, caseId);
+    const caseRecord = await getCaseByIdAuthorized(user, caseId);
+    if (!caseRecord) {
+      return NextResponse.json({ error: `Dispute case "${caseId}" not found.` }, { status: 404 });
+    }
 
-    const safeguards = await SharedResolutionService.validateFinancialSafeguards(caseId, proposalId, user);
+    const canonicalId = caseRecord.dbId || caseRecord.id;
+    const safeguards = await SharedResolutionService.validateFinancialSafeguards(canonicalId, proposalId, user);
 
     return NextResponse.json({
       success: true,

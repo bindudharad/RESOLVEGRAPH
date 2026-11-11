@@ -1,13 +1,11 @@
 import {
-  BarChart3,
   Bot,
-  Building2,
   CreditCard,
   FolderOpen,
   LayoutDashboard,
   Library,
-  MessageSquare,
   Package,
+  Scale,
   Settings,
   ShieldCheck,
   ShoppingCart,
@@ -22,6 +20,12 @@ import {
  */
 export type NavAvailability = "live" | "preview";
 
+export interface NavSubItem {
+  label: string;
+  href: string;
+  adminOnly?: boolean;
+}
+
 export interface NavItem {
   label: string;
   href: string;
@@ -29,8 +33,10 @@ export interface NavItem {
   availability: NavAvailability;
   adminOnly?: boolean;
   merchantOnly?: boolean;
+  hideForPlatformAdmin?: boolean;
   /** Short explanation shown on preview routes. */
   previewNote?: string;
+  subItems?: NavSubItem[];
 }
 
 export interface NavGroup {
@@ -41,7 +47,7 @@ export interface NavGroup {
 
 export const NAV_GROUPS: NavGroup[] = [
   {
-    label: "Main",
+    label: "Platform",
     items: [
       {
         label: "Overview",
@@ -60,17 +66,44 @@ export const NAV_GROUPS: NavGroup[] = [
         href: "/cases",
         icon: FolderOpen,
         availability: "live",
+        subItems: [
+          { label: "Cases Roster", href: "/cases" },
+          { label: "Investigation Engine", href: "/investigation" },
+        ],
       },
-    ],
-  },
-  {
-    label: "Evidence",
-    items: [
       {
-        label: "Evidence Vault",
+        label: "Evidence",
         href: "/evidence",
         icon: Library,
         availability: "live",
+      },
+      {
+        label: "Resolution",
+        href: "/resolution",
+        icon: Scale,
+        availability: "live",
+        subItems: [
+          { label: "Dual-Key Proposals", href: "/resolution" },
+          { label: "Bilateral Room", href: "/resolution-room" },
+        ],
+      },
+      {
+        label: "AI Copilot",
+        href: "/copilot",
+        icon: Bot,
+        availability: "live",
+      },
+      {
+        label: "Administration",
+        href: "/organizations",
+        icon: ShieldCheck,
+        availability: "live",
+        adminOnly: true,
+        subItems: [
+          { label: "Organizations & Roles", href: "/organizations", adminOnly: true },
+          { label: "Security & Audit", href: "/admin/security", adminOnly: true },
+          { label: "Settings", href: "/settings" },
+        ],
       },
     ],
   },
@@ -82,68 +115,28 @@ export const NAV_GROUPS: NavGroup[] = [
         href: "/purchases",
         icon: ShoppingCart,
         availability: "live",
+        hideForPlatformAdmin: true,
       },
       {
         label: "Package & Delivery",
         href: "/packages",
         icon: Package,
         availability: "live",
-      },
-    ],
-  },
-  {
-    label: "Workspace",
-    items: [
-      {
-        label: "Resolution Room",
-        href: "/resolution-room",
-        icon: MessageSquare,
-        availability: "live",
-      },
-      {
-        label: "Reports & Analytics",
-        href: "/analytics",
-        icon: BarChart3,
-        availability: "live",
-      },
-      {
-        label: "AI Copilot",
-        href: "/copilot",
-        icon: Bot,
-        availability: "live",
-      },
-    ],
-  },
-  {
-    label: "Administration",
-    adminOnly: true,
-    items: [
-      {
-        label: "Organizations & Roles",
-        href: "/organizations",
-        icon: Building2,
-        availability: "live",
-        adminOnly: true,
-      },
-      {
-        label: "Security & Audit",
-        href: "/admin/security",
-        icon: ShieldCheck,
-        availability: "live",
-        adminOnly: true,
-      },
-      {
-        label: "Settings",
-        href: "/settings",
-        icon: Settings,
-        availability: "live",
+        hideForPlatformAdmin: true,
       },
     ],
   },
 ];
 
 /** Flattened list — used by breadcrumb generation and mobile navigation. */
-export const NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap((group) => group.items);
+export const NAV_ITEMS: NavItem[] = [
+  ...NAV_GROUPS.flatMap((group) => group.items),
+  { label: "Investigation Engine", href: "/investigation", icon: FolderOpen, availability: "live" },
+  { label: "Shared Resolution Room", href: "/resolution-room", icon: Scale, availability: "live" },
+  { label: "Organizations & Roles", href: "/organizations", icon: ShieldCheck, availability: "live", adminOnly: true },
+  { label: "Security & Audit", href: "/admin/security", icon: ShieldCheck, availability: "live", adminOnly: true },
+  { label: "Settings", href: "/settings", icon: Settings, availability: "live" },
+];
 
 export function findNavItem(href: string): NavItem | undefined {
   return NAV_ITEMS.find(

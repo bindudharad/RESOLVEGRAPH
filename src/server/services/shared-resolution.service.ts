@@ -36,8 +36,16 @@ export class SharedResolutionService {
    * Posts a new message into the Shared Resolution Room.
    */
   public static async postMessage(input: PostMessageInput) {
-    const caseRecord = await prisma.caseRecord.findUnique({
-      where: { id: input.caseId },
+    const trimmedCaseId = input.caseId?.trim();
+    if (!trimmedCaseId) {
+      throw new Error("Case identifier is required.");
+    }
+
+    // Resolve canonical caseRecord by id or caseNumber
+    const caseRecord = await prisma.caseRecord.findFirst({
+      where: {
+        OR: [{ id: trimmedCaseId }, { caseNumber: trimmedCaseId }],
+      },
       include: { buyer: true, merchant: true },
     });
 
@@ -77,7 +85,7 @@ export class SharedResolutionService {
       const evidence = await prisma.evidence.findUnique({
         where: { id: input.attachmentEvidenceId },
       });
-      if (!evidence || evidence.caseId !== input.caseId) {
+      if (!evidence || (evidence.caseId !== caseRecord.id && evidence.caseId !== caseRecord.caseNumber)) {
         throw new Error("Invalid attachment: Evidence does not belong to this case.");
       }
       if (evidence.visibility === "INTERNAL" && senderRole === "BUYER") {
@@ -87,7 +95,7 @@ export class SharedResolutionService {
 
     const message = await prisma.sharedRoomMessage.create({
       data: {
-        caseId: input.caseId,
+        caseId: caseRecord.id, // Store canonical CUID
         senderId: input.senderId,
         senderRole,
         content: input.content,
@@ -112,7 +120,7 @@ export class SharedResolutionService {
 
     // Log timeline event
     await CaseService.logEvent(
-      input.caseId,
+      caseRecord.id,
       "NOTE_ADDED",
       input.senderId,
       `Message posted in Shared Resolution Room (${senderRole})`,
@@ -126,14 +134,26 @@ export class SharedResolutionService {
    * Lists messages in the Shared Resolution Room with role-based filtering.
    */
   public static async listMessages(caseId: string, requestingUser: { id: string; role: string; isPlatformAdmin: boolean }) {
-    const caseRecord = await prisma.caseRecord.findUnique({ where: { id: caseId } });
-    if (!caseRecord) throw new Error(`Case ${caseId} not found.`);
+    if (!caseId || typeof caseId !== "string" || caseId.trim().length === 0) {
+      return [];
+    }
+    const trimmedId = caseId.trim();
+
+    // Resolve canonical caseRecord by id or caseNumber
+    const caseRecord = await prisma.caseRecord.findFirst({
+      where: {
+        OR: [{ id: trimmedId }, { caseNumber: trimmedId }],
+      },
+    });
+    if (!caseRecord) {
+      return [];
+    }
 
     const isBuyer = requestingUser.id === caseRecord.buyerId;
 
     return prisma.sharedRoomMessage.findMany({
       where: {
-        caseId,
+        caseId: { in: [caseRecord.id, caseRecord.caseNumber] },
         // Buyers cannot see internal-only notes
         isInternalOnly: isBuyer ? false : undefined,
       },
@@ -157,8 +177,11 @@ export class SharedResolutionService {
     const reasons: string[] = [];
 
     // 1. Verify case exists
-    const caseRecord = await prisma.caseRecord.findUnique({
-      where: { id: caseId },
+    const trimmedId = caseId.trim();
+    const caseRecord = await prisma.caseRecord.findFirst({
+      where: {
+        OR: [{ id: trimmedId }, { caseNumber: trimmedId }],
+      },
       include: { orders: { include: { payments: { include: { refunds: true } } } } },
     });
     if (!caseRecord) {

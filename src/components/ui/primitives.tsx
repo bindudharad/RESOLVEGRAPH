@@ -89,9 +89,17 @@ export function Tooltip({
           : "left-[calc(100%+8px)] top-1/2 -translate-y-1/2";
 
   return (
-    <div className={cn("rg-tooltip-host relative", className)}>
+    <div className={cn("group/tooltip relative inline-flex items-center justify-center", className)}>
       {children}
-      <span role="tooltip" className={cn("rg-tooltip", position)}>
+      <span
+        role="tooltip"
+        className={cn(
+          "pointer-events-none absolute z-[100] invisible opacity-0 transition-all duration-150",
+          "group-hover/tooltip:visible group-hover/tooltip:opacity-100",
+          "whitespace-nowrap rounded-lg bg-[#141824] px-2.5 py-1 text-[11px] font-medium text-white shadow-xl border border-white/10",
+          position
+        )}
+      >
         {label}
       </span>
     </div>

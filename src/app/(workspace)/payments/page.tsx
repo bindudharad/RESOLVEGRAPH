@@ -10,10 +10,13 @@ import {
   Search,
   ExternalLink,
   ArrowRight,
+  ShieldCheck,
+  Clock,
+  ChevronRight,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
+import { SlideOver } from "@/components/ui/slide-over";
 import { RefundDialog } from "@/components/payments/refund-dialog";
 import { formatCurrency } from "@/lib/utils";
 import type { Currency } from "@/lib/types";
@@ -48,6 +51,15 @@ interface PaymentMetrics {
   totalTransactions: number;
 }
 
+const STATUS_FILTERS = [
+  { id: "ALL", label: "All Payments" },
+  { id: "COMPLETED", label: "Completed" },
+  { id: "APPROVED", label: "Approved" },
+  { id: "PARTIALLY_REFUNDED", label: "Partially Refunded" },
+  { id: "REFUNDED", label: "Refunded" },
+  { id: "CREATED", label: "Pending Capture" },
+];
+
 export default function PaymentsPage() {
   const [payments, setPayments] = useState<PaymentItem[]>([]);
   const [metrics, setMetrics] = useState<PaymentMetrics>({
@@ -60,6 +72,7 @@ export default function PaymentsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [selectedRefundPayment, setSelectedRefundPayment] = useState<PaymentItem | null>(null);
+  const [inspectPayment, setInspectPayment] = useState<PaymentItem | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -106,154 +119,255 @@ export default function PaymentsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "COMPLETED":
-        return <Badge tone="success" dot>Completed</Badge>;
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 font-mono text-[10.5px] font-medium text-emerald-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            Completed
+          </span>
+        );
       case "APPROVED":
-        return <Badge tone="info" dot>Approved</Badge>;
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-md bg-sky-500/10 border border-sky-500/20 px-2.5 py-0.5 font-mono text-[10.5px] font-medium text-sky-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
+            Approved
+          </span>
+        );
       case "PARTIALLY_REFUNDED":
-        return <Badge tone="warning" dot>Partially Refunded</Badge>;
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 font-mono text-[10.5px] font-medium text-amber-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+            Partially Refunded
+          </span>
+        );
       case "REFUNDED":
-        return <Badge tone="neutral" dot>Refunded</Badge>;
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-md bg-white/[0.06] border border-white/[0.1] px-2.5 py-0.5 font-mono text-[10.5px] font-medium text-white/60">
+            <span className="h-1.5 w-1.5 rounded-full bg-white/40" />
+            Refunded
+          </span>
+        );
       case "DENIED":
       case "REVERSED":
-        return <Badge tone="danger" dot>Reversed</Badge>;
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-md bg-rose-500/10 border border-rose-500/20 px-2.5 py-0.5 font-mono text-[10.5px] font-medium text-rose-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+            Reversed
+          </span>
+        );
       default:
-        return <Badge tone="neutral">{status}</Badge>;
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-md bg-white/[0.04] border border-white/[0.08] px-2.5 py-0.5 font-mono text-[10.5px] font-medium text-white/60">
+            {status}
+          </span>
+        );
     }
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 p-6">
-      {/* Top Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-fg">Payment & Refund Ledger</h1>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/30 bg-sky-500/10 px-2.5 py-0.5 text-xs font-medium text-sky-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-sky-400 animate-pulse" />
-              PayPal Sandbox
-            </span>
+    <div className="mx-auto max-w-7xl space-y-6 pb-12 antialiased">
+      {/* ======================================================== */}
+      {/* 1. PAGE HEADER                                           */}
+      {/* ======================================================== */}
+      <header className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-6 shadow-xs">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-white/50">
+                Treasury &amp; Settlement
+              </span>
+              <span className="text-white/20">·</span>
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-white/[0.04] border border-white/[0.08] px-2 py-0.5 font-mono text-[11px] text-white/70">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                PayPal Capture Orchestration Live
+              </span>
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-white">
+              Payment &amp; Settlement Ledger
+            </h1>
+            <p className="mt-1 text-xs text-white/60">
+              Deterministic transaction tracking, automated capture reconciliation, and dual-key refund execution.
+            </p>
           </div>
-          <p className="mt-1 text-sm text-muted">
-            Auditable commerce transactions, server-side PayPal order captures, and merchant refund controls.
-          </p>
-        </div>
 
-        <div className="flex items-center gap-3">
-          <Link href="/paypal/disputes">
-            <Button variant="outline" className="gap-2 text-xs">
-              <ShieldAlert className="h-4 w-4 text-amber-400" />
-              PayPal Disputes
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2.5 shrink-0">
+            <Link href="/paypal/disputes">
+              <Button
+                variant="outline"
+                className="gap-2 text-xs border-white/[0.08] bg-white/[0.03] text-white/80 hover:bg-white/[0.06] hover:text-white"
+              >
+                <ShieldAlert className="h-3.5 w-3.5 text-amber-400" />
+                <span>PayPal Disputes</span>
+              </Button>
+            </Link>
+            <Link href="/reconciliation">
+              <Button
+                variant="outline"
+                className="gap-2 text-xs border-white/[0.08] bg-white/[0.03] text-white/80 hover:bg-white/[0.06] hover:text-white"
+              >
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                <span>10-Tier Reconciliation</span>
+              </Button>
+            </Link>
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* Metrics Cards */}
+      {/* ======================================================== */}
+      {/* 2. FOUR AUTHORITATIVE METRIC CARDS                       */}
+      {/* ======================================================== */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl border border-line bg-card/60 p-4 backdrop-blur-sm">
-          <div className="flex items-center justify-between text-muted">
-            <span className="text-xs font-medium">Captured Volume</span>
+        {/* Captured Volume */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-white/50 text-xs font-medium">
+            <span>Captured Volume</span>
             <DollarSign className="h-4 w-4 text-emerald-400" />
           </div>
-          <div className="mt-2 text-2xl font-bold text-fg">
-            {metrics.capturedByCurrency && metrics.capturedByCurrency.length > 0
-              ? metrics.capturedByCurrency.map((c) => formatCurrency(c.totalAmountMinor / 100, (c.currency as Currency) || "USD")).join(" + ")
-              : formatCurrency(metrics.totalCapturedMinor / 100, "USD")}
+          <div className="mt-4">
+            <div className="font-mono text-2xl font-bold text-white tabular-nums">
+              {metrics.capturedByCurrency && metrics.capturedByCurrency.length > 0
+                ? metrics.capturedByCurrency
+                    .map((c) =>
+                      formatCurrency(
+                        c.totalAmountMinor / 100,
+                        (c.currency as Currency) || "USD"
+                      )
+                    )
+                    .join(" + ")
+                : formatCurrency(metrics.totalCapturedMinor / 100, "USD")}
+            </div>
+            <p className="mt-1 text-xs text-white/50">Authoritative captured ledger total</p>
           </div>
-          <p className="mt-1 text-[11px] text-muted">Authoritative ledger capture total</p>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-emerald-400">
+            Authoritative Settlement
+          </div>
         </div>
 
-        <div className="rounded-xl border border-line bg-card/60 p-4 backdrop-blur-sm">
-          <div className="flex items-center justify-between text-muted">
-            <span className="text-xs font-medium">Total Refunds</span>
+        {/* Total Refunds */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-white/50 text-xs font-medium">
+            <span>Total Refunds</span>
             <RotateCcw className="h-4 w-4 text-sky-400" />
           </div>
-          <div className="mt-2 text-2xl font-bold text-fg">
-            {metrics.refundedByCurrency && metrics.refundedByCurrency.length > 0
-              ? metrics.refundedByCurrency.map((r) => formatCurrency(r.totalAmountMinor / 100, (r.currency as Currency) || "USD")).join(" + ")
-              : formatCurrency(metrics.totalRefundedMinor / 100, "USD")}
+          <div className="mt-4">
+            <div className="font-mono text-2xl font-bold text-white tabular-nums">
+              {metrics.refundedByCurrency && metrics.refundedByCurrency.length > 0
+                ? metrics.refundedByCurrency
+                    .map((r) =>
+                      formatCurrency(
+                        r.totalAmountMinor / 100,
+                        (r.currency as Currency) || "USD"
+                      )
+                    )
+                    .join(" + ")
+                : formatCurrency(metrics.totalRefundedMinor / 100, "USD")}
+            </div>
+            <p className="mt-1 text-xs text-white/50">Completed return transactions</p>
           </div>
-          <p className="mt-1 text-[11px] text-muted">Completed refund transactions</p>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-white/40">
+            Zero balance discrepancy
+          </div>
         </div>
 
-        <div className="rounded-xl border border-line bg-card/60 p-4 backdrop-blur-sm">
-          <div className="flex items-center justify-between text-muted">
-            <span className="text-xs font-medium">Active Disputes</span>
+        {/* Active Disputes */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-white/50 text-xs font-medium">
+            <span>Active Disputes</span>
             <ShieldAlert className="h-4 w-4 text-amber-400" />
           </div>
-          <div className="mt-2 text-2xl font-bold text-amber-400">
-            {metrics.activeDisputesCount}
+          <div className="mt-4">
+            <div className="font-mono text-2xl font-bold text-amber-400 tabular-nums">
+              {metrics.activeDisputesCount}
+            </div>
+            <p className="mt-1 text-xs text-white/50">Disputes under investigation</p>
           </div>
-          <p className="mt-1 text-[11px] text-muted">Awaiting merchant or PayPal review</p>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-amber-400">
+            Escrow Holds Active
+          </div>
         </div>
 
-        <div className="rounded-xl border border-line bg-card/60 p-4 backdrop-blur-sm">
-          <div className="flex items-center justify-between text-muted">
-            <span className="text-xs font-medium">Recorded Payments</span>
-            <CreditCard className="h-4 w-4 text-brand" />
+        {/* Recorded Payments */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-white/50 text-xs font-medium">
+            <span>Recorded Orders</span>
+            <CreditCard className="h-4 w-4 text-teal-400" />
           </div>
-          <div className="mt-2 text-2xl font-bold text-fg">
-            {metrics.totalTransactions}
+          <div className="mt-4">
+            <div className="font-mono text-2xl font-bold text-white tabular-nums">
+              {metrics.totalTransactions}
+            </div>
+            <p className="mt-1 text-xs text-white/50">Commerce orders tracked</p>
           </div>
-          <p className="mt-1 text-[11px] text-muted">Commerce orders tracked</p>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-white/40">
+            Multi-Tenant Isolated
+          </div>
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="flex flex-col gap-3 rounded-xl border border-line bg-card/40 p-4 sm:flex-row sm:items-center sm:justify-between">
+      {/* ======================================================== */}
+      {/* 3. TOOLBAR: SEARCH & STATUS FILTER PILLS                 */}
+      {/* ======================================================== */}
+      <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {/* Search */}
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40" />
           <Input
-            placeholder="Search by Order ID, Capture ID, or Order #..."
+            placeholder="Search by Order ID, Capture ID, or Counterparty..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 text-xs"
+            className="pl-9 text-xs bg-white/[0.03] border-white/[0.08] text-white placeholder:text-white/30 focus:border-white/20"
           />
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted">Status:</span>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-lg border border-line bg-surface px-3 py-1.5 text-xs text-fg focus:border-brand focus:outline-none"
-          >
-            <option value="ALL">All Statuses</option>
-            <option value="COMPLETED">Completed</option>
-            <option value="APPROVED">Approved</option>
-            <option value="PARTIALLY_REFUNDED">Partially Refunded</option>
-            <option value="REFUNDED">Refunded</option>
-            <option value="CREATED">Created (Pending Capture)</option>
-          </select>
+        {/* Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+          {STATUS_FILTERS.map((f) => (
+            <button
+              key={f.id}
+              type="button"
+              onClick={() => setStatusFilter(f.id)}
+              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors shrink-0 ${
+                statusFilter === f.id
+                  ? "bg-white text-black font-semibold shadow-xs"
+                  : "bg-white/[0.03] border border-white/[0.06] text-white/60 hover:text-white hover:bg-white/[0.06]"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Payments Table */}
-      <div className="overflow-hidden rounded-xl border border-line bg-card/50">
+      {/* ======================================================== */}
+      {/* 4. PROFESSIONAL TRANSACTION TABLE                        */}
+      {/* ======================================================== */}
+      <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0E121D] shadow-xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="border-b border-line bg-surface/70 text-muted">
-              <tr>
-                <th className="px-4 py-3 font-medium">Order / Capture ID</th>
-                <th className="px-4 py-3 font-medium">Buyer & Merchant</th>
-                <th className="px-4 py-3 font-medium">Linked Case</th>
-                <th className="px-4 py-3 font-medium">Amount</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Date</th>
-                <th className="px-4 py-3 text-right font-medium">Actions</th>
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="border-b border-white/[0.06] bg-white/[0.02] font-mono text-[11px] text-white/40 uppercase tracking-wider">
+                <th className="px-5 py-3 font-medium">Order / Capture ID</th>
+                <th className="px-5 py-3 font-medium">Buyer &amp; Merchant</th>
+                <th className="px-5 py-3 font-medium">Linked Dispute</th>
+                <th className="px-5 py-3 font-medium text-right">Settled Amount</th>
+                <th className="px-5 py-3 font-medium">Payment Status</th>
+                <th className="px-5 py-3 font-medium">Captured Date</th>
+                <th className="px-5 py-3 text-right font-medium">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-line">
+            <tbody className="divide-y divide-white/[0.04]">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-muted">
-                    Loading payments ledger...
+                  <td colSpan={7} className="p-12 text-center text-white/40">
+                    <div className="flex flex-col items-center gap-2">
+                      <Clock className="h-5 w-5 animate-spin text-white/30" />
+                      <span>Loading payments ledger...</span>
+                    </div>
                   </td>
                 </tr>
               ) : payments.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-muted">
-                    No payment records found matching your filters.
+                  <td colSpan={7} className="p-12 text-center text-white/40">
+                    No payment records match your active search and filter criteria.
                   </td>
                 </tr>
               ) : (
@@ -264,53 +378,57 @@ export default function PaymentsPage() {
                   const remainingMinor = Math.max(0, p.amountMinor - refundedSum);
 
                   return (
-                    <tr key={p.id} className="hover:bg-surface/50 transition-colors">
-                      <td className="px-4 py-3">
-                        <div className="font-mono font-semibold text-fg">
+                    <tr
+                      key={p.id}
+                      onClick={() => setInspectPayment(p)}
+                      className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
+                    >
+                      <td className="px-5 py-3.5">
+                        <div className="font-mono font-semibold text-white group-hover:text-sky-300 transition-colors">
                           {p.commerceOrder?.orderNumber || "ORD-UNKNOWN"}
                         </div>
-                        <div className="font-mono text-[11px] text-muted">
+                        <div className="font-mono text-[11px] text-white/40">
                           {p.captureId ? `Cap: ${p.captureId}` : `Order: ${p.providerOrderId}`}
                         </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="font-medium text-fg">
+                      <td className="px-5 py-3.5">
+                        <div className="font-medium text-white/90">
                           {p.commerceOrder?.buyer?.fullName || "Buyer"}
                         </div>
-                        <div className="text-[11px] text-muted">
+                        <div className="text-[11px] text-white/50">
                           {p.commerceOrder?.merchantOrganization?.name || "Merchant"}
                         </div>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-5 py-3.5" onClick={(e) => e.stopPropagation()}>
                         {p.commerceOrder?.case ? (
                           <Link
                             href={`/cases/${p.commerceOrder.case.id}`}
-                            className="font-medium text-brand hover:underline inline-flex items-center gap-1"
+                            className="font-mono font-medium text-sky-400 hover:underline inline-flex items-center gap-1"
                           >
-                            {p.commerceOrder.case.caseNumber}
+                            <span>{p.commerceOrder.case.caseNumber}</span>
                             <ExternalLink className="h-3 w-3" />
                           </Link>
                         ) : (
-                          <span className="text-muted">Unlinked</span>
+                          <span className="text-white/40 font-mono">No Dispute</span>
                         )}
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="font-mono font-semibold text-fg">
+                      <td className="px-5 py-3.5 text-right font-mono font-semibold text-white tabular-nums">
+                        <div>
                           {formatCurrency(p.amountMinor / 100, (p.currency as Currency) || "USD")}
                         </div>
                         {refundedSum > 0 && (
                           <div className="text-[10px] text-amber-400">
-                            Refunded: {formatCurrency(refundedSum / 100, (p.currency as Currency) || "USD")}
+                            - {formatCurrency(refundedSum / 100, (p.currency as Currency) || "USD")}
                           </div>
                         )}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-5 py-3.5">
                         {getStatusBadge(p.paymentStatus)}
                       </td>
-                      <td className="px-4 py-3 text-muted">
+                      <td className="px-5 py-3.5 font-mono text-white/50 text-[11.5px]">
                         {new Date(p.capturedAt || p.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-5 py-3.5 text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-2">
                           {p.paymentStatus === "COMPLETED" && remainingMinor > 0 && (
                             <Button
@@ -322,12 +440,15 @@ export default function PaymentsPage() {
                               Refund
                             </Button>
                           )}
-                          <Link href={`/payments/${p.id}`}>
-                            <Button variant="ghost" size="sm" className="h-7 text-[11px] gap-1">
-                              Details
-                              <ArrowRight className="h-3 w-3" />
-                            </Button>
-                          </Link>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setInspectPayment(p)}
+                            className="h-7 text-[11px] text-white/70 hover:text-white hover:bg-white/[0.06] gap-1"
+                          >
+                            <span>Inspect</span>
+                            <ChevronRight className="h-3 w-3" />
+                          </Button>
                         </div>
                       </td>
                     </tr>
@@ -339,7 +460,154 @@ export default function PaymentsPage() {
         </div>
       </div>
 
-      {/* Refund Dialog Modal */}
+      {/* ======================================================== */}
+      {/* 5. TRANSACTION DETAIL SLIDE-OVER DRAWER                  */}
+      {/* ======================================================== */}
+      {inspectPayment && (
+        <SlideOver
+          open={Boolean(inspectPayment)}
+          onClose={() => setInspectPayment(null)}
+          title={
+            <div className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4 text-emerald-400" />
+              <span className="font-mono font-bold text-white">
+                {inspectPayment.commerceOrder?.orderNumber || inspectPayment.providerOrderId}
+              </span>
+            </div>
+          }
+          subtitle="Authoritative Payment Settlement Details"
+        >
+          <div className="space-y-6 text-xs text-white/80">
+            {/* Status & Summary Header */}
+            <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4 flex items-center justify-between">
+              <div>
+                <span className="text-[11px] text-white/50">Settlement Amount</span>
+                <div className="font-mono text-xl font-bold text-white mt-0.5">
+                  {formatCurrency(
+                    inspectPayment.amountMinor / 100,
+                    (inspectPayment.currency as Currency) || "USD"
+                  )}
+                </div>
+              </div>
+              <div>{getStatusBadge(inspectPayment.paymentStatus)}</div>
+            </div>
+
+            {/* Provider & Technical Identifiers */}
+            <div className="space-y-3 rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
+              <h3 className="font-semibold text-white text-xs uppercase font-mono tracking-wider text-white/50">
+                Authoritative Keys
+              </h3>
+              <div className="space-y-2 font-mono text-[11.5px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-white/50">Internal Payment ID:</span>
+                  <span className="text-white select-all">{inspectPayment.id}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-white/50">PayPal Order ID:</span>
+                  <span className="text-white select-all">{inspectPayment.providerOrderId}</span>
+                </div>
+                {inspectPayment.captureId && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-white/50">PayPal Capture ID:</span>
+                    <span className="text-emerald-400 select-all">{inspectPayment.captureId}</span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between">
+                  <span className="text-white/50">Environment Mode:</span>
+                  <span className="text-white/80">{inspectPayment.environment}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-white/50">Captured At:</span>
+                  <span className="text-white/80">
+                    {new Date(inspectPayment.capturedAt || inspectPayment.createdAt).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Counterparty Information */}
+            <div className="space-y-3 rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
+              <h3 className="font-semibold text-white text-xs uppercase font-mono tracking-wider text-white/50">
+                Counterparty Profile
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-white/50 block text-[11px]">Buyer Persona</span>
+                  <span className="font-semibold text-white block mt-0.5">
+                    {inspectPayment.commerceOrder?.buyer?.fullName || "Verified Consumer"}
+                  </span>
+                  <span className="text-white/50 font-mono text-[11px] block">
+                    {inspectPayment.commerceOrder?.buyer?.email || "alex.morgan@consumer.demo"}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-white/50 block text-[11px]">Merchant Organization</span>
+                  <span className="font-semibold text-white block mt-0.5">
+                    {inspectPayment.commerceOrder?.merchantOrganization?.name || "TechStore Global"}
+                  </span>
+                  <span className="text-white/50 font-mono text-[11px] block">
+                    {inspectPayment.commerceOrder?.merchantOrganization?.slug || "techstore-demo"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Linked Dispute Case */}
+            <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4 flex items-center justify-between">
+              <div>
+                <span className="text-[11px] text-white/50 block">Investigation Dossier</span>
+                {inspectPayment.commerceOrder?.case ? (
+                  <div className="mt-1">
+                    <span className="font-mono font-bold text-sky-400">
+                      {inspectPayment.commerceOrder.case.caseNumber}
+                    </span>
+                    <p className="text-[11px] text-white/60">
+                      {inspectPayment.commerceOrder.case.title}
+                    </p>
+                  </div>
+                ) : (
+                  <span className="text-white/40 block mt-0.5">No active dispute linked</span>
+                )}
+              </div>
+              {inspectPayment.commerceOrder?.case && (
+                <Link
+                  href={`/cases/${inspectPayment.commerceOrder.case.id}`}
+                  className="rounded-lg bg-sky-500/10 border border-sky-500/20 px-3 py-1.5 text-xs font-semibold text-sky-400 hover:bg-sky-500/20 transition-colors inline-flex items-center gap-1"
+                >
+                  <span>Open Case</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              )}
+            </div>
+
+            {/* Action Bar in Drawer */}
+            <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between">
+              <Link href={`/payments/${inspectPayment.id}`}>
+                <Button variant="outline" size="sm" className="text-xs">
+                  Full Page View
+                </Button>
+              </Link>
+              {inspectPayment.paymentStatus === "COMPLETED" && (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedRefundPayment(inspectPayment);
+                    setInspectPayment(null);
+                  }}
+                  className="text-xs"
+                >
+                  Issue Refund
+                </Button>
+              )}
+            </div>
+          </div>
+        </SlideOver>
+      )}
+
+      {/* ======================================================== */}
+      {/* 6. REFUND DIALOG MODAL                                   */}
+      {/* ======================================================== */}
       {selectedRefundPayment && (
         <RefundDialog
           open={Boolean(selectedRefundPayment)}

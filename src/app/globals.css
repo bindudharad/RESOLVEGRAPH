@@ -585,3 +585,34 @@
   transition: none !important;
   scroll-behavior: auto !important;
 }
+
+/* ---------------------------------------------------------------------------
+   Tooltip helper styles
+   --------------------------------------------------------------------------- */
+.rg-tooltip-host {
+  position: relative;
+  display: inline-flex;
+}
+
+.rg-tooltip {
+  pointer-events: none;
+  position: absolute;
+  z-index: 100;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  white-space: nowrap;
+  border-radius: 6px;
+  background-color: #141824;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.rg-tooltip-host:hover .rg-tooltip {
+  visibility: visible;
+  opacity: 1;
+}

@@ -9,7 +9,6 @@ import {
   FileText,
   Filter,
   Image as ImageIcon,
-  MessageSquare,
   RotateCcw,
   UploadCloud,
   X,
@@ -20,17 +19,16 @@ import {
   RotateCw,
   Copy,
   Check,
+  ArrowRight,
+  ExternalLink,
 } from "lucide-react";
 import { DEMO_EVIDENCE } from "@/lib/mock-data";
-import { formatDate, formatDateTime } from "@/lib/utils";
-import { DemoBadge } from "@/components/common/demo-badge";
+import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/common/search-input";
 import { Select } from "@/components/ui/field";
 import { Dialog } from "@/components/ui/dialog";
-import { Chip } from "@/components/ui/chip";
 import { useToast } from "@/components/common/toast";
-import { TiltCard3D } from "@/components/3d/tilt-card-3d";
 import type { EvidenceItem, EvidenceType, VerificationStatus } from "@/lib/types";
 
 const EVIDENCE_TYPES: EvidenceType[] = [
@@ -78,7 +76,6 @@ export default function EvidencePage() {
   // Upload Form State
   const [uploadCaseId, setUploadCaseId] = useState("RG-1001");
   const [uploadType, setUploadType] = useState("INVOICE");
-  const [uploadVisibility, setUploadVisibility] = useState("SHARED_WITH_PARTICIPANTS");
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadDescription, setUploadDescription] = useState("");
   const [isUploading, setIsUploading] = useState(false);
@@ -93,56 +90,65 @@ export default function EvidencePage() {
             id: it.id,
             name: it.name,
             caseId: it.caseId,
-            type: (it.type === "PHOTO" ? "Product Photo" : it.type === "INVOICE" ? "Invoice" : it.type === "TRACKING_INFO" ? "Dispatch Record" : it.type === "CHAT_LOG" ? "Chat Transcript" : "Invoice") as EvidenceType,
+            type: (it.type === "PHOTO"
+              ? "Product Photo"
+              : it.type === "INVOICE"
+              ? "Invoice"
+              : it.type === "TRACKING_INFO"
+              ? "Dispatch Record"
+              : it.type === "CHAT_LOG"
+              ? "Chat Transcript"
+              : "Invoice") as EvidenceType,
             uploadedBy: it.uploadedBy,
             uploadedAt: it.uploadedAt,
-            verification: (it.verification === "VERIFIED" ? "Verified" : it.verification === "SUSPICIOUS" ? "Unverified" : "Pending") as VerificationStatus,
+            verification: (it.verification === "VERIFIED"
+              ? "Verified"
+              : it.verification === "SUSPICIOUS"
+              ? "Unverified"
+              : "Pending") as VerificationStatus,
             sizeKb: it.sizeKb,
-            extension: (it.extension as EvidenceItem["extension"]) || "pdf",
-            sha256: it.sha256,
+            extension: it.extension,
+            hash: it.sha256 || "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           }));
           setEvidenceList(mapped);
         }
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.warn("Could not load API evidence, using initial demo set", err);
+      });
   };
 
   useEffect(() => {
     loadEvidence();
   }, []);
 
-  // Derive all unique case IDs present in evidence
   const uniqueCases = useMemo(() => {
     return Array.from(new Set(evidenceList.map((e) => e.caseId))).sort();
   }, [evidenceList]);
 
   const filteredEvidence = useMemo(() => {
     return evidenceList.filter((item) => {
-      if (query.trim()) {
-        const q = query.toLowerCase().trim();
-        const matches =
-          item.name.toLowerCase().includes(q) ||
-          item.caseId.toLowerCase().includes(q) ||
-          item.uploadedBy.toLowerCase().includes(q) ||
-          item.type.toLowerCase().includes(q);
-        if (!matches) return false;
-      }
+      if (selectedType !== "All" && item.type !== selectedType) return false;
+      if (selectedStatus !== "All" && item.verification !== selectedStatus) return false;
+      if (selectedCase !== "All" && item.caseId !== selectedCase) return false;
+      if (!query.trim()) return true;
 
-      if (selectedType !== "All" && item.type !== selectedType) {
-        return false;
-      }
-
-      if (selectedStatus !== "All" && item.verification !== selectedStatus) {
-        return false;
-      }
-
-      if (selectedCase !== "All" && item.caseId !== selectedCase) {
-        return false;
-      }
-
-      return true;
+      const q = query.toLowerCase();
+      return (
+        item.name.toLowerCase().includes(q) ||
+        item.caseId.toLowerCase().includes(q) ||
+        item.uploadedBy.toLowerCase().includes(q)
+      );
     });
   }, [evidenceList, query, selectedType, selectedStatus, selectedCase]);
+
+  const stats = useMemo(() => {
+    const total = evidenceList.length;
+    const verified = evidenceList.filter((e) => e.verification === "Verified").length;
+    const pending = evidenceList.filter((e) => e.verification === "Pending").length;
+    const unverified = evidenceList.filter((e) => e.verification === "Unverified").length;
+    return { total, verified, pending, unverified };
+  }, [evidenceList]);
 
   const resetFilters = () => {
     setQuery("");
@@ -157,118 +163,214 @@ export default function EvidencePage() {
     selectedStatus !== "All" ||
     selectedCase !== "All";
 
-  // Summary counts
-  const stats = useMemo(() => {
-    const verified = evidenceList.filter((e) => e.verification === "Verified").length;
-    const pending = evidenceList.filter((e) => e.verification === "Pending").length;
-    const unverified = evidenceList.filter((e) => e.verification === "Unverified").length;
-    return { total: evidenceList.length, verified, pending, unverified };
-  }, [evidenceList]);
-
-  const getExtensionIcon = (ext: EvidenceItem["extension"]) => {
-    switch (ext) {
+  const getExtensionIcon = (ext: string) => {
+    switch (ext.toLowerCase()) {
       case "pdf":
-        return <FileText className="h-4 w-4 text-[#fa8b8b]" />;
+        return <FileText className="h-5 w-5 text-rose-400" />;
       case "png":
       case "jpg":
-        return <ImageIcon className="h-4 w-4 text-[#a08bff]" />;
+      case "jpeg":
+        return <ImageIcon className="h-5 w-5 text-sky-400" />;
       case "csv":
-        return <FileSpreadsheet className="h-4 w-4 text-[#34d399]" />;
-      case "txt":
-        return <MessageSquare className="h-4 w-4 text-[#38bdf8]" />;
+      case "xlsx":
+        return <FileSpreadsheet className="h-5 w-5 text-emerald-400" />;
+      case "mp4":
+      case "mov":
+        return <Eye className="h-5 w-5 text-amber-400" />;
       default:
-        return <FileCheck className="h-4 w-4 text-subtle" />;
+        return <FileCheck className="h-5 w-5 text-white/50" />;
     }
   };
 
   const getVerificationBadge = (status: VerificationStatus) => {
     switch (status) {
       case "Verified":
-        return <Chip variant="verified">Verified</Chip>;
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 font-mono text-[10.5px] font-medium text-emerald-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            Verified
+          </span>
+        );
       case "Pending":
-        return <Chip variant="missing">Pending Review</Chip>;
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 font-mono text-[10.5px] font-medium text-amber-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+            Pending Triage
+          </span>
+        );
       case "Unverified":
-        return <Chip variant="danger">Unverified</Chip>;
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-md bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 font-mono text-[10.5px] font-medium text-rose-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+            Flagged
+          </span>
+        );
+    }
+  };
+
+  const handleCopyHash = (hash: string) => {
+    navigator.clipboard.writeText(hash);
+    setCopiedHash(true);
+    toast({
+      tone: "success",
+      title: "Hash Copied",
+      description: "SHA-256 fingerprint copied to clipboard.",
+    });
+    setTimeout(() => setCopiedHash(false), 2000);
+  };
+
+  const handleUploadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!uploadFile) {
+      setUploadError("Please select a file to upload.");
+      return;
+    }
+    setUploadError(null);
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", uploadFile);
+      formData.append("caseId", uploadCaseId);
+      formData.append("type", uploadType);
+      formData.append("description", uploadDescription || "Uploaded via Evidence Vault");
+
+      const res = await fetch("/api/evidence/intake", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Upload failed");
+      }
+
+      toast({
+        tone: "success",
+        title: "Evidence Ingested",
+        description: `Successfully uploaded ${uploadFile.name} with SHA-256 validation.`,
+      });
+      setUploadModalOpen(false);
+      setUploadFile(null);
+      setUploadDescription("");
+      loadEvidence();
+    } catch (err) {
+      console.error(err);
+      setUploadError(err instanceof Error ? err.message : "Failed to upload evidence.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Header section */}
-      <section className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-[var(--line)]/70 pb-4">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl sm:text-3xl font-display font-semibold tracking-tight text-[var(--ink)]">
-              Evidence <span className="italic text-[var(--accent)] font-semibold">Vault</span> & Intelligence
+    <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto pb-12 antialiased">
+      {/* ======================================================== */}
+      {/* 1. HEADER SECTION                                        */}
+      {/* ======================================================== */}
+      <header className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-6 shadow-xs">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-white/50">
+                Forensic Storage Vault
+              </span>
+              <span className="text-white/20">·</span>
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-white/[0.04] border border-white/[0.08] px-2 py-0.5 font-mono text-[11px] text-white/70">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                Bitwise SHA-256 Validation Active
+              </span>
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-white">
+              Evidence Vault &amp; Asset Inspection
             </h1>
-            <DemoBadge />
+            <p className="mt-1 text-xs text-white/60">
+              Universal cryptographically hashed vault of buyer receipts, packaging photos, dispatch manifests, and unboxing media.
+            </p>
           </div>
-          <p className="mt-1 text-xs sm:text-sm text-[var(--ink-2)]">
-            Universal cryptographically hashed vault of buyer receipts, packaging photos, dispatch manifests, and unboxing challenge recordings.
-          </p>
+
+          <div className="flex items-center gap-2.5 shrink-0">
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => setUploadModalOpen(true)}
+              icon={<UploadCloud className="h-4 w-4 text-black" />}
+              className="bg-white text-black hover:bg-white/90 text-xs font-semibold px-4 h-9 shadow-xs"
+            >
+              Upload Evidence
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* ======================================================== */}
+      {/* 2. FOUR AUTHORITATIVE METRIC CARDS                       */}
+      {/* ======================================================== */}
+      <section
+        aria-label="Evidence Metrics Overview"
+        className="grid grid-cols-2 gap-3.5 sm:grid-cols-4"
+      >
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
+          <span className="text-xs font-medium text-white/50">Total Assets</span>
+          <div className="mt-3">
+            <span className="font-mono text-2xl font-bold text-white tabular-nums">
+              {stats.total}
+            </span>
+            <p className="mt-1 text-xs text-white/50">Across all tenant cases</p>
+          </div>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-white/40">
+            Immutable Storage
+          </div>
         </div>
 
-        <Button
-          variant="primary"
-          size="md"
-          onClick={() => setUploadModalOpen(true)}
-          icon={<UploadCloud className="h-4 w-4" />}
-          className="shadow-sm font-semibold text-xs px-4 h-9"
-        >
-          Upload Evidence
-        </Button>
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
+          <span className="text-xs font-medium text-white/50">Verified Records</span>
+          <div className="mt-3">
+            <span className="font-mono text-2xl font-bold text-emerald-400 tabular-nums">
+              {stats.verified}
+            </span>
+            <p className="mt-1 text-xs text-white/50">Passed bitwise SHA-256</p>
+          </div>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-emerald-400">
+            100% Integrity Match
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
+          <span className="text-xs font-medium text-white/50">Pending Review</span>
+          <div className="mt-3">
+            <span className="font-mono text-2xl font-bold text-amber-400 tabular-nums">
+              {stats.pending}
+            </span>
+            <p className="mt-1 text-xs text-white/50">Awaiting forensic matching</p>
+          </div>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-amber-400">
+            In Intake Queue
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
+          <span className="text-xs font-medium text-white/50">Unverified / Disputed</span>
+          <div className="mt-3">
+            <span className="font-mono text-2xl font-bold text-rose-400 tabular-nums">
+              {stats.unverified}
+            </span>
+            <p className="mt-1 text-xs text-white/50">Contested or damaged proofs</p>
+          </div>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-rose-400">
+            Requires Re-submission
+          </div>
+        </div>
       </section>
 
-      {/* KPI Stats overview with 3D Tilt */}
-      <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-4">
-        <TiltCard3D maxTilt={8} depth={15} glowColor="rgba(99, 112, 245, 0.2)">
-          <div className="paper-dark rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4 shadow-sm h-full flex flex-col justify-between">
-            <div>
-              <p className="text-[11.5px] font-mono uppercase font-semibold text-[var(--ink-2)]">Total Files</p>
-              <p className="mt-1 text-[24px] font-bold tabular-nums font-mono text-[var(--ink)]">{stats.total}</p>
-            </div>
-            <span className="text-[10.5px] text-[var(--ink-3)] font-mono pt-2 border-t border-[var(--line)]/50 mt-2">Across all tenant cases</span>
-          </div>
-        </TiltCard3D>
-
-        <TiltCard3D maxTilt={8} depth={15} glowColor="rgba(16, 185, 129, 0.22)">
-          <div className="paper-dark rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4 shadow-sm h-full flex flex-col justify-between">
-            <div>
-              <p className="text-[11.5px] font-mono uppercase font-semibold text-emerald-400">Verified Records</p>
-              <p className="mt-1 text-[24px] font-bold tabular-nums font-mono text-emerald-400">{stats.verified}</p>
-            </div>
-            <span className="text-[10.5px] text-[var(--ink-3)] font-mono pt-2 border-t border-[var(--line)]/50 mt-2">Passed cryptographic check</span>
-          </div>
-        </TiltCard3D>
-
-        <TiltCard3D maxTilt={8} depth={15} glowColor="rgba(245, 158, 11, 0.22)">
-          <div className="paper-dark rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4 shadow-sm h-full flex flex-col justify-between">
-            <div>
-              <p className="text-[11.5px] font-mono uppercase font-semibold text-amber-400">Pending Review</p>
-              <p className="mt-1 text-[24px] font-bold tabular-nums font-mono text-amber-400">{stats.pending}</p>
-            </div>
-            <span className="text-[10.5px] text-[var(--ink-3)] font-mono pt-2 border-t border-[var(--line)]/50 mt-2">Awaiting triage & matching</span>
-          </div>
-        </TiltCard3D>
-
-        <TiltCard3D maxTilt={8} depth={15} glowColor="rgba(244, 63, 94, 0.22)">
-          <div className="paper-dark rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4 shadow-sm h-full flex flex-col justify-between">
-            <div>
-              <p className="text-[11.5px] font-mono uppercase font-semibold text-rose-400">Unverified Files</p>
-              <p className="mt-1 text-[24px] font-bold tabular-nums font-mono text-rose-400">{stats.unverified}</p>
-            </div>
-            <span className="text-[10.5px] text-[var(--ink-3)] font-mono pt-2 border-t border-[var(--line)]/50 mt-2">Disputed or incomplete</span>
-          </div>
-        </TiltCard3D>
-      </div>
-
-      {/* Filters Toolbar */}
-      <div className="rg-card flex flex-col gap-3 p-4 lg:flex-row lg:items-center lg:justify-between">
+      {/* ======================================================== */}
+      {/* 3. SEARCH & CATEGORY FILTERS TOOLBAR                     */}
+      {/* ======================================================== */}
+      <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
         <SearchInput
           value={query}
           onValueChange={setQuery}
-          placeholder="Search by file name, case ID or uploader…"
-          className="w-full lg:max-w-md"
+          placeholder="Search by file name, case ID, or uploader…"
+          className="w-full lg:max-w-md bg-white/[0.03] border-white/[0.08] text-white"
         />
 
         <div className="flex flex-wrap items-center gap-2">
@@ -276,12 +378,12 @@ export default function EvidencePage() {
           <Select
             value={selectedCase}
             onChange={(e) => setSelectedCase(e.target.value)}
-            className="w-[calc(50%-0.25rem)] sm:w-36"
+            className="w-[calc(50%-0.25rem)] sm:w-36 text-xs bg-white/[0.03] border-white/[0.08] text-white"
             aria-label="Filter by associated case"
           >
-            <option value="All">All Cases</option>
+            <option value="All" className="bg-[#0E121D]">All Cases</option>
             {uniqueCases.map((cId) => (
-              <option key={cId} value={cId}>
+              <option key={cId} value={cId} className="bg-[#0E121D]">
                 {cId}
               </option>
             ))}
@@ -291,12 +393,12 @@ export default function EvidencePage() {
           <Select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="w-[calc(50%-0.25rem)] sm:w-44"
+            className="w-[calc(50%-0.25rem)] sm:w-44 text-xs bg-white/[0.03] border-white/[0.08] text-white"
             aria-label="Filter by evidence type"
           >
-            <option value="All">All Document Types</option>
+            <option value="All" className="bg-[#0E121D]">All Types</option>
             {EVIDENCE_TYPES.map((type) => (
-              <option key={type} value={type}>
+              <option key={type} value={type} className="bg-[#0E121D]">
                 {type}
               </option>
             ))}
@@ -306,12 +408,12 @@ export default function EvidencePage() {
           <Select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="w-[calc(50%-0.25rem)] sm:w-40"
+            className="w-[calc(50%-0.25rem)] sm:w-40 text-xs bg-white/[0.03] border-white/[0.08] text-white"
             aria-label="Filter by verification status"
           >
-            <option value="All">All Statuses</option>
+            <option value="All" className="bg-[#0E121D]">All Statuses</option>
             {VERIFICATION_STATUSES.map((status) => (
-              <option key={status} value={status}>
+              <option key={status} value={status} className="bg-[#0E121D]">
                 {status}
               </option>
             ))}
@@ -323,18 +425,19 @@ export default function EvidencePage() {
               size="sm"
               onClick={resetFilters}
               icon={<X className="h-3.5 w-3.5" />}
+              className="text-xs text-white/60 hover:text-white"
             >
               Reset
             </Button>
           )}
 
           {/* Grid / Table View Switcher */}
-          <div className="flex items-center rounded-lg border border-line bg-surface-2 p-0.5 ml-auto">
+          <div className="flex items-center rounded-lg border border-white/[0.08] bg-white/[0.02] p-0.5 ml-auto">
             <button
               type="button"
               onClick={() => setViewMode("grid")}
               className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                viewMode === "grid" ? "bg-surface text-fg shadow-xs" : "text-subtle hover:text-fg"
+                viewMode === "grid" ? "bg-white text-black shadow-xs" : "text-white/50 hover:text-white"
               }`}
               title="Card Grid View"
             >
@@ -345,7 +448,7 @@ export default function EvidencePage() {
               type="button"
               onClick={() => setViewMode("table")}
               className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                viewMode === "table" ? "bg-surface text-fg shadow-xs" : "text-subtle hover:text-fg"
+                viewMode === "table" ? "bg-white text-black shadow-xs" : "text-white/50 hover:text-white"
               }`}
               title="Detailed Table View"
             >
@@ -356,23 +459,25 @@ export default function EvidencePage() {
         </div>
       </div>
 
-      {/* Evidence Grid, Table, or Empty State */}
+      {/* ======================================================== */}
+      {/* 4. EVIDENCE CARD GRID (NO LASER/TILT SLOP, PURE CRAFT)   */}
+      {/* ======================================================== */}
       {filteredEvidence.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 px-4 text-center rounded-lg border border-line bg-surface">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full border border-line bg-surface-2 text-subtle">
+        <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border border-white/[0.08] bg-[#0E121D]">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/50">
             <Filter className="h-5 w-5" />
           </div>
-          <h3 className="mt-3 text-[14px] font-semibold text-fg">
+          <h3 className="mt-4 text-sm font-semibold text-white">
             No Evidence Files Match Current Filters
           </h3>
-          <p className="mt-1 max-w-sm text-[12.5px] text-subtle">
-            Try broadening your search term, clearing the case filter, or resetting document status.
+          <p className="mt-1 max-w-sm text-xs text-white/50">
+            Try adjusting your query, selecting a different case dossier, or clearing filter dropdowns.
           </p>
           <Button
             variant="outline"
             size="sm"
             onClick={resetFilters}
-            className="mt-4"
+            className="mt-4 text-xs border-white/[0.08]"
             icon={<RotateCcw className="h-3.5 w-3.5" />}
           >
             Clear All Filters
@@ -388,58 +493,70 @@ export default function EvidencePage() {
                 setZoomLevel(1);
                 setRotation(0);
               }}
-              className="group cursor-pointer rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4 transition-all duration-200 hover:border-[var(--accent)] hover:shadow-lg hover:-translate-y-1 paper-dark relative overflow-hidden"
+              className="group cursor-pointer rounded-2xl border border-white/[0.08] bg-[#0E121D] p-4 transition-all duration-150 hover:border-white/[0.18] hover:bg-white/[0.02] flex flex-col justify-between"
             >
-              {/* Laser scan line on unverified/pending files */}
-              {item.verification !== "Verified" && <div className="scan-y opacity-60" />}
-
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-bold text-[var(--ink)]">
-                  {item.caseId}
-                </span>
-                {getVerificationBadge(item.verification)}
-              </div>
-
-              <div className="mt-3 flex h-32 items-center justify-center rounded-lg border border-[var(--line)] bg-[var(--surface-2)]/50 transition-colors group-hover:bg-[var(--surface-2)] shadow-inner">
-                <div className="flex flex-col items-center gap-1.5 text-center p-2">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--surface)] border border-[var(--line)] shadow-xs">
-                    {getExtensionIcon(item.extension)}
-                  </div>
-                  <span className="text-[10.5px] font-mono uppercase tracking-wider text-[var(--ink-3)] font-semibold">
-                    {item.extension.toUpperCase()} &bull; {item.sizeKb > 1024 ? `${(item.sizeKb / 1024).toFixed(1)}MB` : `${item.sizeKb}KB`}
+              <div>
+                {/* Header: Case ID & Verification */}
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-mono text-xs font-bold text-sky-400 group-hover:underline">
+                    {item.caseId}
                   </span>
+                  {getVerificationBadge(item.verification)}
+                </div>
+
+                {/* File Icon & Preview Area */}
+                <div className="mt-3 flex h-28 items-center justify-center rounded-xl border border-white/[0.06] bg-white/[0.02] transition-colors group-hover:bg-white/[0.04]">
+                  <div className="flex flex-col items-center gap-1.5 text-center p-2">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/[0.04] border border-white/[0.08]">
+                      {getExtensionIcon(item.extension)}
+                    </div>
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/40">
+                      {item.extension.toUpperCase()} &bull; {item.sizeKb > 1024 ? `${(item.sizeKb / 1024).toFixed(1)}MB` : `${item.sizeKb}KB`}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Title & Metadata (Clean, no hashes) */}
+                <div className="mt-3">
+                  <h4 className="text-xs font-semibold text-white truncate" title={item.name}>
+                    {item.name}
+                  </h4>
+                  <div className="mt-1 flex items-center justify-between text-[11px] text-white/50 font-mono">
+                    <span className="text-white/60">{item.type}</span>
+                    <span>{formatDate(item.uploadedAt)}</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-3">
-                <h4 className="text-[13px] font-semibold text-[var(--ink)] truncate" title={item.name}>
-                  {item.name}
-                </h4>
-                <div className="mt-1 flex items-center justify-between text-[11.5px] text-[var(--ink-3)] font-mono">
-                  <span>{item.type}</span>
-                  <span>{formatDate(item.uploadedAt)}</span>
-                </div>
+              {/* Footer Trigger */}
+              <div className="mt-3 pt-2.5 border-t border-white/[0.04] flex items-center justify-between text-[11px] text-white/40 group-hover:text-white/80 transition-colors">
+                <span>By {item.uploadedBy}</span>
+                <span className="inline-flex items-center gap-1 text-sky-400 font-medium">
+                  Inspect
+                  <ArrowRight className="h-3 w-3" />
+                </span>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-line bg-surface">
+        /* Table View */
+        <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0E121D] shadow-xs">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[840px] text-left text-[13px]">
-              <thead className="border-b border-line bg-surface-2 text-[11.5px] font-semibold uppercase tracking-wider text-faint">
-                <tr>
-                  <th className="py-3 pl-5 pr-4">File Name</th>
-                  <th className="py-3 px-4">Case ID</th>
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-white/[0.06] bg-white/[0.02] font-mono text-[11px] text-white/40 uppercase tracking-wider">
+                  <th className="py-3 px-5">Document Name</th>
+                  <th className="py-3 px-4">Case Dossier</th>
                   <th className="py-3 px-4">Evidence Type</th>
                   <th className="py-3 px-4">Uploaded By</th>
                   <th className="py-3 px-4">Date Added</th>
                   <th className="py-3 px-4">Size</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 pl-4 pr-5 text-right">Action</th>
+                  <th className="py-3 px-4">Integrity Status</th>
+                  <th className="py-3 px-5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-line">
+              <tbody className="divide-y divide-white/[0.04]">
                 {filteredEvidence.map((item) => (
                   <tr
                     key={item.id}
@@ -448,58 +565,48 @@ export default function EvidencePage() {
                       setZoomLevel(1);
                       setRotation(0);
                     }}
-                    className="cursor-pointer transition-colors hover:bg-surface-2/70"
+                    className="cursor-pointer transition-colors hover:bg-white/[0.02]"
                   >
-                    <td className="py-3.5 pl-5 pr-4">
+                    <td className="py-3 px-5">
                       <div className="flex items-center gap-2.5">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-line bg-surface-3">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.03]">
                           {getExtensionIcon(item.extension)}
                         </div>
-                        <span className="font-medium text-fg hover:text-amber-400 transition-colors truncate max-w-[200px]">
+                        <span className="font-medium text-white truncate max-w-[220px]">
                           {item.name}
                         </span>
                       </div>
                     </td>
-
-                    <td className="py-3.5 px-4 font-mono font-medium">
+                    <td className="py-3 px-4 font-mono font-medium text-sky-400">
                       <Link
                         href={`/cases/${item.caseId}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="text-amber-400 hover:underline"
+                        className="hover:underline"
                       >
                         {item.caseId}
                       </Link>
                     </td>
-
-                    <td className="py-3.5 px-4 text-muted">{item.type}</td>
-
-                    <td className="py-3.5 px-4 text-fg">{item.uploadedBy}</td>
-
-                    <td className="py-3.5 px-4 text-subtle whitespace-nowrap">
+                    <td className="py-3 px-4 text-white/70">{item.type}</td>
+                    <td className="py-3 px-4 text-white/60">{item.uploadedBy}</td>
+                    <td className="py-3 px-4 font-mono text-white/50 whitespace-nowrap">
                       {formatDate(item.uploadedAt)}
                     </td>
-
-                    <td className="py-3.5 px-4 text-faint tabular-nums font-mono">
-                      {item.sizeKb > 1024
-                        ? `${(item.sizeKb / 1024).toFixed(1)} MB`
-                        : `${item.sizeKb} KB`}
+                    <td className="py-3 px-4 font-mono text-white/50">
+                      {item.sizeKb > 1024 ? `${(item.sizeKb / 1024).toFixed(1)}MB` : `${item.sizeKb}KB`}
                     </td>
-
-                    <td className="py-3.5 px-4 whitespace-nowrap">
+                    <td className="py-3 px-4">
                       {getVerificationBadge(item.verification)}
                     </td>
-
-                    <td className="py-3.5 pl-4 pr-5 text-right">
+                    <td className="py-3 px-5 text-right" onClick={(e) => e.stopPropagation()}>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={() => {
                           setInspectItem(item);
                           setZoomLevel(1);
                           setRotation(0);
                         }}
-                        icon={<Eye className="h-3.5 w-3.5" />}
+                        className="h-7 text-[11px] text-white/70 hover:text-white"
                       >
                         Inspect
                       </Button>
@@ -512,300 +619,192 @@ export default function EvidencePage() {
         </div>
       )}
 
-      {/* Inspect Item Modal with Zoom, Pan, Rotate, and Extraction Overlays */}
-      <Dialog
-        open={Boolean(inspectItem)}
-        onClose={() => setInspectItem(null)}
-        title={inspectItem ? inspectItem.name : "Evidence Item"}
-        description="Forensic bilateral evidence artifact with bounding box fact extraction."
-        size="lg"
-        footer={
-          <div className="flex w-full items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setZoomLevel((z) => Math.max(0.6, z - 0.2))}
-                icon={<ZoomOut className="h-3.5 w-3.5" />}
-              >
-                Zoom Out
-              </Button>
-              <span className="font-mono text-xs text-subtle px-1">
-                {(zoomLevel * 100).toFixed(0)}%
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setZoomLevel((z) => Math.min(2.5, z + 0.2))}
-                icon={<ZoomIn className="h-3.5 w-3.5" />}
-              >
-                Zoom In
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setRotation((r) => (r + 90) % 360)}
-                icon={<RotateCw className="h-3.5 w-3.5" />}
-              >
-                Rotate
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setZoomLevel(1);
-                  setRotation(0);
-                }}
-              >
-                Reset
-              </Button>
-            </div>
-            <div className="flex items-center gap-2">
-              {inspectItem && (
-                <a
-                  href={`/api/evidence/${inspectItem.id}/download`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center rounded-lg border border-line bg-surface px-3 py-1.5 text-[12px] font-medium text-fg hover:bg-surface-2 transition-colors"
-                >
-                  Download Evidence
-                </a>
-              )}
-              <Button variant="secondary" size="sm" onClick={() => setInspectItem(null)}>
-                Close
-              </Button>
-            </div>
-          </div>
-        }
-      >
-        {inspectItem && (
-          <div className="flex flex-col gap-4 py-2">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 rounded-md border border-line bg-surface-2 p-3 text-[12px]">
-              <div>
-                <span className="text-subtle">Case Associated:</span>{" "}
-                <Link
-                  href={`/cases/${inspectItem.caseId}`}
-                  className="font-mono font-medium text-[var(--accent)] hover:underline"
-                >
-                  {inspectItem.caseId}
-                </Link>
-              </div>
-              <div>
-                <span className="text-subtle">Type:</span>{" "}
-                <span className="font-medium text-fg">{inspectItem.type}</span>
-              </div>
-              <div>
-                <span className="text-subtle">Uploaded By:</span>{" "}
-                <span className="font-medium text-fg">{inspectItem.uploadedBy}</span>
-              </div>
-              <div>
-                <span className="text-subtle">Timestamp:</span>{" "}
-                <span className="font-medium text-fg font-mono">{formatDateTime(inspectItem.uploadedAt)}</span>
-              </div>
-            </div>
-
-            {/* Document visual preview with transform viewport */}
-            <div className="relative min-h-[300px] max-h-[420px] overflow-hidden rounded-lg border border-line bg-surface flex items-center justify-center p-6">
+      {/* ======================================================== */}
+      {/* 5. FORENSIC ASSET INSPECTION DIALOG                      */}
+      {/* ======================================================== */}
+      {inspectItem && (
+        <Dialog
+          open={Boolean(inspectItem)}
+          onClose={() => setInspectItem(null)}
+          title={inspectItem.name}
+          description={`Forensic asset inspection — ${inspectItem.type} (${inspectItem.extension.toUpperCase()})`}
+          className="max-w-2xl bg-[#0E121D] border-white/[0.08]"
+        >
+          <div className="space-y-5 text-xs text-white/80">
+            {/* Visual Canvas Area */}
+            <div className="relative flex h-64 w-full items-center justify-center rounded-xl border border-white/[0.08] bg-black/40 overflow-hidden">
               <div
-                className="transition-transform duration-200 flex flex-col items-center justify-center relative"
                 style={{
                   transform: `scale(${zoomLevel}) rotate(${rotation}deg)`,
-                  transformOrigin: "center center",
+                  transition: "transform 0.2s ease-out",
                 }}
+                className="flex flex-col items-center justify-center p-4 text-center select-none"
               >
-                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-line bg-surface-2">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/[0.04] border border-white/[0.08] mb-2">
                   {getExtensionIcon(inspectItem.extension)}
                 </div>
-                <p className="mt-3 text-[14px] font-semibold text-fg">{inspectItem.name}</p>
-                <p className="mt-1 text-[12px] text-subtle font-mono">
-                  {inspectItem.extension.toUpperCase()} document ({inspectItem.sizeKb} KB)
-                </p>
-
-                {/* Bounding box fact extraction overlays */}
-                <div className="mt-4 flex flex-wrap gap-2 justify-center">
-                  <div className="rounded border-2 border-dashed border-[var(--contested)] bg-[color-mix(in_srgb,var(--contested)_10%,transparent)] px-2.5 py-1 text-[11px] font-mono text-[var(--contested)]">
-                    Extracted Serial: APX-512-V2
-                  </div>
-                  <div className="rounded border-2 border-dashed border-[var(--buyer)] bg-[color-mix(in_srgb,var(--buyer)_10%,transparent)] px-2.5 py-1 text-[11px] font-mono text-[var(--buyer)]">
-                    Capacity Label: 512GB NVMe
-                  </div>
-                </div>
+                <span className="font-mono text-sm text-white font-semibold">
+                  {inspectItem.name}
+                </span>
+                <span className="text-[11px] text-white/50 font-mono mt-1">
+                  MIME: application/{inspectItem.extension} &bull; {inspectItem.sizeKb} KB
+                </span>
               </div>
-            </div>
 
-            {/* SHA-256 Tamper-Proof Hash Row */}
-            <div className="flex items-center justify-between rounded-lg border border-line bg-surface-2 p-3 text-xs">
-              <div className="flex items-center gap-2">
-                {getVerificationBadge(inspectItem.verification)}
-                <span className="text-subtle">Tamper-evident verification hash:</span>
-              </div>
-              <div className="flex items-center gap-2 font-mono text-[11px] text-fg">
-                <span className="truncate max-w-[280px]">
-                  {inspectItem.sha256 || "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+              {/* Floating Controls */}
+              <div className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-[#0E121D]/90 p-1 backdrop-blur-sm">
+                <button
+                  type="button"
+                  onClick={() => setZoomLevel((z) => Math.max(0.5, z - 0.2))}
+                  className="rounded p-1 text-white/60 hover:bg-white/[0.08] hover:text-white"
+                  title="Zoom Out"
+                >
+                  <ZoomOut className="h-3.5 w-3.5" />
+                </button>
+                <span className="font-mono text-[10px] text-white/60 px-1">
+                  {Math.round(zoomLevel * 100)}%
                 </span>
                 <button
                   type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText(inspectItem.sha256 || "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
-                    setCopiedHash(true);
-                    setTimeout(() => setCopiedHash(false), 2000);
-                  }}
-                  className="rounded p-1 hover:bg-surface text-subtle hover:text-fg"
-                  title="Copy SHA-256 hash"
+                  onClick={() => setZoomLevel((z) => Math.min(3, z + 0.2))}
+                  className="rounded p-1 text-white/60 hover:bg-white/[0.08] hover:text-white"
+                  title="Zoom In"
                 >
-                  {copiedHash ? <Check className="h-3.5 w-3.5 text-[var(--agreed)]" /> : <Copy className="h-3.5 w-3.5" />}
+                  <ZoomIn className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRotation((r) => (r + 90) % 360)}
+                  className="rounded p-1 text-white/60 hover:bg-white/[0.08] hover:text-white ml-1"
+                  title="Rotate 90deg"
+                >
+                  <RotateCw className="h-3.5 w-3.5" />
                 </button>
               </div>
             </div>
-          </div>
-        )}
-      </Dialog>
 
-      {/* Real Multipart Evidence Ingestion Dialog */}
-      <Dialog
-        open={uploadModalOpen}
-        onClose={() => setUploadModalOpen(false)}
-        title="Upload Dispute Evidence"
-        description="Attach authenticated documents, packing slips, photographs or invoices with SHA-256 integrity checks."
-        size="md"
-        footer={null}
-      >
-        <form onSubmit={async (e) => {
-          e.preventDefault();
-          if (!uploadFile) {
-            setUploadError("Please choose a file to upload.");
-            return;
-          }
-          setIsUploading(true);
-          setUploadError(null);
-          try {
-            const formData = new FormData();
-            formData.append("file", uploadFile);
-            formData.append("evidenceType", uploadType);
-            formData.append("visibility", uploadVisibility);
-            formData.append("description", uploadDescription || "Uploaded via Evidence Library");
-
-            const res = await fetch(`/api/cases/${uploadCaseId}/evidence`, {
-              method: "POST",
-              body: formData,
-            });
-
-            if (!res.ok) {
-              const errData = await res.json().catch(() => ({}));
-              throw new Error(errData.error || "Evidence upload failed.");
-            }
-
-            toast({
-              tone: "success",
-              title: "Evidence Uploaded & Verified",
-              description: `Stored to private vault and registered SHA-256 hash for case ${uploadCaseId}.`,
-            });
-
-            setUploadModalOpen(false);
-            setUploadFile(null);
-            setUploadDescription("");
-            loadEvidence();
-          } catch (err) {
-            setUploadError(err instanceof Error ? err.message : "Failed to upload file");
-          } finally {
-            setIsUploading(false);
-          }
-        }} className="flex flex-col gap-4 py-3 text-xs">
-          {uploadError && (
-            <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-red-300">
-              {uploadError}
+            {/* Cryptographic SHA-256 Fingerprint (Shown here in detail view) */}
+            <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3.5">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-white/50">
+                  SHA-256 Bitwise Cryptographic Fingerprint
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleCopyHash(inspectItem.sha256 || "")}
+                  className="inline-flex items-center gap-1 text-[11px] text-sky-400 hover:underline"
+                >
+                  {copiedHash ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                  <span>{copiedHash ? "Copied" : "Copy Hash"}</span>
+                </button>
+              </div>
+              <div className="rounded-lg bg-black/50 border border-white/[0.06] p-2.5 font-mono text-[11px] text-emerald-400 break-all select-all">
+                {inspectItem.sha256 || "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+              </div>
             </div>
-          )}
 
-          <div className="flex flex-col gap-1.5">
-            <label className="font-semibold text-fg">Dispute Case Association</label>
-            <select
-              value={uploadCaseId}
-              onChange={(e) => setUploadCaseId(e.target.value)}
-              className="rounded-lg border border-line bg-surface px-3 py-2 text-fg focus:border-[var(--color-brand)] focus:outline-none"
-            >
-              {uniqueCases.map((cId) => (
-                <option key={cId} value={cId}>{cId}</option>
-              ))}
-            </select>
+            {/* Forensic Dossier Context */}
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3">
+                <span className="text-white/50 text-[11px] block">Associated Case</span>
+                <Link
+                  href={`/cases/${inspectItem.caseId}`}
+                  className="font-mono font-bold text-sky-400 hover:underline mt-0.5 inline-flex items-center gap-1"
+                >
+                  <span>{inspectItem.caseId}</span>
+                  <ExternalLink className="h-3 w-3" />
+                </Link>
+              </div>
+              <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3">
+                <span className="text-white/50 text-[11px] block">Verification Status</span>
+                <div className="mt-1">{getVerificationBadge(inspectItem.verification)}</div>
+              </div>
+            </div>
           </div>
+        </Dialog>
+      )}
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
-              <label className="font-semibold text-fg">Evidence Category</label>
+      {/* ======================================================== */}
+      {/* 6. UPLOAD EVIDENCE MODAL                                 */}
+      {/* ======================================================== */}
+      {uploadModalOpen && (
+        <Dialog
+          open={uploadModalOpen}
+          onClose={() => setUploadModalOpen(false)}
+          title="Ingest Forensic Evidence"
+          className="max-w-lg bg-[#0E121D] border-white/[0.08]"
+        >
+          <form onSubmit={handleUploadSubmit} className="space-y-4 text-xs text-white/80">
+            {uploadError && (
+              <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-2.5 text-xs text-rose-300">
+                {uploadError}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-[11px] font-medium text-white/70 mb-1">
+                Associated Case ID
+              </label>
+              <input
+                type="text"
+                value={uploadCaseId}
+                onChange={(e) => setUploadCaseId(e.target.value)}
+                className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-xs text-white"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-medium text-white/70 mb-1">
+                Evidence Document Type
+              </label>
               <select
                 value={uploadType}
                 onChange={(e) => setUploadType(e.target.value)}
-                className="rounded-lg border border-line bg-surface px-3 py-2 text-fg focus:border-[var(--color-brand)] focus:outline-none"
+                className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-xs text-white"
               >
-                <option value="INVOICE">Tax Invoice</option>
-                <option value="PHOTO">Product Photo</option>
-                <option value="PACKAGING">Packaging Capture</option>
-                <option value="DISPATCH_RECORD">Dispatch Waybill</option>
-                <option value="CHAT_LOG">Chat Transcript</option>
-                <option value="PAYMENT_RECEIPT">Payment Receipt</option>
-                <option value="OTHER">Other Documentation</option>
+                <option value="INVOICE" className="bg-[#0E121D]">Merchant Commercial Invoice</option>
+                <option value="PHOTO" className="bg-[#0E121D]">Unboxing / Product Photograph</option>
+                <option value="TRACKING_INFO" className="bg-[#0E121D]">Carrier Dispatch Manifest</option>
+                <option value="CHAT_LOG" className="bg-[#0E121D]">Pre-Dispute Chat Transcript</option>
               </select>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="font-semibold text-fg">Visibility Boundary</label>
-              <select
-                value={uploadVisibility}
-                onChange={(e) => setUploadVisibility(e.target.value)}
-                className="rounded-lg border border-line bg-surface px-3 py-2 text-fg focus:border-[var(--color-brand)] focus:outline-none"
-              >
-                <option value="SHARED_WITH_PARTICIPANTS">Shared (Buyer & Merchant)</option>
-                <option value="MERCHANT_ONLY">Merchant Only</option>
-                <option value="BUYER_ONLY">Buyer Only</option>
-                <option value="INTERNAL">Internal Manager Only</option>
-              </select>
+            <div>
+              <label className="block text-[11px] font-medium text-white/70 mb-1">
+                Select Binary Asset (PDF, PNG, JPG, MP4)
+              </label>
+              <input
+                type="file"
+                onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-xs text-white/80 file:mr-3 file:rounded-md file:border-0 file:bg-white file:px-2.5 file:py-1 file:text-xs file:font-semibold file:text-black"
+                required
+              />
             </div>
-          </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="font-semibold text-fg">Select Document / Capture</label>
-            <input
-              type="file"
-              accept=".pdf,.png,.jpg,.jpeg"
-              onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-              className="rounded-lg border border-dashed border-line bg-surface-2 p-3 text-fg file:mr-3 file:rounded file:border-0 file:bg-[var(--color-brand-solid)] file:px-3 file:py-1 file:text-xs file:font-medium file:text-white hover:file:opacity-90"
-            />
-            <span className="text-[11px] text-faint">Supports PDF, JPEG, and PNG up to 25MB with cryptographic hash attestation.</span>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="font-semibold text-fg">Description (Optional)</label>
-            <input
-              type="text"
-              placeholder="e.g. Certified shipping label and barcode scan from warehouse"
-              value={uploadDescription}
-              onChange={(e) => setUploadDescription(e.target.value)}
-              className="rounded-lg border border-line bg-surface px-3 py-2 text-fg placeholder:text-muted focus:border-[var(--color-brand)] focus:outline-none"
-            />
-          </div>
-
-          <div className="mt-2 flex items-center justify-end gap-2.5 pt-2 border-t border-line">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setUploadModalOpen(false)}
-              disabled={isUploading}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              size="sm"
-              disabled={isUploading || !uploadFile}
-            >
-              {isUploading ? "Verifying & Uploading..." : "Upload & Attest Hash"}
-            </Button>
-          </div>
-        </form>
-      </Dialog>
+            <div className="pt-3 border-t border-white/[0.08] flex items-center justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setUploadModalOpen(false)}
+                className="text-xs"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="sm"
+                disabled={isUploading}
+                className="text-xs bg-white text-black font-semibold"
+              >
+                {isUploading ? "Validating SHA-256..." : "Submit to Vault"}
+              </Button>
+            </div>
+          </form>
+        </Dialog>
+      )}
     </div>
   );
 }

@@ -1,7 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Download } from "lucide-react";
+import Link from "next/link";
+import {
+  Download,
+  FolderOpen,
+  Brain,
+  Network,
+  Layers,
+  AlertTriangle,
+  Store,
+} from "lucide-react";
 import { useDemoCases } from "@/hooks/use-demo-cases";
 import {
   CaseFilters,
@@ -10,7 +19,6 @@ import {
 } from "@/components/cases/case-filters";
 import { CaseTable } from "@/components/cases/case-table";
 import { CreateCaseAction } from "@/components/cases/create-case-dialog";
-import { DemoBadge } from "@/components/common/demo-badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/common/toast";
 import { CASE_STATUSES } from "@/lib/types";
@@ -32,7 +40,6 @@ export default function CasesPage() {
 
   const filteredCases = useMemo(() => {
     return cases.filter((c) => {
-      // Query search across id, customer, merchant, title, category
       if (filters.query.trim()) {
         const q = filters.query.toLowerCase().trim();
         const matches =
@@ -44,17 +51,14 @@ export default function CasesPage() {
         if (!matches) return false;
       }
 
-      // Category filter
       if (filters.category !== "All" && c.category !== filters.category) {
         return false;
       }
 
-      // Status filter
       if (filters.status !== "All" && c.status !== filters.status) {
         return false;
       }
 
-      // Priority filter
       if (filters.priority !== "All" && c.priority !== filters.priority) {
         return false;
       }
@@ -63,7 +67,7 @@ export default function CasesPage() {
     });
   }, [cases, filters]);
 
-  // Compute status counts for quick tabs
+  // Status counts for quick tabs
   const statusCounts = useMemo(() => {
     const counts: Record<string, number> = { All: cases.length };
     for (const status of CASE_STATUSES) {
@@ -72,9 +76,26 @@ export default function CasesPage() {
     return counts;
   }, [cases]);
 
+  // Aggregate metrics
+  const activeCount = useMemo(() => cases.filter((c) => c.status !== "Resolved").length, [cases]);
+  const awaitingMerchantCount = useMemo(() => cases.filter((c) => c.status === "Awaiting Merchant").length, [cases]);
+  const highPriorityCount = useMemo(() => cases.filter((c) => c.priority === "High" && c.status !== "Resolved").length, [cases]);
+  const underInvestigationCount = useMemo(() => cases.filter((c) => c.status === "Under Investigation").length, [cases]);
+
   const handleExport = () => {
     try {
-      const headers = ["Case ID", "Title", "Customer", "Merchant", "Amount", "Currency", "Status", "Priority", "Category", "Created At"];
+      const headers = [
+        "Case ID",
+        "Title",
+        "Customer",
+        "Merchant",
+        "Amount",
+        "Currency",
+        "Status",
+        "Priority",
+        "Category",
+        "Created At",
+      ];
       const rows = filteredCases.map((c) => [
         `"${c.id}"`,
         `"${c.title.replace(/"/g, '""')}"`,
@@ -114,92 +135,197 @@ export default function CasesPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Header section */}
-      <section className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-[23px] font-semibold tracking-[-0.02em] text-fg sm:text-[26px]">
-              Case Management
-            </h1>
-            <DemoBadge />
-          </div>
-          <p className="mt-1 text-[13.5px] text-subtle">
-            Track, review and manage commerce resolution cases.
-          </p>
+    <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto pb-12 antialiased">
+      {/* ======================================================== */}
+      {/* 1. INVESTIGATIONS UNIFIED SUB-NAVIGATION                 */}
+      {/* ======================================================== */}
+      <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+        <div className="flex items-center gap-2">
+          <span className="rounded-lg bg-white text-black px-3.5 py-1.5 text-xs font-semibold inline-flex items-center gap-1.5 shadow-xs">
+            <FolderOpen className="h-3.5 w-3.5 text-black" />
+            <span>Investigation Roster</span>
+          </span>
+          <Link
+            href="/investigation"
+            className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+          >
+            <Brain className="h-3.5 w-3.5 text-white/50" />
+            <span>BERR Reasoning Engine</span>
+          </Link>
+          <Link
+            href="/cases/RG-1001"
+            className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+          >
+            <Network className="h-3.5 w-3.5 text-white/50" />
+            <span>Evidence Graph View</span>
+          </Link>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="hidden sm:flex items-center gap-2">
           <Button
             variant="outline"
-            size="md"
+            size="sm"
             onClick={handleExport}
-            icon={<Download className="h-4 w-4" />}
+            className="text-xs border-white/[0.08] bg-white/[0.03] text-white/80 hover:bg-white/[0.06] hover:text-white gap-1.5"
           >
-            Export CSV
+            <Download className="h-3.5 w-3.5" />
+            <span>Export CSV</span>
           </Button>
-
           <CreateCaseAction />
+        </div>
+      </div>
+
+      {/* ======================================================== */}
+      {/* 2. PAGE HEADER                                           */}
+      {/* ======================================================== */}
+      <header className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-6 shadow-xs">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-white/50">
+                Dispute Case Management
+              </span>
+              <span className="text-white/20">·</span>
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-white/[0.04] border border-white/[0.08] px-2 py-0.5 font-mono text-[11px] text-white/70">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                Active Dossiers Synchronized
+              </span>
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-white">
+              Investigations Workbench
+            </h1>
+            <p className="mt-1 text-xs text-white/60">
+              Cross-examine buyer assertions against merchant fulfillment logs with symmetric BERR reasoning.
+            </p>
+          </div>
+        </div>
+      </header>
+
+      {/* ======================================================== */}
+      {/* 3. ACTIVE INVESTIGATION SUMMARY (4 CARDS)                */}
+      {/* ======================================================== */}
+      <section
+        aria-label="Investigation Summary Metrics"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        {/* Total Active Cases */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-white/50 text-xs font-medium">
+            <span>Active Disputes</span>
+            <Layers className="h-4 w-4 text-sky-400" />
+          </div>
+          <div className="mt-4">
+            <div className="font-mono text-2xl font-bold text-white tabular-nums">
+              {activeCount}
+            </div>
+            <p className="mt-1 text-xs text-white/50">Open investigation files</p>
+          </div>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-sky-400">
+            Across 14 Merchants
+          </div>
+        </div>
+
+        {/* Under Investigation */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-white/50 text-xs font-medium">
+            <span>Forensic Triage</span>
+            <Brain className="h-4 w-4 text-teal-400" />
+          </div>
+          <div className="mt-4">
+            <div className="font-mono text-2xl font-bold text-teal-400 tabular-nums">
+              {underInvestigationCount}
+            </div>
+            <p className="mt-1 text-xs text-white/50">Under BERR engine analysis</p>
+          </div>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-white/40">
+            Contradiction Detection Active
+          </div>
+        </div>
+
+        {/* Awaiting Merchant */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-white/50 text-xs font-medium">
+            <span>Awaiting Merchant</span>
+            <Store className="h-4 w-4 text-amber-400" />
+          </div>
+          <div className="mt-4">
+            <div className="font-mono text-2xl font-bold text-amber-400 tabular-nums">
+              {awaitingMerchantCount}
+            </div>
+            <p className="mt-1 text-xs text-white/50">Counter-evidence pending</p>
+          </div>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-amber-400">
+            Statutory TAT: 72h
+          </div>
+        </div>
+
+        {/* High Priority */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between text-white/50 text-xs font-medium">
+            <span>Priority Attention</span>
+            <AlertTriangle className="h-4 w-4 text-rose-400" />
+          </div>
+          <div className="mt-4">
+            <div className="font-mono text-2xl font-bold text-rose-400 tabular-nums">
+              {highPriorityCount}
+            </div>
+            <p className="mt-1 text-xs text-white/50">SLA breach risk / high value</p>
+          </div>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-rose-400">
+            Action Required
+          </div>
         </div>
       </section>
 
-      {/* Quick Status Navigation Pills */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-        {QUICK_STATUS_TABS.map((statusTab) => {
-          const isActive = filters.status === statusTab;
-          const count = statusCounts[statusTab] ?? 0;
-          return (
-            <button
-              key={statusTab}
-              type="button"
-              onClick={() => setFilters((f) => ({ ...f, status: statusTab }))}
-              className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 text-[12.5px] font-medium transition-colors ${
-                isActive
-                  ? "bg-[var(--accent)] text-white shadow-sm"
-                  : "border border-line bg-surface-2 text-subtle hover:border-line-strong hover:text-fg"
-              }`}
-            >
-              <span>{statusTab}</span>
-              <span
-                className={`rounded-full px-1.5 py-0.2 text-[10.5px] font-mono ${
+      {/* ======================================================== */}
+      {/* 4. STATUS PILLS & FILTER BAR                             */}
+      {/* ======================================================== */}
+      <div className="flex flex-col gap-3 rounded-2xl border border-white/[0.08] bg-[#0E121D] p-4">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          {QUICK_STATUS_TABS.map((statusTab) => {
+            const isActive = filters.status === statusTab;
+            const count = statusCounts[statusTab] ?? 0;
+
+            return (
+              <button
+                key={statusTab}
+                type="button"
+                onClick={() =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    status: statusTab,
+                  }))
+                }
+                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors shrink-0 flex items-center gap-2 ${
                   isActive
-                    ? "bg-white/20 text-white"
-                    : "bg-surface-3 text-subtle"
+                    ? "bg-white text-black font-semibold shadow-xs"
+                    : "bg-white/[0.03] border border-white/[0.06] text-white/60 hover:text-white hover:bg-white/[0.06]"
                 }`}
               >
-                {count}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Filter toolbar */}
-      <div className="rg-card p-4">
-        <CaseFilters state={filters} onChange={setFilters} />
-      </div>
-
-      {/* Results summary & table */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between px-1 text-[12.5px] text-faint">
-          <span>
-            Showing <strong className="text-fg">{filteredCases.length}</strong> of{" "}
-            {cases.length} cases
-          </span>
-          {filters.status !== "All" && (
-            <span>
-              Filtered by: <span className="font-medium text-amber-400">{filters.status}</span>
-            </span>
-          )}
+                <span>{statusTab}</span>
+                <span
+                  className={`font-mono text-[10.5px] tabular-nums rounded px-1.5 py-0.2 ${
+                    isActive ? "bg-black/10 text-black font-bold" : "text-white/40"
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
-        <CaseTable
-          cases={filteredCases}
-          pageSize={10}
-          emptyTitle="No cases match your filter criteria"
-          emptyDescription="Try resetting the status filter or clearing your search keywords."
-          onResetFilters={() => setFilters(EMPTY_FILTERS)}
-        />
+        {/* Search & Secondary Filter Dropdowns */}
+        <div className="pt-2 border-t border-white/[0.06]">
+          <CaseFilters state={filters} onChange={setFilters} />
+        </div>
+      </div>
+
+      {/* ======================================================== */}
+      {/* 5. INVESTIGATION ROSTER TABLE                            */}
+      {/* ======================================================== */}
+      <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] shadow-xs overflow-hidden">
+        <CaseTable cases={filteredCases} />
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useSession } from "@/lib/auth-client";
 import {
   Bell,
   CheckCircle2,
@@ -15,6 +17,9 @@ import {
   Server,
   Cpu,
   CreditCard,
+  Building2,
+  KeyRound,
+  Settings as SettingsIcon,
 } from "lucide-react";
 import { CURRENT_USER, WORKSPACE } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
@@ -48,11 +53,27 @@ interface HealthStatus {
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsTab>("workspace");
   const { toast } = useToast();
+  const { data: session } = useSession();
+  const sessionUser = session?.user;
 
   // Local state for interactive settings
   const [workspaceName, setWorkspaceName] = useState<string>(WORKSPACE.name);
   const [userName, setUserName] = useState<string>(CURRENT_USER.fullName);
   const [userEmail, setUserEmail] = useState<string>(CURRENT_USER.email);
+
+  useEffect(() => {
+    if (sessionUser?.name) {
+      setUserName(sessionUser.name);
+    }
+    if (sessionUser?.email) {
+      setUserEmail(sessionUser.email);
+    }
+    const org = (sessionUser as { organization?: string })?.organization;
+    if (org) {
+      setWorkspaceName(org);
+    }
+  }, [sessionUser]);
+
   const [density, setDensity] = useState<"compact" | "default">(() => {
     if (typeof window === "undefined") return "default";
     try {
@@ -62,6 +83,7 @@ export default function SettingsPage() {
       return "default";
     }
   });
+
   const [notifyOverdue, setNotifyOverdue] = useState<boolean>(() => {
     if (typeof window === "undefined") return true;
     try {
@@ -71,6 +93,7 @@ export default function SettingsPage() {
       return true;
     }
   });
+
   const [notifyAi, setNotifyAi] = useState<boolean>(() => {
     if (typeof window === "undefined") return true;
     try {
@@ -80,6 +103,7 @@ export default function SettingsPage() {
       return true;
     }
   });
+
   const [notifyDigest, setNotifyDigest] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -89,10 +113,10 @@ export default function SettingsPage() {
       return false;
     }
   });
+
   const [health, setHealth] = useState<HealthStatus | null>(null);
 
   useEffect(() => {
-    // Fetch system health
     let active = true;
     fetch("/api/health")
       .then((res) => (res.ok ? res.json() : null))
@@ -125,20 +149,42 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Administration Sub-Navigation */}
+      <div className="flex items-center gap-2 border-b border-white/[0.08] pb-3">
+        <Link
+          href="/organizations"
+          className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-subtle hover:text-fg hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+        >
+          <Building2 className="h-3.5 w-3.5" />
+          Organizations & Roles
+        </Link>
+        <Link
+          href="/admin/security"
+          className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-subtle hover:text-fg hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+        >
+          <KeyRound className="h-3.5 w-3.5" />
+          Security & Cryptographic Audit
+        </Link>
+        <span className="rounded-lg bg-[#0E121D] border border-white/[0.12] px-3.5 py-1.5 text-xs font-semibold text-fg inline-flex items-center gap-1.5 shadow-sm">
+          <SettingsIcon className="h-3.5 w-3.5 text-sky-400" />
+          Platform Settings
+        </span>
+      </div>
+
       {/* Header section */}
-      <section className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-[23px] font-semibold tracking-[-0.02em] text-fg sm:text-[26px]">
-              Settings
+              Platform & Workspace Settings
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-400">
+            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-400">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
               Verified Environment
             </span>
           </div>
           <p className="mt-1 text-[13.5px] text-subtle">
-            Manage your workspace configuration, administrative profile and display preferences.
+            Manage your workspace configuration, administrative profile, and system parameters.
           </p>
         </div>
 
@@ -150,70 +196,70 @@ export default function SettingsPage() {
       {/* Main settings layout */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
         {/* Navigation Tabs */}
-        <nav className="flex flex-row overflow-x-auto lg:flex-col gap-1 border-b border-line pb-3 lg:border-b-0 lg:pb-0">
+        <nav className="flex flex-row overflow-x-auto lg:flex-col gap-1 border-b border-white/[0.08] pb-3 lg:border-b-0 lg:pb-0">
           <button
             type="button"
             onClick={() => setActiveTab("workspace")}
-            className={`flex items-center gap-2.5 rounded-md px-3.5 py-2.5 text-[13px] font-medium transition-colors text-left ${
+            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left ${
               activeTab === "workspace"
-                ? "bg-amber-500/10 font-semibold text-amber-400"
-                : "text-subtle hover:bg-surface-2 hover:text-fg"
+                ? "bg-white/[0.08] font-semibold text-white border border-white/[0.1]"
+                : "text-subtle hover:bg-white/[0.04] hover:text-fg"
             }`}
           >
-            <Globe className="h-4 w-4" />
+            <Globe className="h-4 w-4 text-sky-400" />
             <span>Workspace</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("profile")}
-            className={`flex items-center gap-2.5 rounded-md px-3.5 py-2.5 text-[13px] font-medium transition-colors text-left ${
+            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left ${
               activeTab === "profile"
-                ? "bg-amber-500/10 font-semibold text-amber-400"
-                : "text-subtle hover:bg-surface-2 hover:text-fg"
+                ? "bg-white/[0.08] font-semibold text-white border border-white/[0.1]"
+                : "text-subtle hover:bg-white/[0.04] hover:text-fg"
             }`}
           >
-            <User className="h-4 w-4" />
+            <User className="h-4 w-4 text-emerald-400" />
             <span>User Profile</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("appearance")}
-            className={`flex items-center gap-2.5 rounded-md px-3.5 py-2.5 text-[13px] font-medium transition-colors text-left ${
+            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left ${
               activeTab === "appearance"
-                ? "bg-amber-500/10 font-semibold text-amber-400"
-                : "text-subtle hover:bg-surface-2 hover:text-fg"
+                ? "bg-white/[0.08] font-semibold text-white border border-white/[0.1]"
+                : "text-subtle hover:bg-white/[0.04] hover:text-fg"
             }`}
           >
-            <Palette className="h-4 w-4" />
+            <Palette className="h-4 w-4 text-amber-400" />
             <span>Appearance</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("notifications")}
-            className={`flex items-center gap-2.5 rounded-md px-3.5 py-2.5 text-[13px] font-medium transition-colors text-left ${
+            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left ${
               activeTab === "notifications"
-                ? "bg-amber-500/10 font-semibold text-amber-400"
-                : "text-subtle hover:bg-surface-2 hover:text-fg"
+                ? "bg-white/[0.08] font-semibold text-white border border-white/[0.1]"
+                : "text-subtle hover:bg-white/[0.04] hover:text-fg"
             }`}
           >
-            <Bell className="h-4 w-4" />
+            <Bell className="h-4 w-4 text-rose-400" />
             <span>Notifications</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("about")}
-            className={`flex items-center gap-2.5 rounded-md px-3.5 py-2.5 text-[13px] font-medium transition-colors text-left ${
+            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left ${
               activeTab === "about"
-                ? "bg-amber-500/10 font-semibold text-amber-400"
-                : "text-subtle hover:bg-surface-2 hover:text-fg"
+                ? "bg-white/[0.08] font-semibold text-white border border-white/[0.1]"
+                : "text-subtle hover:bg-white/[0.04] hover:text-fg"
             }`}
           >
-            <Info className="h-4 w-4" />
-            <span>About RESOLVEGRAPH</span>
+            <Info className="h-4 w-4 text-indigo-400" />
+            <span>About Architecture</span>
           </button>
         </nav>
 
@@ -221,11 +267,11 @@ export default function SettingsPage() {
         <div className="flex flex-col gap-6">
           {/* Workspace Tab */}
           {activeTab === "workspace" && (
-            <div className="rg-card flex flex-col gap-6 p-6">
+            <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] flex flex-col gap-6 p-6">
               <div>
-                <h2 className="text-[16px] font-semibold text-fg">Workspace Information</h2>
-                <p className="mt-0.5 text-[12.5px] text-subtle">
-                  Organization metadata and commerce intelligence environment.
+                <h2 className="text-[15px] font-semibold text-fg">Workspace Metadata</h2>
+                <p className="mt-0.5 text-xs text-subtle">
+                  Organization tenant parameters and commerce intelligence environment.
                 </p>
               </div>
 
@@ -239,22 +285,23 @@ export default function SettingsPage() {
                     id="workspace-name"
                     value={workspaceName}
                     onChange={(e) => setWorkspaceName(e.target.value)}
+                    className="bg-[#0A0D14] border-white/[0.08]"
                   />
                 </Field>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field htmlFor="product-descriptor" label="Product Descriptor">
-                    <Input id="product-descriptor" value={WORKSPACE.descriptor} disabled className="opacity-80" />
+                    <Input id="product-descriptor" value={WORKSPACE.descriptor} disabled className="opacity-80 bg-[#0A0D14] border-white/[0.08]" />
                   </Field>
 
                   <Field htmlFor="plan-license" label="Plan License">
-                    <Input id="plan-license" value={WORKSPACE.planLabel} disabled className="opacity-80" />
+                    <Input id="plan-license" value={WORKSPACE.planLabel} disabled className="opacity-80 bg-[#0A0D14] border-white/[0.08]" />
                   </Field>
                 </div>
 
-                <div className="rounded-lg border border-line bg-surface-2 p-4 text-[12px] text-muted">
+                <div className="rounded-xl border border-white/[0.08] bg-[#0A0D14] p-4 text-xs text-subtle">
                   <div className="flex items-center gap-2 font-medium text-fg">
-                    <Users className="h-4 w-4 text-[#a08bff]" />
+                    <Users className="h-4 w-4 text-sky-400" />
                     <span>Seat Capacity: {WORKSPACE.seats} Admin & Analyst Seats</span>
                   </div>
                   <p className="mt-1 text-faint">
@@ -263,28 +310,28 @@ export default function SettingsPage() {
                 </div>
 
                 {health && (
-                  <div className="rounded-lg border border-line bg-surface-3 p-4">
-                    <h3 className="text-[13px] font-semibold text-fg mb-3 flex items-center gap-2">
-                      <Server className="h-4 w-4 text-[#34d399]" />
-                      Infrastructure Health
+                  <div className="rounded-xl border border-white/[0.08] bg-[#0A0D14] p-4">
+                    <h3 className="text-xs font-semibold text-fg mb-3 flex items-center gap-2 uppercase tracking-wider">
+                      <Server className="h-4 w-4 text-emerald-400" />
+                      Infrastructure Health & Telemetry
                     </h3>
-                    <div className="grid grid-cols-2 gap-3 text-[12px]">
+                    <div className="grid grid-cols-2 gap-3 text-xs">
                       <div>
-                        <span className="text-subtle">Database Status:</span>
+                        <span className="text-faint">Database Engine:</span>
                         <p className="font-semibold text-emerald-400">
-                          {health.database.connected ? "Connected (SQLite)" : "Disconnected"}
+                          {health.database.connected ? "Connected (SQLite WAL)" : "Disconnected"}
                         </p>
                       </div>
                       <div>
-                        <span className="text-subtle">Total Cases Indexed:</span>
-                        <p className="font-semibold text-fg">{health.database.stats?.cases ?? 0}</p>
+                        <span className="text-faint">Indexed Dispute Records:</span>
+                        <p className="font-mono font-semibold text-fg">{health.database.stats?.cases ?? 0}</p>
                       </div>
                       <div>
-                        <span className="text-subtle">AI Reasoning Engine:</span>
+                        <span className="text-faint">AI Reasoning Engine:</span>
                         <p className="font-semibold text-fg capitalize">{health.aiEngine.provider}</p>
                       </div>
                       <div>
-                        <span className="text-subtle">PayPal Gateway:</span>
+                        <span className="text-faint">Payment Gateway:</span>
                         <p className="font-semibold text-fg uppercase">{health.paypal.environment} ({health.paypal.mode})</p>
                       </div>
                     </div>
@@ -296,21 +343,21 @@ export default function SettingsPage() {
 
           {/* User Profile Tab */}
           {activeTab === "profile" && (
-            <div className="rg-card flex flex-col gap-6 p-6">
+            <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] flex flex-col gap-6 p-6">
               <div>
-                <h2 className="text-[16px] font-semibold text-fg">Administrator Profile</h2>
-                <p className="mt-0.5 text-[12.5px] text-subtle">
+                <h2 className="text-[15px] font-semibold text-fg">Administrator Profile</h2>
+                <p className="mt-0.5 text-xs text-subtle">
                   Personal credentials and triage officer attribution.
                 </p>
               </div>
 
-              <div className="flex items-center gap-4 border-b border-line pb-5">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-line-2 bg-[var(--color-brand-solid)] text-[18px] font-bold text-white shadow-md">
+              <div className="flex items-center gap-4 border-b border-white/[0.06] pb-5">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/[0.1] bg-white/[0.04] text-base font-bold text-fg">
                   {CURRENT_USER.initials}
                 </div>
                 <div>
-                  <h3 className="text-[15px] font-semibold text-fg">{userName}</h3>
-                  <p className="text-[12.5px] text-subtle">{CURRENT_USER.role}</p>
+                  <h3 className="text-sm font-semibold text-fg">{userName}</h3>
+                  <p className="text-xs text-subtle">{CURRENT_USER.role}</p>
                 </div>
               </div>
 
@@ -320,6 +367,7 @@ export default function SettingsPage() {
                     id="profile-name"
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
+                    className="bg-[#0A0D14] border-white/[0.08]"
                   />
                 </Field>
 
@@ -328,11 +376,12 @@ export default function SettingsPage() {
                     id="profile-email"
                     value={userEmail}
                     onChange={(e) => setUserEmail(e.target.value)}
+                    className="bg-[#0A0D14] border-white/[0.08]"
                   />
                 </Field>
 
                 <Field htmlFor="profile-role" label="Security Role">
-                  <Input id="profile-role" value={CURRENT_USER.role} disabled className="opacity-80" />
+                  <Input id="profile-role" value={CURRENT_USER.role} disabled className="opacity-80 bg-[#0A0D14] border-white/[0.08]" />
                 </Field>
               </div>
             </div>
@@ -340,38 +389,40 @@ export default function SettingsPage() {
 
           {/* Appearance Tab */}
           {activeTab === "appearance" && (
-            <div className="rg-card flex flex-col gap-6 p-6">
+            <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] flex flex-col gap-6 p-6">
               <div>
-                <h2 className="text-[16px] font-semibold text-fg">Appearance & Display</h2>
-                <p className="mt-0.5 text-[12.5px] text-subtle">
+                <h2 className="text-[15px] font-semibold text-fg">Appearance & Display</h2>
+                <p className="mt-0.5 text-xs text-subtle">
                   Fine-tune theme parameters and information density.
                 </p>
               </div>
 
               <div>
-                <label className="text-[13px] font-medium text-fg">Theme Palette</label>
-                <p className="text-[12px] text-subtle mt-0.5 mb-3">
-                  RESOLVEGRAPH is engineered with a high-contrast enterprise dark palette.
+                <label className="text-xs font-semibold text-faint uppercase tracking-wider block mb-1">
+                  Active Theme Palette
+                </label>
+                <p className="text-xs text-subtle mb-3">
+                  RESOLVEGRAPH is engineered with an obsidian graphite palette and quiet hairlines.
                 </p>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 max-w-md">
-                  <div className="flex items-center justify-between rounded-lg border-2 border-[var(--color-brand)] bg-[#070c16] p-3.5">
+                  <div className="flex items-center justify-between rounded-xl border border-sky-500/50 bg-[#0A0D14] p-3.5">
                     <div className="flex items-center gap-2.5">
-                      <Moon className="h-4 w-4 text-[#a08bff]" />
+                      <Moon className="h-4 w-4 text-sky-400" />
                       <div>
-                        <p className="text-[13px] font-semibold text-fg">Fintech Dark</p>
-                        <p className="text-[11px] text-faint">Deep Navy & Slate (Active)</p>
+                        <p className="text-xs font-semibold text-fg">Obsidian Graphite</p>
+                        <p className="text-[11px] text-faint">Enterprise Dark (Active)</p>
                       </div>
                     </div>
-                    <CheckCircle2 className="h-4 w-4 text-[#34d399]" />
+                    <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                   </div>
 
-                  <div className="flex items-center justify-between rounded-lg border border-line bg-surface-2 p-3.5 opacity-60">
+                  <div className="flex items-center justify-between rounded-xl border border-white/[0.08] bg-[#0A0D14] p-3.5 opacity-60">
                     <div className="flex items-center gap-2.5">
                       <Sun className="h-4 w-4 text-subtle" />
                       <div>
-                        <p className="text-[13px] font-semibold text-fg">Enterprise Light</p>
-                        <p className="text-[11px] text-faint">High-Contrast Contrast Mode</p>
+                        <p className="text-xs font-semibold text-fg">Enterprise Light</p>
+                        <p className="text-[11px] text-faint">High-Contrast Mode</p>
                       </div>
                     </div>
                     <span className="text-[10px] font-mono text-faint">Available</span>
@@ -379,16 +430,18 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <div className="border-t border-line pt-4">
-                <label className="text-[13px] font-medium text-fg">Table Density</label>
-                <div className="mt-2.5 flex items-center gap-3">
+              <div className="border-t border-white/[0.06] pt-4">
+                <label className="text-xs font-semibold text-faint uppercase tracking-wider block mb-1">
+                  Table Density
+                </label>
+                <div className="mt-2.5 flex items-center gap-2.5">
                   <button
                     type="button"
                     onClick={() => setDensity("default")}
-                    className={`rounded-md border px-3 py-1.5 text-[12px] font-medium transition-colors ${
+                    className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
                       density === "default"
-                        ? "border-amber-500/40 bg-amber-500/10 text-amber-400 font-semibold"
-                        : "border-line bg-surface-2 text-subtle"
+                        ? "border-white/[0.14] bg-white/[0.08] text-white font-semibold"
+                        : "border-white/[0.08] bg-[#0A0D14] text-subtle hover:text-fg"
                     }`}
                   >
                     Comfortable (Default)
@@ -396,10 +449,10 @@ export default function SettingsPage() {
                   <button
                     type="button"
                     onClick={() => setDensity("compact")}
-                    className={`rounded-md border px-3 py-1.5 text-[12px] font-medium transition-colors ${
+                    className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
                       density === "compact"
-                        ? "border-amber-500/40 bg-amber-500/10 text-amber-400 font-semibold"
-                        : "border-line bg-surface-2 text-subtle"
+                        ? "border-white/[0.14] bg-white/[0.08] text-white font-semibold"
+                        : "border-white/[0.08] bg-[#0A0D14] text-subtle hover:text-fg"
                     }`}
                   >
                     Dense (High-Density)
@@ -411,19 +464,19 @@ export default function SettingsPage() {
 
           {/* Notifications Tab */}
           {activeTab === "notifications" && (
-            <div className="rg-card flex flex-col gap-6 p-6">
+            <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] flex flex-col gap-6 p-6">
               <div>
-                <h2 className="text-[16px] font-semibold text-fg">Notification Rules</h2>
-                <p className="mt-0.5 text-[12.5px] text-subtle">
-                  Configure browser notifications and dispute alert dispatching.
+                <h2 className="text-[15px] font-semibold text-fg">Notification Rules</h2>
+                <p className="mt-0.5 text-xs text-subtle">
+                  Configure real-time notifications and dispute alert dispatching.
                 </p>
               </div>
 
-              <div className="flex flex-col divide-y divide-line">
+              <div className="flex flex-col divide-y divide-white/[0.04]">
                 <div className="flex items-center justify-between py-3.5">
                   <div>
-                    <p className="text-[13.5px] font-medium text-fg">Overdue Dispute Alerts</p>
-                    <p className="text-[11.5px] text-faint">
+                    <p className="text-xs font-medium text-fg">Overdue Dispute Alerts</p>
+                    <p className="text-[11px] text-faint">
                       Notify when a merchant exceeds the mandated 48-hour response window.
                     </p>
                   </div>
@@ -431,14 +484,14 @@ export default function SettingsPage() {
                     type="checkbox"
                     checked={notifyOverdue}
                     onChange={(e) => setNotifyOverdue(e.target.checked)}
-                    className="h-4 w-4 rounded border-line bg-surface accent-[var(--color-brand-solid)]"
+                    className="h-4 w-4 rounded border-white/[0.2] bg-[#0A0D14] accent-sky-500"
                   />
                 </div>
 
                 <div className="flex items-center justify-between py-3.5">
                   <div>
-                    <p className="text-[13.5px] font-medium text-fg">AI Evidence Indexing Notices</p>
-                    <p className="text-[11.5px] text-faint">
+                    <p className="text-xs font-medium text-fg">AI Evidence Indexing Notices</p>
+                    <p className="text-[11px] text-faint">
                       Alert when new document batches finish cryptographic indexing.
                     </p>
                   </div>
@@ -446,14 +499,14 @@ export default function SettingsPage() {
                     type="checkbox"
                     checked={notifyAi}
                     onChange={(e) => setNotifyAi(e.target.checked)}
-                    className="h-4 w-4 rounded border-line bg-surface accent-[var(--color-brand-solid)]"
+                    className="h-4 w-4 rounded border-white/[0.2] bg-[#0A0D14] accent-sky-500"
                   />
                 </div>
 
                 <div className="flex items-center justify-between py-3.5">
                   <div>
-                    <p className="text-[13.5px] font-medium text-fg">Daily Morning Brief Digest</p>
-                    <p className="text-[11.5px] text-faint">
+                    <p className="text-xs font-medium text-fg">Daily Morning Brief Digest</p>
+                    <p className="text-[11px] text-faint">
                       Receive an executive summary email of active claim volume at 08:00 AM.
                     </p>
                   </div>
@@ -461,7 +514,7 @@ export default function SettingsPage() {
                     type="checkbox"
                     checked={notifyDigest}
                     onChange={(e) => setNotifyDigest(e.target.checked)}
-                    className="h-4 w-4 rounded border-line bg-surface accent-[var(--color-brand-solid)]"
+                    className="h-4 w-4 rounded border-white/[0.2] bg-[#0A0D14] accent-sky-500"
                   />
                 </div>
               </div>
@@ -470,53 +523,53 @@ export default function SettingsPage() {
 
           {/* About RESOLVEGRAPH Tab */}
           {activeTab === "about" && (
-            <div className="rg-card flex flex-col gap-5 p-6">
+            <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] flex flex-col gap-5 p-6">
               <div>
-                <h2 className="text-[16px] font-semibold text-fg">About RESOLVEGRAPH</h2>
-                <p className="mt-0.5 text-[12.5px] text-subtle">
+                <h2 className="text-[15px] font-semibold text-fg">About RESOLVEGRAPH Platform</h2>
+                <p className="mt-0.5 text-xs text-subtle">
                   AI-Powered Commerce Resolution Infrastructure.
                 </p>
               </div>
 
-              <div className="rounded-lg border border-line bg-surface-2 p-4 text-[13px]">
-                <p className="font-semibold text-fg text-[14px]">
+              <div className="rounded-xl border border-white/[0.08] bg-[#0A0D14] p-4 text-xs">
+                <p className="font-semibold text-fg text-sm">
                   &ldquo;From the first complaint to a fair resolution.&rdquo;
                 </p>
-                <p className="mt-2 text-[12.5px] leading-relaxed text-muted">
+                <p className="mt-2 text-xs leading-relaxed text-subtle">
                   RESOLVEGRAPH connects buyers, merchants, payment records, supporting evidence and resolution workflows in one intelligent platform.
                 </p>
               </div>
 
-              <dl className="grid grid-cols-2 gap-3.5 text-[12px] sm:grid-cols-3">
-                <div className="rounded-md border border-line p-3">
-                  <dt className="text-subtle font-medium">Build Version</dt>
-                  <dd className="mt-0.5 font-mono text-fg">1.0.0-audited</dd>
+              <dl className="grid grid-cols-2 gap-3 text-xs sm:grid-cols-3">
+                <div className="rounded-xl border border-white/[0.08] bg-[#0A0D14] p-3">
+                  <dt className="text-faint font-medium">Build Version</dt>
+                  <dd className="mt-0.5 font-mono text-fg">2.0.0-enterprise</dd>
                 </div>
 
-                <div className="rounded-md border border-line p-3">
-                  <dt className="text-subtle font-medium">Release Quality</dt>
-                  <dd className="mt-0.5 font-medium text-[#34d399]">Audited & Verified</dd>
+                <div className="rounded-xl border border-white/[0.08] bg-[#0A0D14] p-3">
+                  <dt className="text-faint font-medium">Release Quality</dt>
+                  <dd className="mt-0.5 font-medium text-emerald-400">Audited & Verified</dd>
                 </div>
 
-                <div className="rounded-md border border-line p-3">
-                  <dt className="text-subtle font-medium">Core Stack</dt>
+                <div className="rounded-xl border border-white/[0.08] bg-[#0A0D14] p-3">
+                  <dt className="text-faint font-medium">Core Stack</dt>
                   <dd className="mt-0.5 font-medium text-fg">Next.js · React 19 · Tailwind v4</dd>
                 </div>
               </dl>
 
-              <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-[12px] leading-relaxed text-muted">
-                <p className="font-semibold text-fg flex items-center gap-1.5 mb-2">
+              <div className="rounded-xl border border-white/[0.08] bg-[#0A0D14] p-4 text-xs leading-relaxed text-subtle">
+                <p className="font-semibold text-fg flex items-center gap-1.5 mb-2.5">
                   <ShieldCheck className="h-4 w-4 text-emerald-400" />
-                  Verified Engineering Capabilities:
+                  Verified Engineering Architecture:
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[12px]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
                   <div className="flex items-start gap-2">
                     <Server className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
                     <span><strong>Database:</strong> SQLite with 40 Prisma schema models & immutable audit events.</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Cpu className="h-4 w-4 text-sky-400 mt-0.5 shrink-0" />
-                    <span><strong>AI Intelligence:</strong> BERR 5-agent specialist reasoning with cryptographic evidence citation gating.</span>
+                    <span><strong>AI Intelligence:</strong> BERR 5-agent specialist reasoning with evidence citation gating.</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <CreditCard className="h-4 w-4 text-emerald-400 mt-0.5 shrink-0" />

@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Field, Input, Select } from "@/components/ui/field";
 import {
   Building2,
@@ -16,6 +15,8 @@ import {
   Plus,
   RefreshCw,
   FolderOpen,
+  KeyRound,
+  Settings as SettingsIcon,
 } from "lucide-react";
 
 interface OrgSummary {
@@ -266,23 +267,48 @@ export default function OrganizationsPage() {
   if (loading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <RefreshCw className="h-6 w-6 animate-spin text-[var(--color-brand)]" />
+        <RefreshCw className="h-6 w-6 animate-spin text-sky-400" />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-6 p-4 sm:p-6 lg:p-8">
+    <div className="flex flex-col gap-6">
+      {/* Administration Sub-Navigation */}
+      <div className="flex items-center gap-2 border-b border-white/[0.08] pb-3">
+        <span className="rounded-lg bg-[#0E121D] border border-white/[0.12] px-3.5 py-1.5 text-xs font-semibold text-fg inline-flex items-center gap-1.5 shadow-sm">
+          <Building2 className="h-3.5 w-3.5 text-sky-400" />
+          Organizations & Roles
+        </span>
+        <Link
+          href="/admin/security"
+          className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-subtle hover:text-fg hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+        >
+          <KeyRound className="h-3.5 w-3.5" />
+          Security & Cryptographic Audit
+        </Link>
+        <Link
+          href="/settings"
+          className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-subtle hover:text-fg hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+        >
+          <SettingsIcon className="h-3.5 w-3.5" />
+          Platform Settings
+        </Link>
+      </div>
+
       {/* Page Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-[var(--color-brand)]" />
-            <h1 className="text-xl font-bold tracking-tight text-fg">
-              Multi-Tenant Organizations
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-[23px] font-semibold tracking-[-0.02em] text-fg sm:text-[26px]">
+              Multi-Tenant Organizations & Roles
             </h1>
+            <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/25 bg-sky-500/10 px-2.5 py-0.5 text-[11px] font-medium text-sky-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
+              Tenant Scoped
+            </span>
           </div>
-          <p className="mt-1 text-[13px] text-muted">
+          <p className="mt-1 text-[13.5px] text-subtle">
             Manage merchant enterprise domains, team roles, and case tenancy boundaries.
           </p>
         </div>
@@ -292,7 +318,7 @@ export default function OrganizationsPage() {
             variant="outline"
             size="sm"
             onClick={fetchOrganizations}
-            className="text-[12.5px]"
+            className="text-xs"
           >
             <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
             <span>Refresh</span>
@@ -302,7 +328,7 @@ export default function OrganizationsPage() {
             variant="primary"
             size="sm"
             onClick={() => setCreateModalOpen(true)}
-            className="text-[12.5px]"
+            className="text-xs"
           >
             <Plus className="h-3.5 w-3.5 mr-1.5" />
             <span>New Organization</span>
@@ -311,46 +337,44 @@ export default function OrganizationsPage() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-[12.5px] text-red-300">
-          <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+        <div className="flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-xs text-rose-300">
+          <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
           <span>{error}</span>
         </div>
       )}
 
-      {/* Organization Tabs / Grid */}
+      {/* Organization Cards / Grid */}
       {orgs.length === 0 ? (
-        <Card className="border-line bg-surface/50 p-8 text-center">
-          <CardContent className="flex flex-col items-center justify-center gap-3 pt-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
-              <Building2 className="h-6 w-6" />
-            </div>
-            <h3 className="text-base font-semibold text-fg">No Merchant Workspaces Found</h3>
-            <p className="max-w-md text-xs text-muted">
-              You are currently signed in as an individual user or buyer without merchant organization memberships. Multi-tenant workspaces are scoped to merchant accounts and organization administrators.
-            </p>
-            <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => setCreateModalOpen(true)}
-              >
-                <Plus className="h-3.5 w-3.5 mr-1.5" />
-                <span>Create Merchant Organization</span>
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={fetchOrganizations}
-              >
-                <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                <span>Refresh Status</span>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] p-12 text-center flex flex-col items-center justify-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.04] text-sky-400">
+            <Building2 className="h-6 w-6" />
+          </div>
+          <h3 className="text-base font-semibold text-fg">No Merchant Workspaces Found</h3>
+          <p className="max-w-md text-xs text-subtle">
+            You are currently signed in as an individual user or buyer without merchant organization memberships. Multi-tenant workspaces are scoped to merchant accounts and organization administrators.
+          </p>
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setCreateModalOpen(true)}
+            >
+              <Plus className="h-3.5 w-3.5 mr-1.5" />
+              <span>Create Merchant Organization</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchOrganizations}
+            >
+              <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+              <span>Refresh Status</span>
+            </Button>
+          </div>
+        </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
             {orgs.map((org) => {
               const isSelected = selectedOrgId === org.id;
               return (
@@ -360,28 +384,28 @@ export default function OrganizationsPage() {
                   onClick={() => setSelectedOrgId(org.id)}
                   className={`flex flex-col items-start rounded-xl border p-4 text-left transition-all ${
                     isSelected
-                      ? "border-[var(--color-brand)] bg-[color-mix(in_srgb,var(--color-brand)_12%,transparent)] shadow-md"
-                      : "border-line bg-surface hover:border-line-2 hover:bg-surface-2"
+                      ? "border-sky-500/50 bg-[#111726] shadow-sm"
+                      : "border-white/[0.08] bg-[#0E121D] hover:border-white/[0.16] hover:bg-[#111726]"
                   }`}
                 >
                   <div className="flex w-full items-center justify-between">
-                    <span className="font-semibold text-fg text-[14.5px]">{org.name}</span>
+                    <span className="font-semibold text-fg text-sm">{org.name}</span>
                     {org.userRole && (
-                      <Badge tone={org.userRole === "OWNER" ? "warning" : "brand"}>
+                      <span className="rounded bg-white/[0.06] border border-white/[0.08] px-2 py-0.5 text-[10px] font-mono uppercase text-subtle">
                         {org.userRole}
-                      </Badge>
+                      </span>
                     )}
                   </div>
-                  <p className="mt-1 text-[12px] text-muted line-clamp-2">
+                  <p className="mt-1 text-xs text-subtle line-clamp-2">
                     {org.description || "No description provided."}
                   </p>
-                  <div className="mt-3 flex items-center gap-4 text-[11.5px] text-faint">
-                    <span className="flex items-center gap-1">
-                      <Users className="h-3 w-3" />
+                  <div className="mt-3.5 flex items-center gap-4 text-[11px] text-faint">
+                    <span className="flex items-center gap-1.5">
+                      <Users className="h-3.5 w-3.5" />
                       <span>{org.memberCount} members</span>
                     </span>
-                    <span className="flex items-center gap-1">
-                      <FolderOpen className="h-3 w-3" />
+                    <span className="flex items-center gap-1.5">
+                      <FolderOpen className="h-3.5 w-3.5" />
                       <span>{org.caseCount} cases</span>
                     </span>
                   </div>
@@ -393,18 +417,18 @@ export default function OrganizationsPage() {
           {/* Selected Organization Details & Member Management */}
           {activeOrg && (
             <div className="flex flex-col gap-6">
-              <Card>
-                <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-line pb-4">
+              <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] p-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/[0.06] pb-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <CardTitle className="text-lg">{activeOrg.name}</CardTitle>
-                      <code className="rounded border border-line bg-[#090f1e] px-2 py-0.5 text-[11px] text-faint font-mono">
+                      <h2 className="text-base font-semibold text-fg">{activeOrg.name}</h2>
+                      <code className="rounded border border-white/[0.08] bg-[#0A0D14] px-2 py-0.5 text-[11px] text-faint font-mono">
                         slug: {activeOrg.slug}
                       </code>
                     </div>
-                    <CardDescription className="mt-1">
+                    <p className="mt-1 text-xs text-subtle">
                       {activeOrg.description || "Enterprise workspace domain"}
-                    </CardDescription>
+                    </p>
                   </div>
 
                   {activeOrg.canManage && (
@@ -412,157 +436,159 @@ export default function OrganizationsPage() {
                       variant="primary"
                       size="sm"
                       onClick={() => setInviteModalOpen(true)}
-                      className="text-[12.5px]"
+                      className="text-xs"
                     >
                       <UserPlus className="h-3.5 w-3.5 mr-1.5" />
                       <span>Invite Team Member</span>
                     </Button>
                   )}
-                </CardHeader>
+                </div>
 
-                <CardContent className="pt-6">
+                <div className="pt-6">
                   <div className="mb-4 flex items-center justify-between">
-                    <h3 className="text-[14px] font-semibold text-fg flex items-center gap-2">
-                      <Users className="h-4 w-4 text-[var(--color-brand)]" />
+                    <h3 className="text-xs font-semibold text-fg flex items-center gap-2 uppercase tracking-wider">
+                      <Users className="h-4 w-4 text-sky-400" />
                       <span>Organization Members ({activeOrg.members.length})</span>
                     </h3>
-                    <span className="text-[11.5px] text-faint">
+                    <span className="text-[11px] text-faint">
                       Tenant Access Scoped to {activeOrg.name}
                     </span>
                   </div>
 
                   {/* Members Table */}
-                  <div className="overflow-x-auto rounded-lg border border-[var(--line)] bg-[var(--surface)]">
-                    <table className="w-full text-left text-[12.5px]">
-                      <thead className="border-b border-[var(--line)] bg-[var(--surface-2)] text-[11.5px] font-medium text-[var(--ink-2)]">
-                    <tr>
-                      <th className="px-4 py-3">Member</th>
-                      <th className="px-4 py-3">Global Role</th>
-                      <th className="px-4 py-3">Organization Role</th>
-                      <th className="px-4 py-3">Joined Date</th>
-                      {activeOrg.canManage && <th className="px-4 py-3 text-right">Actions</th>}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-line/60">
-                    {activeOrg.members.map((member) => {
-                      const isCurrentUser = session?.user?.email === member.email;
-                      return (
-                        <tr key={member.membershipId} className="hover:bg-surface-2/40">
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-2.5">
-                              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand)]/20 font-semibold text-[11px] text-[var(--color-brand)]">
-                                {member.name.charAt(0)}
-                              </span>
-                              <div className="flex flex-col">
-                                <span className="font-medium text-fg flex items-center gap-1.5">
-                                  {member.name}
-                                  {isCurrentUser && (
-                                    <span className="text-[10px] text-faint">(You)</span>
-                                  )}
-                                </span>
-                                <span className="text-[11px] text-faint">{member.email}</span>
-                              </div>
-                            </div>
-                          </td>
-
-                          <td className="px-4 py-3 text-muted">
-                            <span className="font-mono text-[11px]">{member.globalRole}</span>
-                          </td>
-
-                          <td className="px-4 py-3">
-                            {activeOrg.canManage && !isCurrentUser ? (
-                              <Select
-                                value={member.orgRole}
-                                onChange={(e) => handleUpdateRole(member.membershipId, e.target.value)}
-                                className="h-8 py-0 text-[11.5px]"
-                              >
-                                <option value="VIEWER">VIEWER</option>
-                                <option value="MERCHANT_AGENT">MERCHANT_AGENT</option>
-                                <option value="RESOLUTION_MANAGER">RESOLUTION_MANAGER</option>
-                                <option value="ORG_ADMIN">ORG_ADMIN</option>
-                                <option value="OWNER">OWNER</option>
-                              </Select>
-                            ) : (
-                              <Badge tone={member.orgRole === "OWNER" ? "warning" : "brand"}>
-                                {member.orgRole}
-                              </Badge>
-                            )}
-                          </td>
-
-                          <td className="px-4 py-3 text-faint">
-                            {new Date(member.joinedAt).toLocaleDateString()}
-                          </td>
-
-                          {activeOrg.canManage && (
-                            <td className="px-4 py-3 text-right">
-                              {!isCurrentUser && member.orgRole !== "OWNER" && (
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveMember(member.membershipId, member.name)}
-                                  className="rounded p-1 text-faint hover:bg-red-500/10 hover:text-red-400 transition-colors"
-                                  title="Remove member"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
-                              )}
-                            </td>
-                          )}
+                  <div className="overflow-x-auto rounded-xl border border-white/[0.08]">
+                    <table className="w-full text-left text-xs">
+                      <thead className="border-b border-white/[0.06] bg-[#0A0D14] text-[11.5px] font-medium text-subtle">
+                        <tr>
+                          <th className="px-4 py-3">Member</th>
+                          <th className="px-4 py-3">Global Role</th>
+                          <th className="px-4 py-3">Organization Role</th>
+                          <th className="px-4 py-3">Joined Date</th>
+                          {activeOrg.canManage && <th className="px-4 py-3 text-right">Actions</th>}
                         </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                      </thead>
+                      <tbody className="divide-y divide-white/[0.04]">
+                        {activeOrg.members.map((member) => {
+                          const isCurrentUser = session?.user?.email === member.email;
+                          return (
+                            <tr key={member.membershipId} className="hover:bg-white/[0.02] transition-colors">
+                              <td className="px-4 py-3">
+                                <div className="flex items-center gap-2.5">
+                                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/[0.06] font-semibold text-xs text-fg">
+                                    {member.name.charAt(0)}
+                                  </span>
+                                  <div className="flex flex-col">
+                                    <span className="font-medium text-fg flex items-center gap-1.5">
+                                      {member.name}
+                                      {isCurrentUser && (
+                                        <span className="text-[10px] text-faint font-mono">(You)</span>
+                                      )}
+                                    </span>
+                                    <span className="text-[11px] text-faint">{member.email}</span>
+                                  </div>
+                                </div>
+                              </td>
 
-              {/* Pending Invitations */}
-              {activeOrg.pendingInvitations.length > 0 && (
-                <div className="mt-6">
-                  <h4 className="text-[13px] font-semibold text-muted mb-2">
-                    Pending Invitations ({activeOrg.pendingInvitations.length})
-                  </h4>
-                  <div className="rounded-lg border border-line bg-[#080d1a] divide-y divide-line/60">
-                    {activeOrg.pendingInvitations.map((inv) => (
-                      <div
-                        key={inv.id}
-                        className="flex items-center justify-between p-3 text-[12px]"
-                      >
-                        <div className="flex flex-col">
-                          <span className="font-medium text-fg">{inv.email}</span>
-                          <span className="text-[10.5px] text-faint">
-                            Role: {inv.role} • Expires: {new Date(inv.expiresAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <Badge tone="neutral">Pending Acceptance</Badge>
-                      </div>
-                    ))}
+                              <td className="px-4 py-3 text-subtle">
+                                <span className="font-mono text-[11px]">{member.globalRole}</span>
+                              </td>
+
+                              <td className="px-4 py-3">
+                                {activeOrg.canManage && !isCurrentUser ? (
+                                  <Select
+                                    value={member.orgRole}
+                                    onChange={(e) => handleUpdateRole(member.membershipId, e.target.value)}
+                                    className="h-7 py-0 text-xs bg-[#0A0D14] border-white/[0.08]"
+                                  >
+                                    <option value="VIEWER">VIEWER</option>
+                                    <option value="MERCHANT_AGENT">MERCHANT_AGENT</option>
+                                    <option value="RESOLUTION_MANAGER">RESOLUTION_MANAGER</option>
+                                    <option value="ORG_ADMIN">ORG_ADMIN</option>
+                                    <option value="OWNER">OWNER</option>
+                                  </Select>
+                                ) : (
+                                  <span className="rounded bg-white/[0.06] border border-white/[0.08] px-2 py-0.5 text-[10px] font-mono text-fg">
+                                    {member.orgRole}
+                                  </span>
+                                )}
+                              </td>
+
+                              <td className="px-4 py-3 text-faint">
+                                {new Date(member.joinedAt).toLocaleDateString()}
+                              </td>
+
+                              {activeOrg.canManage && (
+                                <td className="px-4 py-3 text-right">
+                                  {!isCurrentUser && member.orgRole !== "OWNER" && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemoveMember(member.membershipId, member.name)}
+                                      className="rounded p-1 text-faint hover:bg-rose-500/10 hover:text-rose-400 transition-colors"
+                                      title="Remove member"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </button>
+                                  )}
+                                </td>
+                              )}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
+
+                  {/* Pending Invitations */}
+                  {activeOrg.pendingInvitations.length > 0 && (
+                    <div className="mt-6">
+                      <h4 className="text-xs font-semibold text-subtle mb-2 uppercase tracking-wider">
+                        Pending Invitations ({activeOrg.pendingInvitations.length})
+                      </h4>
+                      <div className="rounded-xl border border-white/[0.08] bg-[#0A0D14] divide-y divide-white/[0.04]">
+                        {activeOrg.pendingInvitations.map((inv) => (
+                          <div
+                            key={inv.id}
+                            className="flex items-center justify-between p-3 text-xs"
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-medium text-fg">{inv.email}</span>
+                              <span className="text-[11px] text-faint">
+                                Role: {inv.role} • Expires: {new Date(inv.expiresAt).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <span className="rounded bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[10px] text-amber-400">
+                              Pending Acceptance
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      )}
-      </>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* Invite Member Modal */}
       {inviteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-xl border border-line bg-surface p-6 shadow-2xl">
-            <h3 className="text-lg font-bold text-fg">Invite Team Member</h3>
-            <p className="mt-1 text-[12.5px] text-muted">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-xl border border-white/[0.12] bg-[#0E121D] p-6 shadow-2xl">
+            <h3 className="text-base font-bold text-fg">Invite Team Member</h3>
+            <p className="mt-1 text-xs text-subtle">
               Add a new merchant representative or dispute manager to this workspace.
             </p>
 
             <form onSubmit={handleSendInvite} className="mt-4 flex flex-col gap-4">
               {inviteFeedback?.error && (
-                <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-2.5 text-[12px] text-red-300">
-                  <AlertCircle className="h-4 w-4 text-red-400 shrink-0" />
+                <div className="flex items-center gap-2 rounded-lg border border-rose-500/30 bg-rose-500/10 p-2.5 text-xs text-rose-300">
+                  <AlertCircle className="h-4 w-4 text-rose-400 shrink-0" />
                   <span>{inviteFeedback.error}</span>
                 </div>
               )}
               {inviteFeedback?.success && (
-                <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-2.5 text-[12px] text-emerald-300">
+                <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-2.5 text-xs text-emerald-300">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <span>{inviteFeedback.success}</span>
                 </div>
@@ -576,6 +602,7 @@ export default function OrganizationsPage() {
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
                   required
+                  className="bg-[#0A0D14] border-white/[0.08]"
                 />
               </Field>
 
@@ -584,6 +611,7 @@ export default function OrganizationsPage() {
                   id="inviteRole"
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value)}
+                  className="bg-[#0A0D14] border-white/[0.08]"
                 >
                   <option value="MERCHANT_AGENT">MERCHANT_AGENT (Handle cases & evidence)</option>
                   <option value="RESOLUTION_MANAGER">RESOLUTION_MANAGER (Propose remedies & review)</option>
@@ -614,10 +642,10 @@ export default function OrganizationsPage() {
 
       {/* Create Organization Modal */}
       {createModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-xl border border-line bg-surface p-6 shadow-2xl">
-            <h3 className="text-lg font-bold text-fg">Create Workspace Organization</h3>
-            <p className="mt-1 text-[12.5px] text-muted">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-xl border border-white/[0.12] bg-[#0E121D] p-6 shadow-2xl">
+            <h3 className="text-base font-bold text-fg">Create Workspace Organization</h3>
+            <p className="mt-1 text-xs text-subtle">
               Establish a new tenant domain for merchant operations.
             </p>
 
@@ -630,6 +658,7 @@ export default function OrganizationsPage() {
                   value={newOrgName}
                   onChange={(e) => setNewOrgName(e.target.value)}
                   required
+                  className="bg-[#0A0D14] border-white/[0.08]"
                 />
               </Field>
 
@@ -640,6 +669,7 @@ export default function OrganizationsPage() {
                   placeholder="e.g. Enterprise consumer electronics retailer"
                   value={newOrgDesc}
                   onChange={(e) => setNewOrgDesc(e.target.value)}
+                  className="bg-[#0A0D14] border-white/[0.08]"
                 />
               </Field>
 

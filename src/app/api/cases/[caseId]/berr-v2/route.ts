@@ -12,9 +12,13 @@ export async function POST(
     const { caseId } = await context.params;
 
     // Verify authorized tenancy
-    await getCaseByIdAuthorized(user, caseId);
+    const caseRecord = await getCaseByIdAuthorized(user, caseId);
+    if (!caseRecord) {
+      return NextResponse.json({ error: `Dispute case "${caseId}" not found.` }, { status: 404 });
+    }
 
-    const result = await BerrV2Service.evaluateCase(caseId);
+    const canonicalId = caseRecord.dbId || caseRecord.id;
+    const result = await BerrV2Service.evaluateCase(canonicalId);
 
     return NextResponse.json({
       success: true,

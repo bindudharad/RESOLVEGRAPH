@@ -1,0 +1,194 @@
+{
+  "expanded1920": {
+    "sidebarWidth": 260,
+    "brandHeight": 56,
+    "topbarHeight": 56,
+    "navLinks": [
+      {
+        "href": "/overview",
+        "text": "Overview",
+        "width": 235,
+        "height": 40,
+        "scrollWidth": 235,
+        "clientWidth": 235,
+        "isOverflowing": false
+      },
+      {
+        "href": "/payments",
+        "text": "Payments\n2",
+        "width": 235,
+        "height": 40,
+        "scrollWidth": 235,
+        "clientWidth": 235,
+        "isOverflowing": false
+      },
+      {
+        "href": "/cases",
+        "text": "Investigations\n12",
+        "width": 235,
+        "height": 40,
+        "scrollWidth": 235,
+        "clientWidth": 235,
+        "isOverflowing": false
+      },
+      {
+        "href": "/evidence",
+        "text": "Evidence\n4",
+        "width": 235,
+        "height": 40,
+        "scrollWidth": 235,
+        "clientWidth": 235,
+        "isOverflowing": false
+      },
+      {
+        "href": "/resolution",
+        "text": "Resolution\n3",
+        "width": 235,
+        "height": 40,
+        "scrollWidth": 235,
+        "clientWidth": 235,
+        "isOverflowing": false
+      },
+      {
+        "href": "/copilot",
+        "text": "AI Copilot",
+        "width": 235,
+        "height": 40,
+        "scrollWidth": 235,
+        "clientWidth": 235,
+        "isOverflowing": false
+      },
+      {
+        "href": "/organizations",
+        "text": "Administration",
+        "width": 235,
+        "height": 40,
+        "scrollWidth": 235,
+        "clientWidth": 235,
+        "isOverflowing": false
+      }
+    ]
+  },
+  "expanded1440": {
+    "sidebarWidth": 260,
+    "subLinks": [
+      {
+        "href": "/overview",
+        "text": "Overview"
+      },
+      {
+        "href": "/payments",
+        "text": "Payments\n2"
+      },
+      {
+        "href": "/cases",
+        "text": "Investigations\n12"
+      },
+      {
+        "href": "/cases",
+        "text": "Cases Roster"
+      },
+      {
+        "href": "/investigation",
+        "text": "Investigation Engine"
+      },
+      {
+        "href": "/evidence",
+        "text": "Evidence\n4"
+      },
+      {
+        "href": "/resolution",
+        "text": "Resolution\n3"
+      },
+      {
+        "href": "/copilot",
+        "text": "AI Copilot"
+      },
+      {
+        "href": "/organizations",
+        "text": "Administration"
+      }
+    ]
+  },
+  "collapsed1440": {
+    "sidebarWidth": 72,
+    "innerText": "PR",
+    "navLinks": [
+      {
+        "href": "/overview",
+        "text": "",
+        "width": 40,
+        "height": 40,
+        "left": 15.5
+      },
+      {
+        "href": "/payments",
+        "text": "",
+        "width": 40,
+        "height": 40,
+        "left": 15.5
+      },
+      {
+        "href": "/cases",
+        "text": "",
+        "width": 40,
+        "height": 40,
+        "left": 15.5
+      },
+      {
+        "href": "/evidence",
+        "text": "",
+        "width": 40,
+        "height": 40,
+        "left": 15.5
+      },
+      {
+        "href": "/resolution",
+        "text": "",
+        "width": 40,
+        "height": 40,
+        "left": 15.5
+      },
+      {
+        "href": "/copilot",
+        "text": "",
+        "width": 40,
+        "height": 40,
+        "left": 15.5
+      },
+      {
+        "href": "/organizations",
+        "text": "",
+        "width": 40,
+        "height": 40,
+        "left": 15.5
+      }
+    ],
+    "footerButtons": [
+      {
+        "label": "Priya Raghavan (Platform Admin)",
+        "width": 40,
+        "height": 40,
+        "left": 15.5
+      },
+      {
+        "label": "Expand sidebar",
+        "width": 36,
+        "height": 36,
+        "left": 17.5
+      },
+      {
+        "label": "Sign out",
+        "width": 36,
+        "height": 36,
+        "left": 17.5
+      }
+    ]
+  },
+  "mobileDrawer": {
+    "isOpen": true,
+    "drawerWidth": 320,
+    "drawerVisible": true
+  },
+  "timestamp": "2026-11-10T17:26:15.205Z"
+}

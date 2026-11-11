@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth, AuthError } from '@/server/auth/require-auth';
+import { requirePlatformAdmin, AuthError } from '@/server/auth/require-auth';
 import { KillSwitchService } from '@/server/services/kill-switch.service';
 
 export async function GET(request: NextRequest) {
   try {
-    await requireAuth(request);
+    await requirePlatformAdmin(request);
     const status = await KillSwitchService.getStatus();
     return NextResponse.json({ success: true, data: status });
   } catch (error: any) {
@@ -18,11 +18,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await requireAuth(request);
-
-    if (!user.isPlatformAdmin && user.role !== 'RESOLUTION_MANAGER') {
-      return NextResponse.json({ error: 'Forbidden: Admin or Manager authorization required to toggle kill switch.' }, { status: 403 });
-    }
+    const user = await requirePlatformAdmin(request);
 
     const body = await request.json();
     if (!body.reason) {

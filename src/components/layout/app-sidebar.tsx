@@ -15,14 +15,32 @@ import { Tooltip } from "@/components/ui/primitives";
 import { useSidebar } from "@/components/layout/sidebar-context";
 import { useSession, signOut } from "@/lib/auth-client";
 
-function isActive(pathname: string, href: string): boolean {
-  if (href === "/overview") {
+function isItemActive(pathname: string, item: NavItem): boolean {
+  if (item.href === "/overview") {
     return pathname === "/overview";
   }
-  if (href === "/dashboard") {
-    return pathname === "/dashboard";
+  if (item.href === "/cases") {
+    return pathname === "/cases" || pathname.startsWith("/cases/") || pathname === "/investigation";
   }
-  return pathname === href || pathname.startsWith(`${href}/`);
+  if (item.href === "/resolution") {
+    return pathname === "/resolution" || pathname.startsWith("/resolution/") || pathname === "/resolution-room";
+  }
+  if (item.href === "/organizations") {
+    return (
+      pathname === "/organizations" ||
+      pathname.startsWith("/organizations/") ||
+      pathname === "/admin/security" ||
+      pathname.startsWith("/admin/security/") ||
+      pathname === "/settings"
+    );
+  }
+  if (pathname === item.href || pathname.startsWith(`${item.href}/`)) {
+    return true;
+  }
+  if (item.subItems) {
+    return item.subItems.some((s) => pathname === s.href || pathname.startsWith(`${s.href}/`));
+  }
+  return false;
 }
 
 /** Operational action badges for active workspace queues */
@@ -30,6 +48,7 @@ const ACTION_BADGES: Record<string, { count: number; label: string }> = {
   "/cases": { count: 12, label: "12 active investigations" },
   "/evidence": { count: 4, label: "4 unverified files" },
   "/payments": { count: 2, label: "2 escrow holds" },
+  "/resolution": { count: 3, label: "3 remedies pending sign-off" },
 };
 
 interface SessionUserExtra {
@@ -47,129 +66,56 @@ export function SidebarBrand({ collapsed }: { collapsed: boolean }) {
   const user = session?.user as SessionUserExtra | undefined;
 
   const organizationName =
-    user?.organization || "Commerce Resolution";
+    user?.organization || "Platform Workspace";
+
+  if (collapsed) {
+    return (
+      <div className="flex h-14 shrink-0 items-center justify-center border-b border-white/[0.08] bg-[#080B11]">
+        <Tooltip label="RESOLVEGRAPH Workspace" side="right">
+          <Link
+            href="/overview"
+            aria-label="RESOLVEGRAPH Workspace Overview"
+            className="flex h-9 w-9 items-center justify-center rounded-xl hover:bg-white/[0.06] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+          >
+            <Logo className="h-7 w-7 shrink-0 transition-transform duration-200 hover:scale-105" />
+          </Link>
+        </Tooltip>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-14 shrink-0 items-center justify-between border-b border-white/[0.08] px-3.5 bg-[#080B11]">
       <Link
         href="/overview"
         aria-label="RESOLVEGRAPH Workspace Overview"
-        className={cn(
-          "group flex min-w-0 items-center gap-2.5 rounded-lg p-1 transition-all duration-150",
-          "hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]",
-          collapsed ? "mx-auto justify-center" : "flex-1"
-        )}
+        className="group flex min-w-0 flex-1 items-center gap-2.5 rounded-lg p-1 transition-all duration-150 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
       >
         <Logo className="h-7 w-7 shrink-0 transition-transform duration-200 group-hover:scale-105" />
-        {!collapsed && (
-          <div className="min-w-0 flex flex-col">
-            <span className="truncate text-[13.5px] font-bold tracking-[0.08em] text-white">
-              RESOLVE<span className="text-[var(--accent)]">GRAPH</span>
+        <div className="min-w-0 flex flex-col">
+          <span className="truncate text-[13.5px] font-bold tracking-[0.08em] text-white">
+            RESOLVE<span className="text-[var(--accent)]">GRAPH</span>
+          </span>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--agreed)] shrink-0" />
+            <span className="truncate text-[10.5px] font-mono text-white/50 tracking-tight">
+              {organizationName}
             </span>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--agreed)]" />
-              <span className="truncate text-[10.5px] font-mono text-white/50 tracking-tight">
-                {organizationName}
-              </span>
-            </div>
           </div>
-        )}
+        </div>
       </Link>
 
-      {!collapsed && (
-        <button
-          type="button"
-          onClick={toggleCollapsed}
-          aria-label="Collapse sidebar"
-          className="rounded-lg p-1.5 text-white/40 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer"
-          title="Collapse sidebar (Press [ )"
-        >
-          <PanelLeftClose className="h-4 w-4" />
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={toggleCollapsed}
+        aria-label="Collapse sidebar"
+        className="rounded-lg p-1.5 text-white/40 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+        title="Collapse sidebar (Press [ )"
+      >
+        <PanelLeftClose className="h-4 w-4" />
+      </button>
     </div>
   );
-}
-
-function NavItemLink({
-  item,
-  active,
-  collapsed,
-  onNavigate,
-}: {
-  item: NavItem;
-  active: boolean;
-  collapsed: boolean;
-  onNavigate?: () => void;
-}) {
-  const Icon = item.icon;
-  const badge = ACTION_BADGES[item.href];
-
-  const content = (
-    <Link
-      href={item.href}
-      onClick={onNavigate}
-      aria-current={active ? "page" : undefined}
-      className={cn(
-        "group relative flex h-10 items-center gap-3 rounded-xl text-[13px] font-medium transition-all duration-150 select-none",
-        collapsed ? "w-full justify-center px-0" : "px-3",
-        active
-          ? "bg-white/[0.08] text-white font-semibold shadow-xs"
-          : "text-white/60 hover:text-white hover:bg-white/[0.04]"
-      )}
-    >
-      {/* Active Left Indicator Bar */}
-      {active && (
-        <span
-          aria-hidden="true"
-          className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-[var(--accent)]"
-        />
-      )}
-
-      {/* Item Icon */}
-      <Icon
-        className={cn(
-          "h-[18px] w-[18px] shrink-0 transition-colors",
-          active ? "text-[var(--accent)]" : "text-white/50 group-hover:text-white"
-        )}
-        aria-hidden="true"
-      />
-
-      {/* Expanded Label & Badge */}
-      {!collapsed && (
-        <>
-          <span className="min-w-0 flex-1 truncate text-left whitespace-nowrap">
-            {item.label}
-          </span>
-          {badge && (
-            <span
-              className={cn(
-                "rounded-full px-2 py-0.5 font-mono text-[10px] tabular-nums shrink-0",
-                active
-                  ? "bg-[var(--accent)]/30 text-white font-semibold"
-                  : "bg-white/[0.08] text-white/60 group-hover:text-white"
-              )}
-              title={badge.label}
-            >
-              {badge.count}
-            </span>
-          )}
-        </>
-      )}
-
-      {collapsed && <span className="sr-only">{item.label}</span>}
-    </Link>
-  );
-
-  if (collapsed) {
-    return (
-      <Tooltip label={item.label} side="right" className="flex w-full">
-        {content}
-      </Tooltip>
-    );
-  }
-
-  return content;
 }
 
 export function SidebarNav({
@@ -189,7 +135,13 @@ export function SidebarNav({
   return (
     <nav
       aria-label="Sidebar Navigation"
-      className={cn("flex min-h-0 flex-1 flex-col gap-5 py-3 select-none", className)}
+      className={cn(
+        "flex min-h-0 flex-1 flex-col py-3 select-none",
+        collapsed
+          ? "items-center gap-2 px-2 overflow-visible"
+          : "gap-1 px-3 overflow-y-auto",
+        className
+      )}
     >
       {NAV_GROUPS.map((group) => {
         // Enforce role-based administration visibility
@@ -197,29 +149,156 @@ export function SidebarNav({
           return null;
         }
 
+        const visibleItems = group.items.filter((item) => {
+          if (item.adminOnly && !isPlatformAdmin) return false;
+          if (item.hideForPlatformAdmin && isPlatformAdmin) return false;
+          return true;
+        });
+
+        if (visibleItems.length === 0) return null;
+
+        if (collapsed) {
+          return (
+            <div key={group.label} className="flex flex-col items-center gap-2 w-full">
+              {visibleItems.map((item) => {
+                const Icon = item.icon;
+                const active = isItemActive(pathname, item);
+
+                return (
+                  <Tooltip key={item.href} label={item.label} side="right">
+                    <Link
+                      href={item.href}
+                      onClick={onNavigate}
+                      aria-current={active ? "page" : undefined}
+                      aria-label={item.label}
+                      className={cn(
+                        "group relative flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-150 select-none",
+                        active
+                          ? "bg-white/[0.1] text-white shadow-xs"
+                          : "text-white/60 hover:text-white hover:bg-white/[0.04]"
+                      )}
+                    >
+                      {active && (
+                        <span
+                          aria-hidden="true"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-[var(--accent)]"
+                        />
+                      )}
+                      <Icon
+                        className={cn(
+                          "h-5 w-5 shrink-0 transition-colors",
+                          active
+                            ? "text-[var(--accent)]"
+                            : "text-white/60 group-hover:text-white"
+                        )}
+                        aria-hidden="true"
+                      />
+                    </Link>
+                  </Tooltip>
+                );
+              })}
+            </div>
+          );
+        }
+
+        // Expanded view
         return (
-          <div key={group.label} className="flex flex-col gap-1">
-            {!collapsed ? (
-              <div className="px-3 pb-1 text-[10.5px] font-mono uppercase tracking-[0.1em] text-white/40 font-semibold select-none">
+          <div key={group.label} className="flex flex-col gap-1 w-full">
+            {group.label !== "Platform" && (
+              <div className="px-3 pt-2 pb-1 text-[10.5px] font-mono uppercase tracking-[0.1em] text-white/40 font-semibold select-none">
                 {group.label}
               </div>
-            ) : (
-              <div className="h-px w-6 mx-auto bg-white/[0.08] my-1" />
             )}
 
             <ul className="flex flex-col gap-1">
-              {group.items.map((item) => {
-                if (item.adminOnly && !isPlatformAdmin) {
-                  return null;
-                }
+              {visibleItems.map((item) => {
+                const Icon = item.icon;
+                const active = isItemActive(pathname, item);
+                const badge = ACTION_BADGES[item.href];
+                const hasSubItems = Boolean(item.subItems && item.subItems.length > 0);
+
                 return (
-                  <li key={item.href}>
-                    <NavItemLink
-                      item={item}
-                      active={isActive(pathname, item.href)}
-                      collapsed={collapsed}
-                      onNavigate={onNavigate}
-                    />
+                  <li key={item.href} className="flex flex-col">
+                    <Link
+                      href={item.href}
+                      onClick={onNavigate}
+                      aria-current={active ? "page" : undefined}
+                      className={cn(
+                        "group relative flex h-10 items-center gap-3 rounded-xl px-3 text-[13px] font-medium transition-all duration-150 select-none",
+                        active
+                          ? "bg-white/[0.08] text-white font-semibold shadow-xs"
+                          : "text-white/70 hover:text-white hover:bg-white/[0.04]"
+                      )}
+                    >
+                      {/* Active Left Indicator Bar */}
+                      {active && (
+                        <span
+                          aria-hidden="true"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-[var(--accent)]"
+                        />
+                      )}
+
+                      {/* Item Icon */}
+                      <Icon
+                        className={cn(
+                          "h-[18px] w-[18px] shrink-0 transition-colors",
+                          active ? "text-[var(--accent)]" : "text-white/50 group-hover:text-white"
+                        )}
+                        aria-hidden="true"
+                      />
+
+                      {/* Label */}
+                      <span className="min-w-0 flex-1 truncate text-left whitespace-nowrap">
+                        {item.label}
+                      </span>
+
+                      {/* Action Badge */}
+                      {badge && (
+                        <span
+                          className={cn(
+                            "rounded-full px-2 py-0.5 font-mono text-[10px] tabular-nums shrink-0",
+                            active
+                              ? "bg-[var(--accent)]/30 text-white font-semibold"
+                              : "bg-white/[0.08] text-white/60 group-hover:text-white"
+                          )}
+                          title={badge.label}
+                        >
+                          {badge.count}
+                        </span>
+                      )}
+                    </Link>
+
+                    {/* Clean Sub-navigation for items with subpages */}
+                    {hasSubItems && active && (
+                      <div className="relative ml-6 pl-3 border-l border-white/[0.08] my-1 flex flex-col gap-0.5">
+                        {item.subItems!.map((sub) => {
+                          const isSubActive =
+                            pathname === sub.href ||
+                            (sub.href === "/cases" && pathname.startsWith("/cases/"));
+                          return (
+                            <Link
+                              key={sub.href}
+                              href={sub.href}
+                              onClick={onNavigate}
+                              className={cn(
+                                "flex h-7 items-center gap-2 rounded-lg px-2 text-[12px] font-medium transition-colors select-none",
+                                isSubActive
+                                  ? "text-white font-semibold bg-white/[0.06]"
+                                  : "text-white/50 hover:text-white hover:bg-white/[0.03]"
+                              )}
+                            >
+                              <span
+                                className={cn(
+                                  "h-1.5 w-1.5 rounded-full shrink-0 transition-colors",
+                                  isSubActive ? "bg-[var(--accent)]" : "bg-white/30"
+                                )}
+                              />
+                              <span className="truncate">{sub.label}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
                   </li>
                 );
               })}
@@ -237,12 +316,13 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
   const { toggleCollapsed } = useSidebar();
 
   const user = session?.user as SessionUserExtra | undefined;
-  const displayName = user?.name || "Authorized User";
-  const roleLabel = user?.isPlatformAdmin || user?.role === "ADMIN"
-    ? "Platform Admin"
-    : user?.role === "MERCHANT"
-    ? "Merchant Agent"
-    : "Consumer";
+  const displayName = user?.name || "Priya Raghavan";
+  const roleLabel =
+    user?.isPlatformAdmin || user?.role === "ADMIN"
+      ? "Platform Admin"
+      : user?.role === "MERCHANT"
+      ? "Merchant Agent"
+      : "Consumer";
 
   const initials =
     displayName
@@ -250,7 +330,7 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
       .map((n) => n[0])
       .join("")
       .slice(0, 2)
-      .toUpperCase() || "RG";
+      .toUpperCase() || "PR";
 
   const handleSignOut = async () => {
     try {
@@ -265,19 +345,26 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
 
   if (collapsed) {
     return (
-      <div className="shrink-0 border-t border-white/[0.08] p-2 flex flex-col items-center gap-2 bg-[#080B11]">
+      <div className="shrink-0 border-t border-white/[0.08] py-3 px-2 flex flex-col items-center gap-2.5 bg-[#080B11]">
         <Tooltip label={`${displayName} (${roleLabel})`} side="right">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent)]/20 border border-[var(--accent)]/30 font-mono text-xs font-bold text-white">
+          <div
+            tabIndex={0}
+            role="button"
+            aria-label={`${displayName} (${roleLabel})`}
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent)]/20 border border-[var(--accent)]/30 font-mono text-xs font-bold text-white shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+          >
             {initials}
           </div>
         </Tooltip>
+
+        <div className="h-px w-6 bg-white/[0.08] my-0.5" />
 
         <Tooltip label="Expand sidebar (Press [ )" side="right">
           <button
             type="button"
             onClick={toggleCollapsed}
             aria-label="Expand sidebar"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-white/40 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-white/50 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
           >
             <PanelLeftOpen className="h-4 w-4" />
           </button>
@@ -288,7 +375,7 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
             type="button"
             onClick={handleSignOut}
             aria-label="Sign out"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-white/40 hover:bg-red-500/10 hover:text-red-300 transition-colors cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-white/50 hover:bg-red-500/15 hover:text-red-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
           >
             <LogOut className="h-4 w-4" />
           </button>
@@ -309,7 +396,7 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
               {displayName}
             </div>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--agreed)]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--agreed)] shrink-0" />
               <span className="truncate text-[10.5px] font-mono text-white/50">
                 {roleLabel}
               </span>
@@ -322,7 +409,7 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
             href="/settings"
             title="Account Settings"
             aria-label="Settings"
-            className="rounded-lg p-1.5 text-white/40 hover:bg-white/[0.06] hover:text-white transition-colors"
+            className="rounded-lg p-1.5 text-white/40 hover:bg-white/[0.06] hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
           >
             <Settings className="h-4 w-4" />
           </Link>
@@ -331,7 +418,7 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
             onClick={handleSignOut}
             title="Sign out of session"
             aria-label="Sign out"
-            className="rounded-lg p-1.5 text-white/40 hover:bg-red-500/15 hover:text-red-300 transition-colors cursor-pointer"
+            className="rounded-lg p-1.5 text-white/40 hover:bg-red-500/15 hover:text-red-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
           >
             <LogOut className="h-4 w-4" />
           </button>
@@ -344,7 +431,7 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
 /**
  * Enterprise Redesigned Desktop Left Rail:
  * - Expanded: 260px fixed width, no label wrapping
- * - Collapsed: 72px rail, icons with accessible tooltips
+ * - Collapsed: 72px rail, icons only with accessible tooltips, centered horizontally
  * - Dark enterprise charcoal palette (#0A0D14)
  */
 export function AppSidebar() {
@@ -361,10 +448,7 @@ export function AppSidebar() {
       )}
     >
       <SidebarBrand collapsed={collapsed} />
-      <SidebarNav
-        collapsed={collapsed}
-        className={cn("px-3", collapsed ? "overflow-visible" : "overflow-y-auto")}
-      />
+      <SidebarNav collapsed={collapsed} />
       <SidebarFooter collapsed={collapsed} />
     </aside>
   );

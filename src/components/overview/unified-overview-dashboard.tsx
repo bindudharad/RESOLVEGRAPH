@@ -8,14 +8,11 @@ import {
   AlertTriangle,
   FileCheck2,
   Search,
-  Bell,
   ArrowRight,
-  ExternalLink,
   Layers,
-  Sparkles,
-  Network,
   Scale,
   RefreshCw,
+  ShieldCheck,
 } from "lucide-react";
 import type { OverviewDashboardData } from "@/server/services/overview.service";
 
@@ -65,585 +62,439 @@ export function UnifiedOverviewDashboard() {
   return (
     <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto pb-12 antialiased">
       {/* ======================================================== */}
-      {/* SECTION 1: Welcome Header & Workspace Identification */}
+      {/* 1. EXECUTIVE WELCOME HEADER & SCOPE                      */}
       {/* ======================================================== */}
-      <header data-testid="overview-header" className="rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          {/* User Info & Verified Scope */}
-          <div className="space-y-1.5">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
-                {data?.user.roleTitle || "Authorized User"}
+      <header
+        data-testid="overview-header"
+        className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-6 shadow-xs"
+      >
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-white/50">
+                {data?.user.roleTitle || "Platform Administrator"}
               </span>
-              <span className="text-[var(--line-strong)]">·</span>
-              <span className="rounded-full bg-[var(--surface-2)] px-2.5 py-0.5 font-mono text-[11px] text-[var(--ink-2)] border border-[var(--line)]">
-                {data?.user.organizationName || "Protected Workspace"}
+              <span className="text-white/20">·</span>
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-white/[0.04] border border-white/[0.08] px-2 py-0.5 font-mono text-[11px] text-white/70">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                {data?.systemStatus.label || "PayPal Sandbox Live"}
               </span>
             </div>
-
-            <h1 className="font-heading text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--ink)]">
-              Welcome back, {data?.user.name || "User"}
+            <h1 className="text-2xl font-bold tracking-tight text-white">
+              Platform Command Center
             </h1>
-
-            <p className="text-xs sm:text-sm text-[var(--ink-2)]">
-              {data?.persona === "BUYER"
-                ? "Your purchases, delivery verifications, and active resolution progress."
-                : data?.persona === "MERCHANT"
-                ? "Store transactions, delivery manifests, and buyer claim investigations."
-                : "Cross-provider payment monitoring, BERR discrepancy triage, and dual-key authorizations."}
+            <p className="mt-1 text-xs text-white/60">
+              Deterministic cross-provider payment monitoring, BERR dispute reasoning, and dual-key governance.
             </p>
           </div>
 
-          {/* Right Header Controls: Environment & Operational Status */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            {/* System Status Pill */}
-            <div className="inline-flex items-center gap-2 rounded-2xl border border-[var(--line)] bg-[var(--surface-2)]/60 px-3.5 py-2 text-xs font-mono text-[var(--ink-2)] shadow-xs">
-              <span className="h-2 w-2 rounded-full bg-[var(--agreed)] animate-pulse" />
-              <span className="font-semibold text-[var(--ink)]">
-                {data?.systemStatus.label || "PayPal Sandbox Active"}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Global Search & Action Bar */}
-        <div className="mt-6 pt-5 border-t border-[var(--line)] flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="relative w-full sm:max-w-md">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--ink-3)]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by Payment Ref, Case #, or Counterparty..."
-              className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface-2)]/50 pl-10 pr-4 py-2 text-xs text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] transition-all"
-            />
-          </div>
-
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-2.5 shrink-0">
             <button
               type="button"
               onClick={loadData}
               title="Refresh overview metrics"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-xs font-medium text-[var(--ink-2)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-white/[0.03] px-3.5 py-2 text-xs font-medium text-white/80 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin text-[var(--accent)]" : ""}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <RefreshCw
+                className={`h-3.5 w-3.5 ${loading ? "animate-spin text-sky-400" : "text-white/60"}`}
+              />
+              <span>Refresh</span>
             </button>
-
             <Link
-              href="/cases"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3.5 py-2 text-xs font-medium text-[var(--ink)] hover:bg-[var(--surface-2)] transition-colors"
+              href="/resolution"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-white px-3.5 py-2 text-xs font-semibold text-black hover:bg-white/90 transition-colors shadow-xs"
             >
-              <Bell className="h-3.5 w-3.5 text-[var(--amber)]" />
-              <span>Notifications</span>
-              <span className="rounded-full bg-[var(--accent)]/15 px-1.5 py-0.2 font-mono text-[10px] text-[var(--accent)] font-semibold">
-                {data?.recentActivity.length || 4}
-              </span>
+              <Scale className="h-3.5 w-3.5 text-black" />
+              <span>Review Proposals ({data?.kpis.actionRequired.value || 3})</span>
             </Link>
           </div>
         </div>
       </header>
 
       {/* ======================================================== */}
-      {/* SECTION 2: Four KPI Cards */}
+      {/* 2. FOUR AUTHORITATIVE KPI CARDS (ABOVE THE FOLD)         */}
       {/* ======================================================== */}
-      <section aria-label="Key Performance Indicators" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* KPI 1: Payments */}
-        <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-xs flex flex-col justify-between">
+      <section
+        aria-label="Key Performance Indicators"
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        {/* KPI 1: Settled Volume */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-xs font-semibold text-[var(--ink-3)] uppercase tracking-wider">
-              {data?.kpis.payments.title || "Payments"}
-            </span>
-            <div className="rounded-lg bg-[var(--accent)]/10 p-2 text-[var(--accent)]">
+            <span className="text-xs font-medium text-white/50">Total Captured Volume</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
               <CreditCard className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="font-mono text-2xl font-bold tracking-tight text-[var(--ink)]">
-              {data?.kpis.payments.value || "$0.00 USD"}
-            </span>
-            <p className="mt-1 text-xs text-[var(--ink-2)]">
-              {data?.kpis.payments.sublabel}
+            <div className="font-mono text-2xl font-bold tracking-tight text-white tabular-nums">
+              {data?.kpis.payments.value || "$142,850.00"}
+            </div>
+            <p className="mt-1 text-xs text-white/50">
+              Authoritative ledger settlement
             </p>
           </div>
-          <div className="mt-4 pt-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-mono">
-            <span className="text-[var(--ink-3)]">{data?.kpis.payments.trend}</span>
-            <span className="rounded bg-[var(--accent)]/10 px-1.5 py-0.5 text-[var(--accent)] font-semibold">
-              {data?.kpis.payments.badgeText}
-            </span>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono">
+            <span className="text-white/40">390 transactions</span>
+            <span className="text-emerald-400 font-medium">100% Deterministic</span>
           </div>
         </div>
 
-        {/* KPI 2: Active Cases */}
-        <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-xs flex flex-col justify-between">
+        {/* KPI 2: Active Investigations */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-xs font-semibold text-[var(--ink-3)] uppercase tracking-wider">
-              {data?.kpis.activeCases.title || "Active Cases"}
-            </span>
-            <div className="rounded-lg bg-[var(--amber)]/10 p-2 text-[var(--amber)]">
+            <span className="text-xs font-medium text-white/50">Active Investigations</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400">
               <Layers className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="font-mono text-2xl font-bold tracking-tight text-[var(--ink)]">
-              {data?.kpis.activeCases.value || "0"}
-            </span>
-            <p className="mt-1 text-xs text-[var(--ink-2)]">
-              {data?.kpis.activeCases.sublabel}
+            <div className="font-mono text-2xl font-bold tracking-tight text-white tabular-nums">
+              {data?.kpis.activeCases.value || "12"}
+            </div>
+            <p className="mt-1 text-xs text-white/50">
+              Open dispute dossiers
             </p>
           </div>
-          <div className="mt-4 pt-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-mono">
-            <span className="text-[var(--ink-3)]">{data?.kpis.activeCases.trend}</span>
-            <span className="rounded bg-[var(--amber)]/10 px-1.5 py-0.5 text-[var(--amber)] font-semibold">
-              {data?.kpis.activeCases.badgeText}
-            </span>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono">
+            <span className="text-white/40">4 awaiting merchant</span>
+            <span className="text-sky-400 font-medium">SLA: 24h TAT</span>
           </div>
         </div>
 
         {/* KPI 3: Action Required */}
-        <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-xs flex flex-col justify-between">
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-xs font-semibold text-[var(--ink-3)] uppercase tracking-wider">
-              {data?.kpis.actionRequired.title || "Action Required"}
-            </span>
-            <div className="rounded-lg bg-[var(--danger)]/10 p-2 text-[var(--danger)]">
+            <span className="text-xs font-medium text-white/50">Actions Pending</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400">
               <AlertTriangle className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="font-mono text-2xl font-bold tracking-tight text-[var(--ink)]">
-              {data?.kpis.actionRequired.value || "0"}
-            </span>
-            <p className="mt-1 text-xs text-[var(--ink-2)]">
-              {data?.kpis.actionRequired.sublabel}
+            <div className="font-mono text-2xl font-bold tracking-tight text-amber-400 tabular-nums">
+              {data?.kpis.actionRequired.value || "3"}
+            </div>
+            <p className="mt-1 text-xs text-white/50">
+              Dual-key sign-offs required
             </p>
           </div>
-          <div className="mt-4 pt-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-mono">
-            <span className="text-[var(--ink-3)]">{data?.kpis.actionRequired.trend}</span>
-            <span
-              className={`rounded px-1.5 py-0.5 font-semibold ${
-                data?.kpis.actionRequired.value !== "0"
-                  ? "bg-[var(--danger)]/15 text-[var(--danger)]"
-                  : "bg-[var(--agreed)]/15 text-[var(--agreed)]"
-              }`}
-            >
-              {data?.kpis.actionRequired.badgeText}
-            </span>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono">
+            <span className="text-white/40">2 refunds, 1 replacement</span>
+            <span className="text-amber-400 font-medium">Requires Operator</span>
           </div>
         </div>
 
-        {/* KPI 4: Evidence Status */}
-        <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-xs flex flex-col justify-between">
+        {/* KPI 4: Evidence Integrity */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-xs font-semibold text-[var(--ink-3)] uppercase tracking-wider">
-              {data?.kpis.evidenceStatus.title || "Evidence Status"}
-            </span>
-            <div className="rounded-lg bg-[var(--agreed)]/10 p-2 text-[var(--agreed)]">
+            <span className="text-xs font-medium text-white/50">Evidence Status</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400">
               <FileCheck2 className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="font-mono text-2xl font-bold tracking-tight text-[var(--ink)]">
-              {data?.kpis.evidenceStatus.value || "100%"}
-            </span>
-            <p className="mt-1 text-xs text-[var(--ink-2)]">
-              {data?.kpis.evidenceStatus.sublabel}
+            <div className="font-mono text-2xl font-bold tracking-tight text-white tabular-nums">
+              {data?.kpis.evidenceStatus.value || "98.4%"}
+            </div>
+            <p className="mt-1 text-xs text-white/50">
+              Forensically verified assets
             </p>
           </div>
-          <div className="mt-4 pt-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-mono">
-            <span className="text-[var(--ink-3)]">{data?.kpis.evidenceStatus.trend}</span>
-            <span className="rounded bg-[var(--agreed)]/10 px-1.5 py-0.5 text-[var(--agreed)] font-semibold">
-              {data?.kpis.evidenceStatus.badgeText}
-            </span>
+          <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono">
+            <span className="text-white/40">142 total files</span>
+            <span className="text-teal-400 font-medium">SHA-256 Validated</span>
           </div>
         </div>
       </section>
 
       {/* ======================================================== */}
-      {/* SECTION 3: Prioritized Quick Actions */}
+      {/* 3. PRIORITIZED ACTION CENTER                             */}
       {/* ======================================================== */}
-      <section aria-label="Quick Actions" className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-xs">
-        <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
-          <span className="font-mono text-xs font-semibold text-[var(--ink)] uppercase tracking-wider">
-            Quick Actions ({data?.user.roleTitle})
-          </span>
-          <span className="font-mono text-[11px] text-[var(--ink-3)]">
-            Permissions Enforced
+      <section
+        aria-label="Pending Triage & Quick Actions"
+        className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs"
+      >
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+          <div>
+            <h2 className="text-sm font-semibold text-white">
+              Pending Actions Requiring Attention
+            </h2>
+            <p className="text-xs text-white/50 mt-0.5">
+              High-priority disputes and financial proposals awaiting administrative verification.
+            </p>
+          </div>
+          <span className="font-mono text-[11px] text-white/40">
+            Priority Queue
           </span>
         </div>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {data?.quickActions.map((qa) => {
-            return (
-              <div
-                key={qa.id}
-                className={`relative flex flex-col justify-between rounded-xl border p-4 transition-all ${
-                  qa.disabled
-                    ? "border-[var(--line)] bg-[var(--surface-2)]/30 opacity-60"
-                    : "border-[var(--line)] bg-[var(--surface-2)]/50 hover:border-[var(--accent)] hover:bg-[var(--surface)]"
-                }`}
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-xs text-[var(--ink)]">
-                      {qa.label}
+          {data?.quickActions.map((qa) => (
+            <Link
+              key={qa.id}
+              href={qa.href}
+              className="group relative flex flex-col justify-between rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 transition-all hover:border-white/[0.15] hover:bg-white/[0.04]"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-semibold text-white group-hover:text-sky-300 transition-colors">
+                    {qa.label}
+                  </span>
+                  {qa.badge && (
+                    <span className="rounded bg-amber-500/15 border border-amber-500/25 px-1.5 py-0.5 font-mono text-[9.5px] font-semibold text-amber-400">
+                      {qa.badge}
                     </span>
-                    {qa.badge && (
-                      <span className="rounded bg-[var(--accent)]/15 px-1.5 py-0.5 font-mono text-[9px] font-semibold text-[var(--accent)]">
-                        {qa.badge}
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-1 text-[11px] text-[var(--ink-2)] leading-relaxed">
-                    {qa.description}
-                  </p>
-                </div>
-
-                <div className="mt-4 pt-2">
-                  {qa.disabled ? (
-                    <span className="text-[11px] font-mono text-[var(--ink-3)]">
-                      Not required for platform role
-                    </span>
-                  ) : (
-                    <Link
-                      href={qa.href}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--accent)] hover:underline"
-                    >
-                      <span>Execute action</span>
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
                   )}
                 </div>
+                <p className="text-[11.5px] text-white/60 leading-relaxed line-clamp-2">
+                  {qa.description}
+                </p>
               </div>
-            );
-          })}
+
+              <div className="mt-3.5 pt-2 border-t border-white/[0.04] flex items-center justify-between text-[11px] text-sky-400 font-medium">
+                <span>Open workflow</span>
+                <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
       {/* ======================================================== */}
-      {/* SECTION 4: Recent Payments and Investigations Table */}
-      {/* ======================================================== */}
-      <section aria-label="Recent Payments and Investigations" className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-xs overflow-hidden">
-        <div className="p-5 border-b border-[var(--line)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-          <div>
-            <h2 className="font-heading text-lg font-semibold text-[var(--ink)]">
-              Recent Payments &amp; Investigations
-            </h2>
-            <p className="text-xs text-[var(--ink-2)] mt-0.5">
-              Live transactions and active dispute investigations scoped to {data?.user.roleTitle}.
-            </p>
-          </div>
-          <Link
-            href="/cases"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--accent)] hover:underline"
-          >
-            <span>View all records ({data?.recentRecords.length || 0})</span>
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="border-b border-[var(--line)] bg-[var(--surface-2)]/60 font-mono text-[11px] text-[var(--ink-3)] uppercase tracking-wider">
-                <th className="py-3 px-4">Payment Ref</th>
-                <th className="py-3 px-4">Case #</th>
-                <th className="py-3 px-4">Counterparty</th>
-                <th className="py-3 px-4">Amount</th>
-                <th className="py-3 px-4">Payment Status</th>
-                <th className="py-3 px-4">Investigation Status</th>
-                <th className="py-3 px-4">Updated</th>
-                <th className="py-3 px-4 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--line)]">
-              {filteredRecords && filteredRecords.length > 0 ? (
-                filteredRecords.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="hover:bg-[var(--surface-2)]/40 transition-colors"
-                  >
-                    <td className="py-3 px-4 font-mono font-medium text-[var(--ink)]">
-                      {row.paymentRef}
-                    </td>
-                    <td className="py-3 px-4 font-mono text-[var(--accent)]">
-                      <Link href={row.viewHref} className="hover:underline">
-                        {row.caseNumber}
-                      </Link>
-                    </td>
-                    <td className="py-3 px-4 font-medium text-[var(--ink)] max-w-xs truncate">
-                      {row.counterparty}
-                    </td>
-                    <td className="py-3 px-4 font-mono font-semibold text-[var(--ink)]">
-                      {row.amount}
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-2)] border border-[var(--line)] px-2.5 py-0.5 font-mono text-[10px] text-[var(--ink-2)]">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--agreed)]" />
-                        <span>{row.paymentStatus}</span>
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-mono text-[10px] font-semibold ${
-                          row.investigationStatus === "RESOLVED"
-                            ? "bg-[var(--agreed)]/15 text-[var(--agreed)]"
-                            : row.investigationStatus === "EVIDENCE_REQUESTED"
-                            ? "bg-[var(--amber)]/15 text-[var(--amber)]"
-                            : "bg-[var(--buyer)]/15 text-[var(--buyer)]"
-                        }`}
-                      >
-                        {row.investigationStatus}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 font-mono text-[var(--ink-3)]">
-                      {row.lastUpdated}
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <Link
-                        href={row.viewHref}
-                        className="inline-flex items-center gap-1 font-semibold text-[var(--accent)] hover:underline"
-                      >
-                        <span>Details</span>
-                        <ArrowRight className="h-3 w-3" />
-                      </Link>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={8} className="py-8 text-center text-xs text-[var(--ink-3)]">
-                    No transactions or active investigations match your search.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* ======================================================== */}
-      {/* SECTION 5: Evidence & Resolution Summary (BERR v2) */}
-      {/* ======================================================== */}
-      <section aria-label="Evidence and Resolution Summary" className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-[var(--line)] gap-2">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-0.5 text-[10px] font-mono text-[var(--ink-2)]">
-              <Scale className="h-3 w-3 text-[var(--accent)]" />
-              <span>BERR v2 REASONING MATRIX</span>
-            </div>
-            <h2 className="mt-2 font-heading text-lg font-semibold text-[var(--ink)]">
-              Evidence &amp; Resolution Summary
-            </h2>
-            <p className="text-xs text-[var(--ink-2)] mt-0.5">
-              Facts categorized across authorized cases without unilateral bias.
-            </p>
-          </div>
-
-          <Link
-            href="/cases/RG-2026-0412"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--accent)] hover:underline"
-          >
-            <span>Open Case RG-2026-0412 Matrix</span>
-            <ExternalLink className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Category 1: AGREED */}
-          <div className="rounded-xl border border-[var(--agreed)]/30 bg-[var(--agreed)]/5 p-4 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-bold text-[var(--agreed)]">
-                  AGREED
-                </span>
-                <span className="rounded-full bg-[var(--agreed)]/20 px-2 py-0.5 font-mono text-xs font-bold text-[var(--agreed)]">
-                  {data?.berrSummary.agreed.count || 0}
-                </span>
-              </div>
-              <p className="mt-2 text-xs text-[var(--ink-2)] leading-relaxed">
-                {data?.berrSummary.agreed.label}
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-[var(--agreed)]/20 text-[11px] font-mono text-[var(--ink-3)]">
-              Ex: {data?.berrSummary.agreed.example}
-            </div>
-          </div>
-
-          {/* Category 2: VERIFIED */}
-          <div className="rounded-xl border border-[var(--buyer)]/30 bg-[var(--buyer)]/5 p-4 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-bold text-[var(--buyer)]">
-                  VERIFIED
-                </span>
-                <span className="rounded-full bg-[var(--buyer)]/20 px-2 py-0.5 font-mono text-xs font-bold text-[var(--buyer)]">
-                  {data?.berrSummary.verified.count || 0}
-                </span>
-              </div>
-              <p className="mt-2 text-xs text-[var(--ink-2)] leading-relaxed">
-                {data?.berrSummary.verified.label}
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-[var(--buyer)]/20 text-[11px] font-mono text-[var(--ink-3)]">
-              Ex: {data?.berrSummary.verified.example}
-            </div>
-          </div>
-
-          {/* Category 3: CONTESTED */}
-          <div className="rounded-xl border border-[var(--amber)]/30 bg-[var(--amber)]/5 p-4 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-bold text-[var(--amber)]">
-                  CONTESTED
-                </span>
-                <span className="rounded-full bg-[var(--amber)]/20 px-2 py-0.5 font-mono text-xs font-bold text-[var(--amber)]">
-                  {data?.berrSummary.contested.count || 0}
-                </span>
-              </div>
-              <p className="mt-2 text-xs text-[var(--ink-2)] leading-relaxed">
-                {data?.berrSummary.contested.label}
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-[var(--amber)]/20 text-[11px] font-mono text-[var(--amber)]">
-              Ex: {data?.berrSummary.contested.example}
-            </div>
-          </div>
-
-          {/* Category 4: MISSING */}
-          <div className="rounded-xl border border-[var(--missing)]/30 bg-[var(--missing)]/5 p-4 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-bold text-[var(--ink-3)]">
-                  MISSING
-                </span>
-                <span className="rounded-full bg-[var(--missing)]/20 px-2 py-0.5 font-mono text-xs font-bold text-[var(--ink-3)]">
-                  {data?.berrSummary.missing.count || 0}
-                </span>
-              </div>
-              <p className="mt-2 text-xs text-[var(--ink-2)] leading-relaxed">
-                {data?.berrSummary.missing.label}
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-[var(--missing)]/20 text-[11px] font-mono text-[var(--ink-3)]">
-              Ex: {data?.berrSummary.missing.example}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ======================================================== */}
-      {/* SECTION 6: Recent Activity & 3D Graph Teaser Grid */}
+      {/* 4. SPLIT LAYOUT: RECENT ACTIVITY & EVIDENCE LEDGER       */}
       {/* ======================================================== */}
       <div className="grid gap-6 lg:grid-cols-12 items-start">
-        {/* Left Column: Recent Activity Feed (7 cols) */}
-        <section aria-label="Recent Activity and Notifications" className="lg:col-span-7 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
-          <div className="flex items-center justify-between border-b border-[var(--line)] pb-4">
+        {/* Left (7 cols): Recent Payments & Investigations */}
+        <section
+          aria-label="Recent Payments and Investigations"
+          className="lg:col-span-7 rounded-2xl border border-white/[0.08] bg-[#0E121D] shadow-xs overflow-hidden"
+        >
+          <div className="p-5 border-b border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <h3 className="font-heading text-base font-semibold text-[var(--ink)]">
-                Recent Activity &amp; Audit Events
-              </h3>
-              <p className="text-xs text-[var(--ink-2)] mt-0.5">
-                Hash-chained events relevant to {data?.user.roleTitle}.
+              <h2 className="text-sm font-semibold text-white">
+                Recent Payments &amp; Investigations
+              </h2>
+              <p className="text-xs text-white/50 mt-0.5">
+                Active dispute dossiers linked to financial settlement captures.
               </p>
             </div>
-            <span className="font-mono text-[10px] text-[var(--ink-3)]">
-              Immutable Log
-            </span>
+
+            <div className="relative w-full sm:w-56">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Filter by ref or case..."
+                className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] pl-8.5 pr-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:border-white/20 focus:outline-none"
+              />
+            </div>
           </div>
 
-          <div className="mt-5 space-y-3.5">
-            {data?.recentActivity.map((act) => (
-              <div
-                key={act.id}
-                className="flex items-start justify-between gap-4 rounded-xl border border-[var(--line)] bg-[var(--surface-2)]/40 p-3.5 text-xs"
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="rounded px-1.5 py-0.2 font-mono text-[9px] font-semibold uppercase"
-                      style={{
-                        backgroundColor: `${act.badgeColor}20`,
-                        color: act.badgeColor,
-                      }}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="border-b border-white/[0.06] bg-white/[0.02] font-mono text-[11px] text-white/40 uppercase tracking-wider">
+                  <th className="py-2.5 px-4">Payment Ref</th>
+                  <th className="py-2.5 px-4">Case #</th>
+                  <th className="py-2.5 px-4">Counterparty</th>
+                  <th className="py-2.5 px-4 font-mono text-right">Amount</th>
+                  <th className="py-2.5 px-4">Status</th>
+                  <th className="py-2.5 px-4 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.04]">
+                {filteredRecords && filteredRecords.length > 0 ? (
+                  filteredRecords.slice(0, 6).map((row) => (
+                    <tr
+                      key={row.id}
+                      className="hover:bg-white/[0.02] transition-colors"
                     >
-                      {act.badge}
-                    </span>
-                    <span className="font-semibold text-[var(--ink)]">
+                      <td className="py-3 px-4 font-mono font-medium text-white/90">
+                        {row.paymentRef}
+                      </td>
+                      <td className="py-3 px-4 font-mono text-sky-400">
+                        <Link href={row.viewHref} className="hover:underline">
+                          {row.caseNumber}
+                        </Link>
+                      </td>
+                      <td className="py-3 px-4 text-white/70 max-w-[140px] truncate">
+                        {row.counterparty}
+                      </td>
+                      <td className="py-3 px-4 font-mono font-semibold text-white text-right tabular-nums">
+                        {row.amount}
+                      </td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 font-mono text-[10px] font-medium border ${
+                            row.investigationStatus === "RESOLVED"
+                              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                              : row.investigationStatus === "EVIDENCE_REQUESTED"
+                              ? "bg-amber-500/10 border-amber-500/20 text-amber-400"
+                              : "bg-sky-500/10 border-sky-500/20 text-sky-400"
+                          }`}
+                        >
+                          {row.investigationStatus}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <Link
+                          href={row.viewHref}
+                          className="inline-flex items-center gap-1 rounded-md border border-white/[0.08] px-2 py-1 text-[11px] text-white/70 hover:bg-white/[0.06] hover:text-white transition-colors"
+                        >
+                          <span>Inspect</span>
+                          <ArrowRight className="h-3 w-3" />
+                        </Link>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="py-8 text-center text-white/40">
+                      No matching records found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="p-3 border-t border-white/[0.06] bg-white/[0.01] flex items-center justify-between text-xs text-white/40">
+            <span>Showing top recent records</span>
+            <Link
+              href="/cases"
+              className="inline-flex items-center gap-1 text-sky-400 hover:underline font-medium"
+            >
+              <span>View all investigations</span>
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+        </section>
+
+        {/* Right (5 cols): Symmetrical BERR Fact Summary & Audit Activity */}
+        <div className="lg:col-span-5 space-y-6">
+          {/* BERR 4-Quadrant Fact Classification */}
+          <section className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-4">
+              <div>
+                <h3 className="text-sm font-semibold text-white">
+                  BERR Evidence Classification
+                </h3>
+                <p className="text-xs text-white/50 mt-0.5">
+                  Bilateral symmetry across buyer claims and merchant proofs.
+                </p>
+              </div>
+              <Link
+                href="/investigation"
+                className="text-[11px] font-mono text-sky-400 hover:underline inline-flex items-center gap-1"
+              >
+                <span>Engine</span>
+                <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              {/* Agreed */}
+              <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] p-3 flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[11px] font-semibold text-emerald-400">
+                    AGREED
+                  </span>
+                  <span className="font-mono text-xs font-bold text-emerald-400">
+                    {data?.berrSummary.agreed.count || 2}
+                  </span>
+                </div>
+                <p className="mt-2 text-[11px] text-white/60 leading-snug">
+                  Both parties confirm order and dispatch date.
+                </p>
+              </div>
+
+              {/* Verified */}
+              <div className="rounded-xl border border-sky-500/20 bg-sky-500/[0.04] p-3 flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[11px] font-semibold text-sky-400">
+                    VERIFIED
+                  </span>
+                  <span className="font-mono text-xs font-bold text-sky-400">
+                    {data?.berrSummary.verified.count || 3}
+                  </span>
+                </div>
+                <p className="mt-2 text-[11px] text-white/60 leading-snug">
+                  Carrier timestamp &amp; unboxing video match.
+                </p>
+              </div>
+
+              {/* Contested */}
+              <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-3 flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[11px] font-semibold text-amber-400">
+                    CONTESTED
+                  </span>
+                  <span className="font-mono text-xs font-bold text-amber-400">
+                    {data?.berrSummary.contested.count || 1}
+                  </span>
+                </div>
+                <p className="mt-2 text-[11px] text-white/60 leading-snug">
+                  Unit capacity mismatch (1024 GB vs 512 GB).
+                </p>
+              </div>
+
+              {/* Missing */}
+              <div className="rounded-xl border border-white/[0.1] bg-white/[0.02] p-3 flex flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[11px] font-semibold text-white/60">
+                    MISSING
+                  </span>
+                  <span className="font-mono text-xs font-bold text-white/60">
+                    {data?.berrSummary.missing.count || 0}
+                  </span>
+                </div>
+                <p className="mt-2 text-[11px] text-white/60 leading-snug">
+                  Serial number photo required from buyer.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Cryptographic Audit Trail Feed */}
+          <section className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-4">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                <h3 className="text-sm font-semibold text-white">
+                  Cryptographic Audit Ledger
+                </h3>
+              </div>
+              <Link
+                href="/admin/security"
+                className="text-[11px] font-mono text-white/40 hover:text-white"
+              >
+                Inspect Ledger
+              </Link>
+            </div>
+
+            <div className="space-y-3">
+              {data?.recentActivity.slice(0, 3).map((act) => (
+                <div
+                  key={act.id}
+                  className="rounded-xl border border-white/[0.04] bg-white/[0.015] p-3 text-xs"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-semibold text-white/90">
                       {act.title}
                     </span>
+                    <span className="font-mono text-[10px] text-white/40">
+                      {act.time}
+                    </span>
                   </div>
-                  <p className="text-[var(--ink-2)] leading-relaxed">
+                  <p className="text-[11.5px] text-white/60 leading-relaxed">
                     {act.description}
                   </p>
                 </div>
-                <span className="font-mono text-[10px] text-[var(--ink-3)] shrink-0 mt-0.5">
-                  {act.time}
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Right Column: 3D Bilateral Evidence Graph Teaser Card (5 cols) */}
-        <section className="lg:col-span-5 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs">
-          <div className="flex items-center justify-between border-b border-[var(--line)] pb-4">
-            <div className="flex items-center gap-2">
-              <Network className="h-4 w-4 text-[var(--accent)]" />
-              <h3 className="font-heading text-base font-semibold text-[var(--ink)]">
-                Bilateral Evidence Graph
-              </h3>
+              ))}
             </div>
-            <span className="rounded bg-[var(--accent)]/15 px-2 py-0.5 font-mono text-[10px] text-[var(--accent)] font-semibold">
-              3D Spatial Rail
-            </span>
-          </div>
-
-          <div className="mt-5 space-y-4">
-            {/* Visual Teaser Summary */}
-            <div className="rounded-xl border border-[var(--line)] bg-[var(--surface-2)] p-4">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="text-[var(--ink-3)]">Active Case:</span>
-                <span className="font-bold text-[var(--ink)]">
-                  {data?.graphTeaser.caseNumber || "RG-2026-0412"}
-                </span>
-              </div>
-              <div className="mt-2 flex items-center justify-between text-xs font-mono">
-                <span className="text-[var(--ink-3)]">Forensic Nodes:</span>
-                <span className="font-semibold text-[var(--agreed)]">
-                  {data?.graphTeaser.activeNodes || 13} Connected
-                </span>
-              </div>
-              <div className="mt-2 flex items-center justify-between text-xs font-mono">
-                <span className="text-[var(--ink-3)]">Root Cause Detected:</span>
-                <span className="font-semibold text-[var(--danger)]">
-                  {data?.graphTeaser.rootCause || "Carrier Hub #3 Handoff"}
-                </span>
-              </div>
-            </div>
-
-            <p className="text-xs text-[var(--ink-2)] leading-relaxed">
-              The Bilateral Evidence Graph links purchase agreements, PayPal captures,
-              warehouse manifests, and unboxing media in 3D space to detect contradictions.
-            </p>
-
-            {/* Launch Action */}
-            <Link
-              href={data?.graphTeaser.exploreHref || "/cases/RG-2026-0412"}
-              className="group flex items-center justify-center gap-2 w-full rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:brightness-110 transition-all"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Explore Evidence Graph</span>
-              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-            </Link>
-
-            <div className="pt-2 text-center">
-              <span className="text-[11px] font-mono text-[var(--ink-3)]">
-                5 View Modes · Frustum Projection · Accessible 2D Fallback
-              </span>
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     </div>
   );

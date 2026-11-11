@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Sparkles,
   GitGraph,
+  FolderOpen,
 } from "lucide-react";
 import { DemoBadge } from "@/components/common/demo-badge";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,21 @@ import { Button } from "@/components/ui/button";
 export default function InvestigationPage() {
   return (
     <div className="flex flex-col gap-6">
+      {/* Investigations Unified Sub-navigation */}
+      <div className="flex items-center gap-2 border-b border-line pb-3">
+        <Link
+          href="/cases"
+          className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-muted hover:text-fg hover:bg-surface-2 transition-colors inline-flex items-center gap-1.5"
+        >
+          <FolderOpen className="h-3.5 w-3.5" />
+          Investigation Roster
+        </Link>
+        <span className="rounded-lg bg-surface-2 border border-line px-3.5 py-1.5 text-xs font-semibold text-fg inline-flex items-center gap-1.5 shadow-xs">
+          <Brain className="h-3.5 w-3.5 text-[var(--accent)]" />
+          BERR Reasoning Engine
+        </span>
+      </div>
+
       {/* Header section */}
       <section className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
