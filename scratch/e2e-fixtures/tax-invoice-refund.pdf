@@ -1,0 +1,44 @@
+%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj
+4 0 obj << /Length 480 >> stream
+BT
+/F1 14 Tf
+50 720 Td
+(TAX INVOICE - DIGITALMART COMMERCE PRIVATE LIMITED) Tj
+/F1 10 Tf
+0 -25 Td
+(Sold By: DigitalMart Commerce Private Limited) Tj
+0 -15 Td
+(GSTIN: 27AABCD2345F1Z2 | State: Maharashtra) Tj
+0 -15 Td
+(Marketplace: Amazon India | Seller ID: A2DIGITALMART01) Tj
+0 -20 Td
+(Order ID: OD-AMZ-2026-881122 | Invoice No: INV-DM-2026-881122) Tj
+0 -15 Td
+(Order Date: 11-11-2026 | Invoice Date: 11-11-2026) Tj
+0 -25 Td
+(Item: Keychron K2 Wireless Mechanical Keyboard - Brown Switch) Tj
+0 -15 Td
+(SKU: KEY-K2-BROWN | Qty: 1 | HSN: 84716060) Tj
+0 -20 Td
+(Total Amount: INR 4,999.00 [Four Thousand Nine Hundred Ninety Nine Only]) Tj
+0 -25 Td
+(Payment Mode: Pre-paid Electronic Gateway | Status: Captured) Tj
+ET
+endstream
+endobj
+5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000227 00000 n 
+0000000760 00000 n 
+trailer << /Size 6 /Root 1 0 R >>
+startxref
+832
+%%EOF

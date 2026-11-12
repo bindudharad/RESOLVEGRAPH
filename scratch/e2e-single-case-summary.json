@@ -1,0 +1,340 @@
+{
+  "testCaseNumber": "RG-1465",
+  "testCaseDbId": "cmwdh9tcs01rcm8vj88xkqa6i",
+  "sellerRequestId": "cmwdh9tgz01rpm8vjfzk8nc4p",
+  "sellerRequestNumber": "SER-2026-1004",
+  "proposalId": "cmwdhbeak01v7m8vjg2z5qbit",
+  "fulfillmentId": "cmwdhbhvr01vim8vjns23vh0d",
+  "totalSteps": 27,
+  "passedSteps": 27,
+  "failedSteps": 0,
+  "auditLogs": [
+    {
+      "stepNumber": 1,
+      "workspace": "Customer Workspace",
+      "actor": "Alex Morgan (Buyer)",
+      "action": "Navigate to /sign-in",
+      "expected": "Render sign-in portal with workspace options",
+      "actual": "Sign-in page rendered with workspace cards",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/01_customer_sign_in_page.png"
+    },
+    {
+      "stepNumber": 2,
+      "workspace": "Customer Workspace",
+      "actor": "Alex Morgan (Buyer)",
+      "action": "Authenticate and view /overview Customer Portal",
+      "expected": "Authenticated as Alex Morgan, Buyer Resolution Portal rendered",
+      "actual": "Logged in successfully, Customer Portal visible with Submit a Complaint wizard",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/02_customer_portal_overview.png"
+    },
+    {
+      "stepNumber": 3,
+      "workspace": "Customer Workspace",
+      "actor": "Alex Morgan (Buyer)",
+      "action": "Fill Step 1 Order Details (Amazon, OD-AMZ-2026-994411, ₹7,999)",
+      "expected": "Input fields populated and validated",
+      "actual": "All Step 1 purchase fields populated",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/03_wizard_step1_order_info.png"
+    },
+    {
+      "stepNumber": 4,
+      "workspace": "Customer Workspace",
+      "actor": "Alex Morgan (Buyer)",
+      "action": "Select \"Damaged product received\" and enter problem description",
+      "expected": "Category selected and description filled",
+      "actual": "Damaged product selected and issue description recorded",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/04_wizard_step2_problem_details.png"
+    },
+    {
+      "stepNumber": 5,
+      "workspace": "Customer Workspace",
+      "actor": "Alex Morgan (Buyer)",
+      "action": "Select requested remedy: \"Replacement\"",
+      "expected": "Replacement preference selected",
+      "actual": "Remedy option \"Replacement\" highlighted",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/05_wizard_step3_remedy_choice.png"
+    },
+    {
+      "stepNumber": 6,
+      "workspace": "Customer Workspace",
+      "actor": "Alex Morgan (Buyer)",
+      "action": "Upload synthetic tax invoice PDF and product damage PNG photo",
+      "expected": "Both files accepted and previewed in dropzone slots",
+      "actual": "Uploaded tax-invoice-digitalmart.pdf and product-damage-mouse.png",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/06_wizard_step4_evidence_uploaded.png"
+    },
+    {
+      "stepNumber": 7,
+      "workspace": "Customer Workspace",
+      "actor": "Alex Morgan (Buyer)",
+      "action": "Review complaint summary before final submission",
+      "expected": "Order, problem, remedy preference, and evidence files shown",
+      "actual": "Review screen rendered with all verified fields",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/07_wizard_step5_review_summary.png"
+    },
+    {
+      "stepNumber": 8,
+      "workspace": "Customer Workspace",
+      "actor": "Alex Morgan (Buyer)",
+      "action": "Submit complaint and record generated ID: RG-1465",
+      "expected": "Complaint created atomically in DB with caseNumber: RG-1465",
+      "actual": "Created case RG-1465 (dbId: cmwdh9tcs01rcm8vj88xkqa6i) with 2 evidence items, initial status: UNDER_ANALYSIS",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/08_wizard_step6_submission_success.png",
+      "apiOrDbRecord": {
+        "caseNumber": "RG-1465",
+        "dbId": "cmwdh9tcs01rcm8vj88xkqa6i",
+        "amountMinor": 799900,
+        "currency": "INR",
+        "status": "UNDER_ANALYSIS",
+        "evidenceCount": 2
+      }
+    },
+    {
+      "stepNumber": 9,
+      "workspace": "Customer Workspace",
+      "actor": "Alex Morgan (Buyer)",
+      "action": "View Complaint Details at /cases/RG-1465",
+      "expected": "Render customer dispute tracker, status badge, vertical timeline, evidence vault",
+      "actual": "Complaint tracker rendered for RG-1465, status: Submitted/Reviewing, timeline visible",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/09_customer_case_detail_view.png"
+    },
+    {
+      "stepNumber": 10,
+      "workspace": "Platform Workspace",
+      "actor": "Priya Raghavan (Resolution Manager)",
+      "action": "Authenticate and view /overview Platform Overview",
+      "expected": "Platform Overview Dashboard rendered with operational KPIs",
+      "actual": "Platform admin dashboard loaded with active dispute metrics",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/10_platform_overview_dashboard.png"
+    },
+    {
+      "stepNumber": 11,
+      "workspace": "Platform Workspace",
+      "actor": "Priya Raghavan (Resolution Manager)",
+      "action": "Search and locate case RG-1465 in platform cases list",
+      "expected": "Case RG-1465 visible in roster table with Alex Morgan and ₹7,999",
+      "actual": "Found RG-1465 in platform case roster",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/11_platform_case_roster.png"
+    },
+    {
+      "stepNumber": 12,
+      "workspace": "Platform Workspace",
+      "actor": "Priya Raghavan (Resolution Manager)",
+      "action": "Open case dossier for RG-1465",
+      "expected": "Render multi-tab investigation workbench with Overview tab active",
+      "actual": "Dossier opened for RG-1465, showing order OD-AMZ-2026-994411 and buyer evidence",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/12_platform_case_dossier.png"
+    },
+    {
+      "stepNumber": 13,
+      "workspace": "Platform Workspace",
+      "actor": "Priya Raghavan (Resolution Manager)",
+      "action": "Inspect Seller Outreach & Verify Seller Identity Mapping for RG-1465",
+      "expected": "Buyer screening PASSED, Seller mapped to DigitalMart Commerce Private Limited, Request generated",
+      "actual": "Seller matched to DigitalMart Commerce Private Limited (GSTIN: 27AABCD2345F1Z2), Request SER-2026-1004 dispatched to DigitalMart Express Portal (org_digitalmart)",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/13_platform_seller_outreach_tab.png",
+      "apiOrDbRecord": {
+        "sellerRequestId": "cmwdh9tgz01rpm8vjfzk8nc4p",
+        "sellerRequestNumber": "SER-2026-1004",
+        "recipientOrg": "org_digitalmart",
+        "deliveryChannel": "SELLER_PORTAL"
+      }
+    },
+    {
+      "stepNumber": 14,
+      "workspace": "Seller Workspace",
+      "actor": "DigitalMart Express (Merchant Owner)",
+      "action": "Authenticate and view /seller/requests Evidence Requests",
+      "expected": "Authenticated into DigitalMart Express Portal, request SER-2026-1004 listed for case RG-1465",
+      "actual": "Evidence requests rendered for org_digitalmart, showing request for RG-1465",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/14_seller_requests_roster.png"
+    },
+    {
+      "stepNumber": 15,
+      "workspace": "Seller Workspace",
+      "actor": "DigitalMart Express (Merchant Owner)",
+      "action": "Open Evidence Request SER-2026-1004 for case RG-1465",
+      "expected": "Order information, customer complaint statement, and requested evidence checklist displayed",
+      "actual": "Opened request SER-2026-1004, displaying order OD-AMZ-2026-994411 and damaged product claim",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/15_seller_request_detail.png"
+    },
+    {
+      "stepNumber": 16,
+      "workspace": "Seller Workspace",
+      "actor": "DigitalMart Express (Merchant Owner)",
+      "action": "Submit Seller Response (AGREE, inspection declaration, replacement stock confirmation)",
+      "expected": "Response persisted in SellerEvidenceResponse with attached evidence and status SELLER_RESPONDED",
+      "actual": "Response cmwdhaqhy01ucm8vjcpgco35s persisted (Stance: AGREE) with 0 evidence items",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/16_seller_response_submitted.png",
+      "apiOrDbRecord": {
+        "responseId": "cmwdhaqhy01ucm8vjcpgco35s",
+        "stance": "AGREE",
+        "evidenceCount": 0
+      }
+    },
+    {
+      "stepNumber": 17,
+      "workspace": "Seller Workspace",
+      "actor": "DigitalMart Express (Merchant Owner)",
+      "action": "Verify Submitted Responses history at /seller/responses",
+      "expected": "Response for request SER-2026-1004 / case RG-1465 listed in history",
+      "actual": "Response listed with timestamp, status, and declaration details preserved",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/17_seller_responses_history.png"
+    },
+    {
+      "stepNumber": 18,
+      "workspace": "Platform Workspace",
+      "actor": "Priya Raghavan (Resolution Manager)",
+      "action": "Verify Seller Response displayed on case RG-1465",
+      "expected": "Seller response visible with stance AGREE and attached warehouse declaration",
+      "actual": "Platform UI displays verified seller response from DigitalMart Commerce Private Limited",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/18_platform_seller_response_retrieved.png"
+    },
+    {
+      "stepNumber": 19,
+      "workspace": "Platform Workspace",
+      "actor": "Priya Raghavan (Resolution Manager)",
+      "action": "Inspect updated BEG Graph at /cases/RG-1465?tab=evidence_beg",
+      "expected": "BEG Graph connects Buyer evidence, Seller response, Order specs, and Claims with verified provenance",
+      "actual": "BEG Graph v2 active with 24 nodes and 25 edges",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/19_platform_beg_graph.png",
+      "apiOrDbRecord": {
+        "begGraphId": "cmwdh9tji01rxm8vjcssj5mml",
+        "version": 2,
+        "nodeCount": 24,
+        "edgeCount": 25,
+        "revisionsCount": 2
+      }
+    },
+    {
+      "stepNumber": 20,
+      "workspace": "Platform Workspace",
+      "actor": "Priya Raghavan (Resolution Manager)",
+      "action": "Inspect BERR Reasoning Assessment at /cases/RG-1465?tab=berr",
+      "expected": "BERR evaluates buyer and seller evidence, categorizing findings into AGREED / VERIFIED with 0 conflicts",
+      "actual": "BERR v2 (COMPLETED): 3 findings, buyerCoherence: 100, sellerCoherence: 100",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/20_platform_berr_assessment.png",
+      "apiOrDbRecord": {
+        "assessmentId": "cmwdhaqmk01uym8vjr9jj0yzn",
+        "version": 2,
+        "status": "COMPLETED",
+        "findingsCount": 3,
+        "buyerCoherenceScore": 100,
+        "sellerCoherenceScore": 100
+      }
+    },
+    {
+      "stepNumber": 21,
+      "workspace": "Platform Workspace",
+      "actor": "Priya Raghavan (Resolution Manager)",
+      "action": "Evaluate Policy and Create Formal Remedy Proposal for RG-1465",
+      "expected": "Policy evaluates REPLACEMENT as eligible; ResolutionProposal created in PENDING_APPROVAL status",
+      "actual": "Proposal cmwdhbeak01v7m8vjg2z5qbit created (Type: REPLACEMENT, Status: PENDING_BUYER, Auth: PENDING_APPROVAL)",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/22_platform_proposal_created.png",
+      "apiOrDbRecord": {
+        "proposalId": "cmwdhbeak01v7m8vjg2z5qbit",
+        "proposalType": "REPLACEMENT",
+        "authorizationStatus": "PENDING_APPROVAL"
+      }
+    },
+    {
+      "stepNumber": 22,
+      "workspace": "Platform Workspace",
+      "actor": "Priya Raghavan (Resolution Manager)",
+      "action": "Authorize Proposal cmwdhbeak01v7m8vjg2z5qbit and initiate Replacement Fulfillment",
+      "expected": "Proposal status updated to AUTHORIZED, ReplacementFulfillment created, Case moves to EXECUTING_REPLACEMENT",
+      "actual": "Proposal authorized, ReplacementFulfillment cmwdhbhvr01vim8vjns23vh0d initiated, Case status: EXECUTING_REPLACEMENT",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/23_platform_remedy_authorized_and_executing.png",
+      "apiOrDbRecord": {
+        "proposalId": "cmwdhbeak01v7m8vjg2z5qbit",
+        "fulfillmentId": "cmwdhbhvr01vim8vjns23vh0d",
+        "authorizationStatus": "AUTHORIZED",
+        "caseStatus": "EXECUTING_REPLACEMENT"
+      }
+    },
+    {
+      "stepNumber": 23,
+      "workspace": "Platform & Seller Workspaces",
+      "actor": "DigitalMart Express & Resolution Manager",
+      "action": "Confirm replacement stock and dispatch unit with BlueDart tracking BD-DM-REP-8829104",
+      "expected": "ReplacementFulfillment status updated to DISPATCHED with tracking number",
+      "actual": "Dispatched via BlueDart Express (BD-DM-REP-8829104), PackagePassport seal attached",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/24_platform_replacement_dispatched.png",
+      "apiOrDbRecord": {
+        "fulfillmentId": "cmwdhbhvr01vim8vjns23vh0d",
+        "status": "DISPATCHED",
+        "carrier": "BlueDart Express",
+        "trackingNumber": "BD-DM-REP-8829104"
+      }
+    },
+    {
+      "stepNumber": 24,
+      "workspace": "Platform Workspace",
+      "actor": "Priya Raghavan (Resolution Manager) & Alex Morgan",
+      "action": "Confirm delivery and mark case RG-1465 RESOLVED",
+      "expected": "Case RG-1465 transitions to RESOLVED, ReplacementFulfillment marked COMPLETED",
+      "actual": "Case RG-1465 status is RESOLVED, remedy is REPLACEMENT, audit ledger updated",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/25_platform_case_resolved_final.png",
+      "apiOrDbRecord": {
+        "finalStatus": "RESOLVED",
+        "finalStage": "FINALIZED",
+        "recommendedRemedy": "REPLACEMENT",
+        "totalEvents": 27
+      }
+    },
+    {
+      "stepNumber": 25,
+      "workspace": "Customer Workspace",
+      "actor": "Alex Morgan (Buyer)",
+      "action": "Verify final resolved status and persistence on /cases/RG-1465",
+      "expected": "Customer sees Resolved status badge, completed timeline, replacement tracking number BD-DM-REP-8829104",
+      "actual": "Customer workspace reflects completed resolution, replacement delivered, persists after reload",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/26_final_sync_customer_workspace.png"
+    },
+    {
+      "stepNumber": 26,
+      "workspace": "Seller Workspace",
+      "actor": "DigitalMart Express (Merchant Owner)",
+      "action": "Verify request status and response preservation at /seller/requests/cmwdh9tgz01rpm8vjfzk8nc4p",
+      "expected": "Seller response preserved, fulfillment completion accurately reflected, no cross-tenant leakage",
+      "actual": "Seller workspace shows response submitted and replacement fulfilled, strictly isolated to org_digitalmart",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/28_final_sync_seller_workspace.png"
+    },
+    {
+      "stepNumber": 27,
+      "workspace": "Platform Workspace",
+      "actor": "Priya Raghavan (Resolution Manager)",
+      "action": "Inspect complete audit trail on /cases/RG-1465?tab=audit",
+      "expected": "Full chronological audit ledger: Created -> Screened -> Requested -> Responded -> BEG v2 -> BERR v2 -> Proposed -> Authorized -> Dispatched -> Resolved",
+      "actual": "Audit trail shows unbroken chain of cryptographic events for the same complaint ID",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-single-case/29_final_sync_platform_audit_trail.png"
+    }
+  ]
+}

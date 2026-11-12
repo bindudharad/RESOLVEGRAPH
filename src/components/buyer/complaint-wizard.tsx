@@ -601,6 +601,7 @@ export function BuyerComplaintWizard() {
 
           <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
             <button
+              id="wizard-next-step-1"
               type="button"
               onClick={handleNextFromStep1}
               className="inline-flex h-10 sm:h-11 items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-6 text-xs sm:text-sm font-semibold shadow-sm transition-all focus:outline-none focus:ring-4 focus:ring-blue-200 cursor-pointer whitespace-nowrap"
@@ -633,6 +634,7 @@ export function BuyerComplaintWizard() {
               return (
                 <label
                   key={cat.id}
+                  id={`cat-${cat.id}`}
                   className={`flex items-start gap-3.5 p-4 rounded-xl border cursor-pointer transition-all ${
                     isSelected
                       ? "border-blue-600 bg-blue-50/50 ring-2 ring-blue-100 shadow-xs"
@@ -760,6 +762,7 @@ export function BuyerComplaintWizard() {
               <span>Back</span>
             </button>
             <button
+              id="wizard-next-step-2"
               type="button"
               onClick={handleNextFromStep2}
               className="inline-flex h-10 sm:h-11 items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-6 text-xs sm:text-sm font-semibold shadow-sm transition-all focus:outline-none focus:ring-4 focus:ring-blue-200 cursor-pointer whitespace-nowrap"
@@ -792,6 +795,7 @@ export function BuyerComplaintWizard() {
               return (
                 <label
                   key={pref.id}
+                  id={`remedy-${pref.id.toLowerCase()}`}
                   className={`flex items-start gap-4 p-5 rounded-xl border cursor-pointer transition-all ${
                     isSelected
                       ? "border-blue-600 bg-blue-50/50 ring-2 ring-blue-100 shadow-xs"
@@ -842,6 +846,7 @@ export function BuyerComplaintWizard() {
               <span>Back</span>
             </button>
             <button
+              id="wizard-next-step-3"
               type="button"
               onClick={handleNextFromStep3}
               className="inline-flex h-10 sm:h-11 items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-6 text-xs sm:text-sm font-semibold shadow-sm transition-all focus:outline-none focus:ring-4 focus:ring-blue-200 cursor-pointer whitespace-nowrap"
@@ -936,6 +941,7 @@ export function BuyerComplaintWizard() {
                       <UploadCloud className="h-3.5 w-3.5 text-blue-600" />
                       <span>Select {slot.kind === "video" ? "Video" : "File"}</span>
                       <input
+                        id={`file-input-${slot.id}`}
                         type="file"
                         multiple={slot.multiple}
                         accept={slot.acceptedMimeTypes}
@@ -1012,6 +1018,7 @@ export function BuyerComplaintWizard() {
               <span>Back</span>
             </button>
             <button
+              id="wizard-next-step-4"
               type="button"
               onClick={handleNextFromStep4}
               className="inline-flex h-10 sm:h-11 items-center justify-center gap-1.5 sm:gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 text-xs sm:text-sm font-semibold shadow-sm transition-all focus:outline-none focus:ring-4 focus:ring-blue-200 cursor-pointer whitespace-nowrap"
@@ -1192,6 +1199,7 @@ export function BuyerComplaintWizard() {
               <span>Edit details</span>
             </button>
             <button
+              id="wizard-submit-complaint"
               type="button"
               disabled={isSubmitting}
               onClick={handleSubmitComplaint}
@@ -1232,7 +1240,7 @@ export function BuyerComplaintWizard() {
           <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-6 max-w-md mx-auto text-left space-y-3">
             <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
               <span className="text-xs font-semibold text-slate-500 uppercase">Complaint ID</span>
-              <span className="font-mono font-bold text-blue-700 text-base">{submittedCase.id}</span>
+              <span id="submitted-complaint-id" className="font-mono font-bold text-blue-700 text-base">{submittedCase.id}</span>
             </div>
             <div className="flex items-center justify-between text-xs sm:text-sm">
               <span className="text-slate-500">Shopping platform:</span>

@@ -350,6 +350,44 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
     }
   };
 
+  const handleActReplacement = async (
+    fulfillmentId: string,
+    action: string,
+    extra?: Record<string, unknown>
+  ) => {
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`/api/replacements/${fulfillmentId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, ...extra }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        toast({
+          tone: "success",
+          title: `Replacement: ${action}`,
+          description: data.message || `Fulfillment status: ${data.fulfillment?.status}`,
+        });
+        await loadProposalsAndOptions();
+      } else {
+        toast({
+          tone: "error",
+          title: "Replacement Action Failed",
+          description: data.error || "Failed to update replacement fulfillment.",
+        });
+      }
+    } catch {
+      toast({
+        tone: "error",
+        title: "Network Error",
+        description: "Unable to reach replacement fulfillment service.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const remedyOptions: RemedyOption[] = (policyInfo?.candidateOptions || []).map((opt) => {
     const meta = OPTION_META[opt.proposalType] || {
       id: opt.proposalType.toLowerCase(),
@@ -496,10 +534,66 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
                     </p>
                   )}
                   {prop.replacementFulfillment && (
-                    <p className="text-[11px] text-sky-300">
-                      Replacement Status: {prop.replacementFulfillment.status}
-                      {prop.replacementFulfillment.trackingNumber ? ` • Tracking #${prop.replacementFulfillment.trackingNumber}` : ""}
-                    </p>
+                    <div className="mt-2.5 p-3 rounded-xl border border-cyan-500/30 bg-cyan-950/20 space-y-2 text-left">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-cyan-300">Replacement Fulfillment</span>
+                        <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-200 border border-cyan-500/30">
+                          {prop.replacementFulfillment.status}
+                        </span>
+                      </div>
+                      {prop.replacementFulfillment.trackingNumber && (
+                        <p className="text-[11.5px] text-cyan-200 font-mono">
+                          Tracking: <strong className="text-white">{prop.replacementFulfillment.trackingNumber}</strong> ({prop.replacementFulfillment.carrierName || "BlueDart Express"})
+                        </p>
+                      )}
+                      <div className="flex flex-wrap gap-2 pt-1 border-t border-cyan-500/20">
+                        {prop.replacementFulfillment.status === "PENDING_STOCK_CONFIRMATION" && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={isSubmitting}
+                            onClick={() =>
+                              handleActReplacement(prop.replacementFulfillment!.id, "SELLER_CONFIRM", {
+                                confirmedSku: "LOGI-MXM3S-GRAPHITE",
+                                notes: "Warehouse stock confirmed and allocated for replacement.",
+                              })
+                            }
+                          >
+                            Confirm Replacement Stock
+                          </Button>
+                        )}
+                        {prop.replacementFulfillment.status === "SELLER_CONFIRMED" && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={isSubmitting}
+                            onClick={() =>
+                              handleActReplacement(prop.replacementFulfillment!.id, "DISPATCH", {
+                                carrierName: "BlueDart Express",
+                                trackingNumber: "BD-DM-REP-8829104",
+                                sealNumber: "SEAL-DM-9941",
+                              })
+                            }
+                          >
+                            Dispatch Replacement Unit
+                          </Button>
+                        )}
+                        {prop.replacementFulfillment.status === "DISPATCHED" && (
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            disabled={isSubmitting}
+                            onClick={() =>
+                              handleActReplacement(prop.replacementFulfillment!.id, "CONFIRM_DELIVERY", {
+                                deliveryNote: "Customer confirmed delivery of sealed replacement unit.",
+                              })
+                            }
+                          >
+                            Confirm Delivery & Resolve Case
+                          </Button>
+                        )}
+                      </div>
+                    </div>
                   )}
 
                   {/* Actions for Pending / Authorizable / Executable Proposals */}

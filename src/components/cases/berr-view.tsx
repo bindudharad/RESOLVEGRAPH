@@ -28,6 +28,7 @@ import { CANONICAL_BERR_ROWS, type BerrComparisonRow } from "@/lib/demo-fixture"
 import { Chip } from "@/components/ui/chip";
 import { Button } from "@/components/ui/button";
 import { SlideOver } from "@/components/ui/slide-over";
+import { BerrLoadingState } from "@/components/cases/berr-loading-state";
 import { cn } from "@/lib/utils";
 import type {
   BerrNextActionType,
@@ -360,6 +361,10 @@ export function BerrView({
     );
   }
 
+  if (loading && !liveAssessment) {
+    return <BerrLoadingState />;
+  }
+
   const invCtx = liveAssessment?.investigationContext;
   const overallBadge =
     OVERALL_STATUS_BADGES[liveAssessment?.overallStatus || "COMPLETED"] ||
@@ -606,7 +611,10 @@ export function BerrView({
 
       {/* C: Finding Comparison Cards */}
       <div className="space-y-3">
-        {filteredRows.map((row) => {
+        {runningEval ? (
+          <BerrLoadingState />
+        ) : (
+          filteredRows.map((row) => {
           const isSelected = selectedRow?.id === row.id;
           const isBuyerHovered = hoveredSource === row.buyerSourceId;
           const isMerchantHovered = hoveredSource === row.merchantSourceId;
@@ -740,9 +748,9 @@ export function BerrView({
               </div>
             </div>
           );
-        })}
+        }))}
 
-        {!loading && filteredRows.length === 0 && (
+        {!loading && !runningEval && filteredRows.length === 0 && (
           <div className="rg-card p-8 text-center">
             <p className="text-sm font-medium text-fg">
               No findings match this filter in BERR v{liveAssessment?.version || 1}.

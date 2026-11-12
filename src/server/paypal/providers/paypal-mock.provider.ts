@@ -13,6 +13,7 @@ import {
 } from './paypal-provider.interface';
 import { toDecimalString } from '../utils/money';
 import { PayPalApiError } from '../errors/paypal-error';
+import { prisma } from '@/lib/prisma';
 
 interface MockStoredOrder {
   id: string;
@@ -226,7 +227,25 @@ export class PayPalMockProvider implements IPayPalProvider {
   }
 
   public async getCapture(captureId: string): Promise<PayPalCaptureResponse> {
-    const capture = PayPalMockProvider.captures.get(captureId);
+    let capture = PayPalMockProvider.captures.get(captureId);
+    if (!capture) {
+      const dbPayment = await prisma.payPalPayment.findFirst({
+        where: { captureId },
+      });
+      if (dbPayment && dbPayment.captureId) {
+        capture = {
+          id: dbPayment.captureId,
+          orderId: dbPayment.providerOrderId,
+          amountMinor: dbPayment.amountMinor,
+          currency: dbPayment.currency,
+          status: 'COMPLETED',
+          refundedMinor: 0,
+          createTime: dbPayment.capturedAt?.toISOString() || new Date().toISOString(),
+        };
+        PayPalMockProvider.captures.set(captureId, capture);
+      }
+    }
+
     if (!capture) {
       throw new PayPalApiError({
         message: `Capture not found: ${captureId}`,
@@ -255,7 +274,25 @@ export class PayPalMockProvider implements IPayPalProvider {
       return PayPalMockProvider.operations.get(idempotencyKey);
     }
 
-    const capture = PayPalMockProvider.captures.get(params.captureId);
+    let capture = PayPalMockProvider.captures.get(params.captureId);
+    if (!capture) {
+      const dbPayment = await prisma.payPalPayment.findFirst({
+        where: { captureId: params.captureId },
+      });
+      if (dbPayment && dbPayment.captureId) {
+        capture = {
+          id: dbPayment.captureId,
+          orderId: dbPayment.providerOrderId,
+          amountMinor: dbPayment.amountMinor,
+          currency: dbPayment.currency,
+          status: 'COMPLETED',
+          refundedMinor: 0,
+          createTime: dbPayment.capturedAt?.toISOString() || new Date().toISOString(),
+        };
+        PayPalMockProvider.captures.set(params.captureId, capture);
+      }
+    }
+
     if (!capture) {
       throw new PayPalApiError({
         message: `Capture not found for refund: ${params.captureId}`,

@@ -241,18 +241,60 @@ npx tsx --test tests/buyer-seller-audit-e2e.test.ts
 | Persona | Role | Email | Password | Primary Workflow |
 |---|---|---|---|---|
 | **Priya Raghavan** | Platform Admin / Investigator | `admin@resolvegraph.demo` | `Admin@ResolveGraph2026!` | `/overview`, `/cases`, `/resolution` |
-| **Alex Morgan** | Consumer / Buyer | `alex.morgan@consumer.demo` | `Buyer@ResolveGraph2026!` | `/cases/RG-1462`, `/intake` |
+| **Alex Morgan** | Consumer / Buyer | `alex.morgan@consumer.demo` | `Buyer@ResolveGraph2026!` | `/cases/RG-1465`, `/cases/RG-1468`, `/intake` |
+| **DigitalMart Rep** | Registered Merchant (E2E Test Org) | `support@digitalmart.demo` | `Merchant@DigitalMart2026!` | `/seller`, `/seller/requests` |
 | **TechStore Rep** | Registered Merchant | `disputes@techstore.demo` | `Merchant@TechStore2026!` | `/seller`, `/seller/requests` |
 
 **Recommended 3-Minute Judge Demonstration Walkthrough:**
 1. Open [http://localhost:3000](http://localhost:3000) to inspect problem statement and bilateral value proposition.
-2. Log in as Customer (`alex.morgan@consumer.demo`) $\rightarrow$ Navigate to `/cases/RG-1462` to inspect the VEGA Helmet dispute and the assisted seller outreach channel.
-3. Log in as Platform Investigator (`admin@resolvegraph.demo`) $\rightarrow$ Open `/cases/RG-1001` $\rightarrow$ Open **Evidence & BEG** tab to inspect the 54k-edge graph with edge culling $\rightarrow$ Switch to **Resolution** tab to audit BERR risk score and policy authorization.
-4. Log in as Merchant (`disputes@techstore.demo`) $\rightarrow$ Open `/seller/responses` to inspect verified responses with green `Declaration & Tracking Provided` badge.
+2. Log in as Customer (`alex.morgan@consumer.demo`) $\rightarrow$ Navigate to `/cases/RG-1465` to inspect the verified Logitech MX Master 3S single-complaint replacement journey, or `/cases/RG-1468` to inspect the electronic payment refund journey.
+3. Log in as Platform Investigator (`admin@resolvegraph.demo`) $\rightarrow$ Open `/cases/RG-1001` $\rightarrow$ Open **Evidence & BEG** tab to inspect the 400+ relation graph with priority edge culling $\rightarrow$ Switch to **Resolution** tab to audit BERR fact classification and manager authorization.
+4. Log in as Registered Merchant (`support@digitalmart.demo`) $\rightarrow$ Open `/seller/requests` to inspect active dispute requests with full seller defense tooling.
 
 ---
 
-## 19. Known Limitations
+## 19. Authoritative Test Suites & Verification
+
+```bash
+# 1. Primary Single-Case Replacement Journey E2E (27 Audited Steps across all 3 Workspaces)
+npx tsx scripts/run-e2e-single-case-journey.ts
+
+# 2. Single-Case Full Refund Journey E2E (Payment Sandbox Execution)
+npx tsx scripts/run-e2e-refund-journey.ts
+
+# 3. Financial Safeguards Negative Security Suite (12 Tests)
+npx tsx --test tests/financial-safeguards-negative.test.ts
+
+# 4. Controlled Negative Scenarios Audit
+npx tsx scripts/run-negative-failure-scenarios.ts
+
+# 5. Strict TypeScript Check (0 Errors)
+npx tsc --noEmit
+
+# 6. Production Build Verification (88 Routes)
+npm run build
+
+# 7. Automated Multi-Device Visual QA (20 Screenshots)
+npx tsx scripts/capture-final-ui-qa.ts
+```
+
+---
+
+## 20. Authoritative Documentation & Audit Reports
+
+- [Text-Led Website Redesign & Loading Animation Suite](file:///c:/Projects/resolvegraph/RESOLVEGRAPH_TEXT_LED_REDESIGN_FINAL_REPORT.md)
+- [Final Judge Evaluation Report](file:///c:/Projects/resolvegraph/RESOLVEGRAPH_FINAL_JUDGE_EVALUATION.md)
+- [Judge Demonstration Guide](file:///c:/Projects/resolvegraph/RESOLVEGRAPH_JUDGE_DEMO_GUIDE.md)
+- [Final Master Audit Report](file:///c:/Projects/resolvegraph/RESOLVEGRAPH_FINAL_MASTER_AUDIT.md)
+- [Single-Case E2E Workflow Verification](file:///c:/Projects/resolvegraph/RESOLVEGRAPH_FINAL_END_TO_END_WORKFLOW_REPORT.md)
+- [Refund E2E Verification](file:///c:/Projects/resolvegraph/RESOLVEGRAPH_FINAL_REFUND_VERIFICATION.md)
+- [Security & Access Control Audit](file:///c:/Projects/resolvegraph/RESOLVEGRAPH_FINAL_SECURITY_AUDIT.md)
+- [Data Reconciliation Audit](file:///c:/Projects/resolvegraph/RESOLVEGRAPH_FINAL_DATA_RECONCILIATION.md)
+- [UI/UX Design System Guide](file:///c:/Projects/resolvegraph/docs/RESOLVEGRAPH_FINAL_UI_DESIGN_SYSTEM.md)
+
+---
+
+## 21. Known Limitations
 - **Live Marketplace Direct Write:** External marketplaces (Amazon, Flipkart) currently operate via assisted legal outreach documents because public write-access APIs for third-party dispute filing are restricted to registered buyer accounts.
 - **Physical NFC Hardware:** Unboxing sessions currently verify digital cryptographic session tokens; direct physical NTAG424 DNA tag verification requires a WebNFC-compatible mobile device.
 - **Production Banking Credentials:** Payout execution runs in verified local simulation mode until live production RazorpayX / PayPal keys are configured.

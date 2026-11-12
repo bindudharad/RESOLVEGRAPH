@@ -1,0 +1,106 @@
+{
+  "testCaseNumber": "RG-1468",
+  "testCaseDbId": "cmwdhwb96023lm8vjzcixukyb",
+  "sellerRequestId": "cmwdhwbb7023ym8vjar9ovam3",
+  "sellerRequestNumber": "SER-2026-1008",
+  "proposalId": "cmwdhx8rq027rm8vj87lbtl0f",
+  "refundId": "cmwdhx92u0283m8vj1kpgael3",
+  "totalSteps": 5,
+  "passedSteps": 5,
+  "failedSteps": 0,
+  "auditLogs": [
+    {
+      "stepNumber": 1,
+      "workspace": "Customer Workspace",
+      "actor": "Alex Morgan (Buyer)",
+      "action": "Submit complaint for Full Refund (ID: RG-1468)",
+      "expected": "Complaint created with FULL_REFUND preference and invoice evidence",
+      "actual": "Created complaint RG-1468 for Keychron K2 (₹4,999.00)",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-refund/06_refund_submission_success.png"
+    },
+    {
+      "stepNumber": 2,
+      "workspace": "Platform Workspace",
+      "actor": "Priya Raghavan (Resolution Manager)",
+      "action": "Identify seller and dispatch evidence request (SER-2026-1008)",
+      "expected": "Matched to DigitalMart Commerce Private Limited and request issued",
+      "actual": "Dispatched SER-2026-1008 to org_digitalmart via SELLER_PORTAL",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-refund/07_refund_platform_seller_outreach.png"
+    },
+    {
+      "stepNumber": 3,
+      "workspace": "Seller Workspace",
+      "actor": "DigitalMart Express (Merchant Owner)",
+      "action": "Submit Seller Response (AGREE to Full Refund + Declaration)",
+      "expected": "Response persisted in SellerEvidenceResponse with stance AGREE",
+      "actual": "Submitted stance AGREE acknowledging warehouse error and committing 100% refund",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-refund/09_refund_seller_response_submitted.png"
+    },
+    {
+      "stepNumber": 4,
+      "workspace": "Platform Workspace",
+      "actor": "Priya Raghavan (Resolution Manager)",
+      "action": "Authorize and execute FULL_REFUND via payment sandbox",
+      "expected": "Refund transaction executed (status: COMPLETED) and case marked RESOLVED",
+      "actual": "Refund cmwdhx92u0283m8vj1kpgael3 executed successfully (₹4,999.00 INR), Case RG-1468 RESOLVED",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-refund/12_refund_executed_and_resolved.png",
+      "record": {
+        "success": true,
+        "proposal": {
+          "id": "cmwdhx8rq027rm8vj87lbtl0f",
+          "caseId": "cmwdhwb96023lm8vjzcixukyb",
+          "organizationId": "org_digitalmart",
+          "policyId": null,
+          "basedOnAnalysisRunId": null,
+          "basedOnAssessmentId": "cmwdhwuxk027em8vj64js337e",
+          "proposedById": "usr_priya_admin",
+          "proposalType": "FULL_REFUND",
+          "title": "Full Purchase Amount Refund",
+          "description": "Authorized 100% full refund of INR 4,999.00 to original payment method via electronic payment gateway.",
+          "amountMinor": 499900,
+          "currency": "INR",
+          "reason": "Merchant acknowledged shipping error and confirmed stockout; bilateral evidence supports 100% full refund under DigitalMart policy. [Authorized: Authorized by Resolution Manager Priya Raghavan based on verified bilateral evidence.]",
+          "policyVersion": "1.0",
+          "status": "AGREED",
+          "authorizationStatus": "AUTHORIZED",
+          "authorizedById": "usr_priya_admin",
+          "authorizedAt": "2026-11-12T12:00:10.005Z",
+          "denialReason": null,
+          "executionMode": "PAYPAL_REFUND",
+          "expiresAt": null,
+          "createdAt": "2026-11-12T12:00:09.638Z",
+          "updatedAt": "2026-11-12T12:00:10.006Z"
+        },
+        "execution": {
+          "executed": true,
+          "mode": "PAYPAL_REFUND",
+          "status": "COMPLETED",
+          "resolved": true,
+          "refundId": "cmwdhx92u0283m8vj1kpgael3"
+        },
+        "message": "Proposal review decision 'APPROVED' applied successfully."
+      }
+    },
+    {
+      "stepNumber": 5,
+      "workspace": "Multi-Workspace",
+      "actor": "All Personas",
+      "action": "Verify synchronized state across Customer and Platform",
+      "expected": "All portals show RESOLVED status, FULL_REFUND remedy, and refund audit events",
+      "actual": "Synchronized: Case RESOLVED, remedy FULL_REFUND, refund transaction COMPLETED",
+      "status": "PASS",
+      "screenshot": "/screenshots/e2e-refund/13_refund_final_sync_customer_workspace.png",
+      "record": {
+        "caseNumber": "RG-1468",
+        "status": "RESOLVED",
+        "remedy": "FULL_REFUND",
+        "refundId": "cmwdhx92u0283m8vj1kpgael3",
+        "eventsCount": 28
+      }
+    }
+  ]
+}

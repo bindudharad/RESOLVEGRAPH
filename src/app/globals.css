@@ -54,50 +54,51 @@
 }
 
 :root {
-  /* --- The Convergence Ledger (Warm Paper First) --- */
-  --bg: #F4F1E8;
-  --surface: #FFFFFF;
-  --surface-2: #EAE6DB;
-  --line: #DCD7C9;
-  --line-strong: #C8C2B3;
-  --ink: #11191A;
-  --ink-2: #525C58;
-  --ink-3: #747D79;
-  --nav-bg: #11191A;
-  --nav-ink: #EAE6DB;
-  --accent: #4350E5;       /* primary action and focus ring ONLY */
-  --buyer: #4C91C8;        /* buyer blue */
-  --merchant: #388F7D;     /* merchant sage */
-  --ai: #8875B5;           /* AI violet */
-  --copper: #BC7355;       /* copper accent */
-  --amber: #C18B45;        /* soft amber */
-  --payment: #172020;
-  --agreed: #378D70;
-  --contested: #C18B45;
-  --missing: #929A96;      /* neutral missing evidence */
-  --verified: #378D70;
-  --danger: #C8372D;       /* destructive only */
+  /* --- The Evidence Atelier (Warm Canvas & Tactile Surfaces) --- */
+  --bg: #F4F2EC;           /* Warm canvas */
+  --surface: #FFFEFA;      /* Primary surface */
+  --surface-2: #EBE9E2;    /* Secondary recessed surface */
+  --surface-raised: #FFFFFF; /* Elevated tactile surface */
+  --line: #D9DED7;         /* Subtle hairline border */
+  --line-strong: #B5BEB6;  /* Strong boundary border */
+  --ink: #15191C;          /* Deep ink primary text */
+  --ink-2: #414B52;        /* Secondary reading text */
+  --ink-3: #718078;        /* Muted metadata & labels */
+  --nav-bg: #11191A;       /* Architectural dark navigation */
+  --nav-ink: #F4F2EC;      /* Crisp nav text */
+  --accent: #4350E5;       /* Primary brand indigo */
+  --buyer: #4D92CC;        /* Buyer blue */
+  --merchant: #278B79;     /* Seller teal */
+  --ai: #8B72C9;           /* AI reasoning violet */
+  --copper: #C86D4F;       /* Warm editorial copper */
+  --amber: #CA8B2B;        /* Contested amber */
+  --payment: #15191C;      /* Financial ledger dark */
+  --agreed: #2E8A62;       /* Corroborated success green */
+  --contested: #CA8B2B;    /* Contested warning amber */
+  --missing: #718078;      /* Neutral missing obligation */
+  --verified: #2E8A62;     /* Verified ground truth */
+  --danger: #C84E4E;       /* Error / security failure */
 
   /* Legacy variable mappings */
-  --color-app: #F4F1E8;
-  --color-shell: #F4F1E8;
+  --color-app: #F4F2EC;
+  --color-shell: #F4F2EC;
   --color-sidebar: #11191A;
-  --color-surface: #FFFFFF;
-  --color-surface-2: #EAE6DB;
-  --color-surface-3: #DCD7C9;
-  --color-line: #DCD7C9;
-  --color-line-2: #C8C2B3;
-  --color-fg: #11191A;
-  --color-muted: #525C58;
-  --color-subtle: #747D79;
+  --color-surface: #FFFEFA;
+  --color-surface-2: #EBE9E2;
+  --color-surface-3: #D9DED7;
+  --color-line: #D9DED7;
+  --color-line-2: #B5BEB6;
+  --color-fg: #15191C;
+  --color-muted: #414B52;
+  --color-subtle: #718078;
   --color-faint: #929A96;
   --color-brand: #4350E5;
-  --color-brand-2: #6370F5;
+  --color-brand-2: #5C68FA;
   --color-brand-solid: #4350E5;
-  --color-info: #4C91C8;
-  --color-success: #378D70;
-  --color-warning: #C18B45;
-  --color-danger: #C8372D;
+  --color-info: #4D92CC;
+  --color-success: #2E8A62;
+  --color-warning: #CA8B2B;
+  --color-danger: #C84E4E;
 
   --duration-instant: 90ms;
   --duration-quick: 180ms;
@@ -313,6 +314,52 @@
     width: 50%;
     background: var(--merchant);
     border-radius: 0 2px 2px 0;
+  }
+
+  /* Tactile Neumorphism (Restrained 10%) & Editorial Brutalism Primitives */
+  .rg-neumorph-raised {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 2px 6px -1px rgba(21, 25, 28, 0.07), 0 1px 2px rgba(21, 25, 28, 0.04);
+    transition: transform var(--duration-instant) var(--ease-out), box-shadow var(--duration-instant) var(--ease-out);
+  }
+  .rg-neumorph-raised:hover {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 4px 10px -2px rgba(21, 25, 28, 0.1), 0 2px 4px rgba(21, 25, 28, 0.05);
+  }
+  .rg-neumorph-raised:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 1px 2px rgba(21, 25, 28, 0.08), 0 1px 2px rgba(21, 25, 28, 0.04);
+  }
+
+  .rg-neumorph-inset {
+    background-color: var(--surface-2);
+    border: 1px solid var(--line);
+    box-shadow: inset 0 1.5px 3px rgba(21, 25, 28, 0.06), 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+
+  /* Editorial Brutalism Accents */
+  .rg-editorial-number {
+    font-family: var(--font-mono);
+    font-size: 2.75rem;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    color: var(--line-strong);
+    user-select: none;
+  }
+
+  .rg-editorial-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--line-strong);
+    background-color: var(--surface);
+    padding: 0.35rem 0.85rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-2);
+    box-shadow: 0 1px 2px rgba(21, 25, 28, 0.03);
   }
 
   /* Shimmer Skeleton */

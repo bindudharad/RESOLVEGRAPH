@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Space_Grotesk, Instrument_Serif, IBM_Plex_Mono, Hanken_Grotesk } from "next/font/google";
 import { ThemeProvider } from "@/components/common/theme-provider";
+import { BrandLoadingScreen } from "@/components/common/brand-loading-screen";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <body className="min-h-full bg-[var(--bg)] text-[var(--ink)] font-sans antialiased selection:bg-[var(--accent)] selection:text-white">
         <ThemeProvider>
+          <BrandLoadingScreen />
           {children}
         </ThemeProvider>
       </body>

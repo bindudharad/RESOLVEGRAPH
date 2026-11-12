@@ -2,42 +2,54 @@
 
 import { MarketingNavbar } from "./marketing-navbar";
 import { MarketingHero } from "./marketing-hero";
+import { MarketingMarquee } from "./marketing-marquee";
 import { ProblemStatementSection } from "./problem-statement";
 import { HowItWorksFlowSection } from "./how-it-works-flow";
 import { LiveInvestigationShowcase } from "./live-investigation-showcase";
+import { EvidenceArchitectureGallery } from "./evidence-architecture-gallery";
 import { ProductDifferentiatorsSection } from "./product-differentiators";
 import { TrustSafetySection } from "./trust-safety-section";
+import { LandingFAQSection } from "./landing-faq-section";
 import { MarketingCTA } from "./marketing-cta";
 import { MarketingFooter } from "./marketing-footer";
 
 export function MarketingHomePage() {
   return (
-    <div className="relative min-h-screen bg-[var(--bg)] text-[var(--ink)] antialiased selection:bg-[var(--accent)] selection:text-white">
-      {/* 01: Top Navigation with Verified Route Anchors */}
+    <div className="relative min-h-screen bg-[var(--bg,#F4F2EC)] text-[var(--ink,#15191C)] antialiased selection:bg-[var(--accent,#4350E5)] selection:text-white">
+      {/* 01: Floating Pill Navigation with Scroll Progress & Explore Mega Menu */}
       <MarketingNavbar />
 
-      {/* 01: Hero Section — Improved Messaging & 4-Stage Convergence Storytelling */}
+      {/* 02: Hero Section — Editorial Text-Led Typography & Bilateral Convergence Engine */}
       <MarketingHero />
 
-      {/* 02: The Payment Problem — 5 Disconnected Silos vs Unified Bilateral Resolution */}
+      {/* 03: Horizontal Scrolling Marquee Strip */}
+      <MarketingMarquee />
+
+      {/* 04: The Payment Problem — 5 Disconnected Silos vs Unified Bilateral Resolution */}
       <ProblemStatementSection />
 
-      {/* 03: How RESOLVEGRAPH Works — 4-Stage Architectural Flow */}
+      {/* 05: How RESOLVEGRAPH Works — 4-Stage Architectural Flow */}
       <HowItWorksFlowSection />
 
-      {/* 04: Interactive Investigation Demonstration — Sample Case #RG-2026-0412 Walkthrough */}
+      {/* 06: Visual Storytelling Gallery — 4 Pillars with Local Imagery & Overlays */}
+      <EvidenceArchitectureGallery />
+
+      {/* 07: Interactive Investigation Demonstration — Sample Case #RG-2026-0412 Walkthrough */}
       <LiveInvestigationShowcase />
 
-      {/* 05: Core Technologies — Matching, BEG, BERR Engine & EvidenceGuard */}
+      {/* 08: Core Technologies — Matching, BEG, BERR Engine & EvidenceGuard */}
       <ProductDifferentiatorsSection />
 
-      {/* 06: Security, Trust & Integration Transparency Matrix */}
+      {/* 09: Security, Trust & Integration Transparency Matrix */}
       <TrustSafetySection />
 
-      {/* 07: Final Call to Action — Every transaction has a story */}
+      {/* 10: Frequently Examined Questions (Interactive Accordion) */}
+      <LandingFAQSection />
+
+      {/* 11: Final Call to Action — Every transaction has a story */}
       <MarketingCTA />
 
-      {/* 08: Platform Footer with Transparent Status & System Specs */}
+      {/* 12: Platform Footer with Transparent Status & System Specs */}
       <MarketingFooter />
     </div>
   );

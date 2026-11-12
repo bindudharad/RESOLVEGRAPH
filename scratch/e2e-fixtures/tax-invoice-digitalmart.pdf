@@ -1,0 +1,51 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1213 >>
+stream
+BT /F1 10 Tf 40 750 Td (TAX INVOICE) Tj ET
+BT /F1 10 Tf 40 735 Td (Sold By: DigitalMart Commerce Private Limited) Tj ET
+BT /F1 10 Tf 40 720 Td (GSTIN: 27AABCD2345F1Z2) Tj ET
+BT /F1 10 Tf 40 705 Td (Seller ID: A2DIGITALMART01) Tj ET
+BT /F1 10 Tf 40 690 Td (Storefront: DigitalMart Official) Tj ET
+BT /F1 10 Tf 40 675 Td (Registered Office: Bandra-Kurla Complex, Mumbai, Maharashtra - 400051) Tj ET
+BT /F1 10 Tf 40 660 Td () Tj ET
+BT /F1 10 Tf 40 645 Td (Order ID: OD-AMZ-2026-994411) Tj ET
+BT /F1 10 Tf 40 630 Td (Order Date: 10.11.2026) Tj ET
+BT /F1 10 Tf 40 615 Td (Invoice Number: INV-DM-2026-99441) Tj ET
+BT /F1 10 Tf 40 600 Td (Invoice Date: 10.11.2026) Tj ET
+BT /F1 10 Tf 40 585 Td () Tj ET
+BT /F1 10 Tf 40 570 Td (Billed To: Alex Morgan) Tj ET
+BT /F1 10 Tf 40 555 Td (Shipping Address: Flat 4B, Silver Oak, Indiranagar, Bengaluru, Karnataka - 560038) Tj ET
+BT /F1 10 Tf 40 540 Td () Tj ET
+BT /F1 10 Tf 40 525 Td (Item: Logitech MX Master 3S Wireless Performance Mouse \(Graphite\)) Tj ET
+BT /F1 10 Tf 40 510 Td (Quantity: 1) Tj ET
+BT /F1 10 Tf 40 495 Td (Amount: INR 7,999.00) Tj ET
+BT /F1 10 Tf 40 480 Td (Authorized Signatory for DigitalMart Commerce Private Limited) Tj ET
+BT /F1 10 Tf 40 465 Td () Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001506 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1576
+%%EOF

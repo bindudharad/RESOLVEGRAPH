@@ -43,6 +43,7 @@ import type { VisualGraphLayout, VisualGraphNode } from "@/server/graph/graph-pr
 import { GraphProjectionService } from "@/server/graph/graph-projection";
 import { Button } from "@/components/ui/button";
 import { SlideOver } from "@/components/ui/slide-over";
+import { BegLoadingState } from "@/components/cases/beg-loading-state";
 import { cn } from "@/lib/utils";
 
 interface RevisionItem {
@@ -635,12 +636,7 @@ export function EvidenceGraphExplorer({
   };
 
   if (loading) {
-    return (
-      <div className="rg-card p-10 text-center">
-        <RefreshCw className="mx-auto h-6 w-6 animate-spin text-muted" />
-        <p className="mt-3 text-sm font-medium text-fg">Loading persisted Bilateral Evidence Graph...</p>
-      </div>
-    );
+    return <BegLoadingState />;
   }
 
   if (errorMsg || !graph || !layout) {
