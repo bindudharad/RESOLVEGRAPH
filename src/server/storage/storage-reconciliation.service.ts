@@ -34,7 +34,14 @@ export class StorageReconciliationService {
     cleanOrphans?: boolean;
     storageBaseDir?: string;
   } = {}): Promise<StorageReconciliationReport> {
-    const baseDir = options.storageBaseDir || path.resolve(process.cwd(), process.env.EVIDENCE_STORAGE_DIR || './.private/evidence');
+    const baseDir =
+      options.storageBaseDir ||
+      path.resolve(
+        process.cwd(),
+        process.env.EVIDENCE_STORAGE_PATH ||
+          process.env.EVIDENCE_STORAGE_DIR ||
+          './.private/evidence'
+      );
     
     if (!fs.existsSync(baseDir)) {
       fs.mkdirSync(baseDir, { recursive: true });

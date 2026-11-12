@@ -109,7 +109,9 @@ export class LocalEvidenceStorage {
     this.storageDir = path.resolve(
       /*turbopackIgnore: true*/
       process.cwd(),
-      process.env.EVIDENCE_STORAGE_DIR || './.private/evidence'
+      process.env.EVIDENCE_STORAGE_PATH ||
+      process.env.EVIDENCE_STORAGE_DIR ||
+      './.private/evidence'
     );
     this.ensureDirectory();
   }

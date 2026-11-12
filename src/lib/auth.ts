@@ -9,12 +9,31 @@ export const auth = betterAuth({
   secret:
     process.env.BETTER_AUTH_SECRET ||
     'resolvegraph_dev_secret_key_9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
-  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+  baseURL:
+    process.env.BETTER_AUTH_URL ||
+    process.env.AUTH_BASE_URL ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    'http://localhost:3000',
   trustedOrigins: (request) => {
-    const origins = [process.env.BETTER_AUTH_URL || 'http://localhost:3000'];
+    const configuredBase =
+      process.env.BETTER_AUTH_URL ||
+      process.env.AUTH_BASE_URL ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      'http://localhost:3000';
+    const origins = [configuredBase];
+    if (process.env.BETTER_AUTH_TRUSTED_ORIGINS) {
+      process.env.BETTER_AUTH_TRUSTED_ORIGINS.split(',').forEach((o) => {
+        const trimmed = o.trim();
+        if (trimmed && !origins.includes(trimmed)) origins.push(trimmed);
+      });
+    }
     const reqOrigin = request?.headers.get('origin');
-    if (reqOrigin && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(reqOrigin)) {
-      origins.push(reqOrigin);
+    if (reqOrigin) {
+      if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(reqOrigin)) {
+        origins.push(reqOrigin);
+      } else if (reqOrigin === configuredBase || origins.includes(reqOrigin)) {
+        origins.push(reqOrigin);
+      }
     }
     return origins;
   },
