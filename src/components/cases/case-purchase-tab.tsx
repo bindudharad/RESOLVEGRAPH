@@ -60,6 +60,9 @@ interface CasePurchaseTabProps {
   currency?: string;
   customer?: string;
   merchant?: string;
+  productName?: string;
+  orderNumber?: string;
+  marketplace?: string;
 }
 
 export function CasePurchaseTab({
@@ -68,7 +71,11 @@ export function CasePurchaseTab({
   currency = "USD",
   customer = "Alex Johnson",
   merchant = "Apex Tech Retail",
+  productName,
+  orderNumber,
+  marketplace,
 }: CasePurchaseTabProps) {
+  const isCanonicalDemo = caseId.toUpperCase() === "RG-2026-0412";
   const [order, setOrder] = useState<OrderRecord | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -89,11 +96,14 @@ export function CasePurchaseTab({
         // fallback
       }
 
-      // Default synthetic order if no backend order exists yet
+      // Default order record mapped from verified complaint metadata
       if (mounted) {
+        const effectiveOrderNumber = orderNumber || (isCanonicalDemo ? "ORD-2026-8841" : `OD-${caseId.replace(/[^0-9]/g, "") || "438897692"}`);
+        const effectiveProductTitle = productName || (isCanonicalDemo ? "ApexDrive Pro 1TB NVMe PCIe 4.0 SSD (Internal)" : "Purchased Item");
+
         setOrder({
-          id: `ord_${caseId.toLowerCase().replace(/-/g, "_")}`,
-          orderNumber: `ORD-2026-${caseId.replace(/[^0-9]/g, "") || "8841"}`,
+          id: `ord_${caseId.toLowerCase().replace(/[^a-z0-9]/g, "_")}`,
+          orderNumber: effectiveOrderNumber,
           currency,
           totalAmountMinor: Math.round(amount * 100),
           status: "CAPTURED",
@@ -101,9 +111,9 @@ export function CasePurchaseTab({
           items: [
             {
               id: "item-1",
-              productReference: "PROD-NVME-1TB",
-              sku: "SSD-1000GB-GEN4",
-              title: "ApexDrive Pro 1TB NVMe PCIe 4.0 SSD (Internal)",
+              productReference: marketplace ? `${marketplace.toUpperCase()}-ITEM` : "PROD-ITEM",
+              sku: effectiveOrderNumber,
+              title: effectiveProductTitle,
               quantity: 1,
               unitAmountMinor: Math.round(amount * 100),
               totalAmountMinor: Math.round(amount * 100),
@@ -111,9 +121,9 @@ export function CasePurchaseTab({
           ],
           payments: [
             {
-              id: `pay_${caseId.toLowerCase().replace(/-/g, "_")}`,
-              providerOrderId: "5O190127TN364715T",
-              captureId: "84729103KM829141P",
+              id: `pay_${caseId.toLowerCase().replace(/[^a-z0-9]/g, "_")}`,
+              providerOrderId: marketplace ? `${marketplace} Checkout` : "PAYPAL-ORDER",
+              captureId: null,
               environment: "sandbox",
               amountMinor: Math.round(amount * 100),
               currency,
@@ -131,7 +141,7 @@ export function CasePurchaseTab({
     return () => {
       mounted = false;
     };
-  }, [caseId, amount, currency]);
+  }, [caseId, amount, currency, productName, orderNumber, marketplace, isCanonicalDemo]);
 
   if (loading) {
     return (

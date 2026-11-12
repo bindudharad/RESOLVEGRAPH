@@ -135,6 +135,13 @@ export default function GuidedDemoPage() {
         throw new Error(json.error || "Execution failed");
       }
       setLiveDemoResult(json.data as LiveDemoData);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("resolvegraph:capture-updated", {
+            detail: { caseNumber: json.data?.caseNumber },
+          })
+        );
+      }
       toast({
         tone: "success",
         title: "PayPal Hackathon Demonstration Succeeded!",

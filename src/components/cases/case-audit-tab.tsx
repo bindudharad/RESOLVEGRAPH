@@ -53,51 +53,39 @@ export function CaseAuditTab({ caseId }: CaseAuditTabProps) {
         // fallback
       }
 
-      // Default high-fidelity synthetic audit events if none in DB
+      // Default high-fidelity synthetic audit events ONLY for canonical demo fixture
       if (mounted) {
-        const now = Date.now();
-        setItems([
-          {
-            id: "aud-1",
-            type: "CASE_EVENT",
-            title: "Case Created: SUBMITTED",
-            description: "Buyer submitted initial dispute report regarding hardware capacity discrepancy.",
-            timestamp: new Date(now - 4 * 86400000).toISOString(),
-            actor: { name: "Alex Johnson", role: "BUYER" },
-          },
-          {
-            id: "aud-2",
-            type: "SECURITY_AUDIT",
-            title: "Security Scan: Evidence Accepted",
-            description: "Magic byte inspection verified image/jpeg. SHA-256 hash locked.",
-            timestamp: new Date(now - 4 * 86400000 + 120000).toISOString(),
-            actor: { name: "Evidence Guard", role: "SECURITY_AGENT" },
-          },
-          {
-            id: "aud-3",
-            type: "PAYPAL_WEBHOOK",
-            title: "PayPal Webhook: PAYMENT.CAPTURE.COMPLETED",
-            description: "PayPal webhook signature verified via PayPal cert host. Ingested idempotently.",
-            timestamp: new Date(now - 3 * 86400000).toISOString(),
-            actor: { name: "PayPal Webhook Handler", role: "PAYMENT_PROCESSOR" },
-          },
-          {
-            id: "aud-4",
-            type: "TIMELINE_EVENT",
-            title: "BERR Multimodal Analysis Executed",
-            description: "Extracted fact capacity=512GB from photo; invoice asserts 1000GB. Discrepancy score D=0.88.",
-            timestamp: new Date(now - 2 * 86400000).toISOString(),
-            actor: { name: "BERR Engine v2.0", role: "SYSTEM" },
-          },
-          {
-            id: "aud-5",
-            type: "CASE_EVENT",
-            title: "Status Changed: UNDER_ANALYSIS",
-            description: "Case transitioned to UNDER_ANALYSIS following automated evidence discrepancy check.",
-            timestamp: new Date(now - 1 * 86400000).toISOString(),
-            actor: { name: "System Orchestrator", role: "SYSTEM" },
-          },
-        ]);
+        if (caseId.toUpperCase() === "RG-2026-0412") {
+          const now = Date.now();
+          setItems([
+            {
+              id: "aud-1",
+              type: "CASE_EVENT",
+              title: "Case Created: SUBMITTED",
+              description: "Dispute case filed and indexed in ResolveGraph forensic ledger.",
+              timestamp: new Date(now - 4 * 86400000).toISOString(),
+              actor: { name: "Alex Johnson", role: "BUYER" },
+            },
+            {
+              id: "aud-2",
+              type: "SECURITY_AUDIT",
+              title: "Security Scan: Evidence Accepted",
+              description: "Magic byte inspection verified. SHA-256 hash locked.",
+              timestamp: new Date(now - 4 * 86400000 + 120000).toISOString(),
+              actor: { name: "Evidence Guard", role: "SECURITY_AGENT" },
+            },
+            {
+              id: "aud-3",
+              type: "TIMELINE_EVENT",
+              title: "BERR Multimodal Analysis Executed",
+              description: "Automated bilateral evidence reasoning run recorded.",
+              timestamp: new Date(now - 2 * 86400000).toISOString(),
+              actor: { name: "BERR Engine v2.0", role: "SYSTEM" },
+            },
+          ]);
+        } else {
+          setItems([]);
+        }
         setLoading(false);
       }
     }

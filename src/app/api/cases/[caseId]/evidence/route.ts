@@ -6,6 +6,7 @@ import { CaseService } from '@/server/services/case.service';
 import { evidenceStorage } from '@/server/storage/evidence-storage';
 import { createEvidenceSchema } from '@/server/validators/case.validator';
 import { SecurityAuditService } from '@/server/services/security-audit.service';
+import { BegSyncService } from '@/server/graph/beg-sync.service';
 import { EvidenceVisibility, EvidenceType, EvidenceSource, VerificationStatus } from '@/generated/prisma/client';
 import { ZodError } from 'zod';
 
@@ -109,9 +110,16 @@ export async function POST(
         description,
         evidenceType,
         sourceType,
-        verificationStatus: VerificationStatus.VERIFIED,
+        verificationStatus: VerificationStatus.UNVERIFIED,
         visibility,
       });
+
+      await BegSyncService.handleDomainEvent({
+        caseId: caseRecord.id,
+        triggerEvent: 'BUYER_EVIDENCE_UPLOADED',
+        actorId: user.id,
+        rerunBerr: false,
+      }).catch((err) => console.warn('[Evidence POST] BEG sync skipped:', err));
 
       await SecurityAuditService.record({
         actorId: user.id,
@@ -145,6 +153,13 @@ export async function POST(
       ...validated,
       uploadedById: user.id,
     });
+
+    await BegSyncService.handleDomainEvent({
+      caseId: caseRecord.id,
+      triggerEvent: 'BUYER_EVIDENCE_UPLOADED',
+      actorId: user.id,
+      rerunBerr: false,
+    }).catch((err) => console.warn('[Evidence POST JSON] BEG sync skipped:', err));
 
     await SecurityAuditService.record({
       actorId: user.id,

@@ -12,12 +12,13 @@ interface NavLink {
 }
 
 const NAV_LINKS: NavLink[] = [
-  { label: "Product", href: "#differentiators" },
+  { label: "The Problem", href: "#problem-statement" },
   { label: "How It Works", href: "#how-it-works" },
-  { label: "Investigation", href: "#investigation-showcase" },
+  { label: "Sample Case", href: "#investigation-showcase" },
+  { label: "Core Tech", href: "#core-technologies" },
   { label: "Security & Trust", href: "#trust-safety" },
   { label: "Methodology", href: "/methodology" },
-  { label: "Documentation", href: "/docs" },
+  { label: "Docs", href: "/docs" },
 ];
 
 export function MarketingNavbar() {
@@ -36,7 +37,7 @@ export function MarketingNavbar() {
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-200 ${
         scrolled
-          ? "border-b border-[var(--line)] bg-[var(--bg)]/90 backdrop-blur-md shadow-sm"
+          ? "border-b border-[var(--line)] bg-[var(--bg)]/95 backdrop-blur-md shadow-sm"
           : "border-b border-transparent bg-transparent"
       }`}
     >
@@ -49,7 +50,7 @@ export function MarketingNavbar() {
               <span className="font-heading text-base font-bold tracking-tight text-[var(--ink)]">
                 RESOLVEGRAPH
               </span>
-              <span className="font-mono text-[9px] uppercase tracking-widest text-[var(--ink-3)] -mt-1">
+              <span className="font-mono text-[9px] uppercase tracking-widest text-[var(--ink-2)] -mt-1 font-semibold">
                 Evidence Intelligence
               </span>
             </div>
@@ -62,7 +63,7 @@ export function MarketingNavbar() {
             <Link
               key={link.label}
               href={link.href}
-              className="relative px-3.5 py-1.5 text-xs font-medium text-[var(--ink-2)] transition-colors hover:text-[var(--ink)] rounded-md hover:bg-[var(--surface-2)]/50"
+              className="relative px-3 py-1.5 text-xs font-medium text-[var(--ink-2)] transition-colors hover:text-[var(--ink)] rounded-md hover:bg-[var(--surface-2)]/60"
             >
               <span>{link.label}</span>
               {link.badge && (
@@ -78,16 +79,16 @@ export function MarketingNavbar() {
         <div className="hidden sm:flex items-center gap-3">
           <Link
             href="/sign-in"
-            className="px-3.5 py-1.5 text-xs font-medium text-[var(--ink-2)] transition-colors hover:text-[var(--ink)] rounded-md hover:bg-[var(--surface-2)]/50"
+            className="px-3.5 py-1.5 text-xs font-medium text-[var(--ink-2)] transition-colors hover:text-[var(--ink)] rounded-md hover:bg-[var(--surface-2)]/60 cursor-pointer"
           >
             Sign In
           </Link>
 
           <Link
-            href="/overview"
-            className="group inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:brightness-110 active:scale-[0.98]"
+            href="/intake"
+            className="group inline-flex items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:brightness-110 active:scale-[0.98] cursor-pointer"
           >
-            <span>Get Started</span>
+            <span>Start Investigation</span>
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
@@ -99,7 +100,7 @@ export function MarketingNavbar() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle Navigation Menu"
             aria-expanded={mobileMenuOpen}
-            className="p-2 text-[var(--ink-2)] hover:text-[var(--ink)] rounded-md hover:bg-[var(--surface-2)]"
+            className="p-2 text-[var(--ink-2)] hover:text-[var(--ink)] rounded-md hover:bg-[var(--surface-2)] cursor-pointer"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -115,7 +116,7 @@ export function MarketingNavbar() {
                 key={link.label}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-[var(--ink)] hover:bg-[var(--surface-2)]"
+                className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-[var(--ink)] hover:bg-[var(--surface-2)] cursor-pointer"
               >
                 <span>{link.label}</span>
                 {link.badge && (
@@ -129,16 +130,16 @@ export function MarketingNavbar() {
               <Link
                 href="/sign-in"
                 onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-[var(--ink-2)] hover:bg-[var(--surface-2)]"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-[var(--ink-2)] hover:bg-[var(--surface-2)] cursor-pointer"
               >
                 Sign In
               </Link>
               <Link
-                href="/overview"
+                href="/intake"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm"
+                className="flex items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm cursor-pointer"
               >
-                <span>Get Started</span>
+                <span>Start Investigation</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>

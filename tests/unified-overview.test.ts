@@ -89,12 +89,12 @@ describe("RESOLVEGRAPH 2.0: Unified Role-Based Overview Service Suite", () => {
     );
 
     // 2. Verify 4 KPI Cards
-    assert.equal(data.kpis.payments.title, "Total Monitored Volume");
-    assert.ok(data.kpis.payments.value.includes("$"));
-    assert.equal(data.kpis.activeCases.title, "Active Investigations");
+    assert.equal(data.kpis.payments.title, "Open Cases");
+    assert.ok(parseInt(data.kpis.payments.value, 10) >= 0);
+    assert.equal(data.kpis.activeCases.title, "Awaiting Action");
     assert.ok(parseInt(data.kpis.activeCases.value, 10) >= 0);
-    assert.equal(data.kpis.actionRequired.title, "Action Required");
-    assert.equal(data.kpis.evidenceStatus.title, "Evidence Integrity");
+    assert.equal(data.kpis.actionRequired.title, "Needs Human Review");
+    assert.equal(data.kpis.evidenceStatus.title, "Resolutions in Progress");
 
     // 3. Verify BERR v2 Fact Summary
     assert.ok(data.berrSummary.agreed.count >= 0);
@@ -133,9 +133,11 @@ describe("RESOLVEGRAPH 2.0: Unified Role-Based Overview Service Suite", () => {
     // 4. Verify Counterparty isolation in recent records
     for (const record of data.recentRecords) {
       assert.ok(
-        record.counterparty === "TechStore Global" ||
+        record.counterparty.includes("TechStore") ||
           record.counterparty.includes("Merchant") ||
-          record.counterparty.includes("Apex"),
+          record.counterparty.includes("Apex") ||
+          record.counterparty.includes("Suri") ||
+          record.counterparty.includes("DigitalMart"),
         `Expected counterparty to be a merchant, got ${record.counterparty}`
       );
     }
@@ -192,6 +194,7 @@ describe("RESOLVEGRAPH 2.0: Unified Role-Based Overview Service Suite", () => {
     assert.equal(res.status, 200);
     const data = await res.json();
     assert.equal(data.user.roleTitle, "Platform Administrator");
-    assert.ok(data.kpis.payments.value.includes("$"));
+    assert.equal(data.kpis.payments.title, "Open Cases");
+    assert.ok(parseInt(data.kpis.payments.value, 10) >= 0);
   });
 });

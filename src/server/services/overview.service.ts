@@ -1,6 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import { CaseStatus, CasePriority, CaseCategory } from "@/generated/prisma/client";
 import { AuthenticatedUser } from "../auth/session";
+import { AuthError } from "../auth/require-auth";
+import {
+  CaptureAnalyticsService,
+  CaptureEnvironmentMode,
+  CaptureSummaryResult,
+  CurrencyCaptureTotals,
+} from "../analytics/capture-analytics.service";
+import { formatMinorCurrency } from "../analytics/timezone-calendar";
 
 export type OverviewPersona = "PLATFORM" | "BUYER" | "MERCHANT";
 
@@ -11,6 +19,30 @@ export interface OverviewKpiCard {
   trend?: string;
   statusColor: string;
   badgeText: string;
+}
+
+export interface OverviewTotalCaptureMeta {
+  currency: string;
+  grossCapturedMinor: number;
+  refundedMinor: number;
+  netCapturedMinor: number;
+  captureCount: number;
+  completedRefundCount: number;
+  reportingPeriodLabel: string;
+  currentMonthKey: string;
+  currentMonthLabel: string;
+  currentMonthGrossMinor: number;
+  currentMonthCount: number;
+  previousMonthKey: string;
+  previousMonthLabel: string;
+  previousMonthShortLabel: string;
+  previousMonthGrossMinor: number;
+  previousMonthCount: number;
+  comparisonPercent: number | null;
+  comparisonDeltaMinor: number | null;
+  environmentMode: CaptureEnvironmentMode;
+  timezone: string;
+  availableCurrencies: CurrencyCaptureTotals[];
 }
 
 export interface OverviewPaymentInvestigationRow {
@@ -48,6 +80,19 @@ export interface OverviewActivityItem {
   badgeColor: string;
 }
 
+export interface CaseRequiringAttentionRow {
+  id: string;
+  complaintId: string;
+  product: string;
+  marketplace: string;
+  seller: string;
+  currentStage: string;
+  assignedInvestigator: string;
+  actionRequired: string;
+  lastUpdated: string;
+  openCaseHref: string;
+}
+
 export interface OverviewDashboardData {
   persona: OverviewPersona;
   user: {
@@ -68,6 +113,7 @@ export interface OverviewDashboardData {
     actionRequired: OverviewKpiCard;
     evidenceStatus: OverviewKpiCard;
   };
+  totalCapture?: OverviewTotalCaptureMeta;
   quickActions: Array<{
     id: string;
     label: string;
@@ -78,6 +124,7 @@ export interface OverviewDashboardData {
     badge?: string;
   }>;
   recentRecords: OverviewPaymentInvestigationRow[];
+  casesRequiringAttention: CaseRequiringAttentionRow[];
   berrSummary: BerrFactSummary;
   recentActivity: OverviewActivityItem[];
   graphTeaser: {
@@ -122,6 +169,24 @@ export class OverviewService {
         sessionUser.orgMemberships?.[0]?.organization?.name ||
         sessionUser.organization ||
         "Merchant Workspace";
+    } else if (sessionUser.role === "RESOLUTION_MANAGER") {
+      const hasOrgScope =
+        (sessionUser.orgMemberships && sessionUser.orgMemberships.length > 0) ||
+        (await prisma.organizationMember.count({
+          where: { userId: targetUserId, isActive: true },
+        })) > 0;
+      if (hasOrgScope) {
+        persona = "MERCHANT";
+        roleTitle = "Resolution Manager";
+        organizationName =
+          sessionUser.orgMemberships?.[0]?.organization?.name ||
+          sessionUser.organization ||
+          "Organization Resolution Scope";
+      } else {
+        persona = "PLATFORM";
+        roleTitle = "Resolution Manager";
+        organizationName = sessionUser.organization || "Platform Oversight Scope";
+      }
     }
 
     // 2. Build tenant and role case scope filter
@@ -163,26 +228,48 @@ export class OverviewService {
         claims: true,
         berrFindings: true,
         canonicalTransactions: true,
+        sellerIdentityMatches: { include: { matchedSeller: true }, take: 1 },
+        sellerEvidenceRequests: { take: 1 },
+        resolutionProposals: { take: 2, orderBy: { createdAt: "desc" } },
+        assignedManager: true,
       },
     });
 
-    const activeCasesCount = casesInScope.filter(
+    const openCasesCount = casesInScope.filter(
       (c) =>
         c.status !== CaseStatus.RESOLVED &&
         c.status !== CaseStatus.CLOSED &&
         c.status !== CaseStatus.ARCHIVED
     ).length;
 
-    // 4. Compute 4 KPI Cards
-    // Card 1: Payments
-    const totalAmountMinor = casesInScope.reduce((acc, c) => acc + (c.amountMinor || 0), 0);
-    const formattedVolume = `$${(totalAmountMinor / 100).toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })} USD`;
+    const awaitingActionCount = casesInScope.filter(
+      (c) =>
+        c.status === CaseStatus.EVIDENCE_REQUESTED ||
+        c.status === CaseStatus.SUBMITTED
+    ).length;
 
+    const needsHumanReviewCount = casesInScope.filter(
+      (c) =>
+        c.status === CaseStatus.UNDER_ANALYSIS ||
+        c.resolutionProposals?.some((p) => p.status === "PROPOSED")
+    ).length;
+
+    const resolutionsInProgressCount = casesInScope.filter(
+      (c) =>
+        c.status === CaseStatus.IN_REVIEW ||
+        c.status === CaseStatus.EXECUTING_REFUND ||
+        c.status === CaseStatus.EXECUTING_REPLACEMENT ||
+        c.resolutionProposals?.some((p) => p.status === "APPROVED")
+    ).length;
+
+    // 4. Compute 4 KPI Cards
+    // Card 1: Total Capture (authoritative PayPalPayment captures for Merchant/Platform; Purchases for Buyer)
     let paymentsCard: OverviewKpiCard;
+    let totalCaptureMeta: OverviewTotalCaptureMeta | undefined;
+
     if (persona === "BUYER") {
+      const totalAmountMinor = casesInScope.reduce((acc, c) => acc + (c.amountMinor || 0), 0);
+      const formattedVolume = `${formatMinorCurrency(totalAmountMinor, "USD")} USD`;
       paymentsCard = {
         title: "My Purchases",
         value: formattedVolume,
@@ -191,42 +278,131 @@ export class OverviewService {
         statusColor: "var(--buyer)",
         badgeText: "Verified Buyer",
       };
-    } else if (persona === "MERCHANT") {
-      paymentsCard = {
-        title: "Monitored Sales",
-        value: formattedVolume,
-        sublabel: `${casesInScope.length} merchant transactions`,
-        trend: "Escrow Held: Safe",
-        statusColor: "var(--merchant)",
-        badgeText: "Store Scope",
-      };
     } else {
-      paymentsCard = {
-        title: "Total Monitored Volume",
-        value: formattedVolume,
-        sublabel: `${casesInScope.length} transactions in ledger`,
-        trend: "Multi-Rail Reconciled",
-        statusColor: "var(--accent)",
-        badgeText: "Platform Scope",
-      };
+      let captureSummary: CaptureSummaryResult | undefined;
+      try {
+        captureSummary = await CaptureAnalyticsService.getSummary(sessionUser);
+      } catch (err) {
+        if (err instanceof AuthError && err.status === 403) {
+          captureSummary = undefined;
+        } else {
+          throw err;
+        }
+      }
+
+      if (captureSummary) {
+        const multiCurrencies = captureSummary.availableCurrencies;
+        const formattedValue =
+          multiCurrencies.length > 1
+            ? multiCurrencies
+                .map((c) => formatMinorCurrency(c.grossCapturedMinor, c.currency))
+                .join(" + ")
+            : formatMinorCurrency(
+                captureSummary.lifetime.grossCapturedMinor,
+                captureSummary.selectedCurrency
+              );
+
+        const totalCapturesInScope =
+          multiCurrencies.length > 1
+            ? multiCurrencies.reduce((sum, c) => sum + c.captureCount, 0)
+            : captureSummary.lifetime.captureCount;
+
+        let trendText: string;
+        if (captureSummary.previousMonth.comparisonPercent !== null) {
+          const pct = captureSummary.previousMonth.comparisonPercent;
+          trendText = `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}% vs ${captureSummary.previousMonth.shortLabel}`;
+        } else if (captureSummary.currentMonth.captureCount > 0) {
+          trendText = `${formatMinorCurrency(
+            captureSummary.currentMonth.grossCapturedMinor,
+            captureSummary.selectedCurrency
+          )} in ${captureSummary.currentMonth.shortLabel}`;
+        } else {
+          trendText = "No captures recorded yet";
+        }
+
+        const captureLabel = `${totalCapturesInScope.toLocaleString("en-US")} successful capture${
+          totalCapturesInScope === 1 ? "" : "s"
+        }`;
+
+        if (persona === "PLATFORM") {
+          paymentsCard = {
+            title: "Open Cases",
+            value: String(openCasesCount),
+            sublabel: `${casesInScope.length - openCasesCount} closed or resolved cases`,
+            trend: openCasesCount > 0 ? "Active Ingestion" : "All Clear",
+            statusColor: "var(--accent)",
+            badgeText: "Active Pipeline",
+          };
+        } else {
+          paymentsCard = {
+            title: persona === "MERCHANT" ? "Monitored Sales" : "Total Monitored Volume",
+            value: formattedValue,
+            sublabel: `${captureLabel} • ${captureSummary.reportingPeriod.label}`,
+            trend: trendText,
+            statusColor: persona === "MERCHANT" ? "var(--merchant)" : "var(--accent)",
+            badgeText:
+              captureSummary.environmentMode === "SANDBOX"
+                ? "PayPal Sandbox"
+                : persona === "MERCHANT"
+                  ? "Store Scope"
+                  : "Platform Scope",
+          };
+        }
+
+        totalCaptureMeta = {
+          currency: captureSummary.selectedCurrency,
+          grossCapturedMinor: captureSummary.lifetime.grossCapturedMinor,
+          refundedMinor: captureSummary.lifetime.refundedMinor,
+          netCapturedMinor: captureSummary.lifetime.netCapturedMinor,
+          captureCount: captureSummary.lifetime.captureCount,
+          completedRefundCount: captureSummary.lifetime.completedRefundCount,
+          reportingPeriodLabel: captureSummary.reportingPeriod.label,
+          currentMonthKey: captureSummary.currentMonth.monthKey,
+          currentMonthLabel: captureSummary.currentMonth.label,
+          currentMonthGrossMinor: captureSummary.currentMonth.grossCapturedMinor,
+          currentMonthCount: captureSummary.currentMonth.captureCount,
+          previousMonthKey: captureSummary.previousMonth.monthKey,
+          previousMonthLabel: captureSummary.previousMonth.label,
+          previousMonthShortLabel: captureSummary.previousMonth.shortLabel,
+          previousMonthGrossMinor: captureSummary.previousMonth.grossCapturedMinor,
+          previousMonthCount: captureSummary.previousMonth.captureCount,
+          comparisonPercent: captureSummary.previousMonth.comparisonPercent,
+          comparisonDeltaMinor: captureSummary.previousMonth.comparisonDeltaMinor,
+          environmentMode: captureSummary.environmentMode,
+          timezone: captureSummary.reportingPeriod.timezone,
+          availableCurrencies: captureSummary.availableCurrencies,
+        };
+      } else {
+        paymentsCard = {
+          title: persona === "PLATFORM" ? "Open Cases" : persona === "MERCHANT" ? "Monitored Sales" : "Total Monitored Volume",
+          value: persona === "PLATFORM" ? String(openCasesCount) : formatMinorCurrency(0, "USD"),
+          sublabel: persona === "PLATFORM" ? `${casesInScope.length - openCasesCount} resolved / closed` : "0 successful captures",
+          trend: openCasesCount > 0 ? "Active Ingestion" : "All Clear",
+          statusColor: persona === "MERCHANT" ? "var(--merchant)" : "var(--accent)",
+          badgeText: persona === "MERCHANT" ? "Store Scope" : "Platform Scope",
+        };
+      }
     }
 
-    // Card 2: Active Cases
+    // Card 2: Active Cases / Awaiting Action
     const activeCasesCard: OverviewKpiCard = {
       title:
         persona === "BUYER"
           ? "My Active Disputes"
           : persona === "MERCHANT"
           ? "Merchant Cases"
-          : "Active Investigations",
-      value: String(activeCasesCount),
-      sublabel: `${casesInScope.length - activeCasesCount} resolved / closed`,
-      trend: activeCasesCount > 0 ? "Under Review" : "Clear",
-      statusColor: activeCasesCount > 0 ? "var(--amber)" : "var(--agreed)",
-      badgeText: "BERR v2 Matrix",
+          : "Awaiting Action",
+      value: String(persona === "PLATFORM" ? awaitingActionCount : openCasesCount),
+      sublabel:
+        persona === "PLATFORM"
+          ? `${awaitingActionCount} awaiting buyer/seller upload`
+          : `${casesInScope.length - openCasesCount} resolved / closed`,
+      trend: awaitingActionCount > 0 ? "Response Pending" : "Clear",
+      statusColor: awaitingActionCount > 0 ? "var(--amber)" : "var(--agreed)",
+      badgeText: persona === "PLATFORM" ? "Bilateral Channel" : "BERR v2 Matrix",
     };
 
-    // Card 3: Action Required
+    // Card 3: Action Required / Needs Human Review
     let actionRequiredCount = 0;
     let actionRequiredSublabel = "Zero pending actions";
 
@@ -250,27 +426,23 @@ export class OverviewService {
           ? `${actionRequiredCount} awaiting merchant upload`
           : "Fulfillment manifests confirmed";
     } else {
-      // Platform: count pending proposals & approvals
-      const pendingProposals = await prisma.resolutionProposal.count({
-        where: { status: "PROPOSED" },
-      });
-      actionRequiredCount = pendingProposals;
+      actionRequiredCount = needsHumanReviewCount;
       actionRequiredSublabel =
-        pendingProposals > 0
-          ? `${pendingProposals} dual-key approval(s) pending`
+        needsHumanReviewCount > 0
+          ? `${needsHumanReviewCount} case(s) requiring officer review`
           : "Zero pending authorizations";
     }
 
     const actionRequiredCard: OverviewKpiCard = {
-      title: "Action Required",
+      title: persona === "PLATFORM" ? "Needs Human Review" : "Action Required",
       value: String(actionRequiredCount),
       sublabel: actionRequiredSublabel,
-      trend: actionRequiredCount > 0 ? "Attention Needed" : "All Clear",
+      trend: actionRequiredCount > 0 ? "Review Required" : "All Clear",
       statusColor: actionRequiredCount > 0 ? "var(--danger)" : "var(--agreed)",
-      badgeText: "10-Point Gate",
+      badgeText: persona === "PLATFORM" ? "Officer Gate" : "10-Point Gate",
     };
 
-    // Card 4: Evidence Status
+    // Card 4: Resolutions in Progress / Evidence Status
     let allEvidenceInScope = casesInScope.flatMap((c) => c.evidence || []);
     if (persona === "BUYER" && targetUserId) {
       allEvidenceInScope = allEvidenceInScope.filter(
@@ -291,12 +463,15 @@ export class OverviewService {
         : 100;
 
     const evidenceStatusCard: OverviewKpiCard = {
-      title: "Evidence Integrity",
-      value: `${evidencePercent}%`,
-      sublabel: `${verifiedEvidenceCount} of ${allEvidenceInScope.length} verified`,
-      trend: "SHA-256 Validated",
-      statusColor: evidencePercent >= 80 ? "var(--agreed)" : "var(--amber)",
-      badgeText: "Evidence Vault",
+      title: persona === "PLATFORM" ? "Resolutions in Progress" : "Evidence Integrity",
+      value: persona === "PLATFORM" ? String(resolutionsInProgressCount) : `${evidencePercent}%`,
+      sublabel:
+        persona === "PLATFORM"
+          ? `${resolutionsInProgressCount} active remedies/settlements`
+          : `${verifiedEvidenceCount} of ${allEvidenceInScope.length} verified`,
+      trend: persona === "PLATFORM" ? "Arbitration Active" : "SHA-256 Validated",
+      statusColor: "var(--agreed)",
+      badgeText: persona === "PLATFORM" ? "Dual-Key Engine" : "Evidence Vault",
     };
 
     // 5. Build Quick Actions based on Persona Permissions
@@ -346,7 +521,19 @@ export class OverviewService {
     const recentRecords: OverviewPaymentInvestigationRow[] = casesInScope.slice(0, 6).map((c) => {
       let counterparty = "Bilateral Counterparty";
       if (persona === "BUYER") {
-        counterparty = c.merchant?.fullName || c.merchant?.name || "Apex Tech Labs Ltd";
+        const matchedSeller = c.sellerIdentityMatches?.[0]?.matchedSeller;
+        const matchedName =
+          matchedSeller?.displayName ||
+          matchedSeller?.legalName ||
+          c.sellerIdentityMatches?.[0]?.extractedLegalName ||
+          c.sellerIdentityMatches?.[0]?.extractedDisplayName;
+        if (matchedName) {
+          counterparty = matchedName;
+        } else if (c.merchant && c.merchant.role === "MERCHANT") {
+          counterparty = c.merchant.fullName || c.merchant.name || "TechStore Global";
+        } else {
+          counterparty = "TechStore Global";
+        }
       } else if (persona === "MERCHANT") {
         counterparty = c.buyer?.fullName || c.buyer?.name || "Alex Morgan";
       } else {
@@ -387,6 +574,47 @@ export class OverviewService {
       };
     });
 
+    // 6b. Build Cases Requiring Attention table
+    const casesRequiringAttention: CaseRequiringAttentionRow[] = casesInScope.slice(0, 8).map((c: any) => {
+      const descMeta = (c.description || "").match(
+        /\[Platform:\s*([^|]+)\s*\|\s*Order ID:\s*([^|]+)\s*\|\s*Product:\s*([^|]+)\s*\|\s*Category:\s*([^\]]+)\]/i
+      );
+      const marketplace = c.sellerEvidenceRequests?.[0]?.marketplace || descMeta?.[1]?.trim() || "Flipkart";
+      const product = c.sellerEvidenceRequests?.[0]?.productName || descMeta?.[3]?.trim() || c.title;
+      const seller =
+        c.sellerIdentityMatches?.[0]?.matchedSeller?.legalName ||
+        c.sellerIdentityMatches?.[0]?.extractedLegalName ||
+        c.sellerEvidenceRequests?.[0]?.merchantName ||
+        c.merchant?.fullName ||
+        "Identified Seller";
+
+      let actionRequired = "Review Evidence";
+      if (c.status === CaseStatus.EVIDENCE_REQUESTED) {
+        actionRequired = "Awaiting Seller Evidence";
+      } else if (c.status === CaseStatus.UNDER_ANALYSIS) {
+        actionRequired = "Evaluate Discrepancy";
+      } else if (c.resolutionProposals?.some((p: any) => p.status === "PROPOSED")) {
+        actionRequired = "Dual-Key Approval Needed";
+      } else if (c.status === CaseStatus.IN_REVIEW) {
+        actionRequired = "Remedy Authorization";
+      } else if (c.status === CaseStatus.EXECUTING_REFUND || c.status === CaseStatus.EXECUTING_REPLACEMENT) {
+        actionRequired = "Disbursement in Progress";
+      }
+
+      return {
+        id: c.id,
+        complaintId: c.caseNumber,
+        product,
+        marketplace,
+        seller,
+        currentStage: c.status.replace(/_/g, " "),
+        assignedInvestigator: c.assignedManager?.fullName || "Priya Raghavan",
+        actionRequired,
+        lastUpdated: formatRelativeTime(c.updatedAt),
+        openCaseHref: `/cases/${c.id}`,
+      };
+    });
+
     // 7. Evidence & Resolution Summary (BERR v2)
     // Counts aggregated from BerrFindings for cases in scope
     const allFindings = casesInScope.flatMap((c) => c.berrFindings || []);
@@ -399,72 +627,87 @@ export class OverviewService {
       agreed: {
         count: agreedCount,
         label: "Acknowledged by both sides",
-        example: "Purchase Amount $1,420.00 matched",
+        example: "Purchase Amount matched",
       },
       verified: {
         count: verifiedCount,
         label: "Cryptographically authenticated",
-        example: "PayPal Sandbox Capture verified",
+        example: "Invoice and damage photograph verified",
       },
       contested: {
         count: contestedCount,
         label: "Active contradiction flagged",
-        example: "Weight drop: 1,248g vs 420g (-828g)",
+        example: "Damaged goods condition vs delivery scan",
       },
       missing: {
         count: missingCount,
         label: "Required proof not yet submitted",
-        example: "Carrier Hub #3 handover scale slip",
+        example: "Seller pre-dispatch packaging proof",
       },
     };
 
-    // 8. Recent Activity & Notifications Feed
-    const recentActivity: OverviewActivityItem[] = [
-      {
-        id: "act-1",
-        time: "12m ago",
-        type: "INVESTIGATION",
-        title: "BERR v2 Contradiction Localized",
-        description: "Deterministic analysis localized weight loss to Carrier Intermediate Sorting Hub #3.",
-        caseNumber: "RG-2026-0412",
-        caseId: casesInScope[0]?.id,
-        badge: "Root Cause",
-        badgeColor: "var(--accent)",
+    // 8. Recent Activity from actual persisted CaseEvent records
+    const realEvents = await prisma.caseEvent.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 8,
+      include: {
+        case: { select: { id: true, caseNumber: true, title: true } },
+        actor: { select: { id: true, fullName: true, role: true } },
       },
-      {
-        id: "act-2",
-        time: "34m ago",
-        type: "APPROVAL",
-        title: "Remedy Recommendation Generated",
-        description: "AI investigation agent recommended carrier indemnity claim and $1,420.00 escrow refund.",
-        caseNumber: "RG-2026-0412",
-        caseId: casesInScope[0]?.id,
-        badge: "Human Gate",
-        badgeColor: "var(--agreed)",
-      },
-      {
-        id: "act-3",
-        time: "1h ago",
-        type: "EVIDENCE",
-        title: "SHA-256 Provenance Confirmed",
-        description: "4K unboxing video & scale photos hashed and verified against tamper seal telemetry.",
-        caseNumber: "RG-2026-0412",
-        caseId: casesInScope[0]?.id,
-        badge: "Evidence Vault",
-        badgeColor: "var(--buyer)",
-      },
-      {
-        id: "act-4",
-        time: "2h ago",
-        type: "PAYMENT",
-        title: "PayPal Capture Webhook Verified",
-        description: "Transaction #TX-9812 captured successfully on PayPal Sandbox. Funds locked in bilateral escrow.",
-        caseNumber: "RG-2026-0412",
-        caseId: casesInScope[0]?.id,
-        badge: "PayPal Rail",
-        badgeColor: "#0070BA",
-      },
-    ];
+    });
+
+    let recentActivity: OverviewActivityItem[] = [];
+    if (realEvents.length > 0) {
+      recentActivity = realEvents.map((evt) => {
+        let actType: OverviewActivityItem["type"] = "INVESTIGATION";
+        let badge = "Audit";
+        let badgeColor = "var(--accent)";
+
+        if (evt.eventType.includes("EVIDENCE")) {
+          actType = "EVIDENCE";
+          badge = "Evidence";
+          badgeColor = "var(--agreed)";
+        } else if (evt.eventType.includes("RESOLUTION") || evt.eventType.includes("PROPOSAL")) {
+          actType = "APPROVAL";
+          badge = "Remedy";
+          badgeColor = "var(--amber)";
+        } else if (evt.eventType.includes("SELLER")) {
+          actType = "INVESTIGATION";
+          badge = "Seller";
+          badgeColor = "var(--merchant)";
+        } else if (evt.eventType.includes("PAYPAL") || evt.eventType.includes("PAYMENT")) {
+          actType = "PAYMENT";
+          badge = "Payment";
+          badgeColor = "#0070BA";
+        }
+
+        return {
+          id: evt.id,
+          time: formatRelativeTime(evt.createdAt),
+          type: actType,
+          title: evt.eventType.replace(/_/g, " "),
+          description: evt.description,
+          caseNumber: evt.case?.caseNumber,
+          caseId: evt.case?.id,
+          badge,
+          badgeColor,
+        };
+      });
+    } else {
+      recentActivity = [
+        {
+          id: "act-1",
+          time: "12m ago",
+          type: "INVESTIGATION",
+          title: "Investigation Initialized",
+          description: "New complaint ingested into ResolveGraph dispute ledger.",
+          caseNumber: "RG-1462",
+          caseId: casesInScope[0]?.id,
+          badge: "Case Intake",
+          badgeColor: "var(--accent)",
+        },
+      ];
+    }
 
     // 9. Active Graph Teaser
     const canonicalCase = casesInScope.find((c) => c.caseNumber === "RG-2026-0412") || casesInScope[0];
@@ -497,8 +740,10 @@ export class OverviewService {
         actionRequired: actionRequiredCard,
         evidenceStatus: evidenceStatusCard,
       },
+      totalCapture: totalCaptureMeta,
       quickActions,
       recentRecords,
+      casesRequiringAttention,
       berrSummary,
       recentActivity,
       graphTeaser,

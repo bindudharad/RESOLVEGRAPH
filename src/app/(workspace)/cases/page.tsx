@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Download,
   FolderOpen,
@@ -22,6 +23,8 @@ import { CreateCaseAction } from "@/components/cases/create-case-dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/common/toast";
 import { CASE_STATUSES } from "@/lib/types";
+import { useSession } from "@/lib/auth-client";
+import { BuyerComplaintsList } from "@/components/buyer/buyer-complaints-list";
 
 const QUICK_STATUS_TABS = [
   "All",
@@ -34,6 +37,46 @@ const QUICK_STATUS_TABS = [
 ] as const;
 
 export default function CasesPage() {
+  const router = useRouter();
+  const { data: session, isPending } = useSession();
+  const sessionUser = session?.user as { role?: string; isPlatformAdmin?: boolean } | undefined;
+  const isBuyer = Boolean(sessionUser?.role === "BUYER" && !sessionUser?.isPlatformAdmin);
+  const isMerchant = Boolean(sessionUser?.role === "MERCHANT" && !sessionUser?.isPlatformAdmin);
+
+  useEffect(() => {
+    if (!isPending && isMerchant) {
+      router.replace("/seller/requests");
+    }
+  }, [isPending, isMerchant, router]);
+
+  if (isPending) {
+    return (
+      <div className="py-16 text-center text-sm text-[var(--ink-3)]">
+        Loading complaints...
+      </div>
+    );
+  }
+
+  if (isBuyer) {
+    return <BuyerComplaintsList />;
+  }
+
+  if (isMerchant) {
+    return (
+      <div className="py-16 text-center text-sm text-[var(--ink-3)]">
+        Redirecting to{" "}
+        <Link href="/seller/requests" className="text-[var(--accent)] underline">
+          Seller Evidence Requests
+        </Link>
+        ...
+      </div>
+    );
+  }
+
+  return <EnterpriseCasesWorkbench />;
+}
+
+function EnterpriseCasesWorkbench() {
   const { cases } = useDemoCases();
   const [filters, setFilters] = useState<CaseFilterState>(EMPTY_FILTERS);
   const { toast } = useToast();

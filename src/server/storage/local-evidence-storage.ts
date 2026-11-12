@@ -68,6 +68,26 @@ export function detectMagicBytes(buffer: Buffer): AllowedMimeType | null {
     return 'image/webp';
   }
 
+  // 5. MP4 / MOV ISO Base Media signature: ....'ftyp'
+  if (
+    buffer[4] === 0x66 &&
+    buffer[5] === 0x74 &&
+    buffer[6] === 0x79 &&
+    buffer[7] === 0x70
+  ) {
+    return 'video/mp4';
+  }
+
+  // 6. WEBM / Matroska signature: 1A 45 DF A3
+  if (
+    buffer[0] === 0x1a &&
+    buffer[1] === 0x45 &&
+    buffer[2] === 0xdf &&
+    buffer[3] === 0xa3
+  ) {
+    return 'video/webm';
+  }
+
   return null;
 }
 
@@ -134,7 +154,7 @@ export class LocalEvidenceStorage {
       return {
         valid: false,
         error:
-          'Invalid or unverified file format. Only PDF, JPEG, PNG, and WEBP files are permitted.',
+          'Invalid or unverified file format. Only PDF, JPEG, PNG, WEBP, MP4, and WEBM files are permitted.',
       };
     }
 
@@ -145,7 +165,9 @@ export class LocalEvidenceStorage {
         (detected === 'application/pdf' && !declaredMimeType.includes('pdf')) ||
         (detected === 'image/jpeg' && !declaredMimeType.includes('jpeg') && !declaredMimeType.includes('jpg')) ||
         (detected === 'image/png' && !declaredMimeType.includes('png')) ||
-        (detected === 'image/webp' && !declaredMimeType.includes('webp'))
+        (detected === 'image/webp' && !declaredMimeType.includes('webp')) ||
+        (detected === 'video/mp4' && !declaredMimeType.includes('mp4') && !declaredMimeType.includes('quicktime')) ||
+        (detected === 'video/webm' && !declaredMimeType.includes('webm'))
       ) {
         return {
           valid: false,
@@ -219,12 +241,14 @@ export class LocalEvidenceStorage {
     }
 
     if (!fs.existsSync(filePath)) {
-      // If a seeded demo file is requested that doesn't yet exist, generate sample file
-      if (safeBase.endsWith('.pdf')) {
+      // Only generate placeholder content for pre-seeded demo/test fixture keys without binary assets
+      const isSeededDemoFixture =
+        storageKey.startsWith('evidence/') || storageKey.startsWith('tests/');
+      if (isSeededDemoFixture && safeBase.endsWith('.pdf')) {
         const dummyPdf = Buffer.from('%PDF-1.4\n%ResolveGraph Secure Demo Evidence\n1 0 obj<</Type/Catalog>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n');
         fs.mkdirSync(path.dirname(filePath), { recursive: true });
         fs.writeFileSync(filePath, dummyPdf);
-      } else if (safeBase.endsWith('.png')) {
+      } else if (isSeededDemoFixture && safeBase.endsWith('.png')) {
         // Minimal 1x1 PNG
         const dummyPng = Buffer.from('89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000a49444154789c63000100000500010d0a2d420000000049454e44ae426082', 'hex');
         fs.mkdirSync(path.dirname(filePath), { recursive: true });
@@ -240,12 +264,58 @@ export class LocalEvidenceStorage {
   }
 
   /**
+   * Resolves an existing file path safely from private evidence storage (or legacy repo-relative keys).
+   */
+  resolveExistingPath(storageKey: string): string | null {
+    if (!storageKey || !storageKey.trim()) return null;
+    const safeBase = path.basename(storageKey);
+
+    const directPrivate = path.resolve(this.storageDir, storageKey);
+    if (directPrivate.startsWith(this.storageDir) && fs.existsSync(directPrivate)) {
+      return directPrivate;
+    }
+
+    const basePrivate = path.resolve(this.storageDir, safeBase);
+    if (basePrivate.startsWith(this.storageDir) && fs.existsSync(basePrivate)) {
+      return basePrivate;
+    }
+
+    if (path.isAbsolute(storageKey) && fs.existsSync(storageKey)) {
+      return storageKey;
+    }
+
+    const repoRoot = path.resolve(/*turbopackIgnore: true*/ process.cwd());
+    const repoRelative = path.resolve(/*turbopackIgnore: true*/ repoRoot, storageKey);
+    if (repoRelative.startsWith(repoRoot) && fs.existsSync(repoRelative)) {
+      return repoRelative;
+    }
+
+    return null;
+  }
+
+  /**
+   * Reads file bytes safely from storage if present, returning null if unavailable.
+   */
+  async readFileBuffer(storageKey: string): Promise<Buffer | null> {
+    const resolved = this.resolveExistingPath(storageKey);
+    if (!resolved) return null;
+    try {
+      return await fs.promises.readFile(resolved);
+    } catch {
+      return null;
+    }
+  }
+
+  /**
    * Deletes a file from secure storage (e.g. cleanup after failed transaction).
    */
   async deleteFile(storageKey: string): Promise<void> {
     try {
-      const safeKey = path.basename(storageKey);
-      const filePath = path.resolve(this.storageDir, safeKey);
+      const safeBase = path.basename(storageKey);
+      let filePath = path.resolve(this.storageDir, storageKey);
+      if (!filePath.startsWith(this.storageDir) || !fs.existsSync(filePath)) {
+        filePath = path.resolve(this.storageDir, safeBase);
+      }
       if (filePath.startsWith(this.storageDir) && fs.existsSync(filePath)) {
         await fs.promises.unlink(filePath);
       }

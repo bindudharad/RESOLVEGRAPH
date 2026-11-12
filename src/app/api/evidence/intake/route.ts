@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth, AuthError } from '@/server/auth/require-auth';
 import { UniversalEvidenceIntakeService } from '@/server/services/universal-evidence-intake.service';
+import { BegSyncService } from '@/server/graph/beg-sync.service';
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,6 +56,16 @@ export async function POST(request: NextRequest) {
       sourceType,
       manualData,
     });
+
+    const syncedCaseId = result?.evidence?.caseId || caseId;
+    if (syncedCaseId) {
+      await BegSyncService.handleDomainEvent({
+        caseId: syncedCaseId,
+        triggerEvent: 'BUYER_EVIDENCE_UPLOADED',
+        actorId: user.id,
+        rerunBerr: false,
+      }).catch((err) => console.warn('[EvidenceIntake] BEG sync skipped:', err));
+    }
 
     return NextResponse.json({ success: true, data: result }, { status: 201 });
   } catch (error: any) {

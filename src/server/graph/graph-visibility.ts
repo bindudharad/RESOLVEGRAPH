@@ -58,17 +58,22 @@ export class GraphVisibilityService {
   }
 
   private static isNodeVisibleToUser(node: GraphNode, user: UserContext): boolean {
-    const isInternal = Boolean(node.metadata?.isInternal);
+    const isInternal = Boolean(node.isInternal || node.metadata?.isInternal);
 
-    // Internal notes / private metadata are hidden from buyers
-    if (user.role === "BUYER" && isInternal) {
+    // Internal notes, private investigator findings, and internal evidence are hidden from buyers and non-investigator merchants
+    if ((user.role === "BUYER" || user.role === "MERCHANT") && isInternal) {
       return false;
     }
 
-    // Node organization check
+    // Hide raw buyer-only evidence and seller identity internals from unauthorized non-admins
+    if (user.role === "BUYER" && (node.begType === "SELLER_COMMUNICATION" || node.begType === "SELLER_INSPECTION_RECORD")) {
+      return false;
+    }
+
+    // Strict seller org boundary check
     const nodeOrgId = node.metadata?.organizationId as string | undefined;
     if (user.role === "MERCHANT" && nodeOrgId && user.organizationId) {
-      if (nodeOrgId !== user.organizationId && node.party === "MERCHANT") {
+      if (nodeOrgId !== user.organizationId) {
         return false;
       }
     }
@@ -77,12 +82,15 @@ export class GraphVisibilityService {
   }
 
   private static sanitizeNodeForUser(node: GraphNode, user: UserContext): GraphNode {
-    // If the node contains sensitive merchant notes or internal reasoning and user is buyer:
-    if (user.role === "BUYER") {
+    if (user.role === "BUYER" || user.role === "MERCHANT") {
       const safeMetadata = { ...node.metadata };
       delete safeMetadata.merchantInternalNotes;
+      delete safeMetadata.investigatorNotes;
       delete safeMetadata.internalScore;
       delete safeMetadata.rawPrompt;
+      if (user.role === "MERCHANT" && node.party === "BUYER") {
+        delete safeMetadata.email;
+      }
 
       return {
         ...node,

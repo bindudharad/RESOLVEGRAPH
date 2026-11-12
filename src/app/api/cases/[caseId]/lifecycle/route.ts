@@ -12,9 +12,12 @@ export async function GET(
     const { caseId } = await context.params;
 
     // Verify authorized access to case
-    await getCaseByIdAuthorized(user, caseId);
+    const caseRecord = await getCaseByIdAuthorized(user, caseId);
+    if (!caseRecord) {
+      return NextResponse.json({ error: `Dispute case '${caseId}' not found.` }, { status: 404 });
+    }
 
-    const report = await LifecycleIntelligenceService.analyzeCaseLifecycle(caseId);
+    const report = await LifecycleIntelligenceService.analyzeCaseLifecycle(caseRecord.dbId || caseRecord.id);
 
     return NextResponse.json({
       success: true,

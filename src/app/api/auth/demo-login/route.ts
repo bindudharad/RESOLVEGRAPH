@@ -192,7 +192,7 @@ export async function POST(request: NextRequest) {
         isPlatformAdmin: userRecord.isPlatformAdmin,
         organization: userRecord.organization,
       },
-      redirectTo: "/overview",
+      redirectTo: workspace === "MERCHANT" ? "/seller" : "/overview",
     });
 
     // Extract all Set-Cookie headers from Better-Auth response

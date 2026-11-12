@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, AuthError } from "@/server/auth/require-auth";
+import { canMutateBegGraph } from "@/server/auth/permissions";
 import { getCaseByIdAuthorized } from "@/server/dal/get-case-by-id";
 import { prisma } from "@/lib/prisma";
+import { BegSyncService } from "@/server/graph/beg-sync.service";
 
 export async function POST(
   request: NextRequest,
@@ -16,6 +18,13 @@ export async function POST(
       return NextResponse.json({ error: `Case '${caseId}' not found` }, { status: 404 });
     }
 
+    if (!canMutateBegGraph(user, caseRecord)) {
+      return NextResponse.json(
+        { error: "Access denied: Only investigators, resolution managers, or admins may review BEG relationships." },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json().catch(() => ({}));
     const { relationId, targetType, reviewStatus, comment } = body;
 
@@ -26,6 +35,8 @@ export async function POST(
       );
     }
 
+    const realDbCaseId = (caseRecord as { dbId?: string }).dbId || caseRecord.id;
+
     if (targetType === "CLAIM_ASSESSMENT") {
       const assessment = await prisma.factClaimAssessment.update({
         where: { id: relationId },
@@ -33,6 +44,12 @@ export async function POST(
           reviewStatus,
         },
       });
+      await BegSyncService.handleDomainEvent({
+        caseId: realDbCaseId,
+        triggerEvent: "INVESTIGATION_UPDATED",
+        actorId: user.id,
+        rerunBerr: false,
+      }).catch(() => {});
       return NextResponse.json({ success: true, assessment });
     }
 
@@ -45,6 +62,13 @@ export async function POST(
         explanation: comment ? `${comment} (reviewed)` : undefined,
       },
     });
+
+    await BegSyncService.handleDomainEvent({
+      caseId: realDbCaseId,
+      triggerEvent: "INVESTIGATION_UPDATED",
+      actorId: user.id,
+      rerunBerr: false,
+    }).catch(() => {});
 
     return NextResponse.json({ success: true, relation });
   } catch (error: unknown) {

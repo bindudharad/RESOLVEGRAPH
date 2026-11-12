@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   CreditCard,
@@ -10,6 +10,8 @@ import {
   Search,
   ExternalLink,
   ArrowRight,
+  ArrowUpRight,
+  BarChart3,
   ShieldCheck,
   Clock,
   ChevronRight,
@@ -18,7 +20,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
 import { SlideOver } from "@/components/ui/slide-over";
 import { RefundDialog } from "@/components/payments/refund-dialog";
+import { useSession } from "@/lib/auth-client";
 import { formatCurrency } from "@/lib/utils";
+import { formatMinorCurrency } from "@/server/analytics/timezone-calendar";
 import type { Currency } from "@/lib/types";
 
 interface PaymentItem {
@@ -61,6 +65,13 @@ const STATUS_FILTERS = [
 ];
 
 export default function PaymentsPage() {
+  const { data: session } = useSession();
+  const sessionUser = session?.user as { role?: string; isPlatformAdmin?: boolean } | undefined;
+  const isBuyerUser = Boolean(
+    sessionUser && sessionUser.role === "BUYER" && !sessionUser.isPlatformAdmin
+  );
+  const canOpenCaptureAnalytics = !isBuyerUser;
+
   const [payments, setPayments] = useState<PaymentItem[]>([]);
   const [metrics, setMetrics] = useState<PaymentMetrics>({
     totalCapturedMinor: 0,
@@ -74,17 +85,20 @@ export default function PaymentsPage() {
   const [selectedRefundPayment, setSelectedRefundPayment] = useState<PaymentItem | null>(null);
   const [inspectPayment, setInspectPayment] = useState<PaymentItem | null>(null);
 
-  useEffect(() => {
-    let mounted = true;
-    async function load() {
-      setLoading(true);
+  const loadPayments = useCallback(
+    async (silent = false) => {
+      if (!silent) {
+        setLoading(true);
+      }
       try {
         const query = new URLSearchParams();
         if (statusFilter !== "ALL") query.set("status", statusFilter);
         if (search.trim()) query.set("search", search.trim());
 
-        const res = await fetch(`/api/payments?${query.toString()}`);
-        if (res.ok && mounted) {
+        const res = await fetch(`/api/payments?${query.toString()}`, {
+          cache: "no-store",
+        });
+        if (res.ok) {
           const data = await res.json();
           setPayments(data.payments || []);
           if (data.metrics) setMetrics(data.metrics);
@@ -92,29 +106,43 @@ export default function PaymentsPage() {
       } catch (err) {
         console.error("Failed to load payments:", err);
       } finally {
-        if (mounted) setLoading(false);
+        if (!silent) {
+          setLoading(false);
+        }
       }
-    }
-    load();
-    return () => {
-      mounted = false;
+    },
+    [statusFilter, search]
+  );
+
+  useEffect(() => {
+    void loadPayments(false);
+
+    const onRefresh = () => {
+      void loadPayments(true);
     };
-  }, [statusFilter, search]);
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        void loadPayments(true);
+      }
+    };
+
+    window.addEventListener("focus", onRefresh);
+    window.addEventListener("resolvegraph:capture-updated", onRefresh);
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      window.removeEventListener("focus", onRefresh);
+      window.removeEventListener("resolvegraph:capture-updated", onRefresh);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [loadPayments]);
 
   const handleRefresh = () => {
-    const query = new URLSearchParams();
-    if (statusFilter !== "ALL") query.set("status", statusFilter);
-    if (search.trim()) query.set("search", search.trim());
-
-    fetch(`/api/payments?${query.toString()}`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data) {
-          setPayments(data.payments || []);
-          if (data.metrics) setMetrics(data.metrics);
-        }
-      });
+    void loadPayments(true);
   };
+
+  const totalCaptureCount =
+    metrics.capturedByCurrency?.reduce((sum, item) => sum + (item.count || 0), 0) ?? 0;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -189,7 +217,18 @@ export default function PaymentsPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 shrink-0">
+          <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+            {canOpenCaptureAnalytics && (
+              <Link href="/analytics/captures">
+                <Button
+                  variant="outline"
+                  className="gap-2 text-xs border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 hover:text-emerald-200"
+                >
+                  <BarChart3 className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>Capture Analytics</span>
+                </Button>
+              </Link>
+            )}
             <Link href="/paypal/disputes">
               <Button
                 variant="outline"
@@ -216,31 +255,75 @@ export default function PaymentsPage() {
       {/* 2. FOUR AUTHORITATIVE METRIC CARDS                       */}
       {/* ======================================================== */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Captured Volume */}
-        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-white/50 text-xs font-medium">
-            <span>Captured Volume</span>
-            <DollarSign className="h-4 w-4 text-emerald-400" />
-          </div>
-          <div className="mt-4">
-            <div className="font-mono text-2xl font-bold text-white tabular-nums">
-              {metrics.capturedByCurrency && metrics.capturedByCurrency.length > 0
-                ? metrics.capturedByCurrency
-                    .map((c) =>
-                      formatCurrency(
-                        c.totalAmountMinor / 100,
-                        (c.currency as Currency) || "USD"
-                      )
-                    )
-                    .join(" + ")
-                : formatCurrency(metrics.totalCapturedMinor / 100, "USD")}
+        {/* Total Capture -> Interactive Capture Analytics (authorized roles only) */}
+        {canOpenCaptureAnalytics ? (
+          <Link
+            href="/analytics/captures"
+            data-testid="payments-total-capture-card"
+            className="group rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between transition-all hover:border-emerald-500/40 hover:bg-white/[0.03] cursor-pointer focus-visible:outline-2 focus-visible:outline-emerald-400"
+          >
+            <div className="flex items-center justify-between text-white/60 group-hover:text-white text-xs font-medium transition-colors">
+              <span>Total Capture</span>
+              <DollarSign className="h-4 w-4 text-emerald-400" />
             </div>
-            <p className="mt-1 text-xs text-white/50">Authoritative captured ledger total</p>
+            <div className="mt-4">
+              {loading && payments.length === 0 && metrics.totalCapturedMinor === 0 ? (
+                <div className="space-y-2">
+                  <div className="h-8 w-32 rounded bg-white/[0.08] animate-pulse" />
+                  <div className="h-3.5 w-40 rounded bg-white/[0.05] animate-pulse" />
+                </div>
+              ) : (
+                <>
+                  <div className="font-mono text-2xl font-bold text-white tabular-nums">
+                    {metrics.capturedByCurrency && metrics.capturedByCurrency.length > 0
+                      ? metrics.capturedByCurrency
+                          .map((c) => `${formatMinorCurrency(c.totalAmountMinor, c.currency)} ${c.currency}`)
+                          .join(" + ")
+                      : `${formatMinorCurrency(metrics.totalCapturedMinor, "USD")} USD`}
+                  </div>
+                  <p className="mt-1 text-xs text-white/50">
+                    {totalCaptureCount.toLocaleString("en-US")} successful capture
+                    {totalCaptureCount === 1 ? "" : "s"} • Authoritative ledger
+                  </p>
+                </>
+              )}
+            </div>
+            <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-emerald-400">
+              <span>6-mo &amp; daily trends</span>
+              <span className="inline-flex items-center gap-1 font-medium group-hover:underline">
+                <span>View Analytics</span>
+                <ArrowUpRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </span>
+            </div>
+          </Link>
+        ) : (
+          <div
+            data-testid="payments-total-capture-card"
+            className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between text-white/60 text-xs font-medium">
+              <span>Total Capture</span>
+              <DollarSign className="h-4 w-4 text-emerald-400" />
+            </div>
+            <div className="mt-4">
+              <div className="font-mono text-2xl font-bold text-white tabular-nums">
+                {metrics.capturedByCurrency && metrics.capturedByCurrency.length > 0
+                  ? metrics.capturedByCurrency
+                      .map((c) => `${formatMinorCurrency(c.totalAmountMinor, c.currency)} ${c.currency}`)
+                      .join(" + ")
+                  : `${formatMinorCurrency(metrics.totalCapturedMinor, "USD")} USD`}
+              </div>
+              <p className="mt-1 text-xs text-white/50">
+                {totalCaptureCount.toLocaleString("en-US")} successful capture
+                {totalCaptureCount === 1 ? "" : "s"} • Authoritative ledger
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-white/40">
+              <span>Order payment ledger</span>
+              <span>Buyer scope</span>
+            </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-emerald-400">
-            Authoritative Settlement
-          </div>
-        </div>
+        )}
 
         {/* Total Refunds */}
         <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">

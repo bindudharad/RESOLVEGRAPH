@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, AuthError } from "@/server/auth/require-auth";
 import { OverviewService } from "@/server/services/overview.service";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET /api/overview/summary
  * Strictly authenticated endpoint returning scoped overview metrics for the session user.
@@ -12,7 +14,12 @@ export async function GET(request: NextRequest) {
     const user = await requireAuth(request);
     const data = await OverviewService.getScopedOverview(user);
 
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+        Pragma: "no-cache",
+      },
+    });
   } catch (error: unknown) {
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });

@@ -15,7 +15,7 @@ export async function GET(
   const userAgent = request.headers.get('user-agent') || 'Unknown';
 
   // 1. Enforce authentication
-  const session = await getSessionContext();
+  const session = await getSessionContext(request);
   if (!session || !session.user) {
     return NextResponse.json({ error: 'Unauthorized: Authentication required' }, { status: 401 });
   }
@@ -96,12 +96,25 @@ export async function GET(
     });
 
     const webStream = Readable.toWeb(stream) as ReadableStream;
+    const wantsInline = request.nextUrl.searchParams.get('inline') === '1';
+    const safeInlineMimeTypes = new Set([
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'video/mp4',
+      'video/webm',
+    ]);
+    const dispositionType =
+      wantsInline && safeInlineMimeTypes.has((evidence.mimeType || '').toLowerCase())
+        ? 'inline'
+        : 'attachment';
 
     return new Response(webStream, {
       status: 200,
       headers: {
         'Content-Type': evidence.mimeType || 'application/octet-stream',
-        'Content-Disposition': `attachment; filename="${encodeURIComponent(evidence.filename)}"`,
+        'Content-Disposition': `${dispositionType}; filename="${encodeURIComponent(evidence.filename)}"`,
         'Content-Length': sizeBytes.toString(),
         'X-Content-Type-Options': 'nosniff',
         'Cache-Control': 'private, no-cache, no-store, must-revalidate',

@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from '@/lib/prisma';
 import { CaseService } from '@/server/services/case.service';
-import { EventType } from '@/generated/prisma/client';
-import { toMinorUnits } from '../utils/money';
+import { CaseLifecycleService } from '@/server/orchestration/case-lifecycle.service';
+import { DeliveryReminderService } from '@/server/services/delivery-reminder.service';
+import { CaseStatus, EventType, RemedyType } from '@/generated/prisma/client';
+import { toMinorUnits, calculateRemainingRefundable } from '../utils/money';
 import { PayPalSyncService } from './paypal-sync.service';
 
 export interface ProcessWebhookResult {
@@ -102,7 +104,14 @@ export class WebhookProcessingService {
         break;
 
       case 'PAYMENT.CAPTURE.REFUNDED':
+      case 'PAYMENT.CAPTURE.REFUND.COMPLETED':
+      case 'PAYMENT.REFUND.COMPLETED':
         await this.handleCaptureRefunded(resource);
+        break;
+
+      case 'PAYMENT.CAPTURE.REFUND.FAILED':
+      case 'PAYMENT.REFUND.FAILED':
+        await this.handleCaptureRefundFailed(resource, eventType);
         break;
 
       case 'CUSTOMER.DISPUTE.CREATED':
@@ -229,56 +238,256 @@ export class WebhookProcessingService {
 
   private static async handleCaptureRefunded(resource: any): Promise<void> {
     const refundId = resource.id;
-    const captureId = resource.links?.find((l: any) => l.rel === 'up')?.href?.split('/').pop();
+    let captureId: string | undefined =
+      resource.links?.find((l: any) => l.rel === 'up')?.href?.split('/').pop() ||
+      resource.capture_id ||
+      undefined;
 
-    if (!captureId) return;
+    let payment = captureId
+      ? await prisma.payPalPayment.findUnique({
+          where: { captureId },
+          include: {
+            commerceOrder: {
+              include: { case: true },
+            },
+            refunds: true,
+          },
+        })
+      : null;
 
-    const payment = await prisma.payPalPayment.findUnique({
-      where: { captureId },
-      include: {
-        commerceOrder: true,
-        refunds: true,
+    if (!payment && refundId) {
+      const existingByRefund = await prisma.refundTransaction.findFirst({
+        where: {
+          OR: [{ paypalRefundId: refundId }, { refundRequestId: refundId }],
+        },
+        include: {
+          payment: {
+            include: {
+              commerceOrder: {
+                include: { case: true },
+              },
+              refunds: true,
+            },
+          },
+        },
+      });
+      if (existingByRefund?.payment) {
+        payment = existingByRefund.payment;
+        captureId = payment.captureId || captureId;
+      }
+    }
+
+    if (!payment) return;
+
+    const amountMinor = resource.amount?.value
+      ? toMinorUnits(resource.amount.value, resource.amount.currency_code)
+      : payment.amountMinor;
+    const completedAt = resource.create_time ? new Date(resource.create_time) : new Date();
+
+    // Match existing refund by paypalRefundId, refundRequestId, or matching PENDING transaction
+    let targetRefund =
+      payment.refunds.find((r) => r.paypalRefundId === refundId) ||
+      payment.refunds.find(
+        (r) =>
+          (r.status === 'PENDING' || r.status === 'PROCESSING') &&
+          r.amountMinor === amountMinor &&
+          (!r.paypalRefundId || r.paypalRefundId === refundId)
+      ) ||
+      null;
+
+    if (targetRefund && targetRefund.status === 'COMPLETED') {
+      // Already processed and completed idempotently
+      return;
+    }
+
+    if (targetRefund) {
+      targetRefund = await prisma.refundTransaction.update({
+        where: { id: targetRefund.id },
+        data: {
+          paypalRefundId: refundId || targetRefund.paypalRefundId,
+          status: 'COMPLETED',
+          completedAt,
+          rawResponseJson: JSON.stringify(resource),
+        },
+      });
+    } else {
+      targetRefund = await prisma.refundTransaction.create({
+        data: {
+          paymentId: payment.id,
+          refundRequestId: `WH-${refundId}`,
+          paypalRefundId: refundId,
+          amountMinor,
+          currency: resource.amount?.currency_code || payment.currency,
+          status: 'COMPLETED',
+          reason: resource.note_to_payer || 'Refund recorded via PayPal webhook notification',
+          requestedById: payment.commerceOrder.buyerId,
+          completedAt,
+          rawResponseJson: JSON.stringify(resource),
+        },
+      });
+    }
+
+    // Recompute all completed refunds on this payment to update CommerceOrder accurately
+    const refreshedRefunds = await prisma.refundTransaction.findMany({
+      where: { paymentId: payment.id },
+    });
+    const remaining = calculateRemainingRefundable(payment.amountMinor, refreshedRefunds);
+    const hasPendingLeft = refreshedRefunds.some(
+      (r) => r.status === 'PENDING' || r.status === 'PROCESSING'
+    );
+    await prisma.commerceOrder.update({
+      where: { id: payment.commerceOrderId },
+      data: {
+        status: remaining <= 0 && !hasPendingLeft ? 'REFUNDED' : 'PARTIALLY_REFUNDED',
       },
     });
 
-    if (payment) {
-      // Check if refund already recorded
-      const existingRefund = payment.refunds.find((r) => r.paypalRefundId === refundId);
-      if (!existingRefund) {
-        const amountMinor = resource.amount?.value
-          ? toMinorUnits(resource.amount.value, resource.amount.currency_code)
-          : 0;
-
-        await prisma.refundTransaction.create({
-          data: {
-            paymentId: payment.id,
-            refundRequestId: `WH-${refundId}`,
-            paypalRefundId: refundId,
-            amountMinor,
-            currency: resource.amount?.currency_code || payment.currency,
-            status: 'COMPLETED',
-            reason: resource.note_to_payer || 'Refund recorded via PayPal webhook notification',
-            requestedById: payment.commerceOrder.buyerId,
-            completedAt: resource.create_time ? new Date(resource.create_time) : new Date(),
-          },
-        });
-
-        // Synchronize with Canonical Transaction Engine
-        try {
-          await PayPalSyncService.syncRefund({
-            refundId,
-            captureId,
-            amountMinor,
-            currency: resource.amount?.currency_code || payment.currency,
-            status: 'COMPLETED',
-            reason: resource.note_to_payer || 'Refund recorded via PayPal webhook notification',
-            caseId: payment.commerceOrder.caseId,
-            timestamp: resource.create_time ? new Date(resource.create_time) : new Date(),
-          });
-        } catch (syncErr) {
-          console.warn('[WebhookProcessingService] Canonical refund sync notice:', syncErr);
-        }
+    // If linked proposal exists, complete it cleanly
+    let resolvedRemedy: RemedyType = RemedyType.FULL_REFUND;
+    if (targetRefund.resolutionProposalId) {
+      const linkedProposal = await prisma.resolutionProposal.update({
+        where: { id: targetRefund.resolutionProposalId },
+        data: {
+          status: 'COMPLETED',
+          authorizationStatus: 'COMPLETED',
+        },
+      });
+      if (linkedProposal.proposalType === 'PARTIAL_REFUND') {
+        resolvedRemedy = RemedyType.PARTIAL_REFUND;
+      } else if (linkedProposal.proposalType === 'RETURN_AND_REFUND') {
+        resolvedRemedy = RemedyType.RETURN_FOR_REFUND;
       }
+    }
+
+    // Synchronize with Canonical Transaction Engine
+    try {
+      await PayPalSyncService.syncRefund({
+        refundId,
+        captureId: captureId || payment.captureId || '',
+        amountMinor,
+        currency: resource.amount?.currency_code || payment.currency,
+        status: 'COMPLETED',
+        reason: targetRefund.reason || 'Refund confirmed via PayPal webhook notification',
+        caseId: payment.commerceOrder.caseId,
+        timestamp: completedAt,
+      });
+    } catch (syncErr) {
+      console.warn('[WebhookProcessingService] Canonical refund sync notice:', syncErr);
+    }
+
+    // Complete case lifecycle & notify buyer and seller org when linked to dispute case
+    if (payment.commerceOrder.caseId && payment.commerceOrder.case) {
+      const linkedCase = payment.commerceOrder.case;
+      if (
+        linkedCase.status !== CaseStatus.RESOLVED &&
+        linkedCase.status !== CaseStatus.CLOSED
+      ) {
+        await CaseLifecycleService.resolveCase({
+          caseId: linkedCase.id,
+          actorId: targetRefund.approvedById || linkedCase.buyerId,
+          remedy: resolvedRemedy,
+          summary: `Refund of ${targetRefund.currency} ${(targetRefund.amountMinor / 100).toFixed(2)} confirmed via payment provider webhook (${refundId}).`,
+        });
+      }
+
+      await CaseService.logEvent(
+        linkedCase.id,
+        EventType.REFUND_COMPLETED,
+        targetRefund.approvedById || linkedCase.buyerId,
+        `Webhook confirmed refund completion: ${refundId} (${targetRefund.currency} ${(targetRefund.amountMinor / 100).toFixed(2)}).`
+      );
+
+      await DeliveryReminderService.notifyBuyerCaseEvent({
+        userId: linkedCase.buyerId,
+        caseNumber: linkedCase.caseNumber,
+        title: `Refund Completed — ${linkedCase.caseNumber}`,
+        body: `Your refund of ${targetRefund.currency} ${(targetRefund.amountMinor / 100).toFixed(2)} has been completed (Ref: ${refundId}).`,
+        type: 'SUCCESS',
+      });
+
+      const sellerMembers = await prisma.organizationMember.findMany({
+        where: {
+          organizationId: payment.commerceOrder.merchantOrganizationId,
+          isActive: true,
+        },
+        select: { userId: true },
+      });
+      for (const m of sellerMembers) {
+        await prisma.notificationMessage
+          .create({
+            data: {
+              userId: m.userId,
+              title: `Refund Confirmed — ${linkedCase.caseNumber}`,
+              body: `Refund of ${targetRefund.currency} ${(targetRefund.amountMinor / 100).toFixed(2)} confirmed by payment provider (${refundId}).`,
+              linkUrl: '/seller/requests',
+              type: 'SUCCESS',
+            },
+          })
+          .catch(() => {});
+      }
+    }
+  }
+
+  private static async handleCaptureRefundFailed(resource: any, eventType: string): Promise<void> {
+    const refundId = resource.id;
+    const captureId = resource.links?.find((l: any) => l.rel === 'up')?.href?.split('/').pop();
+
+    const targetRefund = await prisma.refundTransaction.findFirst({
+      where: {
+        OR: [
+          ...(refundId ? [{ paypalRefundId: refundId }, { refundRequestId: refundId }] : []),
+          ...(captureId
+            ? [{ payment: { captureId }, status: 'PENDING' }]
+            : []),
+        ],
+      },
+      include: {
+        payment: {
+          include: {
+            commerceOrder: { include: { case: true } },
+          },
+        },
+      },
+    });
+
+    if (!targetRefund || targetRefund.status === 'FAILED') return;
+
+    await prisma.refundTransaction.update({
+      where: { id: targetRefund.id },
+      data: {
+        status: 'FAILED',
+        rawResponseJson: JSON.stringify(resource),
+      },
+    });
+
+    if (targetRefund.resolutionProposalId) {
+      await prisma.resolutionProposal.update({
+        where: { id: targetRefund.resolutionProposalId },
+        data: { authorizationStatus: 'EXECUTION_FAILED' },
+      });
+    }
+
+    const linkedCase = targetRefund.payment.commerceOrder.case;
+    if (linkedCase && linkedCase.status !== CaseStatus.RESOLVED && linkedCase.status !== CaseStatus.CLOSED) {
+      await prisma.caseRecord.update({
+        where: { id: linkedCase.id },
+        data: { status: CaseStatus.IN_REVIEW, updatedAt: new Date() },
+      });
+
+      await CaseService.logEvent(
+        linkedCase.id,
+        EventType.REFUND_FAILED,
+        linkedCase.buyerId,
+        `Webhook reported refund failure (${eventType}) for refund ${refundId || targetRefund.id}.`
+      );
+
+      await DeliveryReminderService.notifyBuyerCaseEvent({
+        userId: linkedCase.buyerId,
+        caseNumber: linkedCase.caseNumber,
+        title: `Refund Processing Issue — ${linkedCase.caseNumber}`,
+        body: 'The payment provider reported a refund processing failure. Our resolution team has been notified for follow-up.',
+        type: 'WARNING',
+      });
     }
   }
 

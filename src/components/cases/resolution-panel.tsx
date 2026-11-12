@@ -31,6 +31,9 @@ interface ProposalItem {
   amountMinor?: number;
   currency: string;
   status: string;
+  authorizationStatus?: string;
+  denialReason?: string | null;
+  basedOnAssessmentId?: string | null;
   reason: string;
   policyVersion: string;
   responses: Array<{
@@ -38,73 +41,119 @@ interface ProposalItem {
     responder: { id: string; fullName: string; role: string };
     response: string;
   }>;
+  refunds?: Array<{
+    id: string;
+    status: string;
+    amountMinor: number;
+    currency: string;
+    paypalRefundId?: string | null;
+  }>;
+  replacementFulfillment?: {
+    id: string;
+    status: string;
+    carrierName?: string | null;
+    trackingNumber?: string | null;
+  } | null;
+}
+
+interface CandidateOptionApi {
+  proposalType: string;
+  title: string;
+  description: string;
+  suggestedAmountMinor?: number;
+  isEligible: boolean;
+  requiresEscalation: boolean;
+  reason: string;
+}
+
+interface PolicyEvalView {
+  policyName: string;
+  policyVersion: string;
+  violations: string[];
+  candidateOptions: CandidateOptionApi[];
+  recommendedOption?: CandidateOptionApi;
+  berrSummary?: {
+    assessmentId: string | null;
+    version: number | null;
+    overallStatus: string | null;
+    status: string | null;
+    isStale: boolean;
+    hasUnresolvedConflicts: boolean;
+    hasMissingEvidence: boolean;
+    buyerEvidenceBlocked: boolean;
+    sellerEvidenceMissing: boolean;
+  };
+  activeRefund?: {
+    hasCompletedFullRefund: boolean;
+    hasActivePendingRefund: boolean;
+    totalRefundedMinor: number;
+  };
 }
 
 interface RemedyOption {
   id: string;
+  proposalType: string;
   title: string;
-  kind: "Replacement" | "Full Refund" | "Partial Settlement" | "Human Review";
+  kind: "Replacement" | "Full Refund" | "Partial Settlement" | "Human Review" | "Information Request";
   description: string;
-  amountCalc?: (amount: number) => number;
+  amountMinor?: number;
   icon: typeof RefreshCw;
   recommended?: boolean;
+  isEligible: boolean;
+  requiresEscalation: boolean;
+  reason?: string;
 }
 
-const REMEDY_OPTIONS: RemedyOption[] = [
-  {
-    id: "replace",
-    title: "Dispatch Replacement Unit",
-    kind: "Replacement",
-    description: "Merchant dispatches the 1 TB model upon receiving carrier tracking verification.",
-    icon: RefreshCw,
-    recommended: true,
-  },
-  {
-    id: "refund_full",
-    title: "Full Transaction Refund",
-    kind: "Full Refund",
-    description: "Full reverse payout credited to buyer once the 512 GB unit is scanned in warehouse.",
-    amountCalc: (amount) => amount,
-    icon: DollarSign,
-  },
-  {
-    id: "settle_partial",
-    title: "Partial Settlement (Difference Offset)",
-    kind: "Partial Settlement",
-    description: "Refund the price differential allowing buyer to keep the delivered unit.",
-    amountCalc: (amount) => Math.round(amount * 0.3),
-    icon: Scale,
-  },
-  {
-    id: "human_review",
-    title: "Escalate to Human Arbitrator",
-    kind: "Human Review",
-    description: "Route dispute packet to senior risk specialist for bilateral settlement negotiation.",
-    icon: UserCheck,
-  },
-];
+const OPTION_META: Record<
+  string,
+  { id: string; kind: RemedyOption["kind"]; icon: typeof RefreshCw }
+> = {
+  REPLACEMENT: { id: "replace", kind: "Replacement", icon: RefreshCw },
+  FULL_REFUND: { id: "refund_full", kind: "Full Refund", icon: DollarSign },
+  PARTIAL_REFUND: { id: "settle_partial", kind: "Partial Settlement", icon: Scale },
+  RETURN_AND_REFUND: { id: "return_refund", kind: "Full Refund", icon: DollarSign },
+  HUMAN_REVIEW: { id: "human_review", kind: "Human Review", icon: UserCheck },
+  INFORMATION_REQUEST: { id: "info_request", kind: "Information Request", icon: HelpCircle },
+};
 
 export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
-  const [selectedRemedy, setSelectedRemedy] = useState<string>("replace");
+  const [selectedRemedy, setSelectedRemedy] = useState<string>("refund_full");
   const [proposals, setProposals] = useState<ProposalItem[]>([]);
-  const [policyInfo, setPolicyInfo] = useState<{ policyName: string; policyVersion: string; violations: string[] } | null>(null);
+  const [policyInfo, setPolicyInfo] = useState<PolicyEvalView | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
+  const applyPolicyData = (optData: PolicyEvalView) => {
+    setPolicyInfo({
+      policyName: optData.policyName,
+      policyVersion: optData.policyVersion,
+      violations: optData.violations || [],
+      candidateOptions: optData.candidateOptions || [],
+      recommendedOption: optData.recommendedOption,
+      berrSummary: optData.berrSummary,
+      activeRefund: optData.activeRefund,
+    });
+    if (optData.recommendedOption?.proposalType) {
+      const meta = OPTION_META[optData.recommendedOption.proposalType];
+      if (meta) setSelectedRemedy(meta.id);
+    }
+  };
+
   const loadProposalsAndOptions = async () => {
     try {
+      setLoadError(null);
       const [optRes, propRes] = await Promise.all([
         fetch(`/api/cases/${caseItem.id}/resolution-options`),
         fetch(`/api/cases/${caseItem.id}/resolution-proposals`),
       ]);
 
       if (optRes.ok) {
-        const optData = await optRes.json();
-        setPolicyInfo({
-          policyName: optData.policyName,
-          policyVersion: optData.policyVersion,
-          violations: optData.violations || [],
-        });
+        const optData = (await optRes.json()) as PolicyEvalView;
+        applyPolicyData(optData);
+      } else {
+        const err = await optRes.json().catch(() => ({}));
+        setLoadError(err.error || "Unable to evaluate resolution policy options.");
       }
 
       if (propRes.ok) {
@@ -112,7 +161,7 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
         setProposals(propData.proposals || []);
       }
     } catch {
-      // Fallback
+      setLoadError("Network error while loading policy options and proposals.");
     }
   };
 
@@ -126,12 +175,11 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
         ]);
 
         if (optRes.ok && !ignore) {
-          const optData = await optRes.json();
-          setPolicyInfo({
-            policyName: optData.policyName,
-            policyVersion: optData.policyVersion,
-            violations: optData.violations || [],
-          });
+          const optData = (await optRes.json()) as PolicyEvalView;
+          applyPolicyData(optData);
+        } else if (!ignore) {
+          const err = await optRes.json().catch(() => ({}));
+          setLoadError(err.error || "Unable to evaluate resolution policy options.");
         }
 
         if (propRes.ok && !ignore) {
@@ -139,7 +187,9 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
           setProposals(propData.proposals || []);
         }
       } catch {
-        // Fallback
+        if (!ignore) {
+          setLoadError("Network error while loading policy options and proposals.");
+        }
       }
     };
     load();
@@ -151,45 +201,42 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
   const handleProposeRemedy = async (option: RemedyOption) => {
     setIsSubmitting(true);
     try {
-      const proposalTypeMap: Record<string, string> = {
-        replace: "REPLACEMENT",
-        refund_full: "FULL_REFUND",
-        settle_partial: "PARTIAL_REFUND",
-        human_review: "HUMAN_REVIEW",
-      };
-
       const res = await fetch(`/api/cases/${caseItem.id}/resolution-proposals`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          proposalType: proposalTypeMap[option.id] || "REPLACEMENT",
+          proposalType: option.proposalType,
           title: option.title,
           description: option.description,
-          amountMinor: option.amountCalc ? option.amountCalc(caseItem.amount) * 100 : undefined,
+          amountMinor: option.amountMinor,
           currency: caseItem.currency,
-          reason: `Formally proposed based on bilateral review under ${policyInfo?.policyName || "Standard Policy"}.`,
+          reason:
+            option.reason ||
+            `Formally proposed based on BERR and policy review under ${policyInfo?.policyName || "Standard Policy"}.`,
+          basedOnAssessmentId: policyInfo?.berrSummary?.assessmentId || undefined,
         }),
       });
 
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
         toast({
           tone: "success",
           title: "Resolution Proposal Submitted",
-          description: `"${option.title}" dispatched to counterparty for bilateral response.`,
+          description: `"${option.title}" persisted and awaiting review/authorization.`,
         });
         await loadProposalsAndOptions();
       } else {
         toast({
-          tone: "info",
-          title: "Proposal Preview Recorded",
-          description: `"${option.title}" recorded for this session.`,
+          tone: "error",
+          title: "Proposal Rejected",
+          description: data.error || "Server rejected this resolution proposal.",
         });
       }
     } catch {
       toast({
-        tone: "info",
-        title: "Proposal Preview Recorded",
-        description: `"${option.title}" recorded in session state.`,
+        tone: "error",
+        title: "Submission Error",
+        description: "Network failure while persisting resolution proposal.",
       });
     } finally {
       setIsSubmitting(false);
@@ -197,6 +244,7 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
   };
 
   const handleRespondToProposal = async (proposalId: string, response: "ACCEPTED" | "REJECTED" | "REQUESTED_CHANGES") => {
+    setIsSubmitting(true);
     try {
       const res = await fetch(`/api/resolution-proposals/${proposalId}/respond`, {
         method: "POST",
@@ -204,14 +252,20 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
         body: JSON.stringify({ response }),
       });
 
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        const data = await res.json();
         toast({
           tone: response === "ACCEPTED" ? "success" : "info",
           title: `Proposal ${response}`,
-          description: `Status updated to: ${data.proposal?.status || response}`,
+          description: `Status updated to ${data.proposalStatus || data.proposal?.status || response} (Auth: ${data.authorizationStatus || "PENDING_APPROVAL"}).`,
         });
         await loadProposalsAndOptions();
+      } else {
+        toast({
+          tone: "error",
+          title: "Response Blocked",
+          description: data.error || "Unable to submit response to proposal.",
+        });
       }
     } catch {
       toast({
@@ -219,8 +273,103 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
         title: "Action Failed",
         description: "Unable to submit response to proposal.",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  const handleAuthorizeDecision = async (proposalId: string, decision: "APPROVED" | "REJECTED") => {
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`/api/resolution-proposals/${proposalId}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          decision,
+          reviewNotes:
+            decision === "APPROVED"
+              ? "Authorized via Case Resolution Panel"
+              : "Authorization denied via Case Resolution Panel",
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        toast({
+          tone: decision === "APPROVED" ? "success" : "info",
+          title: decision === "APPROVED" ? "Remedy Authorized" : "Authorization Denied",
+          description: data.message || `Authorization status: ${data.proposal?.authorizationStatus}`,
+        });
+        await loadProposalsAndOptions();
+      } else {
+        toast({
+          tone: "error",
+          title: "Authorization Blocked",
+          description: data.error || "Permission or policy precondition failed.",
+        });
+      }
+    } catch {
+      toast({
+        tone: "error",
+        title: "Authorization Error",
+        description: "Network failure during authorization decision.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleExecuteAuthorized = async (proposalId: string) => {
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`/api/resolution-proposals/${proposalId}/execute`, {
+        method: "POST",
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        toast({
+          tone: data.execution?.status === "FAILED" ? "error" : "success",
+          title: `Execution ${data.execution?.status || "Triggered"}`,
+          description: data.execution?.error || "Authorized remedy execution initiated and tracked.",
+        });
+        await loadProposalsAndOptions();
+      } else {
+        toast({
+          tone: "error",
+          title: "Execution Blocked",
+          description: data.error || data.execution?.error || "Unable to execute proposal.",
+        });
+      }
+    } catch {
+      toast({
+        tone: "error",
+        title: "Execution Error",
+        description: "Network failure while executing authorized proposal.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const remedyOptions: RemedyOption[] = (policyInfo?.candidateOptions || []).map((opt) => {
+    const meta = OPTION_META[opt.proposalType] || {
+      id: opt.proposalType.toLowerCase(),
+      kind: "Human Review" as const,
+      icon: Scale,
+    };
+    return {
+      id: meta.id,
+      proposalType: opt.proposalType,
+      title: opt.title,
+      kind: meta.kind,
+      description: opt.description,
+      amountMinor: opt.suggestedAmountMinor,
+      icon: meta.icon,
+      recommended: policyInfo?.recommendedOption?.proposalType === opt.proposalType,
+      isEligible: opt.isEligible,
+      requiresEscalation: opt.requiresEscalation,
+      reason: opt.reason,
+    };
+  });
 
   return (
     <div className="rg-card flex flex-col gap-5 p-5">
@@ -244,7 +393,29 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
         </div>
       </div>
 
-      {/* Policy Evaluation Notice */}
+      {/* Policy & BERR Evaluation Notice */}
+      {loadError && (
+        <div className="rounded-lg border border-rose-500/30 bg-rose-950/20 p-3.5 text-[12px] text-rose-300">
+          {loadError}
+        </div>
+      )}
+
+      {policyInfo?.berrSummary?.assessmentId && (
+        <div className="rounded-lg border border-line bg-surface-2/80 p-3 text-[11.5px] text-subtle flex flex-wrap items-center justify-between gap-2">
+          <div>
+            BERR v{policyInfo.berrSummary.version ?? 1}:{" "}
+            <strong className="text-fg">{policyInfo.berrSummary.overallStatus || policyInfo.berrSummary.status}</strong>
+            {policyInfo.berrSummary.isStale ? " (Stale — Re-evaluation Required)" : ""}
+          </div>
+          {policyInfo.activeRefund?.hasActivePendingRefund && (
+            <span className="text-amber-300 font-medium">Pending refund active on order</span>
+          )}
+          {policyInfo.activeRefund?.hasCompletedFullRefund && (
+            <span className="text-emerald-400 font-medium">Full refund completed on order</span>
+          )}
+        </div>
+      )}
+
       {policyInfo && policyInfo.violations.length > 0 && (
         <div className="rounded-lg border border-amber-500/30 bg-amber-950/20 p-3.5 text-[12px] text-amber-300">
           <div className="flex items-center gap-1.5 font-semibold text-amber-400">
@@ -270,8 +441,14 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
 
           <div className="flex flex-col gap-3">
             {proposals.map((prop) => {
-              const isAgreed = prop.status === "AGREED";
+              const isAgreed = prop.status === "AGREED" || prop.status === "COMPLETED";
               const isPending = prop.status.startsWith("PENDING");
+              const authStatus = prop.authorizationStatus || "PENDING_APPROVAL";
+              const canAuthorize =
+                authStatus === "PENDING_APPROVAL" && prop.status !== "REJECTED" && prop.status !== "CANCELLED";
+              const canExecute =
+                (authStatus === "AUTHORIZED" || authStatus === "EXECUTION_FAILED") &&
+                ["FULL_REFUND", "PARTIAL_REFUND", "RETURN_AND_REFUND", "REPLACEMENT"].includes(prop.proposalType);
 
               return (
                 <div
@@ -279,6 +456,8 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
                   className={`flex flex-col gap-2 rounded-lg border p-3.5 ${
                     isAgreed
                       ? "border-emerald-500/40 bg-emerald-950/20"
+                      : prop.status === "REJECTED"
+                      ? "border-rose-500/30 bg-rose-950/15"
                       : "border-line bg-surface"
                   }`}
                 >
@@ -288,48 +467,104 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
                       <span className="text-[13px] font-bold text-fg">{prop.title}</span>
                     </div>
 
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                        isAgreed
-                          ? "bg-emerald-500/20 text-emerald-400"
-                          : prop.status === "REJECTED"
-                          ? "bg-rose-500/20 text-rose-400"
-                          : "bg-amber-500/20 text-amber-400"
-                      }`}
-                    >
-                      {prop.status}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="rounded-full bg-surface-3 px-2 py-0.5 text-[10.5px] font-medium text-subtle">
+                        Auth: {authStatus}
+                      </span>
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+                          isAgreed
+                            ? "bg-emerald-500/20 text-emerald-400"
+                            : prop.status === "REJECTED"
+                            ? "bg-rose-500/20 text-rose-400"
+                            : "bg-amber-500/20 text-amber-400"
+                        }`}
+                      >
+                        {prop.status}
+                      </span>
+                    </div>
                   </div>
 
                   <p className="text-[12px] text-subtle">{prop.description}</p>
                   <p className="text-[11px] text-faint italic">&ldquo;{prop.reason}&rdquo;</p>
+                  {prop.denialReason && (
+                    <p className="text-[11.5px] text-rose-400">Denial reason: {prop.denialReason}</p>
+                  )}
+                  {prop.refunds && prop.refunds.length > 0 && (
+                    <p className="text-[11px] text-sky-300">
+                      Refund Execution: {prop.refunds[0].status} ({prop.refunds[0].currency} {(prop.refunds[0].amountMinor / 100).toFixed(2)})
+                    </p>
+                  )}
+                  {prop.replacementFulfillment && (
+                    <p className="text-[11px] text-sky-300">
+                      Replacement Status: {prop.replacementFulfillment.status}
+                      {prop.replacementFulfillment.trackingNumber ? ` • Tracking #${prop.replacementFulfillment.trackingNumber}` : ""}
+                    </p>
+                  )}
 
-                  {/* Actions for Pending Proposals */}
-                  {isPending && (
+                  {/* Actions for Pending / Authorizable / Executable Proposals */}
+                  {(isPending || canAuthorize || canExecute) && (
                     <div className="mt-2 flex flex-wrap items-center justify-end gap-2 border-t border-line/60 pt-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleRespondToProposal(prop.id, "REQUESTED_CHANGES")}
-                      >
-                        Request Changes
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => handleRespondToProposal(prop.id, "REJECTED")}
-                        icon={<X className="h-3.5 w-3.5 text-rose-400" />}
-                      >
-                        Reject
-                      </Button>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => handleRespondToProposal(prop.id, "ACCEPTED")}
-                        icon={<Check className="h-3.5 w-3.5" />}
-                      >
-                        Accept Proposal
-                      </Button>
+                      {isPending && (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={isSubmitting}
+                            onClick={() => handleRespondToProposal(prop.id, "REQUESTED_CHANGES")}
+                          >
+                            Request Changes
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            disabled={isSubmitting}
+                            onClick={() => handleRespondToProposal(prop.id, "REJECTED")}
+                            icon={<X className="h-3.5 w-3.5 text-rose-400" />}
+                          >
+                            Reject
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            disabled={isSubmitting}
+                            onClick={() => handleRespondToProposal(prop.id, "ACCEPTED")}
+                            icon={<Check className="h-3.5 w-3.5" />}
+                          >
+                            Accept Proposal
+                          </Button>
+                        </>
+                      )}
+                      {canAuthorize && (
+                        <>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            disabled={isSubmitting}
+                            onClick={() => handleAuthorizeDecision(prop.id, "REJECTED")}
+                          >
+                            Deny Authorization
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            disabled={isSubmitting}
+                            onClick={() => handleAuthorizeDecision(prop.id, "APPROVED")}
+                          >
+                            Authorize Remedy
+                          </Button>
+                        </>
+                      )}
+                      {canExecute && (
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          disabled={isSubmitting}
+                          onClick={() => handleExecuteAuthorized(prop.id)}
+                        >
+                          Execute Authorized Remedy
+                        </Button>
+                      )}
                     </div>
                   )}
                 </div>
@@ -342,10 +577,10 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
       {/* Candidate Remedy Selector */}
       <div>
         <h4 className="text-[12px] font-semibold uppercase tracking-wider text-faint mb-3">
-          Available Remedy Blueprints
+          Policy-Evaluated Remedy Options
         </h4>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {REMEDY_OPTIONS.map((option) => {
+          {remedyOptions.map((option) => {
             const Icon = option.icon;
             const isSelected = selectedRemedy === option.id;
             return (
@@ -381,7 +616,9 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
                       </span>
                       <div>
                         <h4 className="text-[13px] font-semibold text-fg">{option.title}</h4>
-                        <span className="text-[11px] font-medium text-subtle">{option.kind}</span>
+                        <span className="text-[11px] font-medium text-subtle">
+                          {option.kind} • {option.isEligible ? "Eligible" : "Ineligible / Guarded"}
+                        </span>
                       </div>
                     </div>
 
@@ -393,12 +630,15 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
                   </div>
 
                   <p className="mt-3 text-[12px] leading-relaxed text-muted">{option.description}</p>
+                  {option.reason && (
+                    <p className="mt-1.5 text-[11px] text-faint">{option.reason}</p>
+                  )}
 
-                  {option.amountCalc && (
+                  {typeof option.amountMinor === "number" && option.amountMinor > 0 && (
                     <div className="mt-2 text-[12px] font-medium text-fg">
                       Estimated Value:{" "}
                       <span className="font-semibold tabular-nums text-[#34d399]">
-                        {formatCurrency(option.amountCalc(caseItem.amount), caseItem.currency)}
+                        {formatCurrency(option.amountMinor / 100, caseItem.currency)}
                       </span>
                     </div>
                   )}
@@ -406,12 +646,12 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
 
                 <div className="mt-4 flex items-center justify-between border-t border-line/60 pt-2.5">
                   <span className="text-[11px] text-faint">
-                    {isSelected ? "Active selection" : "Click to select"}
+                    {option.isEligible ? "Policy eligible" : "Blocked / requires escalation"}
                   </span>
                   <Button
                     variant={isSelected ? "primary" : "secondary"}
                     size="sm"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || (!option.isEligible && option.proposalType !== "HUMAN_REVIEW" && option.proposalType !== "INFORMATION_REQUEST")}
                     onClick={(e) => {
                       e.stopPropagation();
                       setSelectedRemedy(option.id);

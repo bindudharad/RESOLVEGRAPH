@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, AuthError } from "@/server/auth/require-auth";
+import { canMutateBegGraph, canViewInternalBegGraph } from "@/server/auth/permissions";
 import { getCaseByIdAuthorized } from "@/server/dal/get-case-by-id";
 import { prisma } from "@/lib/prisma";
 import { CaseService } from "@/server/services/case.service";
+import { BegSyncService } from "@/server/graph/beg-sync.service";
 
 export async function GET(
   request: NextRequest,
@@ -15,6 +17,20 @@ export async function GET(
     const caseRecord = await getCaseByIdAuthorized(user, caseId);
     if (!caseRecord) {
       return NextResponse.json({ error: `Case '${caseId}' not found` }, { status: 404 });
+    }
+
+    if (!canMutateBegGraph(user, caseRecord)) {
+      return NextResponse.json(
+        { error: "Access denied: Only investigators or resolution managers can establish internal graph relationships." },
+        { status: 403 }
+      );
+    }
+
+    if (!canViewInternalBegGraph(user, caseRecord)) {
+      return NextResponse.json(
+        { error: "Access denied: Internal graph relationships require investigation privileges." },
+        { status: 403 }
+      );
     }
 
     const realDbCaseId = (caseRecord as { dbId?: string }).dbId || caseRecord.id;
@@ -63,6 +79,13 @@ export async function POST(
     const caseRecord = await getCaseByIdAuthorized(user, caseId);
     if (!caseRecord) {
       return NextResponse.json({ error: `Case '${caseId}' not found` }, { status: 404 });
+    }
+
+    if (!canMutateBegGraph(user, caseRecord)) {
+      return NextResponse.json(
+        { error: "Access denied: Only investigators or resolution managers can establish internal graph relationships." },
+        { status: 403 }
+      );
     }
 
     const body = await request.json().catch(() => ({}));
@@ -117,6 +140,13 @@ export async function POST(
         relationType,
       }
     );
+
+    await BegSyncService.handleDomainEvent({
+      caseId: realDbCaseId,
+      triggerEvent: "INVESTIGATION_UPDATED",
+      actorId: user.id,
+      rerunBerr: false,
+    }).catch(() => {});
 
     return NextResponse.json({ relation }, { status: 201 });
   } catch (error: unknown) {

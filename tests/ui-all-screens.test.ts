@@ -46,6 +46,7 @@ describe('PHASE 8 — UI & Screen Rendering End-to-End Suite', () => {
     { name: '22. Help & Support Center', path: '/help', expectedPattern: /Help|Support|FAQ/i },
     { name: '23. Platform Landing Page', path: '/', expectedPattern: /RESOLVEGRAPH|Evidence/i },
     { name: '24. Platform Overview Page (3D Evidence Graph)', path: '/overview', expectedPattern: /RESOLVEGRAPH|Evidence|3D INTERACTIVE EVIDENCE GRAPH/i },
+    { name: '25. Total Capture Analytics', path: '/analytics/captures', expectedPattern: /Capture|Analytics|RESOLVEGRAPH/i },
   ];
 
   for (const screen of screens) {

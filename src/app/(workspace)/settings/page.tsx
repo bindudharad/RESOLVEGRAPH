@@ -21,12 +21,52 @@ import {
   KeyRound,
   Settings as SettingsIcon,
 } from "lucide-react";
-import { CURRENT_USER, WORKSPACE } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
 import { useToast } from "@/components/common/toast";
 
 type SettingsTab = "workspace" | "profile" | "appearance" | "notifications" | "about";
+
+interface ProfileOrgMembership {
+  organizationId: string;
+  role: string;
+  organization: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+}
+
+interface RealUserProfile {
+  id: string;
+  email: string;
+  name: string;
+  fullName: string;
+  role: string;
+  isPlatformAdmin: boolean;
+  phone: string | null;
+  organization: string | null;
+  orgMemberships?: ProfileOrgMembership[];
+}
+
+function getInitials(name: string): string {
+  const parts = name
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (parts.length === 0) return "RG";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+}
+
+function formatRoleLabel(role?: string, isPlatformAdmin?: boolean): string {
+  if (isPlatformAdmin || role === "ADMIN") return "Platform Administrator";
+  if (role === "MERCHANT") return "Seller Account";
+  if (role === "BUYER") return "Customer Account";
+  if (role === "RESOLUTION_MANAGER") return "Resolution Manager";
+  if (role === "INVESTIGATOR") return "Investigator";
+  return role || "Workspace Member";
+}
 
 interface HealthStatus {
   status: string;
@@ -51,28 +91,69 @@ interface HealthStatus {
 }
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<SettingsTab>("workspace");
   const { toast } = useToast();
   const { data: session } = useSession();
-  const sessionUser = session?.user;
+  const sessionUser = session?.user as
+    | { name?: string; email?: string; role?: string; isPlatformAdmin?: boolean; organization?: string }
+    | undefined;
+  const isPlatformAdmin = Boolean(sessionUser?.isPlatformAdmin || sessionUser?.role === "ADMIN");
+  const isMerchant = Boolean(sessionUser?.role === "MERCHANT" && !isPlatformAdmin);
+  const isBuyer = Boolean(sessionUser?.role === "BUYER" && !isPlatformAdmin);
+  const isEnterpriseStaff = !isBuyer && !isMerchant;
 
-  // Local state for interactive settings
-  const [workspaceName, setWorkspaceName] = useState<string>(WORKSPACE.name);
-  const [userName, setUserName] = useState<string>(CURRENT_USER.fullName);
-  const [userEmail, setUserEmail] = useState<string>(CURRENT_USER.email);
+  const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
+  const [hasInitializedTab, setHasInitializedTab] = useState(false);
+
+  // Real DB-backed profile state
+  const [dbProfile, setDbProfile] = useState<RealUserProfile | null>(null);
+  const [profileLoading, setProfileLoading] = useState<boolean>(true);
+  const [saving, setSaving] = useState<boolean>(false);
+  const [workspaceName, setWorkspaceName] = useState<string>("RESOLVEGRAPH");
+  const [userName, setUserName] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [userPhone, setUserPhone] = useState<string>("");
 
   useEffect(() => {
-    if (sessionUser?.name) {
-      setUserName(sessionUser.name);
+    if (!hasInitializedTab && sessionUser) {
+      setActiveTab(isEnterpriseStaff ? "workspace" : "profile");
+      setHasInitializedTab(true);
     }
-    if (sessionUser?.email) {
-      setUserEmail(sessionUser.email);
-    }
-    const org = (sessionUser as { organization?: string })?.organization;
-    if (org) {
-      setWorkspaceName(org);
-    }
-  }, [sessionUser]);
+  }, [hasInitializedTab, isEnterpriseStaff, sessionUser]);
+
+  useEffect(() => {
+    let active = true;
+    setProfileLoading(true);
+    fetch("/api/profile", { cache: "no-store" })
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || "Failed to load profile");
+        return data;
+      })
+      .then((data) => {
+        if (!active || !data?.profile) return;
+        const p = data.profile as RealUserProfile;
+        setDbProfile(p);
+        setUserName(p.fullName || p.name || "");
+        setUserEmail(p.email || "");
+        setUserPhone(p.phone || "");
+        setWorkspaceName(
+          p.orgMemberships?.[0]?.organization?.name || p.organization || "RESOLVEGRAPH"
+        );
+      })
+      .catch((err) => {
+        if (!active) return;
+        if (sessionUser?.name) setUserName(sessionUser.name);
+        if (sessionUser?.email) setUserEmail(sessionUser.email);
+        console.error("Failed to fetch real user profile:", err);
+      })
+      .finally(() => {
+        if (active) setProfileLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [sessionUser?.email, sessionUser?.name]);
 
   const [density, setDensity] = useState<"compact" | "default">(() => {
     if (typeof window === "undefined") return "default";
@@ -117,6 +198,7 @@ export default function SettingsPage() {
   const [health, setHealth] = useState<HealthStatus | null>(null);
 
   useEffect(() => {
+    if (!isEnterpriseStaff) return;
     let active = true;
     fetch("/api/health")
       .then((res) => (res.ok ? res.json() : null))
@@ -128,68 +210,153 @@ export default function SettingsPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [isEnterpriseStaff]);
 
-  const handleSave = () => {
-    try {
-      localStorage.setItem("rg_density", density);
-      localStorage.setItem("rg_notify_overdue", String(notifyOverdue));
-      localStorage.setItem("rg_notify_ai", String(notifyAi));
-      localStorage.setItem("rg_notify_digest", String(notifyDigest));
-    } catch {
-      // Ignore storage errors
+  const handleSave = async () => {
+    const trimmedName = userName.trim();
+    if (trimmedName.length < 2) {
+      toast({
+        tone: "error",
+        title: "Invalid Name",
+        description: "Full name must be at least 2 characters long.",
+      });
+      return;
     }
 
-    toast({
-      tone: "success",
-      title: "Preferences Saved",
-      description: "Your workspace display and notification preferences are saved to your local profile.",
-    });
+    setSaving(true);
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: trimmedName,
+          phone: userPhone.trim() || null,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to save profile settings.");
+      }
+
+      if (data.profile) {
+        setDbProfile(data.profile);
+        setUserName(data.profile.fullName || data.profile.name || trimmedName);
+        setUserPhone(data.profile.phone || "");
+      }
+
+      try {
+        localStorage.setItem("rg_density", density);
+        localStorage.setItem("rg_notify_overdue", String(notifyOverdue));
+        localStorage.setItem("rg_notify_ai", String(notifyAi));
+        localStorage.setItem("rg_notify_digest", String(notifyDigest));
+      } catch {
+        // Ignore storage errors
+      }
+
+      toast({
+        tone: "success",
+        title: "Account Settings Saved",
+        description: "Your profile details and preferences have been persisted to the database.",
+      });
+    } catch (err: unknown) {
+      toast({
+        tone: "error",
+        title: "Save Failed",
+        description: err instanceof Error ? err.message : "Could not save profile changes.",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Administration Sub-Navigation */}
-      <div className="flex items-center gap-2 border-b border-white/[0.08] pb-3">
-        <Link
-          href="/organizations"
-          className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-subtle hover:text-fg hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
-        >
-          <Building2 className="h-3.5 w-3.5" />
-          Organizations & Roles
-        </Link>
-        <Link
-          href="/admin/security"
-          className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-subtle hover:text-fg hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
-        >
-          <KeyRound className="h-3.5 w-3.5" />
-          Security & Cryptographic Audit
-        </Link>
-        <span className="rounded-lg bg-[#0E121D] border border-white/[0.12] px-3.5 py-1.5 text-xs font-semibold text-fg inline-flex items-center gap-1.5 shadow-sm">
-          <SettingsIcon className="h-3.5 w-3.5 text-sky-400" />
-          Platform Settings
-        </span>
+      {/* Role-aware Sub-Navigation */}
+      <div className="flex items-center gap-2 border-b border-white/[0.08] pb-3 flex-wrap">
+        {isMerchant ? (
+          <>
+            <Link
+              href="/seller"
+              className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-subtle hover:text-fg hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+            >
+              Seller Dashboard
+            </Link>
+            <Link
+              href="/seller/profile"
+              className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-subtle hover:text-fg hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+            >
+              <Building2 className="h-3.5 w-3.5" />
+              Business Profile
+            </Link>
+            <span className="rounded-lg bg-[#0E121D] border border-white/[0.12] px-3.5 py-1.5 text-xs font-semibold text-fg inline-flex items-center gap-1.5 shadow-sm">
+              <SettingsIcon className="h-3.5 w-3.5 text-sky-400" />
+              Account Settings
+            </span>
+          </>
+        ) : isBuyer ? (
+          <>
+            <Link
+              href="/overview"
+              className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-subtle hover:text-fg hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+            >
+              Customer Portal
+            </Link>
+            <Link
+              href="/cases"
+              className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-subtle hover:text-fg hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+            >
+              My Complaints
+            </Link>
+            <span className="rounded-lg bg-[#0E121D] border border-white/[0.12] px-3.5 py-1.5 text-xs font-semibold text-fg inline-flex items-center gap-1.5 shadow-sm">
+              <SettingsIcon className="h-3.5 w-3.5 text-sky-400" />
+              Account Settings
+            </span>
+          </>
+        ) : (
+          <>
+            <Link
+              href="/organizations"
+              className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-subtle hover:text-fg hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+            >
+              <Building2 className="h-3.5 w-3.5" />
+              Organizations &amp; Roles
+            </Link>
+            <Link
+              href="/admin/security"
+              className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-subtle hover:text-fg hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+            >
+              <KeyRound className="h-3.5 w-3.5" />
+              Security &amp; Cryptographic Audit
+            </Link>
+            <span className="rounded-lg bg-[#0E121D] border border-white/[0.12] px-3.5 py-1.5 text-xs font-semibold text-fg inline-flex items-center gap-1.5 shadow-sm">
+              <SettingsIcon className="h-3.5 w-3.5 text-sky-400" />
+              Platform Settings
+            </span>
+          </>
+        )}
       </div>
 
       {/* Header section */}
       <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <h1 className="text-[23px] font-semibold tracking-[-0.02em] text-fg sm:text-[26px]">
-              Platform & Workspace Settings
+              {isEnterpriseStaff ? "Platform & Workspace Settings" : "Account Settings"}
             </h1>
             <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-400">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              Verified Environment
+              {formatRoleLabel(dbProfile?.role || sessionUser?.role, dbProfile?.isPlatformAdmin || isPlatformAdmin)}
             </span>
           </div>
           <p className="mt-1 text-[13.5px] text-subtle">
-            Manage your workspace configuration, administrative profile, and system parameters.
+            {isEnterpriseStaff
+              ? "Manage your workspace configuration, administrative profile, and system parameters."
+              : "Manage your personal profile details, contact number, and notification preferences."}
           </p>
         </div>
 
-        <Button variant="primary" size="sm" onClick={handleSave}>
-          Save Preferences
+        <Button variant="primary" size="sm" onClick={handleSave} disabled={saving || profileLoading}>
+          {saving ? "Saving..." : "Save Changes"}
         </Button>
       </section>
 
@@ -197,36 +364,38 @@ export default function SettingsPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
         {/* Navigation Tabs */}
         <nav className="flex flex-row overflow-x-auto lg:flex-col gap-1 border-b border-white/[0.08] pb-3 lg:border-b-0 lg:pb-0">
-          <button
-            type="button"
-            onClick={() => setActiveTab("workspace")}
-            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left ${
-              activeTab === "workspace"
-                ? "bg-white/[0.08] font-semibold text-white border border-white/[0.1]"
-                : "text-subtle hover:bg-white/[0.04] hover:text-fg"
-            }`}
-          >
-            <Globe className="h-4 w-4 text-sky-400" />
-            <span>Workspace</span>
-          </button>
+          {isEnterpriseStaff && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("workspace")}
+              className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left shrink-0 ${
+                activeTab === "workspace"
+                  ? "bg-white/[0.08] font-semibold text-white border border-white/[0.1]"
+                  : "text-subtle hover:bg-white/[0.04] hover:text-fg"
+              }`}
+            >
+              <Globe className="h-4 w-4 text-sky-400" />
+              <span>Workspace</span>
+            </button>
+          )}
 
           <button
             type="button"
             onClick={() => setActiveTab("profile")}
-            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left ${
+            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left shrink-0 ${
               activeTab === "profile"
                 ? "bg-white/[0.08] font-semibold text-white border border-white/[0.1]"
                 : "text-subtle hover:bg-white/[0.04] hover:text-fg"
             }`}
           >
             <User className="h-4 w-4 text-emerald-400" />
-            <span>User Profile</span>
+            <span>Account Profile</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("appearance")}
-            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left ${
+            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left shrink-0 ${
               activeTab === "appearance"
                 ? "bg-white/[0.08] font-semibold text-white border border-white/[0.1]"
                 : "text-subtle hover:bg-white/[0.04] hover:text-fg"
@@ -239,7 +408,7 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => setActiveTab("notifications")}
-            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left ${
+            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left shrink-0 ${
               activeTab === "notifications"
                 ? "bg-white/[0.08] font-semibold text-white border border-white/[0.1]"
                 : "text-subtle hover:bg-white/[0.04] hover:text-fg"
@@ -249,24 +418,26 @@ export default function SettingsPage() {
             <span>Notifications</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab("about")}
-            className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left ${
-              activeTab === "about"
-                ? "bg-white/[0.08] font-semibold text-white border border-white/[0.1]"
-                : "text-subtle hover:bg-white/[0.04] hover:text-fg"
-            }`}
-          >
-            <Info className="h-4 w-4 text-indigo-400" />
-            <span>About Architecture</span>
-          </button>
+          {isEnterpriseStaff && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("about")}
+              className={`flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-xs font-medium transition-colors text-left shrink-0 ${
+                activeTab === "about"
+                  ? "bg-white/[0.08] font-semibold text-white border border-white/[0.1]"
+                  : "text-subtle hover:bg-white/[0.04] hover:text-fg"
+              }`}
+            >
+              <Info className="h-4 w-4 text-indigo-400" />
+              <span>About Architecture</span>
+            </button>
+          )}
         </nav>
 
         {/* Tab Content Panes */}
         <div className="flex flex-col gap-6">
           {/* Workspace Tab */}
-          {activeTab === "workspace" && (
+          {activeTab === "workspace" && isEnterpriseStaff && (
             <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] flex flex-col gap-6 p-6">
               <div>
                 <h2 className="text-[15px] font-semibold text-fg">Workspace Metadata</h2>
@@ -279,7 +450,7 @@ export default function SettingsPage() {
                 <Field
                   htmlFor="workspace-name"
                   label="Workspace Name"
-                  hint="Displayed in the workspace switcher and case dossiers"
+                  hint="Displayed in the workspace header and case dossiers"
                 >
                   <Input
                     id="workspace-name"
@@ -291,18 +462,18 @@ export default function SettingsPage() {
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field htmlFor="product-descriptor" label="Product Descriptor">
-                    <Input id="product-descriptor" value={WORKSPACE.descriptor} disabled className="opacity-80 bg-[#0A0D14] border-white/[0.08]" />
+                    <Input id="product-descriptor" value="RESOLVEGRAPH Commerce Resolution" disabled className="opacity-80 bg-[#0A0D14] border-white/[0.08]" />
                   </Field>
 
-                  <Field htmlFor="plan-license" label="Plan License">
-                    <Input id="plan-license" value={WORKSPACE.planLabel} disabled className="opacity-80 bg-[#0A0D14] border-white/[0.08]" />
+                  <Field htmlFor="plan-license" label="Environment Mode">
+                    <Input id="plan-license" value="Enterprise Multi-Tenant" disabled className="opacity-80 bg-[#0A0D14] border-white/[0.08]" />
                   </Field>
                 </div>
 
                 <div className="rounded-xl border border-white/[0.08] bg-[#0A0D14] p-4 text-xs text-subtle">
                   <div className="flex items-center gap-2 font-medium text-fg">
                     <Users className="h-4 w-4 text-sky-400" />
-                    <span>Seat Capacity: {WORKSPACE.seats} Admin & Analyst Seats</span>
+                    <span>Registered Platform Users: {health?.database.stats?.users ?? "—"}</span>
                   </div>
                   <p className="mt-1 text-faint">
                     Enterprise workspace instance configured with multi-tenant role-based access control.
@@ -345,45 +516,88 @@ export default function SettingsPage() {
           {activeTab === "profile" && (
             <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] flex flex-col gap-6 p-6">
               <div>
-                <h2 className="text-[15px] font-semibold text-fg">Administrator Profile</h2>
+                <h2 className="text-[15px] font-semibold text-fg">
+                  {isEnterpriseStaff ? "Administrator Profile" : isMerchant ? "Seller Account Profile" : "Customer Profile"}
+                </h2>
                 <p className="mt-0.5 text-xs text-subtle">
-                  Personal credentials and triage officer attribution.
+                  {isEnterpriseStaff
+                    ? "Personal credentials and triage officer attribution."
+                    : "Verified account details stored securely in RESOLVEGRAPH."}
                 </p>
               </div>
 
-              <div className="flex items-center gap-4 border-b border-white/[0.06] pb-5">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/[0.1] bg-white/[0.04] text-base font-bold text-fg">
-                  {CURRENT_USER.initials}
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-fg">{userName}</h3>
-                  <p className="text-xs text-subtle">{CURRENT_USER.role}</p>
-                </div>
-              </div>
+              {profileLoading ? (
+                <p className="text-xs text-subtle py-4">Loading account profile...</p>
+              ) : (
+                <>
+                  <div className="flex items-center gap-4 border-b border-white/[0.06] pb-5">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/[0.1] bg-white/[0.04] text-base font-bold text-fg">
+                      {getInitials(userName || dbProfile?.fullName || "RG")}
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-fg">{userName || "Account User"}</h3>
+                      <p className="text-xs text-subtle">
+                        {formatRoleLabel(dbProfile?.role || sessionUser?.role, dbProfile?.isPlatformAdmin || isPlatformAdmin)}
+                      </p>
+                    </div>
+                  </div>
 
-              <div className="flex flex-col gap-4">
-                <Field htmlFor="profile-name" label="Full Name">
-                  <Input
-                    id="profile-name"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    className="bg-[#0A0D14] border-white/[0.08]"
-                  />
-                </Field>
+                  <div className="flex flex-col gap-4">
+                    <Field htmlFor="profile-name" label="Full Name">
+                      <Input
+                        id="profile-name"
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                        className="bg-[#0A0D14] border-white/[0.08]"
+                      />
+                    </Field>
 
-                <Field htmlFor="profile-email" label="Email Address">
-                  <Input
-                    id="profile-email"
-                    value={userEmail}
-                    onChange={(e) => setUserEmail(e.target.value)}
-                    className="bg-[#0A0D14] border-white/[0.08]"
-                  />
-                </Field>
+                    <Field htmlFor="profile-phone" label="Phone Number" hint="Optional contact number for complaint updates">
+                      <Input
+                        id="profile-phone"
+                        value={userPhone}
+                        onChange={(e) => setUserPhone(e.target.value)}
+                        placeholder="+91 98765 43210"
+                        className="bg-[#0A0D14] border-white/[0.08]"
+                      />
+                    </Field>
 
-                <Field htmlFor="profile-role" label="Security Role">
-                  <Input id="profile-role" value={CURRENT_USER.role} disabled className="opacity-80 bg-[#0A0D14] border-white/[0.08]" />
-                </Field>
-              </div>
+                    <Field htmlFor="profile-email" label="Registered Email Address" hint="Sign-in email cannot be edited here">
+                      <Input
+                        id="profile-email"
+                        value={userEmail}
+                        disabled
+                        className="opacity-80 bg-[#0A0D14] border-white/[0.08]"
+                      />
+                    </Field>
+
+                    <Field htmlFor="profile-role" label="Account Role">
+                      <Input
+                        id="profile-role"
+                        value={formatRoleLabel(dbProfile?.role || sessionUser?.role, dbProfile?.isPlatformAdmin || isPlatformAdmin)}
+                        disabled
+                        className="opacity-80 bg-[#0A0D14] border-white/[0.08]"
+                      />
+                    </Field>
+
+                    {dbProfile?.orgMemberships && dbProfile.orgMemberships.length > 0 && (
+                      <div className="rounded-xl border border-white/[0.08] bg-[#0A0D14] p-4">
+                        <p className="text-xs font-semibold text-fg mb-2">Active Organization Memberships</p>
+                        <ul className="space-y-1.5 text-xs text-subtle">
+                          {dbProfile.orgMemberships.map((m) => (
+                            <li key={m.organizationId} className="flex items-center justify-between gap-2">
+                              <span className="text-fg font-medium">{m.organization.name}</span>
+                              <span className="rounded border border-white/[0.1] bg-white/[0.04] px-2 py-0.5 text-[10px] uppercase tracking-wide text-subtle">
+                                {m.role}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -522,7 +736,7 @@ export default function SettingsPage() {
           )}
 
           {/* About RESOLVEGRAPH Tab */}
-          {activeTab === "about" && (
+          {activeTab === "about" && isEnterpriseStaff && (
             <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] flex flex-col gap-5 p-6">
               <div>
                 <h2 className="text-[15px] font-semibold text-fg">About RESOLVEGRAPH Platform</h2>

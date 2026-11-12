@@ -84,6 +84,19 @@ export class EnvValidator {
       errors.push('AI_PROCESSING_ENABLED is true with provider "openai", but OPENAI_API_KEY is missing.');
     }
 
+    // 6. Google Gemini Server-Only Configuration Guardrails
+    if (env.NEXT_PUBLIC_GEMINI_API_KEY) {
+      errors.push(
+        'NEXT_PUBLIC_GEMINI_API_KEY is forbidden because it exposes secrets to browser bundles. Use server-only GEMINI_API_KEY instead.'
+      );
+    }
+
+    if (aiEnabled && aiProvider === 'gemini' && !env.GEMINI_API_KEY) {
+      errors.push('AI_PROCESSING_ENABLED is true with provider "gemini", but GEMINI_API_KEY is missing.');
+    } else if (!env.GEMINI_API_KEY) {
+      warnings.push('GEMINI_API_KEY is not set. Gemini Buyer Evidence Verification capabilities remain inactive until configured.');
+    }
+
     return {
       isValid: errors.length === 0,
       environment,

@@ -12,6 +12,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { createHash, createHmac, randomBytes } from "crypto";
+import { DeliveryReminderService } from "@/server/services/delivery-reminder.service";
 
 const QR_SECRET = process.env.QR_SIGNING_SECRET || "resolvegraph-qr-secret-key-v2-dev";
 
@@ -282,6 +283,23 @@ export class PackagePassportService {
         checkpoint: "Merchant Fulfillment Facility",
       },
     });
+
+    if (pkg.orderId) {
+      const linkedOrder = await prisma.commerceOrder.findUnique({
+        where: { id: pkg.orderId },
+        include: { case: { select: { buyerId: true, caseNumber: true } } },
+      }).catch(() => null);
+
+      if (linkedOrder?.case?.buyerId && linkedOrder.case.caseNumber) {
+        await DeliveryReminderService.notifyBuyerCaseEvent({
+          userId: linkedOrder.case.buyerId,
+          caseNumber: linkedOrder.case.caseNumber,
+          title: `Replacement Dispatched — ${linkedOrder.case.caseNumber}`,
+          body: `Your replacement has been dispatched via ${input.carrierName} (Tracking #${input.trackingNumber}).`,
+          type: "INFO",
+        });
+      }
+    }
 
     return updated;
   }

@@ -66,24 +66,30 @@ export class PaymentOrchestrationService {
 
     const caseId = payment?.commerceOrder?.caseId;
     if (caseId) {
+      const isCompleted = refund.status === "COMPLETED";
       await EventOrchestrationService.recordCaseEvent({
         caseId,
-        eventType: EventType.REFUND_COMPLETED,
+        eventType: isCompleted ? EventType.REFUND_COMPLETED : EventType.REFUND_INITIATED,
         actorId: user.id,
-        description: `Refund of ${(refund.amountMinor / 100).toFixed(2)} ${refund.currency} issued via PayPal. Reason: ${input.reason}`,
+        description: isCompleted
+          ? `Refund of ${(refund.amountMinor / 100).toFixed(2)} ${refund.currency} completed via PayPal. Reason: ${input.reason}`
+          : `Refund of ${(refund.amountMinor / 100).toFixed(2)} ${refund.currency} initiated via PayPal (status: ${refund.status}). Reason: ${input.reason}`,
         metadata: {
           refundId: refund.id,
           paypalRefundId: refund.paypalRefundId,
           amountMinor: refund.amountMinor,
           currency: refund.currency,
+          refundStatus: refund.status,
         },
       });
 
       await EventOrchestrationService.recordTimelineEvent({
         caseId,
-        eventType: "REFUND_COMPLETED",
-        title: "PayPal Refund Processed",
-        description: `Refunded ${(refund.amountMinor / 100).toFixed(2)} ${refund.currency} to buyer. Status: ${refund.status}`,
+        eventType: isCompleted ? "REFUND_COMPLETED" : "REFUND_INITIATED",
+        title: isCompleted ? "PayPal Refund Completed" : "PayPal Refund Initiated",
+        description: isCompleted
+          ? `Refunded ${(refund.amountMinor / 100).toFixed(2)} ${refund.currency} to buyer. Status: COMPLETED`
+          : `Refund of ${(refund.amountMinor / 100).toFixed(2)} ${refund.currency} initiated and awaiting provider confirmation (${refund.status}).`,
         occurredAt: refund.completedAt || new Date(),
         timeBasis: "SYSTEM_OBSERVED",
         sourceParty: "MERCHANT",

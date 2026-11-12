@@ -670,6 +670,112 @@ async function main() {
   });
   console.log('✓ Seeded initial security audit log.');
 
+  // 9. Seed Verified Registered Sellers in Seller Directory for Existing Demo Organizations
+  const demoSellers = [
+    {
+      id: 'sel_techstore_verified',
+      legalName: 'TechStore Retail Private Limited',
+      normalizedLegalName: 'techstore retail private limited',
+      displayName: 'TechStore Official',
+      gstin: '29AABCT1234E1Z5',
+      businessAddress: 'Bengaluru Fulfillment Hub, Karnataka',
+      state: 'Karnataka',
+      linkedOrganizationId: 'org_techstore',
+      linkedMerchantUserId: 'usr_techstore_merchant',
+      marketplace: 'DIRECT',
+      marketplaceSellerId: 'TECHSTORE-DIRECT-01',
+      storefrontName: 'TechStore',
+    },
+    {
+      id: 'sel_digitalmart_verified',
+      legalName: 'DigitalMart Commerce Private Limited',
+      normalizedLegalName: 'digitalmart commerce private limited',
+      displayName: 'DigitalMart',
+      gstin: '27AABCD2345F1Z2',
+      businessAddress: 'Mumbai Distribution Center, Maharashtra',
+      state: 'Maharashtra',
+      linkedOrganizationId: 'org_digitalmart',
+      linkedMerchantUserId: 'usr_digitalmart_merchant',
+      marketplace: 'AMAZON',
+      marketplaceSellerId: 'A2DIGITALMART01',
+      storefrontName: 'DigitalMart',
+    },
+    {
+      id: 'sel_nova_verified',
+      legalName: 'Nova Electronics India Private Limited',
+      normalizedLegalName: 'nova electronics india private limited',
+      displayName: 'Nova Electronics',
+      gstin: '07AABCN3456G1Z8',
+      businessAddress: 'Okhla Industrial Area, New Delhi',
+      state: 'Delhi',
+      linkedOrganizationId: 'org_nova',
+      linkedMerchantUserId: 'usr_novaelectronics_merchant',
+      marketplace: 'FLIPKART',
+      marketplaceSellerId: 'NOVAELEC_FK01',
+      storefrontName: 'Nova Electronics',
+    },
+  ];
+
+  for (const s of demoSellers) {
+    await prisma.sellerDirectoryEntry.upsert({
+      where: { id: s.id },
+      update: {
+        legalName: s.legalName,
+        normalizedLegalName: s.normalizedLegalName,
+        displayName: s.displayName,
+        gstin: s.gstin,
+        businessAddress: s.businessAddress,
+        state: s.state,
+        identityStatus: 'REGISTERED',
+        registrationStatus: 'REGISTERED',
+        verificationStatus: 'VERIFIED',
+        identificationSource: 'SELLER_REGISTRATION',
+        verifiedAt: new Date(),
+        linkedOrganizationId: s.linkedOrganizationId,
+        linkedMerchantUserId: s.linkedMerchantUserId,
+      },
+      create: {
+        id: s.id,
+        legalName: s.legalName,
+        normalizedLegalName: s.normalizedLegalName,
+        displayName: s.displayName,
+        gstin: s.gstin,
+        businessAddress: s.businessAddress,
+        state: s.state,
+        identityStatus: 'REGISTERED',
+        registrationStatus: 'REGISTERED',
+        verificationStatus: 'VERIFIED',
+        identificationSource: 'SELLER_REGISTRATION',
+        verifiedAt: new Date(),
+        linkedOrganizationId: s.linkedOrganizationId,
+        linkedMerchantUserId: s.linkedMerchantUserId,
+      },
+    });
+
+    await prisma.sellerMarketplaceAccount.upsert({
+      where: {
+        marketplace_marketplaceSellerId: {
+          marketplace: s.marketplace,
+          marketplaceSellerId: s.marketplaceSellerId,
+        },
+      },
+      update: {
+        storefrontName: s.storefrontName,
+        isVerified: true,
+      },
+      create: {
+        sellerId: s.id,
+        marketplace: s.marketplace,
+        marketplaceSellerId: s.marketplaceSellerId,
+        storefrontName: s.storefrontName,
+        relationshipType:
+          s.marketplace === 'DIRECT' ? 'DIRECT_BRAND' : 'MARKETPLACE_THIRD_PARTY',
+        isVerified: true,
+      },
+    });
+  }
+  console.log('✓ Seeded SellerDirectoryEntry & SellerMarketplaceAccount records for demo merchants.');
+
   console.log('✅ Database Step 3 seeding finished successfully.');
 }
 

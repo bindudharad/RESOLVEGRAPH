@@ -17,7 +17,7 @@ export async function getAccessibleEvidence(user: AuthenticatedUser, params: Acc
   const limit = Math.min(100, Math.max(1, Number(params.limit) || 20));
   const skip = (page - 1) * limit;
 
-  const userOrgIds = user.orgMemberships.map((m) => m.organizationId);
+  const userOrgIds = user.orgMemberships?.map((m) => m.organizationId) || [];
 
   // Case-level boundary
   const caseAccessFilter: Prisma.CaseRecordWhereInput[] = [];

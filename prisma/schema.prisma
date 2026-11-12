@@ -53,6 +53,8 @@ enum CaseStatus {
   EVIDENCE_REQUESTED
   EVIDENCE_SUBMITTED
   UNDER_ANALYSIS
+  EXECUTING_REFUND
+  EXECUTING_REPLACEMENT
   RESOLVED
   CLOSED
   ARCHIVED
@@ -164,6 +166,26 @@ enum EventType {
   AGENT_RUN_FAILED
   AGENT_APPROVAL_REQUESTED
   AGENT_APPROVAL_RESOLVED
+  SELLER_IDENTITY_EXTRACTED
+  SELLER_IDENTITY_MATCHED
+  SELLER_EVIDENCE_REQUESTED
+  SELLER_EVIDENCE_DISPATCHED
+  SELLER_EVIDENCE_VIEWED
+  SELLER_RESPONSE_SUBMITTED
+  SELLER_RESPONSE_VERIFIED
+  SELLER_FOLLOW_UP_SENT
+  MARKETPLACE_SUPPORT_ACTION_RECORDED
+  BEG_GRAPH_UPDATED
+  BEG_EDGE_REVIEWED
+  BERR_EVALUATION_RECORDED
+  AUTHORIZATION_GRANTED
+  AUTHORIZATION_DENIED
+  REFUND_FAILED
+  REPLACEMENT_AUTHORIZED
+  REPLACEMENT_CONFIRMED
+  REPLACEMENT_DISPATCHED
+  REPLACEMENT_DELIVERED
+  SELLER_REASSIGNED
 }
 
 model User {
@@ -227,6 +249,23 @@ model User {
   appliedSeals            PackageSeal[]            @relation("UserAppliedSeals")
   sentSharedMessages      SharedRoomMessage[]      @relation("SentSharedMessages")
   deliveryReminders       DeliveryReminder[]       @relation("UserDeliveryReminders")
+
+  // Seller Identification, Directory & Evidence Collection Relations
+  linkedSellerDirectoryEntries SellerDirectoryEntry[]    @relation("LinkedMerchantSellerEntries")
+  reviewedSellerMatches        SellerIdentityMatch[]     @relation("ReviewedSellerMatches")
+  createdSellerRequests        SellerEvidenceRequest[]   @relation("CreatedSellerRequests")
+  sellerCommunicationActors    SellerCommunicationAttempt[] @relation("ActorCommunicationAttempts")
+  sellerResponses              SellerEvidenceResponse[]  @relation("SubmittedSellerResponses")
+
+  // Persisted Bilateral Evidence Graph (BEG) & BERR History Relations
+  reviewedBegEdges             BegEdge[]                 @relation("ReviewedBegEdges")
+  begEdgeActions               BegEdgeAction[]           @relation("ActorBegEdgeActions")
+  triggeredBegRevisions        BegGraphRevision[]        @relation("TriggeredBegRevisions")
+  createdBerrAssessments       BerrAssessmentRecord[]    @relation("CreatedBerrAssessments")
+  reviewedBerrAssessments      BerrAssessmentRecord[]    @relation("ReviewedBerrAssessments")
+  reviewedBerrV2Findings       BerrV2FindingRecord[]     @relation("ReviewedBerrV2Findings")
+  berrV2ReviewActions          BerrV2ReviewAction[]      @relation("ActorBerrV2ReviewActions")
+  sellerOnboardingState        SellerOnboardingState?    @relation("UserSellerOnboardingState")
 
   @@index([role])
   @@index([isPlatformAdmin])
@@ -294,6 +333,9 @@ model Organization {
   orders              CommerceOrder[]          @relation("MerchantOrders")
   paypalDisputes      PayPalDispute[]          @relation("OrgDisputes")
   agentRuns           AgentRun[]               @relation("OrgAgentRuns")
+  sellerDirectoryEntries SellerDirectoryEntry[] @relation("OrgSellerDirectoryEntries")
+  sellerEvidenceRequests SellerEvidenceRequest[] @relation("OrgSellerEvidenceRequests")
+  sellerEvidenceResponses SellerEvidenceResponse[] @relation("OrgSellerEvidenceResponses")
 
   @@index([slug])
   @@index([isActive])
@@ -406,6 +448,23 @@ model CaseRecord {
   paymentIncident          PaymentIncident?
   multilingualComplaints   MultilingualComplaint[]
 
+  // Seller Identification & Evidence Collection Relations
+  sellerIdentityMatches    SellerIdentityMatch[]
+  sellerEvidenceRequests   SellerEvidenceRequest[]
+  sellerEvidenceResponses  SellerEvidenceResponse[]
+
+  // Persisted Bilateral Evidence Graph (BEG) & BERR History Relations
+  begGraph                 BegGraph?
+  begNodes                 BegNode[]
+  begEdges                 BegEdge[]
+  begEdgeActions           BegEdgeAction[]
+  begGraphRevisions        BegGraphRevision[]
+  berrAssessments          BerrAssessmentRecord[]
+  berrV2Findings           BerrV2FindingRecord[]
+  berrV2RecommendedActions BerrV2RecommendedAction[]
+  berrV2ReviewActions      BerrV2ReviewAction[]
+  replacementFulfillments  ReplacementFulfillment[]
+
   @@index([caseNumber])
   @@index([status])
   @@index([priority])
@@ -488,6 +547,9 @@ model Evidence {
   analysisResults   EvidenceAnalysisResult[]
   sourceRecords     TransactionSourceRecord[]
   fieldExtractions  EvidenceFieldExtraction[]
+  sellerMatchSources SellerIdentityMatch[]     @relation("SourceEvidenceSellerMatches")
+  sellerEvidenceItems SellerEvidenceItem[]
+  berrV2SupportingLinks BerrV2SupportingEvidence[] @relation("EvidenceBerrV2Links")
 
   @@index([caseId])
   @@index([uploadedById])
@@ -899,6 +961,7 @@ model ResolutionProposal {
   organizationId      String
   policyId            String?
   basedOnAnalysisRunId String?
+  basedOnAssessmentId String?
   proposedById        String
   proposalType        String    // REPLACEMENT, FULL_REFUND, PARTIAL_REFUND, RETURN_AND_REFUND, INFORMATION_REQUEST, HUMAN_REVIEW
   title               String
@@ -908,21 +971,28 @@ model ResolutionProposal {
   reason              String
   policyVersion       String    @default("1.0")
   status              String    @default("DRAFT") // DRAFT, PENDING_BUYER, PENDING_MERCHANT, AGREED, REJECTED, EXPIRED, CANCELLED, COMPLETED
+  authorizationStatus String    @default("NOT_EVALUATED") // NOT_EVALUATED, NOT_ELIGIBLE, PENDING_APPROVAL, APPROVED, AUTHORIZED, EXECUTION_PENDING, EXECUTION_FAILED, REJECTED, COMPLETED
+  authorizedById      String?
+  authorizedAt        DateTime?
+  denialReason        String?
+  executionMode       String?   // PAYPAL_REFUND, REPLACEMENT_FULFILLMENT, STORE_CREDIT, MANUAL_SETTLEMENT
   expiresAt           DateTime?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
-  case        CaseRecord                 @relation(fields: [caseId], references: [id], onDelete: Cascade)
-  organization Organization              @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  policy      ResolutionPolicy?          @relation(fields: [policyId], references: [id], onDelete: SetNull)
-  proposedBy  User                       @relation("ProposedResolutions", fields: [proposedById], references: [id])
-  analysisRun AIAnalysisRun?             @relation(fields: [basedOnAnalysisRunId], references: [id], onDelete: SetNull)
-  responses   ResolutionPartyResponse[]
-  refunds     RefundTransaction[]
+  case                   CaseRecord                 @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  organization           Organization               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  policy                 ResolutionPolicy?          @relation(fields: [policyId], references: [id], onDelete: SetNull)
+  proposedBy             User                       @relation("ProposedResolutions", fields: [proposedById], references: [id])
+  analysisRun            AIAnalysisRun?             @relation(fields: [basedOnAnalysisRunId], references: [id], onDelete: SetNull)
+  responses              ResolutionPartyResponse[]
+  refunds                RefundTransaction[]
+  replacementFulfillment ReplacementFulfillment?
 
   @@index([caseId])
   @@index([organizationId])
   @@index([status])
+  @@index([authorizationStatus])
   @@index([proposalType])
   @@index([createdAt])
 }
@@ -1040,6 +1110,8 @@ model PayPalPayment {
   @@index([providerOrderId])
   @@index([captureId])
   @@index([paymentStatus])
+  @@index([capturedAt])
+  @@index([paymentStatus, capturedAt])
   @@index([createdAt])
 }
 
@@ -1066,6 +1138,7 @@ model RefundTransaction {
   approvedBy         User?               @relation("ApprovedRefunds", fields: [approvedById], references: [id])
 
   @@index([paymentId])
+  @@index([paymentId, status])
   @@index([resolutionProposalId])
   @@index([refundRequestId])
   @@index([paypalRefundId])
@@ -1405,6 +1478,7 @@ model PackagePassport {
   deliveryEvents         DeliveryEvent[]
   cameraSessions         CameraSession[]
   disputes               CaseRecord[]
+  replacementFulfillments ReplacementFulfillment[]
 
   @@index([packageNumber])
   @@index([qrToken])
@@ -1891,4 +1965,614 @@ model MultilingualComplaint {
   @@index([userId])
   @@index([caseId])
   @@index([inputLanguage])
+}
+
+// ============================================================================
+// SELLER IDENTIFICATION, DIRECTORY, COMMUNICATION GATEWAY & EVIDENCE COLLECTION
+// ============================================================================
+
+model SellerDirectoryEntry {
+  id                   String    @id @default(cuid())
+  legalName            String
+  normalizedLegalName  String
+  displayName          String?
+  gstin                String?   @unique
+  panMasked            String?
+  panHash              String?
+  businessAddress      String?
+  state                String?
+  identityStatus       String    @default("IDENTIFIED") // IDENTIFIED, CANDIDATE, UNVERIFIED, VERIFICATION_PENDING, VERIFIED, REGISTERED, INACTIVE, REVIEW_REQUIRED
+  registrationStatus   String    @default("UNREGISTERED") // REGISTERED, UNREGISTERED, INACTIVE, UNKNOWN
+  verificationStatus   String    @default("UNVERIFIED") // UNVERIFIED, VERIFIED, REJECTED
+  identificationSource String    @default("INVOICE_OCR") // INVOICE_OCR, ORDER_CONFIRMATION, SELLER_REGISTRATION, PURCHASE_MEMORY, MANUAL_ADMIN
+  verifiedAt           DateTime?
+  linkedOrganizationId String?
+  linkedMerchantUserId String?
+  metadataJson         String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  linkedOrganization  Organization?              @relation("OrgSellerDirectoryEntries", fields: [linkedOrganizationId], references: [id], onDelete: SetNull)
+  linkedMerchantUser  User?                      @relation("LinkedMerchantSellerEntries", fields: [linkedMerchantUserId], references: [id], onDelete: SetNull)
+  marketplaceAccounts SellerMarketplaceAccount[]
+  identityMatches     SellerIdentityMatch[]
+  evidenceRequests    SellerEvidenceRequest[]
+
+  @@index([normalizedLegalName])
+  @@index([displayName])
+  @@index([identityStatus])
+  @@index([registrationStatus])
+  @@index([verificationStatus])
+  @@index([linkedOrganizationId])
+  @@index([state])
+}
+
+model SellerMarketplaceAccount {
+  id                  String   @id @default(cuid())
+  sellerId            String
+  marketplace         String   // FLIPKART, AMAZON, OLX, MEESHO, MYNTRA, SHOPIFY, DIRECT, OTHER
+  marketplaceSellerId String?
+  storefrontName      String?
+  marketplaceUrl      String?
+  relationshipType    String?  // MARKETPLACE_THIRD_PARTY, DIRECT_BRAND, AUTHORIZED_DISTRIBUTOR, MARKETPLACE_FULFILLED, UNKNOWN
+  isVerified          Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  seller SellerDirectoryEntry @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@unique([marketplace, marketplaceSellerId])
+  @@index([sellerId])
+  @@index([marketplace])
+  @@index([storefrontName])
+}
+
+model SellerIdentityMatch {
+  id                           String    @id @default(cuid())
+  caseId                       String
+  sourceEvidenceId             String?
+  sourcePageNumber             Int?
+  sourceExcerpt                String?
+  extractedLegalName           String?
+  extractedDisplayName         String?
+  extractedGstin               String?
+  extractedPanMasked           String?
+  extractedAddress             String?
+  extractedState               String?
+  extractedMarketplace         String?
+  extractedMarketplaceSellerId String?
+  extractedOrderId             String?
+  extractedInvoiceNumber       String?
+  extractedProductName         String?
+  sellerRelationship           String?
+  detectedEntitiesJson         String?
+  matchedSellerId              String?
+  candidateSellerIdsJson       String?
+  matchOutcome                 String    // EXACT_MATCH, VERIFIED_MATCH, POSSIBLE_MATCH, MULTIPLE_MATCHES, NO_MATCH, INSUFFICIENT_INFORMATION
+  matchConfidence              Float     @default(0)
+  matchSignalsJson             String?
+  requiresHumanReview          Boolean   @default(false)
+  reviewedById                 String?
+  reviewedAt                   DateTime?
+  reviewNotes                  String?
+  screeningGateStatus          String    @default("PASSED") // PASSED, BLOCKED_BY_SCREENING
+  createdAt                    DateTime  @default(now())
+  updatedAt                    DateTime  @updatedAt
+
+  case             CaseRecord            @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  sourceEvidence   Evidence?             @relation("SourceEvidenceSellerMatches", fields: [sourceEvidenceId], references: [id], onDelete: SetNull)
+  matchedSeller    SellerDirectoryEntry? @relation(fields: [matchedSellerId], references: [id], onDelete: SetNull)
+  reviewedBy       User?                 @relation("ReviewedSellerMatches", fields: [reviewedById], references: [id], onDelete: SetNull)
+  evidenceRequests SellerEvidenceRequest[]
+
+  @@index([caseId])
+  @@index([matchedSellerId])
+  @@index([matchOutcome])
+  @@index([requiresHumanReview])
+  @@index([extractedGstin])
+}
+
+model SellerEvidenceRequest {
+  id                           String    @id @default(cuid())
+  requestNumber                String    @unique
+  caseId                       String
+  sellerId                     String?
+  sellerMatchId                String?
+  organizationId               String?
+  marketplace                  String
+  orderId                      String
+  productName                  String
+  complaintCategory            String
+  requestDescription           String
+  requestedItemsJson           String
+  deliveryChannel              String    // SELLER_PORTAL, MARKETPLACE_API, CUSTOMER_ASSISTED_HELP_CENTRE, REVIEW_REQUIRED
+  registrationStatus           String    // REGISTERED_VERIFIED, IDENTIFIED_UNREGISTERED, REQUIRES_REVIEW
+  status                       String    @default("DRAFT") // DRAFT, READY_TO_SEND, SENT_TO_SELLER_PORTAL, DELIVERY_PENDING, DELIVERED, VIEWED, WAITING_FOR_SELLER, SELLER_RESPONDED, ADDITIONAL_EVIDENCE_REQUIRED, CUSTOMER_ACTION_REQUIRED, MARKETPLACE_SUPPORT_PENDING, NO_RESPONSE, CANCELLED, FAILED
+  marketplaceSupportUrl        String?
+  preparedMessageForBuyer      String?
+  customerReportedSubmissionAt DateTime?
+  customerSubmissionNote       String?
+  createdById                  String
+  dispatchedAt                 DateTime?
+  deliveredAt                  DateTime?
+  viewedAt                     DateTime?
+  respondedAt                  DateTime?
+  verifiedAt                   DateTime?
+  dueAt                        DateTime?
+  followUpCount                Int       @default(0)
+  lastFollowUpAt               DateTime?
+  draftResponseJson            String?
+  idempotencyKey               String?   @unique
+  createdAt                    DateTime  @default(now())
+  updatedAt                    DateTime  @updatedAt
+
+  case                  CaseRecord                   @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  seller                SellerDirectoryEntry?        @relation(fields: [sellerId], references: [id], onDelete: SetNull)
+  sellerMatch           SellerIdentityMatch?         @relation(fields: [sellerMatchId], references: [id], onDelete: SetNull)
+  organization          Organization?                @relation("OrgSellerEvidenceRequests", fields: [organizationId], references: [id], onDelete: SetNull)
+  createdBy             User                         @relation("CreatedSellerRequests", fields: [createdById], references: [id])
+  communicationAttempts SellerCommunicationAttempt[]
+  responses             SellerEvidenceResponse[]
+  evidenceItems         SellerEvidenceItem[]
+
+  @@index([caseId])
+  @@index([sellerId])
+  @@index([organizationId])
+  @@index([status])
+  @@index([deliveryChannel])
+  @@index([createdAt])
+}
+
+model SellerCommunicationAttempt {
+  id                  String   @id @default(cuid())
+  requestId           String
+  attemptNumber       Int      @default(1)
+  channel             String   // SELLER_PORTAL, MARKETPLACE_API, CUSTOMER_ASSISTED_HELP_CENTRE
+  actionType          String   // INITIAL_DISPATCH, FOLLOW_UP, ADDITIONAL_EVIDENCE_REQUEST, CUSTOMER_REPORTED_CONTACT, ADAPTER_PROBE
+  eligibility         String   // ELIGIBLE, UNAVAILABLE, BLOCKED
+  executionStatus     String   // SENT, DELIVERED, PENDING, CUSTOMER_ACTION_REQUIRED, CUSTOMER_REPORTED_SUBMISSION, FAILED, UNSUPPORTED
+  failureReason       String?
+  externalReferenceId String?
+  idempotencyKey      String?  @unique
+  actorId             String?
+  metadataJson        String?
+  executedAt          DateTime @default(now())
+
+  request SellerEvidenceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  actor   User?                 @relation("ActorCommunicationAttempts", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([requestId])
+  @@index([channel])
+  @@index([executionStatus])
+  @@index([executedAt])
+}
+
+model SellerEvidenceResponse {
+  id                      String    @id @default(cuid())
+  requestId               String
+  caseId                  String
+  organizationId          String?
+  responderId             String
+  stance                  String    // AGREE, DISAGREE, CLARIFICATION_ONLY, PARTIAL_AGREEMENT
+  summary                 String
+  itemResponsesJson       String
+  additionalRemarks       String?
+  structuredDetailsJson   String?
+  verificationSummaryJson String?
+  verificationStatus      String    @default("PENDING") // PENDING, VERIFIED, NEEDS_REVIEW, SUSPICIOUS
+  idempotencyKey          String?   @unique
+  submittedAt             DateTime  @default(now())
+  verifiedAt              DateTime?
+
+  request       SellerEvidenceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  case          CaseRecord            @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  organization  Organization?         @relation("OrgSellerEvidenceResponses", fields: [organizationId], references: [id], onDelete: SetNull)
+  responder     User                  @relation("SubmittedSellerResponses", fields: [responderId], references: [id])
+  evidenceItems SellerEvidenceItem[]
+
+  @@index([requestId])
+  @@index([caseId])
+  @@index([organizationId])
+  @@index([responderId])
+  @@index([submittedAt])
+}
+
+model SellerEvidenceItem {
+  id                     String   @id @default(cuid())
+  requestId              String
+  responseId             String
+  evidenceId             String
+  requestedItemKey       String?
+  fileUsabilityJson      String?
+  documentExtractionJson String?
+  relevanceJson          String?
+  consistencyJson        String?
+  suspiciousSignalsJson  String?
+  humanReviewRequired    Boolean  @default(true)
+  createdAt              DateTime @default(now())
+
+  request  SellerEvidenceRequest  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  response SellerEvidenceResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  evidence Evidence               @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@index([responseId])
+  @@index([evidenceId])
+}
+
+// ============================================================================
+// PERSISTED BILATERAL EVIDENCE GRAPH (BEG) & VERSIONED BERR HISTORY
+// ============================================================================
+
+model BegGraph {
+  id               String   @id @default(cuid())
+  caseId           String   @unique
+  version          Int      @default(1)
+  schemaVersion    String   @default("2.0")
+  buildStatus      String   @default("BUILT") // BUILT, OUTDATED, FAILED
+  lastTriggerEvent String?
+  lastEventAt      DateTime?
+  nodeCount        Int      @default(0)
+  edgeCount        Int      @default(0)
+  verifiedCount    Int      @default(0)
+  contestedCount   Int      @default(0)
+  missingCount     Int      @default(0)
+  inferredCount    Int      @default(0)
+  integrityHash    String?
+  summaryJson      String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  case            CaseRecord             @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  nodes           BegNode[]
+  edges           BegEdge[]
+  revisions       BegGraphRevision[]
+  berrAssessments BerrAssessmentRecord[]
+
+  @@index([caseId])
+  @@index([buildStatus])
+  @@index([updatedAt])
+}
+
+model BegNode {
+  id                    String    @id @default(cuid())
+  graphId               String
+  caseId                String
+  nodeKey               String
+  nodeType              String
+  legacyType            String
+  sourceEntityType      String
+  sourceEntityId        String?
+  label                 String
+  sublabel              String?
+  party                 String    @default("NEUTRAL") // BUYER, MERCHANT, SELLER, MARKETPLACE, LOGISTICS, SYSTEM, NEUTRAL
+  sourceOrigin          String    @default("SYSTEM_GENERATED") // BUYER_SUBMITTED, SELLER_SUBMITTED, MARKETPLACE_SOURCED, LOGISTICS_SOURCED, SYSTEM_GENERATED, AI_EXTRACTED, INDEPENDENTLY_VERIFIED
+  verificationState     String    @default("UNVERIFIED") // VERIFIED, SOURCE_SUPPORTED, INFERRED, CONTESTED, UNVERIFIED
+  discrepancyState      String?   // CONSISTENT, INCONSISTENT, CONTESTED, MISSING, REQUIRES_REVIEW
+  reviewStatus          String    @default("UNREVIEWED")
+  confidence            Float?
+  evidenceId            String?
+  originalFileId        String?
+  uploadedById          String?
+  uploadingParty        String?
+  uploadTimestamp       DateTime?
+  originalFilename      String?
+  sha256                String?
+  storageKey            String?
+  extractedInfoRef      String?
+  ocrResultRef          String?
+  verificationResultRef String?
+  accessPermissions     String?
+  sourceLocationJson    String?
+  metadataJson          String?
+  isInternal            Boolean   @default(false)
+  eventTimestamp        DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  graph         BegGraph   @relation(fields: [graphId], references: [id], onDelete: Cascade)
+  case          CaseRecord @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  outgoingEdges BegEdge[]  @relation("BegEdgeSource")
+  incomingEdges BegEdge[]  @relation("BegEdgeTarget")
+
+  @@unique([graphId, nodeKey])
+  @@index([caseId])
+  @@index([nodeType])
+  @@index([sourceOrigin])
+  @@index([verificationState])
+  @@index([evidenceId])
+}
+
+model BegEdge {
+  id                        String    @id @default(cuid())
+  graphId                   String
+  caseId                    String
+  edgeKey                   String
+  sourceNodeId              String
+  targetNodeId              String
+  relationType              String
+  legacyType                String
+  label                     String
+  verificationState         String    @default("UNVERIFIED") // VERIFIED, SOURCE_SUPPORTED, INFERRED, CONTESTED, UNVERIFIED
+  sourceOrigin              String    @default("SYSTEM_GENERATED")
+  provenance                String    @default("RULE")
+  confidence                Float?
+  matchMethod               String?
+  explanation               String?
+  supportingEvidenceIdsJson String?
+  originalAiState           String?
+  originalAiConfidence      Float?
+  reviewStatus              String    @default("UNREVIEWED")
+  reviewedById              String?
+  reviewedAt                DateTime?
+  reviewNote                String?
+  metadataJson              String?
+  isInternal                Boolean   @default(false)
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+
+  graph      BegGraph        @relation(fields: [graphId], references: [id], onDelete: Cascade)
+  case       CaseRecord      @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  sourceNode BegNode         @relation("BegEdgeSource", fields: [sourceNodeId], references: [id], onDelete: Cascade)
+  targetNode BegNode         @relation("BegEdgeTarget", fields: [targetNodeId], references: [id], onDelete: Cascade)
+  reviewedBy User?           @relation("ReviewedBegEdges", fields: [reviewedById], references: [id], onDelete: SetNull)
+  actions    BegEdgeAction[]
+
+  @@unique([graphId, edgeKey])
+  @@index([caseId])
+  @@index([sourceNodeId])
+  @@index([targetNodeId])
+  @@index([relationType])
+  @@index([verificationState])
+  @@index([reviewStatus])
+}
+
+model BegEdgeAction {
+  id                        String   @id @default(cuid())
+  edgeId                    String
+  caseId                    String
+  actorId                   String
+  action                    String   // CONFIRM, REJECT, MARK_CONTESTED, REQUEST_ADDITIONAL_INFO, ESCALATE
+  previousVerificationState String?
+  newVerificationState      String?
+  previousReviewStatus      String?
+  newReviewStatus           String?
+  explanation               String
+  metadataJson              String?
+  createdAt                 DateTime @default(now())
+
+  edge  BegEdge    @relation(fields: [edgeId], references: [id], onDelete: Cascade)
+  case  CaseRecord @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  actor User       @relation("ActorBegEdgeActions", fields: [actorId], references: [id])
+
+  @@index([edgeId])
+  @@index([caseId])
+  @@index([actorId])
+  @@index([createdAt])
+}
+
+model BegGraphRevision {
+  id                 String   @id @default(cuid())
+  graphId            String
+  caseId             String
+  version            Int
+  triggerEvent       String
+  triggeredById      String?
+  nodeCount          Int      @default(0)
+  edgeCount          Int      @default(0)
+  contradictionCount Int      @default(0)
+  missingCount       Int      @default(0)
+  integrityHash      String
+  deltaSummaryJson   String?
+  snapshotJson       String?
+  createdAt          DateTime @default(now())
+
+  graph           BegGraph               @relation(fields: [graphId], references: [id], onDelete: Cascade)
+  case            CaseRecord             @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  triggeredBy     User?                  @relation("TriggeredBegRevisions", fields: [triggeredById], references: [id], onDelete: SetNull)
+  berrAssessments BerrAssessmentRecord[]
+
+  @@unique([graphId, version])
+  @@index([caseId])
+  @@index([createdAt])
+}
+
+model BerrAssessmentRecord {
+  id                       String    @id @default(cuid())
+  caseId                   String
+  begGraphId               String?
+  begRevisionId            String?
+  begGraphVersion          Int       @default(1)
+  version                  Int       @default(1)
+  status                   String    @default("COMPLETED")
+  overallStatus            String    @default("COMPLETED") // COMPLETED, COMPLETED_WITH_CONFLICTS, REQUIRES_ADDITIONAL_EVIDENCE, HUMAN_REVIEW_REQUIRED, INCONCLUSIVE, FAILED
+  complaintCategory        String?
+  providerName             String    @default("deterministic-hybrid")
+  modelName                String    @default("berr-v2.1")
+  idempotencyKey           String?   @unique
+  isStale                  Boolean   @default(false)
+  staleReason              String?
+  triggerReason            String    @default("MANUAL")
+  summary                  String
+  buyerCoherenceScore      Int       @default(0)
+  sellerCoherenceScore     Int       @default(0)
+  classifiedFactsJson      String
+  recommendedRemedyJson    String
+  uncertaintyJson          String
+  investigationContextJson String?
+  recommendedActionsJson   String?
+  qualityReviewJson        String?
+  linkedBegNodeIdsJson     String?
+  linkedBegEdgeIdsJson     String?
+  humanReviewStatus        String    @default("UNREVIEWED") // UNREVIEWED, ACCEPTED, MODIFIED, ESCALATED
+  reviewedById             String?
+  reviewedAt               DateTime?
+  reviewNote               String?
+  createdById              String?
+  createdAt                DateTime  @default(now())
+
+  case               CaseRecord                @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  begGraph           BegGraph?                 @relation(fields: [begGraphId], references: [id], onDelete: SetNull)
+  begRevision        BegGraphRevision?         @relation(fields: [begRevisionId], references: [id], onDelete: SetNull)
+  createdBy          User?                     @relation("CreatedBerrAssessments", fields: [createdById], references: [id], onDelete: SetNull)
+  reviewedBy         User?                     @relation("ReviewedBerrAssessments", fields: [reviewedById], references: [id], onDelete: SetNull)
+  findings           BerrV2FindingRecord[]
+  recommendedActions BerrV2RecommendedAction[]
+  reviewActions      BerrV2ReviewAction[]
+
+  @@index([caseId])
+  @@index([begGraphId])
+  @@index([overallStatus])
+  @@index([isStale])
+  @@index([createdAt])
+}
+
+model BerrV2FindingRecord {
+  id                        String    @id @default(cuid())
+  assessmentId              String
+  caseId                    String
+  findingCode               String    // e.g. BERR-F-001
+  classification            String    // AGREED, VERIFIED, CONTESTED, MISSING
+  claim                     String
+  explanation               String
+  verificationState         String    @default("UNVERIFIED")
+  verificationMethod        String?
+  verificationAuthority     String?
+  verifiedAt                DateTime?
+  buyerSummary              String?
+  sellerSummary             String?
+  recommendedNextAction     String?
+  linkedBegNodeIdsJson      String?
+  linkedBegEdgeIdsJson      String?
+  confidence                Float     @default(0.5)
+  originalAiClassification  String
+  originalAiExplanation     String
+  humanReviewStatus         String    @default("UNREVIEWED") // UNREVIEWED, ACCEPTED, REJECTED, CORRECTED
+  reviewedById              String?
+  reviewedAt                DateTime?
+  humanOverrideReason       String?
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+
+  assessment         BerrAssessmentRecord       @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  case               CaseRecord                 @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  reviewedBy         User?                      @relation("ReviewedBerrV2Findings", fields: [reviewedById], references: [id], onDelete: SetNull)
+  supportingEvidence BerrV2SupportingEvidence[]
+  reviewActions      BerrV2ReviewAction[]
+
+  @@index([assessmentId])
+  @@index([caseId])
+  @@index([classification])
+  @@index([humanReviewStatus])
+}
+
+model BerrV2SupportingEvidence {
+  id             String   @id @default(cuid())
+  findingId      String
+  evidenceId     String
+  partyRole      String   @default("SHARED") // BUYER, SELLER, SYSTEM, SHARED
+  relationRole   String   @default("SUPPORTING") // SUPPORTING, CONFLICTING, VERIFICATION_SOURCE
+  sourceLocation String?
+  createdAt      DateTime @default(now())
+
+  finding  BerrV2FindingRecord @relation(fields: [findingId], references: [id], onDelete: Cascade)
+  evidence Evidence            @relation("EvidenceBerrV2Links", fields: [evidenceId], references: [id], onDelete: Cascade)
+
+  @@unique([findingId, evidenceId, relationRole])
+  @@index([findingId])
+  @@index([evidenceId])
+}
+
+model BerrV2RecommendedAction {
+  id           String   @id @default(cuid())
+  assessmentId String
+  caseId       String
+  actionType   String   // REQUEST_ADDITIONAL_BUYER_EVIDENCE, REQUEST_ADDITIONAL_SELLER_EVIDENCE, ...
+  priority     String   @default("MEDIUM") // HIGH, MEDIUM, LOW
+  targetParty  String   @default("INVESTIGATOR") // BUYER, SELLER, MARKETPLACE, LOGISTICS, INVESTIGATOR
+  reason       String
+  status       String   @default("PROPOSED") // PROPOSED, ACCEPTED, DISMISSED, EXECUTED
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  assessment BerrAssessmentRecord @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  case       CaseRecord           @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([assessmentId])
+  @@index([caseId])
+  @@index([actionType])
+}
+
+model BerrV2ReviewAction {
+  id                String   @id @default(cuid())
+  assessmentId      String
+  findingId         String?
+  caseId            String
+  actorId           String
+  action            String   // ACCEPT_FINDING, REJECT_FINDING, CORRECT_CLASSIFICATION, CHANGE_NEXT_ACTION, REQUEST_MORE_INFO, ESCALATE_CASE
+  previousStateJson String?
+  newStateJson      String?
+  reason            String
+  createdAt         DateTime @default(now())
+
+  assessment BerrAssessmentRecord @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  finding    BerrV2FindingRecord? @relation(fields: [findingId], references: [id], onDelete: SetNull)
+  case       CaseRecord           @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  actor      User                 @relation("ActorBerrV2ReviewActions", fields: [actorId], references: [id])
+
+  @@index([assessmentId])
+  @@index([findingId])
+  @@index([caseId])
+  @@index([createdAt])
+}
+
+model ReplacementFulfillment {
+  id                     String    @id @default(cuid())
+  caseId                 String
+  proposalId             String    @unique
+  orderId                String?
+  packagePassportId      String?
+  merchantOrganizationId String?
+  sellerId               String?
+  productName            String
+  requestedSku           String?
+  confirmedSku           String?
+  carrierName            String?
+  trackingNumber         String?
+  status                 String    @default("AUTHORIZED") // AUTHORIZED, REQUESTED_FROM_SELLER, SELLER_CONFIRMED, DISPATCHED, IN_TRANSIT, DELIVERED, COMPLETED, CANCELLED, FAILED
+  authorizedById         String?
+  authorizedAt           DateTime  @default(now())
+  sellerConfirmedById    String?
+  sellerConfirmedAt      DateTime?
+  dispatchedAt           DateTime?
+  deliveredAt            DateTime?
+  completedAt            DateTime?
+  failureReason          String?
+  notes                  String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  case            CaseRecord        @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  proposal        ResolutionProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  packagePassport PackagePassport?  @relation(fields: [packagePassportId], references: [id], onDelete: SetNull)
+
+  @@index([caseId])
+  @@index([status])
+  @@index([packagePassportId])
+  @@index([merchantOrganizationId])
+}
+
+model SellerOnboardingState {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  status         String    @default("NOT_STARTED") // NOT_STARTED, IN_PROGRESS, SKIPPED, COMPLETED
+  lastViewedStep Int       @default(1)
+  completedAt    DateTime?
+  dismissedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user User @relation("UserSellerOnboardingState", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
 }

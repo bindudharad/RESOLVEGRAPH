@@ -172,7 +172,13 @@ export class SharedResolutionService {
   public static async validateFinancialSafeguards(
     caseId: string,
     proposalId: string,
-    actorUser: { id: string; role: string; organization?: string | null; isPlatformAdmin: boolean }
+    actorUser: {
+      id: string;
+      role: string;
+      organization?: string | null;
+      isPlatformAdmin: boolean;
+      orgMemberships?: Array<{ organizationId: string; role: string }>;
+    }
   ): Promise<FinancialSafeguardCheckResult> {
     const reasons: string[] = [];
 
@@ -196,11 +202,45 @@ export class SharedResolutionService {
     if (proposal.status !== "AGREED") {
       reasons.push(`Proposal status is '${proposal.status}', but must be 'AGREED' with bilateral party consent.`);
     }
+    if (proposal.authorizationStatus === "REJECTED") {
+      reasons.push("Authorization for this proposal was denied.");
+    }
 
-    // 3. Verify actor authorization (Merchant Owner, Resolution Manager, or Platform Admin)
-    const isMerchantOwner = actorUser.organization === caseRecord.organizationId;
-    const isManager = actorUser.role === "RESOLUTION_MANAGER" || actorUser.isPlatformAdmin;
-    if (!isMerchantOwner && !isManager) {
+    // 3. Verify actor authorization (Merchant Owner/Admin/Manager in Org, Assigned Merchant, Resolution Manager, or Platform Admin)
+    const isOrgAuthorized = actorUser.orgMemberships
+      ? Boolean(
+          caseRecord.organizationId &&
+            actorUser.orgMemberships.some(
+              (m) =>
+                m.organizationId === caseRecord.organizationId &&
+                (m.role === "OWNER" ||
+                  m.role === "ORG_ADMIN" ||
+                  m.role === "RESOLUTION_MANAGER" ||
+                  m.role === "MERCHANT_AGENT")
+            )
+        )
+      : caseRecord.organizationId
+      ? Boolean(
+          await prisma.organizationMember.findFirst({
+            where: {
+              userId: actorUser.id,
+              organizationId: caseRecord.organizationId,
+              isActive: true,
+              role: {
+                in: ["OWNER", "ORG_ADMIN", "RESOLUTION_MANAGER", "MERCHANT_AGENT"],
+              },
+            },
+            select: { id: true },
+          })
+        )
+      : false;
+    const isAssignedMerchant =
+      actorUser.role === "MERCHANT" && caseRecord.merchantId === actorUser.id;
+    const isManager =
+      actorUser.role === "RESOLUTION_MANAGER" ||
+      actorUser.isPlatformAdmin ||
+      actorUser.role === "ADMIN";
+    if (!isOrgAuthorized && !isAssignedMerchant && !isManager) {
       reasons.push("Unauthorized actor: Only merchant owner or resolution manager can authorize financial operations.");
     }
 
@@ -220,7 +260,7 @@ export class SharedResolutionService {
     }
 
     const totalRefunded = payment.refunds
-      .filter((r) => r.status === "COMPLETED")
+      .filter((r) => r.status === "COMPLETED" || r.status === "PENDING" || r.status === "PROCESSING")
       .reduce((sum, r) => sum + r.amountMinor, 0);
 
     const remainingBalance = payment.amountMinor - totalRefunded;

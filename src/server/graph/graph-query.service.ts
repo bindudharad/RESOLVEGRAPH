@@ -21,13 +21,45 @@ export class GraphQueryService {
     // 1. Filter by node types
     if (options.nodeTypes && options.nodeTypes.length > 0) {
       const typeSet = new Set(options.nodeTypes);
-      filteredNodes = filteredNodes.filter((n) => typeSet.has(n.type));
+      filteredNodes = filteredNodes.filter(
+        (n) => typeSet.has(n.type) || (n.begType ? typeSet.has(n.begType) : false)
+      );
+    }
+
+    // 1b. Filter by BEG node types
+    if (options.begNodeTypes && options.begNodeTypes.length > 0) {
+      const begSet = new Set(options.begNodeTypes);
+      filteredNodes = filteredNodes.filter((n) => n.begType && begSet.has(n.begType));
     }
 
     // 2. Filter by party
     if (options.parties && options.parties.length > 0) {
       const partySet = new Set(options.parties);
       filteredNodes = filteredNodes.filter((n) => n.party && partySet.has(n.party));
+    }
+
+    // 2b. Filter by evidence source origin
+    if (options.sourceOrigins && options.sourceOrigins.length > 0) {
+      const originSet = new Set(options.sourceOrigins);
+      filteredNodes = filteredNodes.filter(
+        (n) => n.sourceOrigin && originSet.has(n.sourceOrigin)
+      );
+    }
+
+    // 2c. Filter by verification state
+    if (options.verificationStates && options.verificationStates.length > 0) {
+      const vSet = new Set(options.verificationStates);
+      filteredNodes = filteredNodes.filter(
+        (n) => n.verificationState && vSet.has(n.verificationState)
+      );
+    }
+
+    // 2d. Filter by discrepancy state
+    if (options.discrepancyStates && options.discrepancyStates.length > 0) {
+      const dSet = new Set(options.discrepancyStates);
+      filteredNodes = filteredNodes.filter(
+        (n) => n.discrepancyState && dSet.has(n.discrepancyState)
+      );
     }
 
     // 3. Filter by review status
@@ -46,12 +78,16 @@ export class GraphQueryService {
       });
     }
 
-    // 5. Filter by search query (label, sublabel, metadata values)
+    // 5. Filter by search query (label, sublabel, begType, provenanceRecord, metadata values)
     if (options.searchQuery && options.searchQuery.trim().length > 0) {
       const q = options.searchQuery.toLowerCase().trim();
       filteredNodes = filteredNodes.filter((n) => {
         if (n.label.toLowerCase().includes(q)) return true;
         if (n.sublabel && n.sublabel.toLowerCase().includes(q)) return true;
+        if (n.begType && n.begType.toLowerCase().includes(q)) return true;
+        if (n.provenanceRecord && JSON.stringify(n.provenanceRecord).toLowerCase().includes(q)) {
+          return true;
+        }
         const metaStr = JSON.stringify(n.metadata).toLowerCase();
         return metaStr.includes(q);
       });

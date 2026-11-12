@@ -39,56 +39,112 @@ export function Dropdown({
   label = "Menu",
 }: DropdownProps) {
   const [open, setOpen] = useState(false);
+  const [shiftX, setShiftX] = useState(0);
+  const [maxMenuHeight, setMaxMenuHeight] = useState<number | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
 
+    const adjustPosition = () => {
+      const el = menuRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const margin = 12;
+
+      let nextShift = 0;
+      if (rect.left < margin) {
+        nextShift = margin - rect.left;
+      } else if (rect.right > vw - margin) {
+        nextShift = vw - margin - rect.right;
+      }
+      setShiftX((prev) => (prev === Math.round(nextShift) ? prev : Math.round(nextShift)));
+
+      const availableBottom = vh - rect.top - margin;
+      if (availableBottom > 180 && rect.height > availableBottom) {
+        setMaxMenuHeight(Math.floor(availableBottom));
+      } else {
+        setMaxMenuHeight(null);
+      }
+    };
+
+    const rafId = window.requestAnimationFrame(adjustPosition);
+
     const onPointerDown = (event: MouseEvent) => {
-      if (!wrapRef.current?.contains(event.target as Node)) setOpen(false);
+      if (!wrapRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+        setShiftX(0);
+      }
     };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setOpen(false);
+        setShiftX(0);
         triggerRef.current?.focus();
       }
     };
-    const onScroll = () => setOpen(false);
+    const onResize = () => {
+      setOpen(false);
+      setShiftX(0);
+    };
 
     document.addEventListener("mousedown", onPointerDown);
     document.addEventListener("keydown", onKeyDown);
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("resize", onResize);
     return () => {
+      window.cancelAnimationFrame(rafId);
       document.removeEventListener("mousedown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, [open]);
 
-  const close = () => setOpen(false);
+  const close = () => {
+    setOpen(false);
+    setShiftX(0);
+  };
 
   return (
     <div ref={wrapRef} className={cn("relative", className)}>
       {trigger({
         ref: triggerRef,
-        onClick: () => setOpen((v) => !v),
+        onClick: () => {
+          setOpen((v) => {
+            if (v) setShiftX(0);
+            return !v;
+          });
+        },
         "aria-expanded": open,
         "aria-haspopup": "menu",
       })}
 
       {open ? (
         <div
-          role="menu"
-          aria-label={label}
+          ref={menuRef}
+          style={{ transform: shiftX !== 0 ? `translateX(${shiftX}px)` : undefined }}
           className={cn(
-            "rg-anim-pop absolute top-[calc(100%+7px)] z-80 overflow-hidden rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] py-1.5 shadow-xl text-[var(--ink)]",
+            "absolute top-[calc(100%+7px)] z-80 max-w-[calc(100vw-24px)]",
             align === "end" ? "right-0" : "left-0",
             width,
           )}
-          onClick={close}
         >
-          {children}
+          <div
+            role="menu"
+            aria-label={label}
+            style={
+              maxMenuHeight !== null
+                ? { maxHeight: `${maxMenuHeight}px`, overflowY: "auto" }
+                : undefined
+            }
+            className="rg-anim-pop w-full overflow-hidden rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] py-1.5 shadow-xl text-[var(--ink)]"
+            onClick={close}
+          >
+            {children}
+          </div>
         </div>
       ) : null}
     </div>

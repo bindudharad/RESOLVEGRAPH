@@ -9,6 +9,10 @@ import {
   Library,
   CreditCard,
   Menu,
+  PlusCircle,
+  Settings,
+  Inbox,
+  FileCheck2,
 } from "lucide-react";
 import { useEffect } from "react";
 import {
@@ -17,6 +21,7 @@ import {
   SidebarFooter,
 } from "@/components/layout/app-sidebar";
 import { useSidebar } from "@/components/layout/sidebar-context";
+import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
 /**
@@ -38,12 +43,33 @@ export function MobileNavigation() {
     };
   }, [mobileOpen]);
 
-  const mobileTabs = [
-    { label: "Overview", href: "/overview", icon: LayoutDashboard },
-    { label: "Cases", href: "/cases", icon: FolderOpen },
-    { label: "Evidence", href: "/evidence", icon: Library },
-    { label: "Payments", href: "/payments", icon: CreditCard },
-  ];
+  const { data: session, isPending } = useSession();
+  const sessionUser = session?.user as { role?: string; isPlatformAdmin?: boolean } | undefined;
+  const isPlatformAdmin = Boolean(sessionUser?.isPlatformAdmin || sessionUser?.role === "ADMIN");
+  const isBuyer = Boolean(sessionUser?.role === "BUYER" && !isPlatformAdmin);
+  const isMerchant = Boolean(sessionUser?.role === "MERCHANT" && !isPlatformAdmin);
+
+  const mobileTabs =
+    isPending && !sessionUser
+      ? []
+      : isBuyer
+      ? [
+          { label: "Submit", href: "/overview", icon: PlusCircle },
+          { label: "My Complaints", href: "/cases", icon: FolderOpen },
+          { label: "Settings", href: "/settings", icon: Settings },
+        ]
+      : isMerchant
+      ? [
+          { label: "Dashboard", href: "/seller", icon: LayoutDashboard },
+          { label: "Requests", href: "/seller/requests", icon: Inbox },
+          { label: "Responses", href: "/seller/responses", icon: FileCheck2 },
+        ]
+      : [
+          { label: "Overview", href: "/overview", icon: LayoutDashboard },
+          { label: "Cases", href: "/cases", icon: FolderOpen },
+          { label: "Evidence", href: "/evidence", icon: Library },
+          { label: "Payments", href: "/payments", icon: CreditCard },
+        ];
 
   return (
     <>

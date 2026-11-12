@@ -1,4 +1,5 @@
 import {
+  BarChart3,
   Bot,
   CreditCard,
   FolderOpen,
@@ -9,6 +10,9 @@ import {
   Settings,
   ShieldCheck,
   ShoppingCart,
+  Inbox,
+  Building2,
+  BookOpen,
   type LucideIcon,
 } from "lucide-react";
 
@@ -56,13 +60,7 @@ export const NAV_GROUPS: NavGroup[] = [
         availability: "live",
       },
       {
-        label: "Payments",
-        href: "/payments",
-        icon: CreditCard,
-        availability: "live",
-      },
-      {
-        label: "Investigations",
+        label: "Cases",
         href: "/cases",
         icon: FolderOpen,
         availability: "live",
@@ -72,7 +70,7 @@ export const NAV_GROUPS: NavGroup[] = [
         ],
       },
       {
-        label: "Evidence",
+        label: "Evidence & BEG",
         href: "/evidence",
         icon: Library,
         availability: "live",
@@ -88,41 +86,36 @@ export const NAV_GROUPS: NavGroup[] = [
         ],
       },
       {
-        label: "AI Copilot",
-        href: "/copilot",
-        icon: Bot,
+        label: "Payments & Capture Analytics",
+        href: "/payments",
+        icon: CreditCard,
         availability: "live",
+        subItems: [
+          { label: "Payments Ledger", href: "/payments" },
+          { label: "Capture Analytics", href: "/analytics/captures" },
+        ],
       },
       {
-        label: "Administration",
+        label: "Organizations & Sellers",
         href: "/organizations",
-        icon: ShieldCheck,
+        icon: Building2,
         availability: "live",
         adminOnly: true,
         subItems: [
           { label: "Organizations & Roles", href: "/organizations", adminOnly: true },
-          { label: "Security & Audit", href: "/admin/security", adminOnly: true },
-          { label: "Settings", href: "/settings" },
+          { label: "Seller Directory", href: "/seller/directory", adminOnly: true },
         ],
       },
-    ],
-  },
-  {
-    label: "Commerce",
-    items: [
       {
-        label: "Purchase Memory",
-        href: "/purchases",
-        icon: ShoppingCart,
+        label: "Administration",
+        href: "/settings",
+        icon: Settings,
         availability: "live",
-        hideForPlatformAdmin: true,
-      },
-      {
-        label: "Package & Delivery",
-        href: "/packages",
-        icon: Package,
-        availability: "live",
-        hideForPlatformAdmin: true,
+        adminOnly: true,
+        subItems: [
+          { label: "Settings", href: "/settings" },
+          { label: "Security & Audit", href: "/admin/security", adminOnly: true },
+        ],
       },
     ],
   },
@@ -132,6 +125,14 @@ export const NAV_GROUPS: NavGroup[] = [
 export const NAV_ITEMS: NavItem[] = [
   ...NAV_GROUPS.flatMap((group) => group.items),
   { label: "Investigation Engine", href: "/investigation", icon: FolderOpen, availability: "live" },
+  { label: "Analytics", href: "/analytics", icon: BarChart3, availability: "live" },
+  { label: "Capture Analytics", href: "/analytics/captures", icon: CreditCard, availability: "live" },
+  { label: "Seller Dashboard", href: "/seller", icon: LayoutDashboard, availability: "live" },
+  { label: "Seller Requests", href: "/seller/requests", icon: Inbox, availability: "live" },
+  { label: "Submitted Responses", href: "/seller/responses", icon: Inbox, availability: "live" },
+  { label: "Seller Guidelines", href: "/seller/guidelines", icon: BookOpen, availability: "live" },
+  { label: "Business Profile", href: "/seller/profile", icon: Building2, availability: "live" },
+  { label: "Seller Directory", href: "/seller/directory", icon: Building2, availability: "live", adminOnly: true },
   { label: "Shared Resolution Room", href: "/resolution-room", icon: Scale, availability: "live" },
   { label: "Organizations & Roles", href: "/organizations", icon: ShieldCheck, availability: "live", adminOnly: true },
   { label: "Security & Audit", href: "/admin/security", icon: ShieldCheck, availability: "live", adminOnly: true },
@@ -139,8 +140,9 @@ export const NAV_ITEMS: NavItem[] = [
 ];
 
 export function findNavItem(href: string): NavItem | undefined {
-  return NAV_ITEMS.find(
-    (item) => item.href === href || href.startsWith(`${item.href}/`),
+  return (
+    NAV_ITEMS.find((item) => item.href === href) ??
+    NAV_ITEMS.find((item) => href.startsWith(`${item.href}/`))
   );
 }
 
@@ -203,7 +205,13 @@ export function breadcrumbsFor(pathname: string): Breadcrumb[] {
   for (const segment of segments.slice(1)) {
     const decoded = decodeURIComponent(segment);
     const isCuid = /^[a-z0-9]{20,36}$/i.test(decoded);
-    const label = isCuid ? `Dossier (${decoded.slice(0, 8)}…)` : decoded;
+    const label = isCuid
+      ? `Dossier (${decoded.slice(0, 8)}…)`
+      : pathname === "/analytics/captures" && decoded === "captures"
+        ? "Capture Analytics"
+        : pathname === "/seller/guidelines" && decoded === "guidelines"
+          ? "Seller Guidelines"
+          : decoded;
     crumbs.push({ label });
   }
 
@@ -269,9 +277,37 @@ export const PAGE_META: Record<string, { title: string; description: string }> =
     title: "Analytics",
     description: "Workspace resolution performance, statutory SLA turnaround, and AI accuracy metrics.",
   },
+  "/analytics/captures": {
+    title: "Capture Analytics",
+    description: "Monthly and daily captured payment performance, capture counts, and settlement reconciliation.",
+  },
   "/organizations": {
     title: "Organizations",
     description: "Manage multi-tenant workspaces, merchant memberships and team roles.",
+  },
+  "/seller/requests": {
+    title: "Evidence Requests",
+    description: "Respond to verified RESOLVEGRAPH evidence requests for your merchant organization.",
+  },
+  "/seller": {
+    title: "Seller Dashboard",
+    description: "Manage customer complaints and respond to evidence requests.",
+  },
+  "/seller/responses": {
+    title: "Submitted Responses",
+    description: "Review submitted seller responses and current evidence verification status.",
+  },
+  "/seller/guidelines": {
+    title: "Seller Guidelines",
+    description: "Structured investigation guidance, evidence best practices, and seller commitments.",
+  },
+  "/seller/profile": {
+    title: "Business Profile",
+    description: "Manage verified merchant identity, business contact details, and marketplace accounts.",
+  },
+  "/seller/directory": {
+    title: "Seller Directory",
+    description: "Verify extracted sellers, GSTIN records, and registered merchant organization links.",
   },
   "/settings": {
     title: "Settings",

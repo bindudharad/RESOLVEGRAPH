@@ -5,7 +5,9 @@ import { DeliveryReminderService } from "@/server/services/delivery-reminder.ser
 export async function GET(request: NextRequest) {
   try {
     const user = await requireAuth(request);
-    const result = await DeliveryReminderService.getUserNotifications(user.id);
+    const limitParam = request.nextUrl.searchParams.get("limit");
+    const limit = limitParam ? parseInt(limitParam, 10) : 50;
+    const result = await DeliveryReminderService.getUserNotifications(user.id, limit);
 
     return NextResponse.json({
       success: true,

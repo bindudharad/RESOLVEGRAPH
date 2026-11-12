@@ -69,6 +69,15 @@ export class DeliveryReminderService {
           where: { id: input.packageId },
           data: { status: "DELIVERED", deliveredAt: timestamp },
         });
+        const { ReplacementExecutionService } = await import(
+          "@/server/orchestration/replacement-execution.service"
+        );
+        await ReplacementExecutionService.syncDeliveredPackage({
+          packageId: input.packageId,
+          actorId: input.userId,
+          deliveredAt: timestamp,
+          deliveryNote: input.checkpoint || "Carrier delivery event recorded",
+        }).catch(() => {});
       } else if (input.eventType === "OUT_FOR_DELIVERY") {
         await prisma.packagePassport.update({
           where: { id: input.packageId },
@@ -223,6 +232,16 @@ export class DeliveryReminderService {
       data: { status: "DELIVERED", deliveredAt: now },
     });
 
+    const { ReplacementExecutionService } = await import(
+      "@/server/orchestration/replacement-execution.service"
+    );
+    await ReplacementExecutionService.syncDeliveredPackage({
+      packageId,
+      actorId: userId,
+      deliveredAt: now,
+      deliveryNote: "Buyer confirmed physical receipt via portal",
+    }).catch(() => {});
+
     // Trigger immediate unboxing session notification
     const reminderResult = await this.scheduleReminder({
       userId,
@@ -258,11 +277,12 @@ export class DeliveryReminderService {
   /**
    * Lists in-app notifications for user.
    */
-  public static async getUserNotifications(userId: string) {
+  public static async getUserNotifications(userId: string, limit = 50) {
+    const safeLimit = Math.min(Math.max(Number.isFinite(limit) ? limit : 50, 1), 100);
     const notifications = await prisma.notificationMessage.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
-      take: 50,
+      take: safeLimit,
     });
     const unreadCount = await prisma.notificationMessage.count({
       where: { userId, isRead: false },
@@ -278,5 +298,49 @@ export class DeliveryReminderService {
       where: { id: notificationId, userId },
       data: { isRead: true },
     });
+  }
+
+  /**
+   * Marks all unread notifications belonging to a user as read.
+   */
+  public static async markAllNotificationsRead(userId: string) {
+    return prisma.notificationMessage.updateMany({
+      where: { userId, isRead: false },
+      data: { isRead: true },
+    });
+  }
+
+  /**
+   * Creates a real user-scoped buyer notification tied to a complaint lifecycle event.
+   */
+  public static async notifyBuyerCaseEvent(input: {
+    userId?: string | null;
+    caseNumber?: string | null;
+    title: string;
+    body: string;
+    type?: "INFO" | "SUCCESS" | "WARNING" | "ERROR";
+    linkUrl?: string;
+  }) {
+    if (!input.userId) return null;
+    const linkUrl =
+      input.linkUrl ||
+      (input.caseNumber
+        ? `/cases?complaint=${encodeURIComponent(input.caseNumber)}`
+        : "/cases");
+
+    try {
+      return await prisma.notificationMessage.create({
+        data: {
+          userId: input.userId,
+          title: input.title,
+          body: input.body,
+          linkUrl,
+          type: input.type || "INFO",
+        },
+      });
+    } catch (err) {
+      console.warn("[DeliveryReminderService] Buyer notification warning:", err);
+      return null;
+    }
   }
 }

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, AuthError } from "@/server/auth/require-auth";
+import { canViewInternalBegGraph } from "@/server/auth/permissions";
 import { getCaseByIdAuthorized } from "@/server/dal/get-case-by-id";
-import { GraphBuilder } from "@/server/graph/graph-builder";
+import { BegPersistenceService } from "@/server/graph/beg-persistence.service";
 import { GraphVisibilityService } from "@/server/graph/graph-visibility";
 import { GraphQueryService } from "@/server/graph/graph-query.service";
 
@@ -18,6 +19,13 @@ export async function GET(
       return NextResponse.json({ error: `Case '${caseId}' not found` }, { status: 404 });
     }
 
+    if (!canViewInternalBegGraph(user, caseRecord)) {
+      return NextResponse.json(
+        { error: "Access denied: Internal BEG neighborhood expansion requires authorized investigation role." },
+        { status: 403 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const nodeId = searchParams.get("nodeId");
     const depthStr = searchParams.get("depth");
@@ -28,9 +36,9 @@ export async function GET(
     }
 
     const realDbCaseId = (caseRecord as { dbId?: string }).dbId || caseRecord.id;
-    const rawGraph = await GraphBuilder.getOrBuild(realDbCaseId, false);
+    const bundle = await BegPersistenceService.getPersistedGraph(realDbCaseId, false);
 
-    const visibleGraph = GraphVisibilityService.filterForUser(rawGraph, {
+    const visibleGraph = GraphVisibilityService.filterForUser(bundle.graph, {
       userId: user.id,
       role: user.role,
       isPlatformAdmin: user.isPlatformAdmin,

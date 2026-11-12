@@ -90,6 +90,13 @@ export function RefundDialog({
       }
 
       setSuccessMessage("Refund successfully authorized and completed via PayPal!");
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("resolvegraph:capture-updated", {
+            detail: { type: "refund", paymentId },
+          })
+        );
+      }
       setTimeout(() => {
         onSuccess?.();
         onClose();

@@ -95,6 +95,8 @@ const REVERSE_STATUS_MAP: Record<string, FrontendCaseStatus> = {
   [CaseStatus.EVIDENCE_REQUESTED]: "Awaiting Merchant",
   [CaseStatus.EVIDENCE_SUBMITTED]: "Under Investigation",
   [CaseStatus.IN_REVIEW]: "Escalated",
+  [CaseStatus.EXECUTING_REFUND]: "Under Investigation",
+  [CaseStatus.EXECUTING_REPLACEMENT]: "Under Investigation",
   [CaseStatus.RESOLVED]: "Resolved",
   [CaseStatus.CLOSED]: "Resolved",
   [CaseStatus.ARCHIVED]: "Resolved",

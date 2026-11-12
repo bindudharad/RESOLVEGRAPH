@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, AuthError } from "@/server/auth/require-auth";
 import { prisma } from "@/lib/prisma";
 import { getCaseByIdAuthorized } from "@/server/dal/get-case-by-id";
-import { CaseService } from "@/server/services/case.service";
+import { ResolutionOrchestrationService } from "@/server/orchestration/resolution-orchestration.service";
 
 export async function POST(
   request: NextRequest,
@@ -12,7 +12,7 @@ export async function POST(
     const user = await requireAuth(request);
     const { proposalId } = await context.params;
 
-    if (user.role !== "RESOLUTION_MANAGER" && !user.isPlatformAdmin) {
+    if (user.role !== "RESOLUTION_MANAGER" && user.role !== "ADMIN" && !user.isPlatformAdmin) {
       return NextResponse.json(
         { error: "Forbidden: Only Resolution Managers or Admins can review proposals." },
         { status: 403 }
@@ -27,54 +27,52 @@ export async function POST(
       return NextResponse.json({ error: `Proposal '${proposalId}' not found` }, { status: 404 });
     }
 
-    await getCaseByIdAuthorized(user, proposal.caseId);
+    const authorizedCase = await getCaseByIdAuthorized(user, proposal.caseId);
+    if (!authorizedCase) {
+      return NextResponse.json({ error: `Case for proposal '${proposalId}' not found` }, { status: 404 });
+    }
 
     const body = await request.json().catch(() => ({}));
-    const { decision, reviewNotes } = body; // APPROVED, REJECTED, MODIFIED
+    const { decision, reviewNotes, executeOnApprove } = body;
 
-    if (!decision) {
-      return NextResponse.json({ error: "Missing required field: 'decision'" }, { status: 400 });
+    if (!decision || !["APPROVED", "REJECTED", "MODIFIED"].includes(decision)) {
+      return NextResponse.json(
+        { error: "Valid 'decision' ('APPROVED', 'REJECTED', 'MODIFIED') is required." },
+        { status: 400 }
+      );
     }
 
-    let newStatus = proposal.status;
-    if (decision === "APPROVED") {
-      newStatus = "AGREED";
-    } else if (decision === "REJECTED") {
-      newStatus = "REJECTED";
-    }
-
-    const updated = await prisma.resolutionProposal.update({
-      where: { id: proposalId },
-      data: {
-        status: newStatus,
-        reason: reviewNotes ? `${proposal.reason} [Review: ${reviewNotes}]` : proposal.reason,
-      },
+    const result = await ResolutionOrchestrationService.authorizeOrDenyProposal({
+      proposalId,
+      actor: user,
+      decision,
+      reviewNotes: typeof reviewNotes === "string" ? reviewNotes : undefined,
+      executeOnApprove: Boolean(executeOnApprove),
     });
-
-    await CaseService.logEvent(
-      proposal.caseId,
-      newStatus === "AGREED" ? "RESOLUTION_AGREED" : "RESOLUTION_RESPONSE_SUBMITTED",
-      user.id,
-      `Proposal review completed: ${decision}`,
-      {
-        proposalId,
-        decision,
-        reviewNotes,
-        status: newStatus,
-      }
-    );
 
     return NextResponse.json({
       success: true,
-      proposal: updated,
+      proposal: result.proposal,
+      execution: result.execution,
       message: `Proposal review decision '${decision}' applied successfully.`,
     });
   } catch (error: unknown) {
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error("API /api/resolution-proposals/[proposalId]/review POST error:", error);
     const message = error instanceof Error ? error.message : "Internal server error";
+    if (message.startsWith("Forbidden")) {
+      return NextResponse.json({ error: message }, { status: 403 });
+    }
+    if (
+      message.includes("blocked") ||
+      message.includes("already rejected") ||
+      message.includes("Completed proposal") ||
+      message.includes("not automatically eligible")
+    ) {
+      return NextResponse.json({ error: message }, { status: 400 });
+    }
+    console.error("API /api/resolution-proposals/[proposalId]/review POST error:", error);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

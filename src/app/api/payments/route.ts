@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth, AuthError } from '@/server/auth/require-auth';
+import { FeatureFlags } from '@/lib/feature-flags';
+import {
+  COMPLETED_REFUND_STATUSES,
+  VALID_CAPTURED_PAYMENT_STATUSES,
+} from '@/server/analytics/capture-analytics.service';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
@@ -14,19 +19,27 @@ export async function GET(request: NextRequest) {
     const environment = searchParams.get('environment') || undefined;
     const search = searchParams.get('search') || undefined;
 
-    const where: any = {};
-    if (status && status !== 'ALL') where.paymentStatus = status;
-    if (environment && environment !== 'ALL') where.environment = environment;
+    const strictLiveOnly = FeatureFlags.isPayPalLiveEnabled();
+
+    const metricsScopeWhere: any = {};
+    if (strictLiveOnly) {
+      metricsScopeWhere.environment = 'live';
+    } else if (environment && environment !== 'ALL') {
+      metricsScopeWhere.environment = environment;
+    }
 
     if (!user.isPlatformAdmin) {
       const userOrgIds = user.orgMemberships.map((m) => m.organizationId);
-      where.commerceOrder = {
+      metricsScopeWhere.commerceOrder = {
         OR: [
           { buyerId: user.id },
           { merchantOrganizationId: { in: userOrgIds } },
         ],
       };
     }
+
+    const where: any = { ...metricsScopeWhere };
+    if (status && status !== 'ALL') where.paymentStatus = status;
 
     if (search) {
       where.OR = [
@@ -35,6 +48,23 @@ export async function GET(request: NextRequest) {
         { commerceOrder: { orderNumber: { contains: search } } },
       ];
     }
+
+    const now = new Date();
+    const authoritativeCapturedWhere: any = {
+      ...metricsScopeWhere,
+      paymentStatus: { in: VALID_CAPTURED_PAYMENT_STATUSES },
+      captureId: { not: null },
+      capturedAt: { not: null, lte: now },
+      amountMinor: { gt: 0 },
+      ...(strictLiveOnly
+        ? {
+            NOT: [
+              { captureId: { startsWith: 'MOCK-' } },
+              { providerOrderId: { startsWith: 'MOCK-' } },
+            ],
+          }
+        : {}),
+    };
 
     const [payments, total, capturedByCurrencyRaw, refundsByCurrencyRaw] = await Promise.all([
       prisma.payPalPayment.findMany({
@@ -57,15 +87,16 @@ export async function GET(request: NextRequest) {
       prisma.payPalPayment.count({ where }),
       prisma.payPalPayment.groupBy({
         by: ['currency'],
-        where: { ...where, paymentStatus: 'COMPLETED' },
+        where: authoritativeCapturedWhere,
         _sum: { amountMinor: true },
         _count: { id: true },
       }),
       prisma.refundTransaction.groupBy({
         by: ['currency'],
         where: {
-          ...(where.commerceOrder ? { payment: { commerceOrder: where.commerceOrder } } : {}),
-          status: 'COMPLETED',
+          payment: authoritativeCapturedWhere,
+          status: { in: COMPLETED_REFUND_STATUSES },
+          amountMinor: { gt: 0 },
         },
         _sum: { amountMinor: true },
         _count: { id: true },
@@ -74,7 +105,9 @@ export async function GET(request: NextRequest) {
 
     const activeDisputesCount = await prisma.payPalDispute.count({
       where: {
-        ...(where.commerceOrder ? { payment: { commerceOrder: where.commerceOrder } } : {}),
+        ...(metricsScopeWhere.commerceOrder
+          ? { payment: { commerceOrder: metricsScopeWhere.commerceOrder } }
+          : {}),
         paypalStatus: { not: 'RESOLVED' },
       },
     });

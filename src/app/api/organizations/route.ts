@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSessionContext } from '@/server/auth/session';
 import { SecurityAuditService } from '@/server/services/security-audit.service';
-import { OrganizationRole } from '@/generated/prisma/client';
+import { OrganizationRole, UserRole } from '@/generated/prisma/client';
 
 export async function GET(request?: NextRequest) {
   try {
@@ -65,12 +65,19 @@ export async function GET(request?: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSessionContext();
+    const session = await getSessionContext(request);
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized: Authentication required' }, { status: 401 });
     }
 
     const { user } = session;
+    if (!user.isPlatformAdmin && user.role !== UserRole.ADMIN) {
+      return NextResponse.json(
+        { error: 'Forbidden: Only administrators can register organizations directly' },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     const { name, slug, description } = body;
 

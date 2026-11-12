@@ -4,6 +4,40 @@ import { canAccessCase, canViewEvidence } from '../auth/permissions';
 import { formatCaseResponse } from '../services/case.service';
 import { AuthError } from '../auth/require-auth';
 
+const caseIncludes = {
+  buyer: true,
+  merchant: true,
+  assignedManager: true,
+  organization: true,
+  claims: {
+    include: { author: true },
+    orderBy: { createdAt: 'asc' as const },
+  },
+  evidence: {
+    include: { uploadedBy: true },
+    orderBy: { createdAt: 'desc' as const },
+  },
+  events: {
+    include: { actor: true },
+    orderBy: { createdAt: 'desc' as const },
+  },
+  sellerIdentityMatches: {
+    include: { matchedSeller: true },
+    orderBy: { createdAt: 'desc' as const },
+  },
+  sellerEvidenceRequests: {
+    include: { seller: true, organization: true },
+    orderBy: { createdAt: 'desc' as const },
+  },
+  berrAssessments: {
+    orderBy: { version: 'desc' as const },
+    take: 3,
+  },
+  resolutionProposals: {
+    orderBy: { createdAt: 'desc' as const },
+  },
+};
+
 export async function getCaseByIdAuthorized(user: AuthenticatedUser, caseIdOrNumber: string) {
   if (!caseIdOrNumber || typeof caseIdOrNumber !== 'string') {
     return null;
@@ -19,24 +53,7 @@ export async function getCaseByIdAuthorized(user: AuthenticatedUser, caseIdOrNum
     where: {
       OR: [{ caseNumber: trimmedId }, { id: trimmedId }],
     },
-    include: {
-      buyer: true,
-      merchant: true,
-      assignedManager: true,
-      organization: true,
-      claims: {
-        include: { author: true },
-        orderBy: { createdAt: 'asc' },
-      },
-      evidence: {
-        include: { uploadedBy: true },
-        orderBy: { createdAt: 'desc' },
-      },
-      events: {
-        include: { actor: true },
-        orderBy: { createdAt: 'desc' },
-      },
-    },
+    include: caseIncludes,
   });
 
   // 2. Secondary lookup: Map from PayPal Dispute identifier if applicable
@@ -53,24 +70,7 @@ export async function getCaseByIdAuthorized(user: AuthenticatedUser, caseIdOrNum
         where: {
           OR: [{ id: dispute.linkedCaseId }, { caseNumber: dispute.linkedCaseId }],
         },
-        include: {
-          buyer: true,
-          merchant: true,
-          assignedManager: true,
-          organization: true,
-          claims: {
-            include: { author: true },
-            orderBy: { createdAt: 'asc' },
-          },
-          evidence: {
-            include: { uploadedBy: true },
-            orderBy: { createdAt: 'desc' },
-          },
-          events: {
-            include: { actor: true },
-            orderBy: { createdAt: 'desc' },
-          },
-        },
+        include: caseIncludes,
       });
     }
   }
@@ -89,24 +89,7 @@ export async function getCaseByIdAuthorized(user: AuthenticatedUser, caseIdOrNum
         where: {
           OR: [{ id: order.caseId }, { caseNumber: order.caseId }],
         },
-        include: {
-          buyer: true,
-          merchant: true,
-          assignedManager: true,
-          organization: true,
-          claims: {
-            include: { author: true },
-            orderBy: { createdAt: 'asc' },
-          },
-          evidence: {
-            include: { uploadedBy: true },
-            orderBy: { createdAt: 'desc' },
-          },
-          events: {
-            include: { actor: true },
-            orderBy: { createdAt: 'desc' },
-          },
-        },
+        include: caseIncludes,
       });
     }
   }

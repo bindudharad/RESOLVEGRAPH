@@ -4,40 +4,40 @@ import { MarketingNavbar } from "./marketing-navbar";
 import { MarketingHero } from "./marketing-hero";
 import { ProblemStatementSection } from "./problem-statement";
 import { HowItWorksFlowSection } from "./how-it-works-flow";
-import { ProductDifferentiatorsSection } from "./product-differentiators";
 import { LiveInvestigationShowcase } from "./live-investigation-showcase";
+import { ProductDifferentiatorsSection } from "./product-differentiators";
 import { TrustSafetySection } from "./trust-safety-section";
 import { MarketingCTA } from "./marketing-cta";
 import { MarketingFooter } from "./marketing-footer";
 
 export function MarketingHomePage() {
   return (
-    <div className="relative min-h-screen bg-[var(--bg)] text-[var(--ink)] antialiased">
-      {/* 01: Clean, Premium Marketing Navigation */}
+    <div className="relative min-h-screen bg-[var(--bg)] text-[var(--ink)] antialiased selection:bg-[var(--accent)] selection:text-white">
+      {/* 01: Top Navigation with Verified Route Anchors */}
       <MarketingNavbar />
 
-      {/* 02: High-Impact First Impression Hero with 5-Stream Convergence */}
+      {/* 01: Hero Section — Improved Messaging & 4-Stage Convergence Storytelling */}
       <MarketingHero />
 
-      {/* 03: Meaningful Problem Statement: 5 Fragmented Silos vs Unified Resolution */}
+      {/* 02: The Payment Problem — 5 Disconnected Silos vs Unified Bilateral Resolution */}
       <ProblemStatementSection />
 
-      {/* 04: Connected 4-Stage Architectural Flow (Connect -> Normalize -> Compare -> Resolve) */}
+      {/* 03: How RESOLVEGRAPH Works — 4-Stage Architectural Flow */}
       <HowItWorksFlowSection />
 
-      {/* 05: Core Differentiators Showcase (BEG, BERR Matrix, AI Agent, Canonical Rails) */}
-      <ProductDifferentiatorsSection />
-
-      {/* 06: Compact Interactive Investigation Walkthrough of Case #RG-2026-0412 */}
+      {/* 04: Interactive Investigation Demonstration — Sample Case #RG-2026-0412 Walkthrough */}
       <LiveInvestigationShowcase />
 
-      {/* 07: Trust, Safety & Transparency (SHA-256 integrity, 10-point safeguard, PayPal Sandbox) */}
+      {/* 05: Core Technologies — Matching, BEG, BERR Engine & EvidenceGuard */}
+      <ProductDifferentiatorsSection />
+
+      {/* 06: Security, Trust & Integration Transparency Matrix */}
       <TrustSafetySection />
 
-      {/* 08: Conversion CTA to Demo and Documentation */}
+      {/* 07: Final Call to Action — Every transaction has a story */}
       <MarketingCTA />
 
-      {/* 09: Streamlined Fintech Editorial Footer */}
+      {/* 08: Platform Footer with Transparent Status & System Specs */}
       <MarketingFooter />
     </div>
   );

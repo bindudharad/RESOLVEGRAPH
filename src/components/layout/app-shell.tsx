@@ -7,6 +7,7 @@ import { Topbar } from "@/components/layout/topbar";
 import { SidebarProvider } from "@/components/layout/sidebar-context";
 import { ToastProvider } from "@/components/common/toast";
 import { CasesProvider } from "@/hooks/use-demo-cases";
+import { SellerOnboardingProvider } from "@/components/seller/seller-onboarding-provider";
 
 /**
  * Workspace chrome (Section 4):
@@ -20,27 +21,29 @@ export function AppShell({ children }: { children: ReactNode }) {
     <SidebarProvider>
       <CasesProvider>
         <ToastProvider>
-          <a
-            href="#main-content"
-            className="sr-only z-200 rounded-lg bg-[var(--accent)] px-4 py-2 text-[13px] font-medium text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
-          >
-            Skip to content
-          </a>
+          <SellerOnboardingProvider>
+            <a
+              href="#main-content"
+              className="sr-only z-200 rounded-lg bg-[var(--accent)] px-4 py-2 text-[13px] font-medium text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+            >
+              Skip to content
+            </a>
 
-          <div className="flex min-h-screen w-full bg-[var(--bg)] text-[var(--ink)]">
-            <AppSidebar />
+            <div className="flex min-h-screen w-full bg-[var(--bg)] text-[var(--ink)]">
+              <AppSidebar />
 
-            <div className="flex min-w-0 flex-1 flex-col">
-              <Topbar />
-              <main id="main-content" className="min-w-0 flex-1 pb-16 lg:pb-6">
-                <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
-                  {children}
-                </div>
-              </main>
+              <div className="flex min-w-0 flex-1 flex-col">
+                <Topbar />
+                <main id="main-content" className="min-w-0 flex-1 pb-16 lg:pb-6">
+                  <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
+                    {children}
+                  </div>
+                </main>
+              </div>
+
+              <MobileNavigation />
             </div>
-
-            <MobileNavigation />
-          </div>
+          </SellerOnboardingProvider>
         </ToastProvider>
       </CasesProvider>
     </SidebarProvider>

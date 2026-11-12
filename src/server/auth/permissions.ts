@@ -1,6 +1,7 @@
 import {
   OrganizationRole,
   EvidenceVisibility,
+  UserRole,
 } from '@/generated/prisma/client';
 import { AuthenticatedUser } from './session';
 
@@ -169,4 +170,43 @@ export function canManageOrganization(user: AuthenticatedUser, organizationId: s
     membership.role === OrganizationRole.OWNER ||
     membership.role === OrganizationRole.ORG_ADMIN
   );
+}
+
+/**
+ * Checks whether the user is authorized to inspect the internal Bilateral Evidence Graph (BEG)
+ * and internal BERR investigation assessments.
+ * Buyers and unprivileged third parties / cross-org sellers are strictly blocked.
+ */
+export function canViewInternalBegGraph(user: AuthenticatedUser, c: MinimalCase): boolean {
+  if (!canAccessCase(user, c)) return false;
+
+  if (user.isPlatformAdmin) return true;
+
+  // Buyers must never inspect internal BEG graphs, seller internals, or investigator notes
+  if (c.buyerId === user.id || user.role === UserRole.BUYER) {
+    return false;
+  }
+
+  if (user.role === UserRole.ADMIN || user.role === UserRole.RESOLUTION_MANAGER) {
+    return true;
+  }
+
+  // Strictly require explicit RESOLUTION_MANAGER org role on this case's organization
+  if (c.organizationId) {
+    return user.orgMemberships.some(
+      (m) =>
+        m.organizationId === c.organizationId &&
+        m.role === OrganizationRole.RESOLUTION_MANAGER
+    );
+  }
+
+  return false;
+}
+
+/**
+ * Checks whether the user is authorized to confirm, reject, contest, escalate,
+ * or rebuild internal BEG relationships and graph snapshots.
+ */
+export function canMutateBegGraph(user: AuthenticatedUser, c: MinimalCase): boolean {
+  return canViewInternalBegGraph(user, c);
 }

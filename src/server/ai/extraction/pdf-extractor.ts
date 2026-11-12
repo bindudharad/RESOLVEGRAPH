@@ -27,17 +27,19 @@ export class PdfExtractor {
 
     if (typeof source === 'string') {
       const fileBuffer = await fs.readFile(source);
-      buffer = new Uint8Array(fileBuffer);
+      // Copy into an isolated Uint8Array so pdf.js worker transfer never detaches caller memory
+      buffer = Uint8Array.from(fileBuffer);
       size = fileBuffer.byteLength;
     } else {
-      buffer = new Uint8Array(source);
+      buffer = Uint8Array.from(source);
       size = source.byteLength;
     }
 
     const doc = await getDocumentProxy(buffer);
     const pageCount = doc.numPages;
 
-    const { text: pagesArray } = await extractText(buffer, { mergePages: false });
+    // Pass the parsed PDFDocumentProxy rather than the transferred buffer (which pdf.js detaches)
+    const { text: pagesArray } = await extractText(doc, { mergePages: false });
 
     const pages: PdfPageText[] = [];
     let cumulativeChars = 0;

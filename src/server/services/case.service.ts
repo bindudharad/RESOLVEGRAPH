@@ -6,6 +6,8 @@ import {
   CaseStage,
   EventType,
   PartyRole,
+  EvidenceSource,
+  EvidenceVisibility,
   Prisma,
 } from '@/generated/prisma/client';
 import { z } from 'zod';
@@ -38,6 +40,8 @@ const ALLOWED_TRANSITIONS: Record<CaseStatus, CaseStatus[]> = {
   [CaseStatus.IN_REVIEW]: [
     CaseStatus.EVIDENCE_REQUESTED,
     CaseStatus.UNDER_ANALYSIS,
+    CaseStatus.EXECUTING_REFUND,
+    CaseStatus.EXECUTING_REPLACEMENT,
     CaseStatus.RESOLVED,
     CaseStatus.CLOSED,
   ],
@@ -50,19 +54,47 @@ const ALLOWED_TRANSITIONS: Record<CaseStatus, CaseStatus[]> = {
   [CaseStatus.EVIDENCE_SUBMITTED]: [
     CaseStatus.UNDER_ANALYSIS,
     CaseStatus.IN_REVIEW,
+    CaseStatus.EXECUTING_REFUND,
+    CaseStatus.EXECUTING_REPLACEMENT,
     CaseStatus.RESOLVED,
     CaseStatus.CLOSED,
   ],
   [CaseStatus.UNDER_ANALYSIS]: [
     CaseStatus.IN_REVIEW,
+    CaseStatus.EXECUTING_REFUND,
+    CaseStatus.EXECUTING_REPLACEMENT,
     CaseStatus.RESOLVED,
     CaseStatus.EVIDENCE_REQUESTED,
+    CaseStatus.CLOSED,
+  ],
+  [CaseStatus.EXECUTING_REFUND]: [
+    CaseStatus.RESOLVED,
+    CaseStatus.IN_REVIEW,
+    CaseStatus.CLOSED,
+  ],
+  [CaseStatus.EXECUTING_REPLACEMENT]: [
+    CaseStatus.RESOLVED,
+    CaseStatus.IN_REVIEW,
     CaseStatus.CLOSED,
   ],
   [CaseStatus.RESOLVED]: [CaseStatus.CLOSED, CaseStatus.ARCHIVED, CaseStatus.IN_REVIEW],
   [CaseStatus.CLOSED]: [CaseStatus.ARCHIVED, CaseStatus.IN_REVIEW],
   [CaseStatus.ARCHIVED]: [CaseStatus.CLOSED],
 };
+
+function extractMarketplaceMetaFromDescription(desc?: string | null) {
+  if (!desc) return {};
+  const match = desc.match(
+    /\[Platform:\s*([^|]+)\s*\|\s*Order ID:\s*([^|]+)\s*\|\s*Product:\s*([^|]+)\s*\|\s*Category:\s*([^\]]+)\]/i
+  );
+  if (!match) return {};
+  return {
+    marketplace: match[1]?.trim(),
+    orderId: match[2]?.trim(),
+    productName: match[3]?.trim(),
+    categoryDeclared: match[4]?.trim(),
+  };
+}
 
 /**
  * Format a case record into a rich representation satisfying both
@@ -80,13 +112,62 @@ export function formatCaseResponse<
     };
   }>
 >(c: T) {
+  const descMeta = extractMarketplaceMetaFromDescription(c.description);
+  const sellerMatch = (c as any).sellerIdentityMatches?.[0];
+  const sellerRequest = (c as any).sellerEvidenceRequests?.[0];
+
+  const extractedLegalName =
+    sellerMatch?.matchedSeller?.legalName ||
+    sellerMatch?.extractedLegalName ||
+    sellerRequest?.seller?.legalName ||
+    sellerRequest?.sellerLegalName ||
+    null;
+
+  const extractedGstin =
+    sellerMatch?.extractedGstin ||
+    sellerMatch?.matchedSeller?.gstin ||
+    null;
+
+  const isUnregistered = !c.organizationId;
+  const isPlatformAdminMerchant =
+    (c.merchant?.isPlatformAdmin || c.merchant?.role === 'ADMIN') && isUnregistered;
+
+  let sellerDisplayName: string;
+  if (extractedLegalName) {
+    sellerDisplayName = isUnregistered
+      ? `${extractedLegalName} (Unregistered)`
+      : (c as any).organization?.name || extractedLegalName;
+  } else if ((c as any).organization?.name) {
+    sellerDisplayName = (c as any).organization.name;
+  } else if (!isPlatformAdminMerchant && (c.merchant?.organization || c.merchant?.fullName)) {
+    sellerDisplayName = c.merchant.organization || c.merchant.fullName;
+  } else {
+    sellerDisplayName = isUnregistered ? 'Unregistered Seller' : (c.merchant?.fullName || 'Unknown Merchant');
+  }
+
+  const marketplace = sellerRequest?.marketplace || descMeta.marketplace || null;
+  const orderId = sellerRequest?.orderId || descMeta.orderId || null;
+  const productName = sellerRequest?.productName || descMeta.productName || null;
+  const sellerRegStatus =
+    sellerRequest?.registrationStatus ||
+    (c.organizationId ? 'APPROVED_ACTIVE' : 'NOT_REGISTERED');
+
   return {
     ...c,
     id: c.caseNumber, // Frontend links and displays use caseNumber (e.g. RG-1001)
     dbId: c.id,
     amount: c.amountMinor / 100, // Major units (e.g. 6499.00)
-    customer: c.buyer?.fullName || 'Anonymous Customer',
-    merchant: c.merchant?.fullName || 'Unknown Merchant',
+    customer: c.buyer?.fullName || c.buyer?.name || 'Anonymous Customer',
+    merchant: sellerDisplayName,
+    sellerDisplayName,
+    identifiedSeller: extractedLegalName,
+    sellerGstin: extractedGstin,
+    sellerRegistrationStatus: sellerRegStatus,
+    marketplace,
+    orderId,
+    productName,
+    merchantUser: c.merchant,
+    merchantOrganization: (c as any).organization || null,
   };
 }
 
@@ -202,8 +283,9 @@ export class CaseService {
    */
   static async createCase(input: z.infer<typeof createCaseSchema>) {
     // Generate next sequential case number (e.g., RG-1015)
-    return await prisma.$transaction(async (tx) => {
-      const allCases = await tx.caseRecord.findMany({
+    return await prisma.$transaction(
+      async (tx) => {
+        const allCases = await tx.caseRecord.findMany({
         where: { caseNumber: { startsWith: 'RG-' } },
         select: { caseNumber: true },
       });
@@ -279,8 +361,9 @@ export class CaseService {
    * Update case details, status transition, or priority with transaction and audit event
    */
   static async updateCase(caseIdOrNumber: string, input: z.infer<typeof updateCaseSchema>) {
-    return await prisma.$transaction(async (tx) => {
-      const existing = await tx.caseRecord.findFirst({
+    return await prisma.$transaction(
+      async (tx) => {
+        const existing = await tx.caseRecord.findFirst({
         where: {
           OR: [{ caseNumber: caseIdOrNumber }, { id: caseIdOrNumber }],
         },
@@ -381,8 +464,54 @@ export class CaseService {
         });
       }
 
+      if (input.status && input.status !== existing.status && existing.buyerId) {
+        const linkUrl = `/cases?complaint=${encodeURIComponent(existing.caseNumber)}`;
+        let notification: { title: string; body: string; type: string } | null = null;
+
+        if (input.status === CaseStatus.EVIDENCE_REQUESTED) {
+          notification = {
+            title: `Additional Evidence Required — ${existing.caseNumber}`,
+            body: 'Additional evidence is required from you to continue reviewing your complaint.',
+            type: 'WARNING',
+          };
+        } else if (input.status === CaseStatus.UNDER_ANALYSIS || input.status === CaseStatus.IN_REVIEW) {
+          const isReinvestigation =
+            existing.status === CaseStatus.EVIDENCE_REQUESTED ||
+            existing.status === CaseStatus.RESOLVED;
+          notification = isReinvestigation
+            ? {
+                title: `Re-investigation In Progress — ${existing.caseNumber}`,
+                body: 'Your complaint requires re-investigation. RESOLVEGRAPH is reviewing updated records.',
+                type: 'INFO',
+              }
+            : {
+                title: `Investigation Started — ${existing.caseNumber}`,
+                body: 'RESOLVEGRAPH has started analyzing your complaint.',
+                type: 'INFO',
+              };
+        } else if (input.status === CaseStatus.RESOLVED || input.status === CaseStatus.CLOSED) {
+          notification = {
+            title: `Complaint Resolved — ${existing.caseNumber}`,
+            body: 'Your complaint has been successfully resolved.',
+            type: 'SUCCESS',
+          };
+        }
+
+        if (notification) {
+          await tx.notificationMessage.create({
+            data: {
+              userId: existing.buyerId,
+              title: notification.title,
+              body: notification.body,
+              linkUrl,
+              type: notification.type,
+            },
+          });
+        }
+      }
+
       return formatCaseResponse(updated);
-    });
+    }, { maxWait: 10000, timeout: 20000 });
   }
 
   /**
@@ -423,6 +552,18 @@ export class CaseService {
           }),
         },
       });
+
+      if (caseRecord.buyerId && partyRole === PartyRole.MERCHANT) {
+        await tx.notificationMessage.create({
+          data: {
+            userId: caseRecord.buyerId,
+            title: `Seller Response Received — ${caseRecord.caseNumber}`,
+            body: 'The seller submitted a response and supporting details for your complaint.',
+            linkUrl: `/cases?complaint=${encodeURIComponent(caseRecord.caseNumber)}`,
+            type: 'INFO',
+          },
+        });
+      }
 
       return claim;
     });
@@ -471,6 +612,28 @@ export class CaseService {
           }),
         },
       });
+
+      if (
+        caseRecord.buyerId &&
+        input.visibility !== EvidenceVisibility.INTERNAL &&
+        (input.sourceType === EvidenceSource.MERCHANT_PORTAL ||
+          input.sourceType === EvidenceSource.CARRIER_API)
+      ) {
+        const isMerchant = input.sourceType === EvidenceSource.MERCHANT_PORTAL;
+        await tx.notificationMessage.create({
+          data: {
+            userId: caseRecord.buyerId,
+            title: isMerchant
+              ? `Seller Evidence Received — ${caseRecord.caseNumber}`
+              : `Verification Record Received — ${caseRecord.caseNumber}`,
+            body: isMerchant
+              ? 'Seller evidence has been received and added to your complaint investigation.'
+              : 'Delivery verification records have been received for your complaint.',
+            linkUrl: `/cases?complaint=${encodeURIComponent(caseRecord.caseNumber)}`,
+            type: 'INFO',
+          },
+        });
+      }
 
       return evidence;
     });

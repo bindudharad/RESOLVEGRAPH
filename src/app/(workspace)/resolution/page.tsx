@@ -158,40 +158,77 @@ export default function ResolutionPage() {
       const res = await fetch(`/api/resolution-proposals/${remedyId}/review`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ decision: "APPROVED", reviewNotes: "Authorized via Resolution Governance Center" }),
+        body: JSON.stringify({
+          decision: "APPROVED",
+          reviewNotes: "Authorized via Resolution Governance Center",
+        }),
       });
+      const data = await res.json().catch(() => ({}));
 
       if (res.ok) {
         toast({
           tone: "success",
           title: "Dual-Key Remedy Authorized",
-          description: "Status updated to Agreed in ledger and recorded to tamper-evident audit trail.",
+          description: `Proposal authorized (status: ${data.proposal?.authorizationStatus || "AUTHORIZED"}).`,
         });
         setRemedies((current) =>
           current.map((r) => (r.id === remedyId ? { ...r, state: "Approved" } : r)),
         );
+        setActiveRemedy(null);
       } else {
-        setRemedies((current) =>
-          current.map((r) => (r.id === remedyId ? { ...r, state: "Approved" } : r)),
-        );
         toast({
-          tone: "success",
-          title: "Remedy Approved",
-          description: "Remedy state marked as Approved in session.",
+          tone: "error",
+          title: "Authorization Blocked",
+          description: data.error || "Unable to authorize proposal due to permissions or policy gate.",
         });
       }
     } catch {
-      setRemedies((current) =>
-        current.map((r) => (r.id === remedyId ? { ...r, state: "Approved" } : r)),
-      );
       toast({
-        tone: "success",
-        title: "Remedy Approved",
-        description: "Remedy state marked as Approved.",
+        tone: "error",
+        title: "Authorization Failed",
+        description: "Network error communicating with authorization endpoint.",
       });
     } finally {
       setIsSubmitting(false);
-      setActiveRemedy(null);
+    }
+  };
+
+  const handleDeny = async (remedyId: string) => {
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`/api/resolution-proposals/${remedyId}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          decision: "REJECTED",
+          reviewNotes: "Authorization denied via Resolution Governance Center",
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        setRemedies((current) => current.filter((r) => r.id !== remedyId));
+        toast({
+          tone: "info",
+          title: "Authorization Denied",
+          description: "Proposal rejected and case returned to investigation review.",
+        });
+        setActiveRemedy(null);
+      } else {
+        toast({
+          tone: "error",
+          title: "Denial Blocked",
+          description: data.error || "Unable to deny authorization on this proposal.",
+        });
+      }
+    } catch {
+      toast({
+        tone: "error",
+        title: "Action Failed",
+        description: "Network error communicating with authorization endpoint.",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -538,6 +575,14 @@ export default function ResolutionPage() {
               <div className="flex items-center gap-2">
                 <Button variant="ghost" size="sm" onClick={() => setActiveRemedy(null)}>
                   Cancel
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={isSubmitting}
+                  onClick={() => handleDeny(activeRemedy.id)}
+                >
+                  Deny Authorization
                 </Button>
                 <Button
                   variant="primary"

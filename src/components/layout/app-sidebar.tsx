@@ -7,6 +7,12 @@ import {
   PanelLeftOpen,
   LogOut,
   Settings,
+  PlusCircle,
+  FolderOpen,
+  LayoutDashboard,
+  Inbox,
+  FileCheck2,
+  CreditCard,
 } from "lucide-react";
 import { NAV_GROUPS, type NavItem } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
@@ -19,20 +25,26 @@ function isItemActive(pathname: string, item: NavItem): boolean {
   if (item.href === "/overview") {
     return pathname === "/overview";
   }
+  if (item.href === "/seller") {
+    return pathname === "/seller";
+  }
   if (item.href === "/cases") {
     return pathname === "/cases" || pathname.startsWith("/cases/") || pathname === "/investigation";
+  }
+  if (item.href === "/evidence") {
+    return pathname === "/evidence" || pathname.startsWith("/evidence/");
   }
   if (item.href === "/resolution") {
     return pathname === "/resolution" || pathname.startsWith("/resolution/") || pathname === "/resolution-room";
   }
+  if (item.href === "/payments") {
+    return pathname === "/payments" || pathname.startsWith("/payments/") || pathname === "/analytics/captures" || pathname.startsWith("/analytics/captures/");
+  }
   if (item.href === "/organizations") {
-    return (
-      pathname === "/organizations" ||
-      pathname.startsWith("/organizations/") ||
-      pathname === "/admin/security" ||
-      pathname.startsWith("/admin/security/") ||
-      pathname === "/settings"
-    );
+    return pathname === "/organizations" || pathname.startsWith("/organizations/") || pathname.startsWith("/seller/directory");
+  }
+  if (item.href === "/settings") {
+    return pathname === "/settings" || pathname.startsWith("/settings/") || pathname === "/admin/security" || pathname.startsWith("/admin/security/");
   }
   if (pathname === item.href || pathname.startsWith(`${item.href}/`)) {
     return true;
@@ -65,15 +77,24 @@ export function SidebarBrand({ collapsed }: { collapsed: boolean }) {
   const { data: session } = useSession();
   const user = session?.user as SessionUserExtra | undefined;
 
-  const organizationName =
-    user?.organization || "Platform Workspace";
+  const isPlatformAdmin = Boolean(user?.isPlatformAdmin || user?.role === "ADMIN");
+  const isBuyer = Boolean(user?.role === "BUYER" && !isPlatformAdmin);
+  const isMerchant = Boolean(user?.role === "MERCHANT" && !isPlatformAdmin);
+
+  const organizationName = isBuyer
+    ? "Customer Resolution Portal"
+    : isMerchant
+    ? user?.organization || "Seller Portal"
+    : user?.organization || "Platform Workspace";
+
+  const brandHref = isMerchant ? "/seller" : "/overview";
 
   if (collapsed) {
     return (
       <div className="flex h-14 shrink-0 items-center justify-center border-b border-white/[0.08] bg-[#080B11]">
         <Tooltip label="RESOLVEGRAPH Workspace" side="right">
           <Link
-            href="/overview"
+            href={brandHref}
             aria-label="RESOLVEGRAPH Workspace Overview"
             className="flex h-9 w-9 items-center justify-center rounded-xl hover:bg-white/[0.06] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
           >
@@ -87,7 +108,7 @@ export function SidebarBrand({ collapsed }: { collapsed: boolean }) {
   return (
     <div className="flex h-14 shrink-0 items-center justify-between border-b border-white/[0.08] px-3.5 bg-[#080B11]">
       <Link
-        href="/overview"
+        href={brandHref}
         aria-label="RESOLVEGRAPH Workspace Overview"
         className="group flex min-w-0 flex-1 items-center gap-2.5 rounded-lg p-1 transition-all duration-150 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
       >
@@ -128,9 +149,174 @@ export function SidebarNav({
   className?: string;
 }) {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
   const user = session?.user as SessionUserExtra | undefined;
   const isPlatformAdmin = Boolean(user?.isPlatformAdmin || user?.role === "ADMIN");
+  const isBuyer = Boolean(user?.role === "BUYER" && !isPlatformAdmin);
+  const isMerchant = Boolean(user?.role === "MERCHANT" && !isPlatformAdmin);
+
+  if (isPending && !user) {
+    return (
+      <nav aria-label="Loading navigation" className={cn("flex flex-1 flex-col gap-2 px-3 py-4", className)}>
+        <div className="h-9 animate-pulse rounded-xl bg-white/[0.06]" />
+        <div className="h-9 animate-pulse rounded-xl bg-white/[0.06]" />
+        <div className="h-9 animate-pulse rounded-xl bg-white/[0.06]" />
+      </nav>
+    );
+  }
+
+  if (isBuyer || isMerchant) {
+    const portalLabel = isMerchant ? "Seller Portal" : "Customer Portal";
+    const navAriaLabel = isMerchant ? "Seller Navigation" : "Buyer Navigation";
+    const portalItems = isMerchant
+      ? [
+          {
+            label: "Dashboard",
+            href: "/seller",
+            icon: LayoutDashboard,
+            active: pathname === "/seller",
+          },
+          {
+            label: "Evidence Requests",
+            href: "/seller/requests",
+            icon: Inbox,
+            active: pathname === "/seller/requests" || pathname.startsWith("/seller/requests/"),
+          },
+          {
+            label: "Submitted Responses",
+            href: "/seller/responses",
+            icon: FileCheck2,
+            active:
+              pathname === "/seller/responses" || pathname.startsWith("/seller/responses/"),
+          },
+          {
+            label: "Capture Analytics",
+            href: "/analytics/captures",
+            icon: CreditCard,
+            active:
+              pathname === "/analytics/captures" || pathname.startsWith("/analytics/captures/"),
+          },
+        ]
+      : [
+          {
+            label: "Submit Complaint",
+            href: "/overview",
+            icon: PlusCircle,
+            active: pathname === "/overview",
+          },
+          {
+            label: "My Complaints",
+            href: "/cases",
+            icon: FolderOpen,
+            active: pathname === "/cases" || pathname.startsWith("/cases/"),
+          },
+          {
+            label: "Profile & Settings",
+            href: "/settings",
+            icon: Settings,
+            active: pathname === "/settings" || pathname.startsWith("/settings/"),
+          },
+        ];
+
+    if (collapsed) {
+      return (
+        <nav
+          aria-label={navAriaLabel}
+          className={cn(
+            "flex min-h-0 flex-1 flex-col py-3 select-none items-center gap-2 px-2 overflow-visible",
+            className
+          )}
+        >
+          {portalItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Tooltip key={item.href} label={item.label} side="right">
+                <Link
+                  href={item.href}
+                  onClick={onNavigate}
+                  aria-current={item.active ? "page" : undefined}
+                  aria-label={item.label}
+                  className={cn(
+                    "group relative flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-150 select-none",
+                    item.active
+                      ? "bg-white/[0.1] text-white shadow-xs"
+                      : "text-white/60 hover:text-white hover:bg-white/[0.04]"
+                  )}
+                >
+                  {item.active && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-[var(--accent)]"
+                    />
+                  )}
+                  <Icon
+                    className={cn(
+                      "h-5 w-5 shrink-0 transition-colors",
+                      item.active
+                        ? "text-[var(--accent)]"
+                        : "text-white/60 group-hover:text-white"
+                    )}
+                    aria-hidden="true"
+                  />
+                </Link>
+              </Tooltip>
+            );
+          })}
+        </nav>
+      );
+    }
+
+    return (
+      <nav
+        aria-label={navAriaLabel}
+        className={cn(
+          "flex min-h-0 flex-1 flex-col py-3 select-none gap-1 px-3 overflow-y-auto",
+          className
+        )}
+      >
+        <div className="px-3 pt-2 pb-1 text-[10.5px] font-mono uppercase tracking-[0.1em] text-white/40 font-semibold select-none">
+          {portalLabel}
+        </div>
+        <ul className="flex flex-col gap-1">
+          {portalItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <li key={item.href} className="flex flex-col">
+                <Link
+                  href={item.href}
+                  onClick={onNavigate}
+                  aria-current={item.active ? "page" : undefined}
+                  className={cn(
+                    "group relative flex h-10 items-center gap-3 rounded-xl px-3 text-[13px] font-medium transition-all duration-150 select-none",
+                    item.active
+                      ? "bg-white/[0.08] text-white font-semibold shadow-xs"
+                      : "text-white/70 hover:text-white hover:bg-white/[0.04]"
+                  )}
+                >
+                  {item.active && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-[var(--accent)]"
+                    />
+                  )}
+                  <Icon
+                    className={cn(
+                      "h-[18px] w-[18px] shrink-0 transition-colors",
+                      item.active ? "text-[var(--accent)]" : "text-white/50 group-hover:text-white"
+                    )}
+                    aria-hidden="true"
+                  />
+                  <span className="min-w-0 flex-1 truncate text-left whitespace-nowrap">
+                    {item.label}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    );
+  }
 
   return (
     <nav

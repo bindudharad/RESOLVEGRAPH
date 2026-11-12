@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, AuthError } from "@/server/auth/require-auth";
-import { ProposalWorkflowService } from "@/server/resolution/proposal-workflow";
 import { prisma } from "@/lib/prisma";
 import { getCaseByIdAuthorized } from "@/server/dal/get-case-by-id";
+import { ResolutionOrchestrationService } from "@/server/orchestration/resolution-orchestration.service";
 
 export async function POST(
   request: NextRequest,
@@ -21,7 +21,10 @@ export async function POST(
     }
 
     // Verify user can access the dispute case
-    await getCaseByIdAuthorized(user, proposal.caseId);
+    const authorizedCase = await getCaseByIdAuthorized(user, proposal.caseId);
+    if (!authorizedCase) {
+      return NextResponse.json({ error: `Case for proposal '${proposalId}' not found` }, { status: 404 });
+    }
 
     const body = await request.json().catch(() => ({}));
     const { response, comment } = body;
@@ -33,24 +36,36 @@ export async function POST(
       );
     }
 
-    const updatedProposal = await ProposalWorkflowService.submitPartyResponse({
-      proposalId,
-      responderId: user.id,
-      response,
-      comment,
-    });
+    const result = await ResolutionOrchestrationService.recordPartyResponse(
+      {
+        proposalId,
+        responderId: user.id,
+        response,
+        comment: typeof comment === "string" ? comment : undefined,
+      },
+      user
+    );
 
     return NextResponse.json({
       success: true,
-      proposal: updatedProposal,
+      proposal: result.response,
+      proposalStatus: result.proposalStatus,
+      authorizationStatus: result.authorizationStatus,
+      execution: result.execution,
       message: `Response '${response}' recorded successfully.`,
     });
   } catch (error: unknown) {
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error("API /api/resolution-proposals/[proposalId]/respond POST error:", error);
     const message = error instanceof Error ? error.message : "Internal server error";
+    if (message.startsWith("Unauthorized") || message.startsWith("Forbidden")) {
+      return NextResponse.json({ error: message }, { status: 403 });
+    }
+    if (message.includes("terminal state") || message.includes("Execution blocked")) {
+      return NextResponse.json({ error: message }, { status: 400 });
+    }
+    console.error("API /api/resolution-proposals/[proposalId]/respond POST error:", error);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

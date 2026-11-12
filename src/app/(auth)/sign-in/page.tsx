@@ -138,6 +138,9 @@ function SignInForm() {
   const searchParams = useSearchParams();
 
   // Validate callback URL to ensure it is same-origin relative path
+  const hasExplicitCallback = Boolean(
+    searchParams.get("callbackUrl") || searchParams.get("redirect")
+  );
   const rawCallback =
     searchParams.get("callbackUrl") || searchParams.get("redirect") || "/overview";
   const callbackUrl =
@@ -186,7 +189,11 @@ function SignInForm() {
 
       // Successful server-side Better-Auth authentication
       // Session cookies are established via HTTP response headers
-      router.push(callbackUrl);
+      const targetUrl =
+        !hasExplicitCallback && typeof data.redirectTo === "string" && data.redirectTo.startsWith("/")
+          ? data.redirectTo
+          : callbackUrl;
+      router.push(targetUrl);
       router.refresh();
     } catch (err: unknown) {
       console.error("[One-Click Entry Error]:", err);
