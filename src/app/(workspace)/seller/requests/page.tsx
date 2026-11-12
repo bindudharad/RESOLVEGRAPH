@@ -9,6 +9,7 @@ import {
   RefreshCw,
   ArrowRight,
   AlertTriangle,
+  Sparkles,
 } from "lucide-react";
 import {
   SellerStatusPill,
@@ -33,6 +34,7 @@ interface SellerRequestCardItem {
   statusLabel: string;
   hasDraft: boolean;
   createdAt: string;
+  dueAt: string | null;
 }
 
 const FILTERS = [
@@ -107,6 +109,16 @@ function EvidenceRequestsContent() {
           <span>Refresh</span>
         </button>
       </header>
+
+      {/* Internal Demo Safeguard Banner */}
+      <div className="rounded-xl border border-sky-500/25 bg-sky-500/10 p-3.5 text-xs text-sky-200 flex items-center gap-2.5">
+        <Sparkles className="h-4 w-4 text-sky-400 shrink-0" />
+        <span>
+          <strong>Demonstration Portal Mode:</strong> Evidence requests shown in this workspace are
+          internal demonstration requests delivered directly to your RESOLVEGRAPH Seller Portal
+          account. No external emails or marketplace communications are dispatched.
+        </span>
+      </div>
 
       <SellerContextualGuide
         guideId="seller-requests-overview"
@@ -208,6 +220,9 @@ function EvidenceRequestsContent() {
                   <div className="flex flex-wrap items-center gap-2 text-xs">
                     <span className="font-mono font-bold text-[var(--ink)]">
                       {req.caseNumber}
+                    </span>
+                    <span className="rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 text-[10px] font-mono font-semibold">
+                      DEMO / TEST
                     </span>
                     <span className="rounded-md bg-[var(--surface-2)] px-2 py-0.5 text-[11px] font-medium text-[var(--ink-2)]">
                       {req.marketplace}

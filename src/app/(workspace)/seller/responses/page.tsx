@@ -253,6 +253,9 @@ function SubmittedResponsesContent() {
                           <span className="font-mono text-xs font-semibold text-[var(--ink)]">
                             {item.caseNumber}
                           </span>
+                          <span className="rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 text-[10px] font-mono font-semibold">
+                            DEMO / TEST
+                          </span>
                           <span className="text-[var(--ink-3)]">&middot;</span>
                           <span className="text-xs text-[var(--ink-2)]">
                             {item.marketplace}

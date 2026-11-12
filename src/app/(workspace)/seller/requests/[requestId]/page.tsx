@@ -12,6 +12,7 @@ import {
   Eye,
   MessageSquarePlus,
   CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 import type {
   DynamicSellerFormConfig,
@@ -51,6 +52,7 @@ interface RequestDetailModel {
     requestedAt: string;
     viewedAt: string | null;
     respondedAt: string | null;
+    dueAt: string | null;
     sellerLegalName: string | null;
     organizationName: string | null;
   };
@@ -168,12 +170,26 @@ export default function SellerRequestDetailPage({
           Back to Evidence Requests
         </Link>
         <div className="flex items-center gap-2">
+          <span className="rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 text-[10px] font-mono font-semibold">
+            DEMO / TEST
+          </span>
           <SellerStatusPill label={detail.statusLabel} />
           <span className="inline-flex items-center gap-1 text-[11px] text-[var(--ink-3)]">
             <Lock className="h-3 w-3" />
             Buyer personal contacts masked
           </span>
         </div>
+      </div>
+
+      {/* Internal Demo Safeguard Banner */}
+      <div className="rounded-xl border border-sky-500/25 bg-sky-500/10 p-3.5 text-xs text-sky-200 flex items-center gap-2.5">
+        <Sparkles className="h-4 w-4 text-sky-400 shrink-0" />
+        <span>
+          <strong>Demonstration Evidence Request:</strong> This evidence request was delivered
+          internally to your RESOLVEGRAPH Seller Portal account. Your response and uploaded evidence
+          will be saved to the platform&apos;s bilateral evidence graph without external emails or
+          third-party communications.
+        </span>
       </div>
 
       <SellerContextualGuide

@@ -377,14 +377,19 @@ export function SellerSubmissionWizard({
 
   if (submittedResult) {
     return (
-      <div className="rounded-2xl border border-emerald-200 bg-[var(--surface)] p-6 sm:p-8 shadow-sm max-w-3xl mx-auto text-center space-y-4">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+      <div className="rounded-2xl border border-emerald-500/30 bg-[var(--surface)] p-6 sm:p-8 shadow-sm max-w-3xl mx-auto text-center space-y-4">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400">
           <CheckCircle2 className="h-6 w-6" />
         </div>
-        <h2 className="text-xl font-bold text-[var(--ink)]">Seller Evidence Submitted</h2>
-        <p className="text-sm text-[var(--ink-2)] max-w-lg mx-auto">
-          Your response and supporting files for order <strong className="font-mono">{orderId}</strong>{" "}
-          have been securely saved and queued through RESOLVEGRAPH Evidence Verification &amp; BERR evaluation.
+        <div className="space-y-1">
+          <span className="rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2.5 py-0.5 text-[10px] font-mono font-semibold">
+            DEMO / TEST
+          </span>
+          <h2 className="text-xl font-bold text-[var(--ink)] mt-1.5">Seller Evidence Submitted</h2>
+        </div>
+        <p className="text-sm text-[var(--ink-2)] max-w-lg mx-auto leading-relaxed">
+          Demo seller response successfully submitted and delivered to the RESOLVEGRAPH Platform
+          Workspace. Bilateral evidence graph synchronized without external emails.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
           {submittedResult.responseId && (

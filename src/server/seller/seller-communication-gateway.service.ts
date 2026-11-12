@@ -76,6 +76,13 @@ async function generateNextRequestNumber(): Promise<string> {
 
 export class SellerCommunicationGatewayService {
   /**
+   * Generates the next sequential request number in format SER-YYYY-XXXX.
+   */
+  public static async generateNextRequestNumber(): Promise<string> {
+    return generateNextRequestNumber();
+  }
+
+  /**
    * Executes channel selection, creates persisted SellerEvidenceRequest +
    * SellerCommunicationAttempt records, and dispatches accurate notifications.
    */
