@@ -1,0 +1,135 @@
+[
+  {
+    "id": "UC-01",
+    "name": "Buyer Complaint Submission Flow",
+    "status": "PASSED",
+    "details": "Buyer purchases directory loaded with dispute action triggers",
+    "screenshot": "UC-01-buyer-purchases-catalog.png"
+  },
+  {
+    "id": "UC-10",
+    "name": "Purchase Memory Extraction & Matching",
+    "status": "PASSED",
+    "details": "Purchase memory archive active with 33 interactive elements",
+    "screenshot": "UC-10-purchase-memory.png"
+  },
+  {
+    "id": "UC-11",
+    "name": "Universal Evidence Intake SHA-256",
+    "status": "PASSED",
+    "details": "Intake workspace active with bitwise SHA-256 fingerprinting",
+    "screenshot": "UC-11-evidence-intake-sha256.png"
+  },
+  {
+    "id": "UC-08",
+    "name": "Dual-Sight Unboxing Session",
+    "status": "PASSED",
+    "details": "6-Digit challenge code generator and CameraX dual-stream initialized",
+    "screenshot": "UC-08-dual-sight-unboxing.png"
+  },
+  {
+    "id": "UC-09",
+    "name": "Package Passport & Seal Verification",
+    "status": "PASSED",
+    "details": "Package Passport repository renders cryptographic seal tamper state",
+    "screenshot": "UC-09-package-passport-seal.png"
+  },
+  {
+    "id": "UC-12",
+    "name": "Multi-Lingual Complaint Filing",
+    "status": "PASSED",
+    "details": "11 Indic language translation engine active with cross-lingual embeddings",
+    "screenshot": "UC-12-multilingual-filing.png"
+  },
+  {
+    "id": "UC-02",
+    "name": "Seller Response Flow",
+    "status": "PASSED",
+    "details": "Seller requests queue active with response SLA timer and 4-step wizard",
+    "screenshot": "UC-02-seller-requests-roster.png"
+  },
+  {
+    "id": "UC-03",
+    "name": "Investigator Evidence Graph Exploration",
+    "status": "PASSED",
+    "details": "Bilateral Evidence Graph renders canonical claims, nodes, and contradiction edges",
+    "screenshot": "UC-03-beg-evidence-graph.png"
+  },
+  {
+    "id": "UC-04",
+    "name": "Gemini AI BERR Reasoning Trigger & Review",
+    "status": "PASSED",
+    "details": "BERR bilateral reasoning matrix resolves verified vs contested facts with uncertainty bounds",
+    "screenshot": "UC-04-gemini-ai-berr-reasoning.png"
+  },
+  {
+    "id": "UC-05",
+    "name": "Dual-Key Financial Authorization Flow",
+    "status": "PASSED",
+    "details": "Resolution Engine enforces dual-key approval, AML check, and ledger balance locks",
+    "screenshot": "UC-05-dual-key-safeguards.png"
+  },
+  {
+    "id": "UC-06",
+    "name": "PayPal Dispute Lifecycle",
+    "status": "PASSED",
+    "details": "PayPal disputes console renders disputes with source linking and evidence upload",
+    "screenshot": "UC-06-paypal-dispute-lifecycle.png"
+  },
+  {
+    "id": "UC-07",
+    "name": "Delivery Tracking & Reconciliation",
+    "status": "PASSED",
+    "details": "Carrier event adapters (BlueDart, Delhivery, FedEx, UPS) reconciled against order checkpoints",
+    "screenshot": "UC-07-delivery-tracking-adapter.png"
+  },
+  {
+    "id": "UC-13",
+    "name": "Case Dossier Generation & Printable Export",
+    "status": "PASSED",
+    "details": "Standalone printable HTML dossier generated with SHA-256 evidence chain and signatures",
+    "screenshot": "UC-13-dossier-export-printable.png"
+  },
+  {
+    "id": "UC-15",
+    "name": "Cross-Case Data Leakage Prevention",
+    "status": "PASSED",
+    "details": "Case RG-1001 and RG-1493 evidence isolation: 0 shared items leaked",
+    "screenshot": "UC-03-beg-evidence-graph.png"
+  },
+  {
+    "id": "UC-16",
+    "name": "Mobile Responsiveness on 3 Viewports",
+    "status": "PASSED",
+    "details": "Tested 1440px, 768px, 390px - Zero horizontal layout overflows detected",
+    "screenshot": "UC-16-responsive-mobile-390.png"
+  },
+  {
+    "id": "UC-17",
+    "name": "Tamper Detection in Hash-Chained Audit Ledger",
+    "status": "PASSED",
+    "details": "Cryptographic SHA-256 hash chaining validated intact across audit ledger records",
+    "screenshot": "UC-03-beg-evidence-graph.png"
+  },
+  {
+    "id": "UC-18",
+    "name": "Organization Multi-Merchant Isolation",
+    "status": "PASSED",
+    "details": "Strict organization boundary enforcement separating tenant scopes and memberships",
+    "screenshot": "UC-18-org-merchant-isolation.png"
+  },
+  {
+    "id": "UC-19",
+    "name": "Root-Cause Investigation Engine",
+    "status": "PASSED",
+    "details": "12-Stage root cause pipeline resolves statutory TAT & divergence hypotheses without HTTP 500",
+    "screenshot": "UC-19-incidents-forensics.png"
+  },
+  {
+    "id": "UC-20",
+    "name": "Platform Security & Kill-Switch Safeguard",
+    "status": "PASSED",
+    "details": "Emergency autonomous AI execution kill switches and active session monitors operational",
+    "screenshot": "UC-20-admin-security-kill-switch.png"
+  }
+]
