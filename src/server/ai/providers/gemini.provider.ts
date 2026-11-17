@@ -377,13 +377,16 @@ Respond strictly with valid JSON.`;
       missingEvidence: [],
       findings: [
         {
-          findingType: 'CONTESTED',
+          findingType: 'UNRESOLVED_CONFLICT',
           title: 'Evidence Review Required',
           description: 'A human investigator must inspect the attached evidence before resolution.',
           severity: 'MEDIUM',
           confidence: 0.85,
+          conflictType: 'BILATERAL_FACT_CONFLICT',
           involvedParties: ['BUYER', 'MERCHANT'],
-          recommendedNextSteps: ['Request warehouse scan log', 'Verify packing seal']
+          recommendedNextSteps: ['Request warehouse scan log', 'Verify packing seal'],
+          supportingFactNames: ['Storage Capacity', 'Transaction Amount'],
+          relatedEvidenceIds: req.evidenceFacts.map((e) => e.evidenceId)
         }
       ],
       tokenUsage: { promptTokens: 120, completionTokens: 40, totalTokens: 160 },

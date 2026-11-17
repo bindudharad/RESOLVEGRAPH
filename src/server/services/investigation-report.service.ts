@@ -243,4 +243,163 @@ Generated deterministically by RESOLVEGRAPH BERR v2 & Cross-Platform Reconciliat
 
     return [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
   }
+
+  /**
+   * Generates a self-contained, printable HTML dossier with professional typography,
+   * print stylesheets, and one-click PDF export support.
+   */
+  public static async generatePrintableHtmlReport(caseId: string, options: ReportGenerationOptions = {}): Promise<string> {
+    const report = await this.generateJsonReport(caseId, options);
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ResolveGraph Investigation Dossier - ${report.caseNumber}</title>
+  <style>
+    @media print {
+      body { background: white !important; color: #111827 !important; font-size: 11pt; }
+      .no-print { display: none !important; }
+      .page-break { page-break-after: always; }
+      a { text-decoration: none; color: inherit; }
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      color: #1f2937;
+      background: #f9fafb;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 48px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .header {
+      border-bottom: 2px solid #111827;
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .title { font-size: 24px; font-weight: 700; color: #111827; margin: 0 0 8px 0; }
+    .subtitle { font-size: 14px; color: #6b7280; font-family: monospace; }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+    .card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px; }
+    .card-title { font-size: 13px; font-weight: 600; text-transform: uppercase; color: #4b5563; margin-bottom: 8px; }
+    .table { width: 100%; border-collapse: collapse; margin-top: 16px; margin-bottom: 32px; font-size: 13px; }
+    .table th, .table td { border: 1px solid #e5e7eb; padding: 10px 12px; text-align: left; }
+    .table th { background: #f9fafb; font-weight: 600; color: #374151; }
+    .table tr:nth-child(even) { background: #fafafa; }
+    .code { font-family: monospace; font-size: 12px; background: #f3f4f6; padding: 2px 4px; border-radius: 4px; }
+    .finding { border-left: 4px solid #3b82f6; background: #f8fafc; padding: 16px; margin-bottom: 16px; border-radius: 0 6px 6px 0; }
+    .finding-title { font-weight: 600; font-size: 15px; color: #1e293b; margin-bottom: 4px; }
+    .btn-print {
+      background: #111827; color: white; border: none; padding: 10px 20px;
+      border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer;
+    }
+    .btn-print:hover { background: #1f2937; }
+    .footer { border-top: 1px solid #e5e7eb; padding-top: 24px; margin-top: 40px; font-size: 12px; color: #9ca3af; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1 class="title">RESOLVEGRAPH INVESTIGATION DOSSIER</h1>
+        <div class="subtitle">Case Ref: ${report.caseNumber} &bull; Report ID: ${report.reportId}</div>
+      </div>
+      <div style="text-align: right;">
+        <button class="btn-print no-print" onclick="window.print()">Print / Export PDF</button>
+        <div style="margin-top: 8px;"><span class="badge">${report.incidentCategory}</span></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">Buyer / Complainant</div>
+        <div><strong>${report.parties.buyer.name}</strong></div>
+        <div style="color: #6b7280; font-size: 13px;">${report.parties.buyer.email}</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Merchant / Respondent</div>
+        <div><strong>${report.parties.merchant.name}</strong></div>
+        <div style="color: #6b7280; font-size: 13px;">${report.parties.merchant.email}</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 32px;">
+      <div class="card-title">Dispute Overview</div>
+      <div><strong>${report.title}</strong></div>
+      <div style="margin-top: 8px; font-size: 14px; color: #4b5563;">
+        Disputed Amount: <strong>${report.paymentDetails.amount}</strong> &bull; Generated: ${report.createdAt}
+      </div>
+    </div>
+
+    <h2 style="font-size: 18px; margin-bottom: 8px;">Multi-Dimensional Evidence Inventory</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Filename</th>
+          <th>MIME Type</th>
+          <th>Integrity</th>
+          <th>Source</th>
+          <th>Status</th>
+          <th>Relevance</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${report.evidenceInventory.map((e) => `
+          <tr>
+            <td><span class="code">${e.filename}</span></td>
+            <td>${e.mimeType}</td>
+            <td>${e.fileIntegrity}</td>
+            <td>${e.sourceVerification}</td>
+            <td>${e.extractionStatus}</td>
+            <td>${e.relevance}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <h2 style="font-size: 18px; margin-bottom: 16px;">Forensic Findings & Discrepancies</h2>
+    ${report.investigationFindings.map((f, idx) => `
+      <div class="finding">
+        <div class="finding-title">${idx + 1}. [${f.findingType}] ${f.findingTitle} &mdash; ${Math.round(f.confidence * 100)}% Confidence</div>
+        <div style="color: #334155; font-size: 14px; margin-top: 6px;">${f.description}</div>
+        ${f.recommendedAction ? `<div style="margin-top: 8px; font-size: 13px; color: #2563eb;"><strong>Recommendation:</strong> ${f.recommendedAction}</div>` : ''}
+      </div>
+    `).join('')}
+
+    <div class="card" style="margin-top: 32px;">
+      <div class="card-title">Root Cause & Regulatory Assessment</div>
+      <div><strong>Probable Root Cause:</strong> ${report.rootCauseHypothesis}</div>
+      <div style="margin-top: 6px;"><strong>Uncertainty Notes:</strong> ${report.uncertaintyNotes}</div>
+      <div style="margin-top: 6px; color: #4b5563;"><strong>Statutory Guidance:</strong> ${report.statutoryTatGuidance}</div>
+    </div>
+
+    <div class="footer">
+      Generated deterministically by RESOLVEGRAPH BERR v2 & Cross-Platform Reconciliation Engine.<br>
+      This document constitutes a certified digital evidence dossier for human investigator governance.
+    </div>
+  </div>
+</body>
+</html>`;
+  }
 }

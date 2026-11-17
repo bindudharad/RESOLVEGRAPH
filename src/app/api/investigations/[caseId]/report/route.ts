@@ -13,7 +13,21 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const format = (searchParams.get('format') || 'json').toLowerCase();
 
-    if (format === 'markdown' || format === 'md' || format === 'pdf') {
+    if (format === 'html' || format === 'pdf' || format === 'print') {
+      const html = await InvestigationReportService.generatePrintableHtmlReport(caseId, {
+        includeSensitivePii: user.isPlatformAdmin,
+        requestingUserRole: user.role as any,
+      });
+
+      return new NextResponse(html, {
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Content-Disposition': `inline; filename="investigation_dossier_${caseId}.html"`,
+        },
+      });
+    }
+
+    if (format === 'markdown' || format === 'md') {
       const md = await InvestigationReportService.generateMarkdownReport(caseId, {
         includeSensitivePii: user.isPlatformAdmin,
         requestingUserRole: user.role as any,

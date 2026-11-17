@@ -1,0 +1,50 @@
+name: RESOLVEGRAPH CI / Acceptance Gates
+
+on:
+  push:
+    branches: [ "main", "remediation/*", "completion/*" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  verify:
+    name: Code Quality, Security & Automated Tests
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: "file:./dev.db"
+      AI_PROVIDER: test
+      AI_PROCESSING_ENABLED: "true"
+      QR_SIGNING_SECRET: "ci-test-qr-signing-secret"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Dependency Security Audit
+        run: npm audit --audit-level=high
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: TypeScript Type Check
+        run: npx tsc --noEmit
+
+      - name: Static Code Linting
+        run: npm run lint
+
+      - name: Execute Full Automated Test Suite (456 Tests)
+        run: npm test
+
+      - name: Production Bundle Build (Next.js Turbopack)
+        run: npm run build
