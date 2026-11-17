@@ -1,0 +1,43 @@
+{
+  "QA-007": {
+    "status": "VERIFIED_CLOSED",
+    "observed": "smooth"
+  },
+  "QA-008": {
+    "status": "VERIFIED_CLOSED",
+    "proxyExists": true,
+    "middlewareDeleted": true
+  },
+  "QA-001": {
+    "status": "VERIFIED_CLOSED",
+    "berr403Count": 0,
+    "renderedCard": "Dispute Mediation Status"
+  },
+  "QA-003": {
+    "status": "VERIFIED_CLOSED",
+    "clientWidth": 390,
+    "scrollWidth": 390
+  },
+  "QA-004_BUYER": {
+    "status": "VERIFIED_CLOSED",
+    "landedUrl": "http://localhost:3000/access-denied"
+  },
+  "QA-005": {
+    "status": "VERIFIED_CLOSED",
+    "observedUrl": "http://localhost:3000/paypal/disputes"
+  },
+  "QA-002": {
+    "status": "VERIFIED_CLOSED",
+    "directory403Count": 0,
+    "advisoryRendered": true
+  },
+  "QA-004_MERCHANT": {
+    "status": "VERIFIED_CLOSED",
+    "landedUrl": "http://localhost:3000/access-denied"
+  },
+  "QA-006": {
+    "status": "VERIFIED_CLOSED",
+    "errors500Count": 0,
+    "dataRendered": true
+  }
+}

@@ -16,6 +16,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSession } from "@/lib/auth-client";
 
 interface SharedMessage {
   id: string;
@@ -63,6 +64,11 @@ interface SafeguardsResult {
 }
 
 export default function ResolutionRoomPage() {
+  const { data: session } = useSession();
+  const userRole = (session?.user as { role?: string; isPlatformAdmin?: boolean } | undefined)?.role;
+  const isPlatformAdmin = Boolean((session?.user as { isPlatformAdmin?: boolean } | undefined)?.isPlatformAdmin);
+  const isInvestigator = isPlatformAdmin || userRole === "ADMIN" || userRole === "RESOLUTION_MANAGER";
+
   const [cases, setCases] = useState<CaseItem[]>([]);
   const [selectedCaseId, setSelectedCaseId] = useState<string>("");
   const [messages, setMessages] = useState<SharedMessage[]>([]);
@@ -87,9 +93,14 @@ export default function ResolutionRoomPage() {
   useEffect(() => {
     if (selectedCaseId) {
       loadMessages(selectedCaseId);
-      loadBerrAnalysis(selectedCaseId);
+      if (isInvestigator) {
+        loadBerrAnalysis(selectedCaseId);
+      } else {
+        setBerrAnalysis(null);
+      }
     }
-  }, [selectedCaseId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCaseId, isInvestigator]);
 
   async function loadCases() {
     try {
@@ -127,20 +138,19 @@ export default function ResolutionRoomPage() {
   }
 
   async function loadBerrAnalysis(caseId: string) {
-    if (!caseId) {
+    if (!caseId || !isInvestigator) {
       setBerrAnalysis(null);
       return;
     }
     try {
-      const res = await fetch(`/api/cases/${encodeURIComponent(caseId)}/berr-v2`, { method: "POST" });
+      const res = await fetch(`/api/cases/${encodeURIComponent(caseId)}/berr-v2`);
       if (res.ok) {
         const data = await res.json();
         setBerrAnalysis(data.berrV2 || data);
       } else {
         setBerrAnalysis(null);
       }
-    } catch (e) {
-      console.error("Failed to fetch BERR analysis:", e);
+    } catch {
       setBerrAnalysis(null);
     }
   }
@@ -394,56 +404,83 @@ export default function ResolutionRoomPage() {
             </div>
           )}
 
-          {/* BERR v2 Fact Reasoning Matrix */}
-          <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] p-4">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
-              <div className="flex items-center gap-2">
-                <Scale className="h-4 w-4 text-sky-400" />
-                <h3 className="text-xs font-semibold text-fg">BERR Reasoning Matrix</h3>
+          {/* BERR v2 Fact Reasoning Matrix (Investigators) / Arbitration Overview (Parties) */}
+          {isInvestigator ? (
+            <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] p-4">
+              <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+                <div className="flex items-center gap-2">
+                  <Scale className="h-4 w-4 text-sky-400" />
+                  <h3 className="text-xs font-semibold text-fg">BERR Reasoning Matrix</h3>
+                </div>
+                <span className="rounded bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 text-[10px] font-mono text-sky-400">
+                  v2.0 Bilateral
+                </span>
               </div>
-              <span className="rounded bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 text-[10px] font-mono text-sky-400">
-                v2.0 Bilateral
-              </span>
-            </div>
 
-            <div className="mt-3 space-y-2 text-xs">
-              <div className="flex items-center justify-between rounded-lg bg-black/20 p-2.5">
-                <span className="text-subtle">Agreed Facts:</span>
-                <span className="font-semibold text-emerald-400">
-                  {berrAnalysis?.agreedFacts?.length || 2} Facts
-                </span>
+              <div className="mt-3 space-y-2 text-xs">
+                <div className="flex items-center justify-between rounded-lg bg-black/20 p-2.5">
+                  <span className="text-subtle">Agreed Facts:</span>
+                  <span className="font-semibold text-emerald-400">
+                    {berrAnalysis?.agreedFacts?.length || 2} Facts
+                  </span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-black/20 p-2.5">
+                  <span className="text-subtle">Forensically Verified:</span>
+                  <span className="font-semibold text-sky-400">
+                    {berrAnalysis?.verifiedFacts?.length || 3} Verified
+                  </span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-black/20 p-2.5">
+                  <span className="text-subtle">Contested Claims:</span>
+                  <span className="font-semibold text-amber-400">
+                    {berrAnalysis?.contestedFacts?.length || 1} Contested
+                  </span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-black/20 p-2.5">
+                  <span className="text-subtle">Objective Uncertainty:</span>
+                  <span className="font-mono text-fg">
+                    {berrAnalysis?.uncertaintyScore !== undefined
+                      ? `${berrAnalysis.uncertaintyScore}%`
+                      : "14%"}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center justify-between rounded-lg bg-black/20 p-2.5">
-                <span className="text-subtle">Forensically Verified:</span>
-                <span className="font-semibold text-sky-400">
-                  {berrAnalysis?.verifiedFacts?.length || 3} Verified
-                </span>
-              </div>
-              <div className="flex items-center justify-between rounded-lg bg-black/20 p-2.5">
-                <span className="text-subtle">Contested Claims:</span>
-                <span className="font-semibold text-amber-400">
-                  {berrAnalysis?.contestedFacts?.length || 1} Contested
-                </span>
-              </div>
-              <div className="flex items-center justify-between rounded-lg bg-black/20 p-2.5">
-                <span className="text-subtle">Objective Uncertainty:</span>
-                <span className="font-mono text-fg">
-                  {berrAnalysis?.uncertaintyScore !== undefined
-                    ? `${berrAnalysis.uncertaintyScore}%`
-                    : "14%"}
-                </span>
-              </div>
-            </div>
 
-            <div className="mt-3.5 pt-3 border-t border-white/[0.06]">
-              <span className="text-[11px] font-medium text-faint">Recommended Resolution:</span>
-              <div className="mt-1.5 rounded-lg bg-sky-500/10 border border-sky-500/20 p-2.5 text-xs font-medium text-sky-300">
-                {typeof berrAnalysis?.recommendedRemedy === "object" && berrAnalysis?.recommendedRemedy !== null
-                  ? (berrAnalysis.recommendedRemedy.title || berrAnalysis.recommendedRemedy.type || "Partial Refund / Hardware Replacement")
-                  : (berrAnalysis?.recommendedRemedy || "Partial Refund / Hardware Replacement")}
+              <div className="mt-3.5 pt-3 border-t border-white/[0.06]">
+                <span className="text-[11px] font-medium text-faint">Recommended Resolution:</span>
+                <div className="mt-1.5 rounded-lg bg-sky-500/10 border border-sky-500/20 p-2.5 text-xs font-medium text-sky-300">
+                  {typeof berrAnalysis?.recommendedRemedy === "object" && berrAnalysis?.recommendedRemedy !== null
+                    ? (berrAnalysis.recommendedRemedy.title || berrAnalysis.recommendedRemedy.type || "Partial Refund / Hardware Replacement")
+                    : (berrAnalysis?.recommendedRemedy || "Partial Refund / Hardware Replacement")}
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] p-4">
+              <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+                <div className="flex items-center gap-2">
+                  <Scale className="h-4 w-4 text-emerald-400" />
+                  <h3 className="text-xs font-semibold text-fg">Dispute Mediation Status</h3>
+                </div>
+                <span className="rounded bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-mono text-emerald-400">
+                  Active
+                </span>
+              </div>
+              <div className="mt-3 space-y-2.5 text-xs text-subtle leading-relaxed">
+                <p>
+                  Dispute evidence and submitted records are actively reconciled by the neutral platform resolution desk.
+                </p>
+                <div className="rounded-lg bg-black/20 p-2.5 flex items-center justify-between">
+                  <span className="text-subtle">Arbitration Mode:</span>
+                  <span className="font-semibold text-fg">Neutral Platform Mediation</span>
+                </div>
+                <div className="rounded-lg bg-black/20 p-2.5 flex items-center justify-between">
+                  <span className="text-subtle">Evidence Status:</span>
+                  <span className="font-semibold text-emerald-400">Cryptographically Recorded</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* 10-Point Financial Safeguards Gate */}
           <div className="rounded-xl border border-white/[0.08] bg-[#0E121D] p-4">

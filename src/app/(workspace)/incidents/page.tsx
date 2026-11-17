@@ -135,9 +135,10 @@ export default function IncidentsPage() {
         const res = await fetch(`/api/investigations/${selectedCaseId}`);
         if (res.ok && mounted) {
           const data = await res.json();
-          setIncident(data.incident);
-          if (data.incident?.category) {
-            setCategory(data.incident.category);
+          const inc = data.incident || data.data?.incident || null;
+          setIncident(inc);
+          if (inc?.category) {
+            setCategory(inc.category);
           }
         } else if (mounted) {
           setIncident(null);
@@ -168,7 +169,7 @@ export default function IncidentsPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Investigation failed");
 
-      setIncident(data.incident);
+      setIncident(data.incident || data.data?.incident || null);
       setMessage("12-Stage Investigation Pipeline successfully completed.");
       toast({
         tone: "success",
@@ -218,7 +219,7 @@ export default function IncidentsPage() {
       const invRes = await fetch(`/api/investigations/${selectedCaseId}`);
       if (invRes.ok) {
         const invData = await invRes.json();
-        setIncident(invData.incident);
+        setIncident(invData.incident || invData.data?.incident || null);
       }
     } catch (e: unknown) {
       toast({ tone: "error", title: "Registration Failed", description: e instanceof Error ? e.message : "Error" });

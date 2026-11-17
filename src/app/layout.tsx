@@ -63,6 +63,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       lang="en"
       className={`dark ${spaceGrotesk.variable} ${hankenGrotesk.variable} ${instrumentSerif.variable} ${ibmPlexMono.variable} h-full antialiased`}
       data-theme="dark"
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <body className="min-h-full bg-[var(--bg)] text-[var(--ink)] font-sans antialiased selection:bg-[var(--accent)] selection:text-white">

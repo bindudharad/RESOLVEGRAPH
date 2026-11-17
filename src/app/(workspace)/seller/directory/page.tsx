@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import {
   Building2,
   CheckCircle2,
@@ -12,6 +13,7 @@ import {
   Link2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSession } from "@/lib/auth-client";
 
 interface OrganizationOption {
   id: string;
@@ -49,6 +51,11 @@ interface DirectoryEntry {
 }
 
 export default function SellerDirectoryPage() {
+  const { data: session, isPending: sessionLoading } = useSession();
+  const userRole = (session?.user as { role?: string; isPlatformAdmin?: boolean } | undefined)?.role;
+  const isPlatformAdmin = Boolean((session?.user as { isPlatformAdmin?: boolean } | undefined)?.isPlatformAdmin);
+  const isInvestigator = isPlatformAdmin || userRole === "ADMIN" || userRole === "RESOLUTION_MANAGER";
+
   const [sellers, setSellers] = useState<DirectoryEntry[]>([]);
   const [organizations, setOrganizations] = useState<OrganizationOption[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,6 +73,10 @@ export default function SellerDirectoryPage() {
   const [saving, setSaving] = useState(false);
 
   const loadDirectory = useCallback(async () => {
+    if (!isInvestigator) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -82,11 +93,13 @@ export default function SellerDirectoryPage() {
     } finally {
       setLoading(false);
     }
-  }, [search, regFilter]);
+  }, [search, regFilter, isInvestigator]);
 
   useEffect(() => {
-    loadDirectory();
-  }, [loadDirectory]);
+    if (!sessionLoading) {
+      loadDirectory();
+    }
+  }, [loadDirectory, sessionLoading]);
 
   const handleCreateEntry = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,6 +154,36 @@ export default function SellerDirectoryPage() {
       setError(err instanceof Error ? err.message : "Failed to verify seller");
     }
   };
+
+  if (!sessionLoading && !isInvestigator) {
+    return (
+      <div className="space-y-6">
+        <header className="rg-card p-5 sm:p-6">
+          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-subtle">
+            <Building2 className="h-4 w-4 text-[var(--accent)]" />
+            <span>Central Identity Governance</span>
+          </div>
+          <h1 className="mt-1.5 text-[22px] font-bold text-fg">Seller Directory</h1>
+          <p className="mt-1 text-xs text-muted max-w-2xl">
+            Central registry of marketplace sellers and verified merchant organizations.
+          </p>
+        </header>
+
+        <div className="rg-card p-8 text-center space-y-4">
+          <ShieldCheck className="h-10 w-10 text-[var(--accent)] mx-auto opacity-80" />
+          <h2 className="text-base font-semibold text-fg">Restricted to Platform Investigators</h2>
+          <p className="text-xs text-subtle max-w-md mx-auto leading-relaxed">
+            The global Seller Directory is an administrative tool used by platform investigators to reconcile cross-marketplace merchant identities. Merchant accounts can manage their own verified identity, GSTIN, and marketplace links under Business Profile.
+          </p>
+          <div className="pt-2">
+            <Link href="/seller/profile">
+              <Button size="sm">Manage Business Profile</Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

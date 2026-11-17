@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 import { requireAuth, AuthError } from "@/server/auth/require-auth";
 import { getCaseByIdAuthorized } from "@/server/dal/get-case-by-id";
 import { SharedResolutionService } from "@/server/services/shared-resolution.service";
@@ -12,18 +13,39 @@ export async function POST(
     const { caseId } = await context.params;
     const body = await request.json().catch(() => ({}));
 
-    const { proposalId } = body;
-    if (!proposalId) {
-      return NextResponse.json({ error: "Missing required field: 'proposalId'." }, { status: 400 });
-    }
-
     const caseRecord = await getCaseByIdAuthorized(user, caseId);
     if (!caseRecord) {
       return NextResponse.json({ error: `Dispute case "${caseId}" not found.` }, { status: 404 });
     }
 
     const canonicalId = caseRecord.dbId || caseRecord.id;
-    const safeguards = await SharedResolutionService.validateFinancialSafeguards(canonicalId, proposalId, user);
+    let targetProposalId = body.proposalId;
+
+    if (!targetProposalId) {
+      const existingProposal = await prisma.resolutionProposal.findFirst({
+        where: { caseId: canonicalId },
+        orderBy: { createdAt: "desc" },
+      });
+      targetProposalId = existingProposal?.id;
+    }
+
+    if (!targetProposalId) {
+      return NextResponse.json({
+        success: true,
+        safeguards: {
+          isEligible: false,
+          safeguardsPassed: false,
+          reasons: ["No resolution proposal is currently recorded for this case."],
+          caseId: canonicalId,
+          proposalId: "NONE",
+          refundAmountMinor: 0,
+          currency: caseRecord.currency || "USD",
+          remainingBalanceMinor: 0,
+        },
+      });
+    }
+
+    const safeguards = await SharedResolutionService.validateFinancialSafeguards(canonicalId, targetProposalId, user);
 
     return NextResponse.json({
       success: true,

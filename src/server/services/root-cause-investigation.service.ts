@@ -91,8 +91,10 @@ export class RootCauseInvestigationService {
    * Executes the 12-stage root-cause investigation pipeline for a case.
    */
   public static async investigateCase(caseId: string, initialCategory?: IncidentCategory): Promise<InvestigationResult> {
-    const caseRecord = await prisma.caseRecord.findUnique({
-      where: { id: caseId },
+    const caseRecord = await prisma.caseRecord.findFirst({
+      where: {
+        OR: [{ id: caseId }, { caseNumber: caseId }],
+      },
       include: {
         evidence: {
           include: { fieldExtractions: true },
@@ -106,17 +108,19 @@ export class RootCauseInvestigationService {
       throw new Error(`CaseRecord ${caseId} not found.`);
     }
 
+    const actualCaseId = caseRecord.id;
+
     // Run reconciliation first to get matching decisions and mismatches
-    const recon = await CrossPlatformMatchingService.reconcileCase(caseId);
+    const recon = await CrossPlatformMatchingService.reconcileCase(actualCaseId);
 
     // Discover sources and canonical transactions
     const canonicalTxs = await prisma.canonicalTransaction.findMany({
-      where: { caseId },
+      where: { caseId: actualCaseId },
       include: { sourceRecords: true },
     });
 
     const sourceRecords = await prisma.transactionSourceRecord.findMany({
-      where: { caseId },
+      where: { caseId: actualCaseId },
     });
 
     // Determine category heuristically if not explicitly supplied
@@ -234,7 +238,7 @@ export class RootCauseInvestigationService {
 
     // Upsert PaymentIncident
     const incident = await prisma.paymentIncident.upsert({
-      where: { caseId },
+      where: { caseId: actualCaseId },
       update: {
         incidentCategory: category,
         primaryProvider,
@@ -246,7 +250,7 @@ export class RootCauseInvestigationService {
         investigationStage: 'ROOT_CAUSE_ANALYSIS',
       },
       create: {
-        caseId,
+        caseId: actualCaseId,
         incidentCategory: category,
         primaryProvider,
         amountMinor,

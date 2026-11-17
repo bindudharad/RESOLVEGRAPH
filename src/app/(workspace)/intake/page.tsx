@@ -346,7 +346,7 @@ function UniversalIntakeContent() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 p-6">
+    <div className="w-full max-w-7xl space-y-8 p-4 sm:p-6 overflow-hidden">
       {/* Header */}
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
@@ -360,7 +360,7 @@ function UniversalIntakeContent() {
             Ingest and verify raw bank statements, payment receipts, UPI confirmations, and CameraX Dual-Sight unboxing video streams with bitwise SHA-256 fingerprinting.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {intakeMode === "DOCUMENT" ? (
             <>
               <Button
@@ -389,7 +389,7 @@ function UniversalIntakeContent() {
       </div>
 
       {/* Mode Switcher Tabs */}
-      <div className="flex items-center gap-3 border-b border-line pb-3">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 border-b border-line pb-3 overflow-x-auto">
         <button
           type="button"
           onClick={() => setIntakeMode("DOCUMENT")}
@@ -544,7 +544,7 @@ function UniversalIntakeContent() {
                           <Badge tone="warning">Duplicate Content Flagged</Badge>
                         )}
                       </div>
-                      <p className="text-xs text-muted mt-1 font-mono">
+                      <p className="text-xs text-muted mt-1 font-mono break-all">
                         SHA-256: {result.evidence.sha256Hash}
                       </p>
                     </div>
@@ -605,9 +605,9 @@ function UniversalIntakeContent() {
                           key={field.id}
                           className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
                         >
-                          <div className="space-y-1 min-w-[200px]">
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-semibold text-fg font-mono">
+                          <div className="space-y-1 min-w-0 sm:min-w-[160px]">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="font-semibold text-fg font-mono break-all">
                                 {field.fieldName}
                               </span>
                               {field.isUserCorrected && (
@@ -621,7 +621,7 @@ function UniversalIntakeContent() {
                             </span>
                           </div>
 
-                          <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                             {editingFieldId === field.id ? (
                               <div className="space-y-2">
                                 <Input
@@ -638,7 +638,7 @@ function UniversalIntakeContent() {
                                 />
                               </div>
                             ) : (
-                              <div className="font-mono font-medium text-fg bg-surface-2 px-2.5 py-1.5 rounded border border-border inline-block">
+                              <div className="font-mono font-medium text-fg bg-surface-2 px-2.5 py-1.5 rounded border border-border inline-block break-all max-w-full">
                                 {field.correctedValue || field.fieldValue}
                               </div>
                             )}
