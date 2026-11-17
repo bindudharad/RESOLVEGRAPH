@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { Readable } from 'node:stream';
 import {
   MAX_FILE_SIZE_BYTES,
   ALLOWED_MIME_TYPES,
@@ -8,6 +9,8 @@ import {
   AllowedMimeType,
   StoredFileResult,
   StorageValidationResult,
+  FileStreamResult,
+  EvidenceProvenance,
 } from './storage-types';
 
 export class EvidenceStorageError extends Error {
@@ -226,9 +229,9 @@ export class LocalEvidenceStorage {
   }
 
   /**
-   * Retrieves read stream for an authorized file download.
+   * Retrieves read stream for an authorized file download with explicit provenance and synthetic awareness.
    */
-  getFileStream(storageKey: string): { stream: fs.ReadStream; sizeBytes: number } {
+  getFileStream(storageKey: string, options?: { allowSyntheticFixture?: boolean }): FileStreamResult {
     const safeBase = path.basename(storageKey);
     let filePath = path.resolve(this.storageDir, storageKey);
 
@@ -242,27 +245,74 @@ export class LocalEvidenceStorage {
       throw new EvidenceStorageError('Access denied: Invalid storage key', 403);
     }
 
-    if (!fs.existsSync(filePath)) {
-      // Only generate placeholder content for pre-seeded demo/test fixture keys without binary assets
-      const isSeededDemoFixture =
-        storageKey.startsWith('evidence/') || storageKey.startsWith('tests/');
-      if (isSeededDemoFixture && safeBase.endsWith('.pdf')) {
-        const dummyPdf = Buffer.from('%PDF-1.4\n%ResolveGraph Secure Demo Evidence\n1 0 obj<</Type/Catalog>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n');
-        fs.mkdirSync(path.dirname(filePath), { recursive: true });
-        fs.writeFileSync(filePath, dummyPdf);
-      } else if (isSeededDemoFixture && safeBase.endsWith('.png')) {
-        // Minimal 1x1 PNG
-        const dummyPng = Buffer.from('89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000a49444154789c63000100000500010d0a2d420000000049454e44ae426082', 'hex');
-        fs.mkdirSync(path.dirname(filePath), { recursive: true });
-        fs.writeFileSync(filePath, dummyPng);
-      } else {
-        throw new EvidenceStorageError('File not found in secure storage', 404);
-      }
+    const isSeededDemoFixture =
+      storageKey.startsWith('evidence/') ||
+      storageKey.startsWith('tests/') ||
+      storageKey.startsWith('.private/evidence/') ||
+      storageKey.includes('demo_');
+
+    const allowSynthetic =
+      options?.allowSyntheticFixture ??
+      (process.env.NODE_ENV !== 'production' && process.env.ALLOW_SYNTHETIC_FIXTURES !== 'false');
+
+    // Case 1: File exists on disk
+    if (fs.existsSync(filePath)) {
+      const stats = fs.statSync(filePath);
+      // Check if file is an on-demand synthetic placeholder
+      const isDummyPdf = stats.size === 104 && safeBase.endsWith('.pdf');
+      const isDummyImg =
+        (stats.size === 67 || stats.size === 68) &&
+        (safeBase.endsWith('.png') || safeBase.endsWith('.jpg') || safeBase.endsWith('.jpeg'));
+      const isDummyTxt =
+        (stats.size === 118 || stats.size === 138) &&
+        (safeBase.endsWith('.csv') || safeBase.endsWith('.txt'));
+
+      const isSynthetic = isSeededDemoFixture || isDummyPdf || isDummyImg || isDummyTxt;
+      const provenance: EvidenceProvenance = isSynthetic ? 'SYNTHETIC_FIXTURE' : 'ORIGINAL_UPLOAD';
+
+      const stream = fs.createReadStream(filePath);
+      return {
+        stream,
+        sizeBytes: stats.size,
+        provenance,
+        isSynthetic,
+      };
     }
 
-    const stats = fs.statSync(filePath);
-    const stream = fs.createReadStream(filePath);
-    return { stream, sizeBytes: stats.size };
+    // Case 2: File does NOT exist on disk
+    if (isSeededDemoFixture && allowSynthetic) {
+      // In development/test mode, serve synthetic demonstration fixture in-memory without polluting disk or masquerading as customer evidence
+      let dummyBuffer: Buffer;
+      if (safeBase.endsWith('.pdf')) {
+        dummyBuffer = Buffer.from(
+          '%PDF-1.4\n%ResolveGraph Secure Demo Evidence (SYNTHETIC FIXTURE)\n1 0 obj<</Type/Catalog>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n'
+        );
+      } else if (
+        safeBase.endsWith('.png') ||
+        safeBase.endsWith('.jpg') ||
+        safeBase.endsWith('.jpeg')
+      ) {
+        dummyBuffer = Buffer.from(
+          '89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000a49444154789c63000100000500010d0a2d420000000049454e44ae426082',
+          'hex'
+        );
+      } else {
+        dummyBuffer = Buffer.from(
+          'Transaction_ID,Date,Bank_Ref,Amount,Currency,Status,Payment_Method\nT2611031942001,2026-11-03 14:22:10,HDFC0001248,6499.00,INR,DEMO_SYNTHETIC,UPI\n'
+        );
+      }
+
+      const stream = Readable.from(dummyBuffer);
+      return {
+        stream,
+        sizeBytes: dummyBuffer.length,
+        provenance: 'SYNTHETIC_FIXTURE',
+        isSynthetic: true,
+      };
+    }
+
+    // Case 3: Missing original upload or production mode - strict non-fabrication
+    throw new EvidenceStorageError('Evidence file not found in secure storage', 404);
   }
 
   /**

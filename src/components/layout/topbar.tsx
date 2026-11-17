@@ -134,14 +134,14 @@ export function Topbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 h-14 border-b border-[var(--line)] bg-[var(--surface)]/90 backdrop-blur-md transition-colors">
+      <header className="sticky top-0 z-40 h-14 border-b border-white/[0.08] bg-[#090D13]/82 backdrop-blur-2xl transition-colors shadow-[0_2px_16px_rgba(0,0,0,0.25)]">
         <div className="flex h-14 items-center gap-3 px-4 sm:px-6 lg:px-8">
           {/* Mobile: drawer trigger + compact brand */}
           <button
             type="button"
             onClick={openMobile}
             aria-label="Open navigation menu"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--line)] text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)] lg:hidden"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-[#A7B2C2] transition-colors hover:bg-white/[0.06] hover:text-[#F5F7FA] lg:hidden"
           >
             <Menu className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -158,27 +158,27 @@ export function Topbar() {
           <div className="min-w-0 flex-1 overflow-hidden">
             <nav aria-label="Breadcrumb">
               <ol className="flex items-center gap-1.5 text-[12px] leading-none truncate">
-                <li className="hidden items-center gap-1.5 text-[var(--ink-3)] sm:flex shrink-0">
+                <li className="hidden items-center gap-1.5 text-[#748195] sm:flex shrink-0">
                   <span>{isBuyer ? "Customer Portal" : isMerchant ? businessName : WORKSPACE.name}</span>
                 </li>
                 {portalCrumbs.map((crumb, index) => (
                   <li key={`${crumb.label}-${index}`} className="flex items-center gap-1.5 min-w-0 shrink">
                     {index === 0 ? (
-                      <ChevronRight className="hidden h-3 w-3 text-[var(--ink-3)] opacity-60 sm:inline shrink-0" />
+                      <ChevronRight className="hidden h-3 w-3 text-[#748195] opacity-60 sm:inline shrink-0" />
                     ) : (
-                      <ChevronRight className="h-3 w-3 text-[var(--ink-3)] opacity-60 inline shrink-0" />
+                      <ChevronRight className="h-3 w-3 text-[#748195] opacity-60 inline shrink-0" />
                     )}
                     {crumb.href ? (
                       <Link
                         href={crumb.href}
-                        className="max-w-[14ch] sm:max-w-[20ch] truncate text-[var(--ink-2)] transition-colors hover:text-[var(--accent)] font-medium"
+                        className="max-w-[14ch] sm:max-w-[20ch] truncate text-[#A7B2C2] transition-colors hover:text-[#3B82F6] font-medium"
                       >
                         {crumb.label}
                       </Link>
                     ) : (
                       <span
                         aria-current="page"
-                        className="max-w-[16ch] sm:max-w-[28ch] truncate text-[var(--ink)] font-semibold"
+                        className="max-w-[16ch] sm:max-w-[28ch] truncate text-[#F5F7FA] font-semibold"
                       >
                         {crumb.label}
                       </span>
@@ -197,16 +197,16 @@ export function Topbar() {
                 <button
                   type="button"
                   onClick={() => setCommandPaletteOpen(true)}
-                  className="hidden h-8 w-52 md:w-56 lg:w-68 items-center justify-between rounded-lg border border-[var(--line)] bg-[var(--surface-2)] px-2.5 text-[12px] text-[var(--ink-3)] transition-all hover:border-[var(--accent)] hover:text-[var(--ink)] sm:flex"
+                  className="hidden h-8.5 w-52 md:w-56 lg:w-68 items-center justify-between rounded-xl border border-white/[0.08] bg-[#151F2B]/65 backdrop-blur-md px-3 text-[12px] text-[#748195] transition-all hover:border-[#3B82F6]/50 hover:text-[#F5F7FA] hover:bg-[#1B2634]/70 sm:flex shadow-xs"
                   aria-label="Open universal command search"
                 >
-                  <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-                    <Search className="h-3.5 w-3.5 shrink-0 text-[var(--ink-3)]" />
+                  <div className="flex items-center gap-2 min-w-0 overflow-hidden">
+                    <Search className="h-3.5 w-3.5 shrink-0 text-[#748195]" />
                     <span className="truncate whitespace-nowrap">Search cases, evidence, graph…</span>
                   </div>
                   <div className="flex shrink-0 items-center gap-0.5 ml-1">
-                    <Kbd>⌘</Kbd>
-                    <Kbd>K</Kbd>
+                    <Kbd className="bg-white/[0.08] text-[10px] text-[#A7B2C2] border border-white/[0.1] rounded px-1">⌘</Kbd>
+                    <Kbd className="bg-white/[0.08] text-[10px] text-[#A7B2C2] border border-white/[0.1] rounded px-1">K</Kbd>
                   </div>
                 </button>
 
@@ -215,17 +215,27 @@ export function Topbar() {
                   type="button"
                   onClick={() => setCommandPaletteOpen(true)}
                   aria-label="Search"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--line)] text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)] md:hidden"
+                  className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-[#A7B2C2] transition-colors hover:bg-white/[0.06] hover:text-[#F5F7FA] md:hidden"
                 >
                   <Search className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
               </>
             )}
 
-            {/* Notifications (shown in Topbar except on My Complaints where header hosts dedicated controls) */}
+            {/* Help & Docs Icon */}
+            <Link
+              href="/help"
+              title="Help & Documentation"
+              aria-label="Help & Documentation"
+              className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-[#A7B2C2] transition-colors hover:bg-white/[0.06] hover:text-[#F5F7FA]"
+            >
+              <LifeBuoy className="h-3.5 w-3.5" />
+            </Link>
+
+            {/* Notifications */}
             {!(isBuyer && pathname === "/cases") && <NotificationPanel />}
 
-            {/* Theme & Motion Controls Menu (Platform & Admin + Buyer; omitted from minimal Seller top-right bar) */}
+            {/* Theme & Motion Controls Menu */}
             {!isMerchant && (
               <Popover
                 align="right"
@@ -235,7 +245,7 @@ export function Topbar() {
                     type="button"
                     onClick={onClick}
                     aria-label="Theme and Motion settings"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--line)] text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
+                    className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/[0.09] bg-white/[0.03] text-[#A3AFBF] transition-colors hover:bg-white/[0.06] hover:text-[#F4F7FB]"
                     title="Theme & Motion Controls"
                   >
                     <Sliders className="h-3.5 w-3.5" />
@@ -307,28 +317,28 @@ export function Topbar() {
                     type="button"
                     {...props}
                     aria-label="Account menu"
-                    className="flex items-center gap-2 rounded-lg border border-[var(--line)] py-1 pl-1.5 pr-2 transition-colors hover:bg-[var(--surface-2)]"
+                    className="flex items-center gap-2 rounded-xl border border-white/[0.08] bg-[#151F2B]/65 backdrop-blur-md py-1 pl-1.5 pr-2.5 transition-colors hover:bg-[#1B2634] hover:border-white/[0.14] shadow-xs cursor-pointer"
                   >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[var(--accent)] text-[11px] font-semibold text-white">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#3B82F6]/20 border border-[#3B82F6]/35 text-[11px] font-semibold text-[#F5F7FA]">
                       {initials}
                     </span>
                     <span className="hidden min-w-0 text-left sm:block">
-                      <span className="block max-w-[14ch] truncate text-[12px] font-semibold leading-tight text-[var(--ink)]">
+                      <span className="block max-w-[14ch] truncate text-[12px] font-semibold leading-tight text-[#F5F7FA]">
                         {isMerchant ? businessName : displayName}
                       </span>
                     </span>
                   </button>
                 )}
               >
-                <div className="flex items-center gap-2.5 px-3 py-2">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[var(--accent)] text-[12px] font-semibold text-white">
+                <div className="flex items-center gap-2.5 px-3 py-2.5">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#3B82F6]/20 border border-[#3B82F6]/35 text-[12px] font-semibold text-[#F5F7FA]">
                     {initials}
                   </span>
                   <div className="min-w-0">
-                    <span className="block truncate text-[13px] font-semibold text-[var(--ink)]">
+                    <span className="block truncate text-[13px] font-semibold text-[#F5F7FA]">
                       {isMerchant ? businessName : displayName}
                     </span>
-                    <span className="block truncate text-[11px] text-[var(--ink-3)] font-mono">
+                    <span className="block truncate text-[11px] text-[#748195] font-mono">
                       {displayEmail}
                     </span>
                   </div>

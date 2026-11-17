@@ -60,9 +60,9 @@ export function SearchInput({
         placeholder={placeholder}
         onChange={(event) => onValueChange(event.target.value)}
         className={cn(
-          "h-9 w-full rounded-lg border border-[var(--line)] bg-[var(--surface)] text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-3)]",
-          "pl-9 transition-colors duration-150",
-          "focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/15",
+          "h-9 w-full rounded-xl border border-white/[0.09] bg-[#151D28]/70 backdrop-blur-md text-[13px] text-[#F4F7FB] placeholder:text-[#718096]",
+          "pl-9 transition-all duration-150 shadow-xs",
+          "focus:border-[#3B82F6] focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/20",
           plannedChip ? "pr-[86px]" : shortcut ? "pr-16" : value ? "pr-9" : "pr-3",
           "[&::-webkit-search-cancel-button]:hidden",
         )}

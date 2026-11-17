@@ -5,6 +5,8 @@ import { UnifiedOverviewDashboard } from "@/components/overview/unified-overview
 import { getSessionContext } from "@/server/auth/session";
 import { UserRole } from "@/generated/prisma/client";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Overview Dashboard — RESOLVEGRAPH",
   description:

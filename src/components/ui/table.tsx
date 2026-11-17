@@ -19,7 +19,7 @@ export function TableHeader({
   return (
     <thead
       className={cn(
-        "border-b border-line bg-[#0a1120]",
+        "border-b border-white/[0.09] bg-[#111821]/80 backdrop-blur-md",
         className,
       )}
       {...props}
@@ -31,7 +31,7 @@ export function TableBody({
   className,
   ...props
 }: ComponentPropsWithRef<"tbody">) {
-  return <tbody className={cn("divide-y divide-line", className)} {...props} />;
+  return <tbody className={cn("divide-y divide-white/[0.05]", className)} {...props} />;
 }
 
 export function TableRow({
@@ -41,7 +41,7 @@ export function TableRow({
   return (
     <tr
       className={cn(
-        "transition-colors duration-150 hover:bg-[color-mix(in_srgb,var(--color-brand)_5%,transparent)]",
+        "transition-colors duration-150 hover:bg-white/[0.03]",
         className,
       )}
       {...props}
@@ -58,7 +58,7 @@ export function TableHead({
     <th
       scope="col"
       className={cn(
-        "whitespace-nowrap px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-faint",
+        "whitespace-nowrap px-4 py-3 text-[10.5px] font-mono font-semibold uppercase tracking-[0.08em] text-[#718096]",
         align === "right" && "text-right",
         align === "center" && "text-center",
         align === "left" && "text-left",
@@ -77,7 +77,7 @@ export function TableCell({
   return (
     <td
       className={cn(
-        "px-4 py-3 align-middle text-muted",
+        "px-4 py-3.5 align-middle text-[#A3AFBF] text-[13px]",
         align === "right" && "text-right",
         align === "center" && "text-center",
         className,

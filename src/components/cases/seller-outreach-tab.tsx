@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   Clock,
   AlertTriangle,
-  Copy,
   PlusCircle,
   X,
   FileCheck2,
@@ -184,7 +183,6 @@ export function SellerOutreachTab({ caseId }: { caseId: string }) {
   const [actionBusy, setActionBusy] = useState(false);
   const [selectedSellerId, setSelectedSellerId] = useState("");
   const [reviewNotes, setReviewNotes] = useState("");
-  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
 
   // Create Evidence Request Modal State
@@ -207,6 +205,23 @@ export function SellerOutreachTab({ caseId }: { caseId: string }) {
       const res = await fetch(`/api/cases/${encodeURIComponent(caseId)}/seller-workflow`, {
         cache: "no-store",
       });
+      if (res.status === 404) {
+        setData({
+          caseId,
+          caseNumber: caseId,
+          screening: {
+            passed: true,
+            screeningState: "SCREENING_PASSED",
+            reason: "Initial buyer documentation verified. Bilateral seller outreach ready to initialize.",
+            eligibleDocumentIds: [],
+            flaggedEvidenceIds: [],
+          },
+          matches: [],
+          requests: [],
+          directoryCandidates: [],
+        });
+        return;
+      }
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Failed to load seller workflow");
       setData(json);

@@ -54,103 +54,110 @@
 }
 
 :root {
-  /* --- The Evidence Atelier (Warm Canvas & Tactile Surfaces) --- */
-  --bg: #F4F2EC;           /* Warm canvas */
-  --surface: #FFFEFA;      /* Primary surface */
-  --surface-2: #EBE9E2;    /* Secondary recessed surface */
-  --surface-raised: #FFFFFF; /* Elevated tactile surface */
-  --line: #D9DED7;         /* Subtle hairline border */
-  --line-strong: #B5BEB6;  /* Strong boundary border */
-  --ink: #15191C;          /* Deep ink primary text */
-  --ink-2: #414B52;        /* Secondary reading text */
-  --ink-3: #718078;        /* Muted metadata & labels */
-  --nav-bg: #11191A;       /* Architectural dark navigation */
-  --nav-ink: #F4F2EC;      /* Crisp nav text */
-  --accent: #4350E5;       /* Primary brand indigo */
-  --buyer: #4D92CC;        /* Buyer blue */
-  --merchant: #278B79;     /* Seller teal */
-  --ai: #8B72C9;           /* AI reasoning violet */
-  --copper: #C86D4F;       /* Warm editorial copper */
-  --amber: #CA8B2B;        /* Contested amber */
-  --payment: #15191C;      /* Financial ledger dark */
-  --agreed: #2E8A62;       /* Corroborated success green */
-  --contested: #CA8B2B;    /* Contested warning amber */
-  --missing: #718078;      /* Neutral missing obligation */
-  --verified: #2E8A62;     /* Verified ground truth */
-  --danger: #C84E4E;       /* Error / security failure */
+  /* --- Apple-Inspired Dark Charcoal & Slate Architecture --- */
+  --bg: #090D13;             /* Main background */
+  --bg-secondary: #111923;   /* Secondary background */
+  --sidebar-bg: #0E141D;     /* Sidebar */
+  --surface: #151F2B;        /* Surface */
+  --surface-2: #1B2634;      /* Elevated surface */
+  --surface-raised: #212E3F; /* High elevation surface */
+  --line: rgba(255, 255, 255, 0.08);        /* Hairline border */
+  --line-strong: rgba(255, 255, 255, 0.14); /* Strong boundary border */
+  --ink: #F5F7FA;            /* Primary text */
+  --ink-2: #A7B2C2;          /* Secondary text */
+  --ink-3: #748195;          /* Muted text */
+  --nav-bg: rgba(14, 20, 29, 0.88); /* Dark glass navigation */
+  --nav-ink: #F5F7FA;        /* Crisp nav text */
+  --accent: #3B82F6;         /* Primary brand accent - Electric Blue */
+  --accent-hover: #60A5FA;   /* Accent hover - Light Blue */
+  --buyer: #3B82F6;          /* Buyer blue */
+  --merchant: #14B8A6;       /* Seller teal */
+  --ai: #8B5CF6;             /* AI reasoning violet */
+  --copper: #F97316;         /* Warm amber/copper */
+  --amber: #F59E0B;          /* Warning amber */
+  --payment: #151F2B;        /* Financial ledger dark */
+  --agreed: #22C55E;         /* Success green */
+  --contested: #F59E0B;      /* Warning amber */
+  --missing: #748195;        /* Muted missing obligation */
+  --verified: #22C55E;       /* Ground truth green */
+  --danger: #EF4444;         /* Error / security red */
 
   /* Legacy variable mappings */
-  --color-app: #F4F2EC;
-  --color-shell: #F4F2EC;
-  --color-sidebar: #11191A;
-  --color-surface: #FFFEFA;
-  --color-surface-2: #EBE9E2;
-  --color-surface-3: #D9DED7;
-  --color-line: #D9DED7;
-  --color-line-2: #B5BEB6;
-  --color-fg: #15191C;
-  --color-muted: #414B52;
-  --color-subtle: #718078;
-  --color-faint: #929A96;
-  --color-brand: #4350E5;
-  --color-brand-2: #5C68FA;
-  --color-brand-solid: #4350E5;
-  --color-info: #4D92CC;
-  --color-success: #2E8A62;
-  --color-warning: #CA8B2B;
-  --color-danger: #C84E4E;
+  --color-app: #090D13;
+  --color-shell: #090D13;
+  --color-sidebar: rgba(14, 20, 29, 0.88);
+  --color-surface: #151F2B;
+  --color-surface-2: #1B2634;
+  --color-surface-3: rgba(255, 255, 255, 0.08);
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-line-2: rgba(255, 255, 255, 0.14);
+  --color-fg: #F5F7FA;
+  --color-muted: #A7B2C2;
+  --color-subtle: #748195;
+  --color-faint: #4A5568;
+  --color-brand: #3B82F6;
+  --color-brand-2: #60A5FA;
+  --color-brand-solid: #3B82F6;
+  --color-info: #3B82F6;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
 
   --duration-instant: 90ms;
   --duration-quick: 180ms;
-  --duration-base: 280ms;
-  --duration-slow: 480ms;
-  --duration-draw: 900ms;
+  --duration-base: 240ms;
+  --duration-slow: 360ms;
+  --duration-draw: 800ms;
 }
 
 .dark, [data-theme="dark"] {
-  /* --- The Convergence Ledger (Editorial Graphite & Paper Contrast) --- */
-  --bg: #11191A;           /* Graphite */
-  --surface: #182223;       /* Deep graphite */
-  --surface-2: #202B2B;     /* Raised surface */
-  --line: #2A3636;
-  --line-strong: #3A4848;
-  --ink: #F4F1E8;           /* Warm paper text */
-  --ink-2: #A6B0AC;
-  --ink-3: #747D79;         /* Muted text */
-  --nav-bg: #0D1415;
-  --nav-ink: #EAE6DB;
-  --accent: #5C68FA;
-  --buyer: #4C91C8;        /* Buyer blue */
-  --merchant: #388F7D;     /* Merchant sage */
-  --ai: #8875B5;           /* AI violet */
-  --copper: #BC7355;       /* Copper accent */
-  --amber: #C18B45;        /* Soft amber */
-  --payment: #202B2B;
-  --agreed: #378D70;       /* Verified green */
-  --contested: #C18B45;    /* Contested amber */
-  --missing: #929A96;      /* Missing evidence */
-  --verified: #378D70;
-  --danger: #E04539;
+  /* --- Apple-Inspired Dark Charcoal & Slate Palette --- */
+  --bg: #090D13;
+  --bg-secondary: #111923;
+  --sidebar-bg: #0E141D;
+  --surface: #151F2B;
+  --surface-2: #1B2634;
+  --surface-raised: #212E3F;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.14);
+  --ink: #F5F7FA;
+  --ink-2: #A7B2C2;
+  --ink-3: #748195;
+  --nav-bg: rgba(14, 20, 29, 0.88);
+  --nav-ink: #F5F7FA;
+  --accent: #3B82F6;
+  --accent-hover: #60A5FA;
+  --buyer: #3B82F6;
+  --merchant: #14B8A6;
+  --ai: #8B5CF6;
+  --copper: #F97316;
+  --amber: #F59E0B;
+  --payment: #151F2B;
+  --agreed: #22C55E;
+  --contested: #F59E0B;
+  --missing: #748195;
+  --verified: #22C55E;
+  --danger: #EF4444;
 
-  --color-app: #11191A;
-  --color-shell: #11191A;
-  --color-sidebar: #0D1415;
-  --color-surface: #182223;
-  --color-surface-2: #202B2B;
-  --color-surface-3: #2A3636;
-  --color-line: #2A3636;
-  --color-line-2: #3A4848;
-  --color-fg: #F4F1E8;
-  --color-muted: #A6B0AC;
-  --color-subtle: #747D79;
-  --color-faint: #929A96;
-  --color-brand: #5C68FA;
-  --color-brand-2: #7A84FB;
-  --color-brand-solid: #5C68FA;
-  --color-info: #4C91C8;
-  --color-success: #378D70;
-  --color-warning: #C18B45;
-  --color-danger: #E04539;
+  --color-app: #090D13;
+  --color-shell: #090D13;
+  --color-sidebar: rgba(14, 20, 29, 0.88);
+  --color-surface: #151F2B;
+  --color-surface-2: #1B2634;
+  --color-surface-3: rgba(255, 255, 255, 0.08);
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-line-2: rgba(255, 255, 255, 0.14);
+  --color-fg: #F5F7FA;
+  --color-muted: #A7B2C2;
+  --color-subtle: #748195;
+  --color-faint: #4A5568;
+  --color-brand: #3B82F6;
+  --color-brand-2: #60A5FA;
+  --color-brand-solid: #3B82F6;
+  --color-info: #3B82F6;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
 }
 
 @layer base {
@@ -241,13 +248,60 @@
    Core Primitives & Elevated Surfaces (Section 2)
    --------------------------------------------------------------------------- */
 @layer components {
-  /* Card: 10px radius, 1px hairline border + soft shadow */
+  /* Apple-Inspired Dark Glassmorphism Primitives */
+  .glass-panel {
+    background: rgba(21, 31, 43, 0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+  }
+
+  .glass-elevated {
+    background: rgba(27, 38, 52, 0.82);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.36);
+  }
+
+  .glass-card {
+    background: rgba(21, 31, 43, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.20);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-card:hover {
+    background: rgba(27, 38, 52, 0.80);
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.32);
+  }
+
+  .glass-input {
+    background: rgba(17, 25, 35, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #F5F7FA;
+    transition: all 0.15s ease;
+  }
+
+  .glass-input:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    outline: none;
+  }
+
+  /* Card: 12px radius, 1px hairline border + soft shadow */
   .rg-card {
     position: relative;
-    border-radius: 10px;
+    border-radius: 12px;
     border: 1px solid var(--line);
     background-color: var(--surface);
-    box-shadow: 0 1px 2px rgba(14, 18, 32, 0.04), 0 12px 28px -16px rgba(14, 18, 32, 0.16);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15), 0 12px 28px -16px rgba(0, 0, 0, 0.35);
     transition: border-color var(--duration-quick) var(--ease-out), background-color var(--duration-quick) var(--ease-out);
   }
 

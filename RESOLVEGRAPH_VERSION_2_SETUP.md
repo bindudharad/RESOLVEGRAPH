@@ -55,7 +55,7 @@ npx tsc --noEmit
 # Code quality check with ESLint
 npm run lint
 
-# Run all 221 automated tests across 49 suites
+# Run all 456 automated tests across 73 suites
 npm test
 ```
 
@@ -74,7 +74,7 @@ To build and run the optimized production server:
 npm run build
 npm start
 ```
-Next.js will compile all 54 routes and start the production server on port 3000.
+Next.js will compile all 87 routes and start the production server on port 3000.
 
 ---
 

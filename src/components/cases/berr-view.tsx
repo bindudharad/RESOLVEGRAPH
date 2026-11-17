@@ -373,14 +373,14 @@ export function BerrView({
   return (
     <div className="space-y-4">
       {/* A & B: Complaint Summary + Overall Assessment Banner */}
-      <div className="rg-card p-5 space-y-4">
+      <div className="glass-card p-5 sm:p-6 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.22)] space-y-4">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-[17px] font-bold text-fg">
+              <h2 className="text-[17px] font-bold text-[#F5F7FA]">
                 Bilateral Evidence-to-Remedy Reasoning (BERR)
               </h2>
-              <span className="rounded bg-[var(--ai)]/10 px-2 py-0.5 text-[11px] font-mono text-[var(--ai)] border border-[var(--ai)]/30">
+              <span className="rounded-full bg-[#3B82F6]/15 px-2.5 py-0.5 text-[11px] font-mono text-[#60A5FA] border border-[#3B82F6]/30">
                 {liveAssessment
                   ? `Assessment v${liveAssessment.version || 1} • BEG v${liveAssessment.begGraphVersion || 1}`
                   : "Convergence Spine"}
@@ -388,7 +388,7 @@ export function BerrView({
               {liveAssessment?.overallStatus && (
                 <span
                   className={cn(
-                    "rounded border px-2 py-0.5 text-[11px] font-semibold",
+                    "rounded-full border px-2.5 py-0.5 text-[11px] font-mono font-semibold",
                     overallBadge.cls
                   )}
                 >
@@ -396,13 +396,13 @@ export function BerrView({
                 </span>
               )}
               {liveAssessment?.isStale && (
-                <span className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[11px] font-mono font-medium text-amber-300 border border-amber-500/30">
                   <AlertTriangle className="h-3 w-3" />
                   BEG Updated — Re-run BERR
                 </span>
               )}
             </div>
-            <p className="mt-1 text-[13px] text-muted">
+            <p className="mt-1 text-[13px] text-[#A7B2C2]">
               BEG connects evidence; BERR evaluates claims into AGREED, VERIFIED, CONTESTED, and MISSING findings grounded in verified provenance.
             </p>
           </div>
@@ -413,6 +413,7 @@ export function BerrView({
               size="sm"
               onClick={handleRunEvaluation}
               disabled={runningEval}
+              className="bg-[#3B82F6] hover:bg-[#60A5FA] text-white rounded-xl shadow-xs"
             >
               <RefreshCw className={cn("mr-1.5 h-3.5 w-3.5", runningEval && "animate-spin")} />
               {runningEval ? "Evaluating BEG..." : "Run BERR Re-evaluation"}
@@ -422,36 +423,36 @@ export function BerrView({
 
         {/* Complaint Structured Context Strip (Part 13.A) */}
         {invCtx && (
-          <div className="grid grid-cols-2 gap-3 rounded-lg border border-line bg-surface-2/60 p-3 text-xs sm:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-3 rounded-xl border border-white/[0.08] bg-[#1B2634]/60 p-3.5 text-xs sm:grid-cols-3 lg:grid-cols-6">
             <div>
-              <span className="text-[10px] uppercase text-muted">Complaint / Order</span>
-              <p className="font-mono font-semibold text-fg truncate">
+              <span className="text-[10px] uppercase font-mono text-[#748195]">Complaint / Order</span>
+              <p className="font-mono font-semibold text-[#F5F7FA] truncate">
                 {invCtx.caseNumber} {invCtx.sharedInfo.orderId ? `• ${invCtx.sharedInfo.orderId}` : ""}
               </p>
             </div>
             <div>
-              <span className="text-[10px] uppercase text-muted">Marketplace</span>
-              <p className="font-medium text-fg truncate">{invCtx.sharedInfo.marketplace || "Direct"}</p>
+              <span className="text-[10px] uppercase font-mono text-[#748195]">Marketplace</span>
+              <p className="font-medium text-[#F5F7FA] truncate">{invCtx.sharedInfo.marketplace || "Direct"}</p>
             </div>
             <div>
-              <span className="text-[10px] uppercase text-muted">Identified Seller</span>
-              <p className="font-medium text-fg truncate">
+              <span className="text-[10px] uppercase font-mono text-[#748195]">Identified Seller</span>
+              <p className="font-medium text-amber-400 truncate">
                 {invCtx.sellerInfo.identifiedSellerName || "Pending ID"}
               </p>
             </div>
             <div>
-              <span className="text-[10px] uppercase text-muted">Product / SKU</span>
-              <p className="font-medium text-fg truncate">
+              <span className="text-[10px] uppercase font-mono text-[#748195]">Product / SKU</span>
+              <p className="font-medium text-[#60A5FA] truncate">
                 {invCtx.sharedInfo.productName || "See Description"}
               </p>
             </div>
             <div>
-              <span className="text-[10px] uppercase text-muted">Reasoning Track</span>
-              <p className="font-mono font-semibold text-fg">{invCtx.complaintTrack}</p>
+              <span className="text-[10px] uppercase font-mono text-[#748195]">Reasoning Track</span>
+              <p className="font-mono font-semibold text-[#F5F7FA]">{invCtx.complaintTrack}</p>
             </div>
             <div>
-              <span className="text-[10px] uppercase text-muted">BEG Inputs</span>
-              <p className="font-mono text-subtle">
+              <span className="text-[10px] uppercase font-mono text-[#748195]">BEG Inputs</span>
+              <p className="font-mono text-[#A7B2C2]">
                 {invCtx.begNodeCount} nodes • {invCtx.begEdgeCount} edges
               </p>
             </div>
@@ -460,8 +461,8 @@ export function BerrView({
 
         {/* Prompt Injection / Uncertainty Alert if Present */}
         {invCtx?.promptInjectionDetected && (
-          <div className="flex items-start gap-2.5 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-700 dark:text-rose-300">
-            <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
+          <div className="flex items-start gap-2.5 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-300">
+            <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-rose-400" />
             <div>
               <strong>Adversarial Input Quarantined:</strong> Untrusted document text contained instruction-override patterns ({invCtx.promptInjectionWarnings.join(", ")}). Policy and remedy rules were protected; mandatory human review is active.
             </div>
@@ -469,16 +470,16 @@ export function BerrView({
         )}
 
         {/* Four Classification Segmented Filter */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-3">
-          <div className="flex flex-wrap items-center rounded-lg border border-line bg-surface-2 p-1 text-[12px]">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.08] pt-3.5">
+          <div className="flex flex-wrap items-center rounded-xl border border-white/[0.08] bg-[#111821]/80 p-1 text-[12px]">
             <button
               type="button"
               onClick={() => setFilterState("ALL")}
               className={cn(
-                "rounded-md px-3 py-1 font-medium transition-colors",
+                "rounded-lg px-3 py-1 font-medium transition-all",
                 filterState === "ALL"
-                  ? "bg-surface text-fg shadow-xs font-semibold"
-                  : "text-subtle hover:text-fg"
+                  ? "bg-[#3B82F6] text-white shadow-xs font-semibold"
+                  : "text-[#A7B2C2] hover:text-[#F5F7FA]"
               )}
             >
               All ({rows.length})
@@ -487,65 +488,65 @@ export function BerrView({
               type="button"
               onClick={() => setFilterState("AGREED")}
               className={cn(
-                "flex items-center gap-1.5 rounded-md px-2.5 py-1 font-medium transition-colors",
+                "flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium transition-all",
                 filterState === "AGREED"
-                  ? "bg-surface text-[var(--agreed)] shadow-xs font-semibold"
-                  : "text-subtle hover:text-fg"
+                  ? "bg-[#22C55E]/20 text-[#22C55E] border border-[#22C55E]/30 font-semibold"
+                  : "text-[#A7B2C2] hover:text-[#22C55E]"
               )}
             >
-              <Check className="h-3 w-3 text-[var(--agreed)]" />
+              <Check className="h-3 w-3 text-[#22C55E]" />
               Agreed ({countAgreed})
             </button>
             <button
               type="button"
               onClick={() => setFilterState("VERIFIED")}
               className={cn(
-                "flex items-center gap-1.5 rounded-md px-2.5 py-1 font-medium transition-colors",
+                "flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium transition-all",
                 filterState === "VERIFIED"
-                  ? "bg-surface text-emerald-600 shadow-xs font-semibold"
-                  : "text-subtle hover:text-fg"
+                  ? "bg-teal-500/20 text-teal-300 border border-teal-500/30 font-semibold"
+                  : "text-[#A7B2C2] hover:text-teal-300"
               )}
             >
-              <ShieldCheck className="h-3 w-3 text-emerald-600" />
+              <ShieldCheck className="h-3 w-3 text-teal-400" />
               Verified ({countVerified})
             </button>
             <button
               type="button"
               onClick={() => setFilterState("CONTESTED")}
               className={cn(
-                "flex items-center gap-1.5 rounded-md px-2.5 py-1 font-medium transition-colors",
+                "flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium transition-all",
                 filterState === "CONTESTED"
-                  ? "bg-surface text-[var(--contested)] shadow-xs font-semibold"
-                  : "text-subtle hover:text-fg"
+                  ? "bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold"
+                  : "text-[#A7B2C2] hover:text-rose-300"
               )}
             >
-              <ArrowLeftRight className="h-3 w-3 text-[var(--contested)]" />
+              <ArrowLeftRight className="h-3 w-3 text-rose-400" />
               Contested ({countContested})
             </button>
             <button
               type="button"
               onClick={() => setFilterState("MISSING")}
               className={cn(
-                "flex items-center gap-1.5 rounded-md px-2.5 py-1 font-medium transition-colors",
+                "flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium transition-all",
                 filterState === "MISSING"
-                  ? "bg-surface text-[var(--ink-2)] shadow-xs font-semibold"
-                  : "text-subtle hover:text-fg"
+                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold"
+                  : "text-[#A7B2C2] hover:text-amber-300"
               )}
             >
-              <HelpCircle className="h-3 w-3 text-subtle" />
+              <HelpCircle className="h-3 w-3 text-amber-400" />
               Missing ({countMissing})
             </button>
           </div>
 
           {liveAssessment?.uncertaintyAnalysis && (
             <div className="flex items-center gap-3 text-xs">
-              <span className="font-mono text-subtle">
-                Uncertainty: <strong>{Math.round(liveAssessment.uncertaintyAnalysis.objectiveUncertaintyScore * 100)}%</strong>
+              <span className="font-mono text-[#A7B2C2]">
+                Uncertainty: <strong className="text-[#F5F7FA]">{Math.round(liveAssessment.uncertaintyAnalysis.objectiveUncertaintyScore * 100)}%</strong>
               </span>
               {liveAssessment.uncertaintyAnalysis.requiresHumanReview && (
-                <span className="inline-flex items-center gap-1 rounded border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300">
+                <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-amber-300">
                   <UserCheck className="h-3 w-3" />
-                  Human Support Review Required
+                  Human Review Required
                 </span>
               )}
             </div>
@@ -585,26 +586,26 @@ export function BerrView({
         )}
 
         {/* Bilateral Party Header Track */}
-        <div className="mt-2 grid grid-cols-1 md:grid-cols-[1fr_200px_1fr] items-center gap-4 border-t border-line pt-4">
-          <div className="rounded-md border-t-2 border-t-[var(--buyer)] bg-surface-2/60 p-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--buyer)]">
+        <div className="mt-2 grid grid-cols-1 md:grid-cols-[1fr_200px_1fr] items-center gap-4 border-t border-white/[0.08] pt-4">
+          <div className="rounded-xl border border-[#3B82F6]/30 bg-[#3B82F6]/10 p-3.5">
+            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#60A5FA]">
               Buyer Evidence Thread
             </span>
-            <p className="mt-0.5 text-[13px] font-medium text-fg">{customerName}</p>
+            <p className="mt-0.5 text-[13px] font-medium text-[#F5F7FA]">{customerName}</p>
           </div>
 
           <div className="text-center">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-subtle">
-              Claim & Classification
+            <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-[#748195]">
+              Claim &amp; Classification
             </span>
-            <div className="mx-auto mt-1 h-[2px] w-12 bg-line-strong" />
+            <div className="mx-auto mt-1 h-[2px] w-12 bg-white/[0.12]" />
           </div>
 
-          <div className="rounded-md border-t-2 border-t-[var(--merchant)] bg-surface-2/60 p-3 text-right">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--merchant)]">
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-right">
+            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-300">
               Seller / Ledger Thread
             </span>
-            <p className="mt-0.5 text-[13px] font-medium text-fg">{merchantName}</p>
+            <p className="mt-0.5 text-[13px] font-medium text-[#F5F7FA]">{merchantName}</p>
           </div>
         </div>
       </div>
@@ -628,12 +629,12 @@ export function BerrView({
                 setReviewFeedback(null);
               }}
               className={cn(
-                "group cursor-pointer rounded-lg border border-line bg-surface p-4 transition-all hover:border-line-strong hover:shadow-sm",
-                isSelected && "ring-2 ring-[var(--accent)]",
-                row.state === "CONTESTED" && "border-l-4 border-l-[var(--contested)]",
-                row.state === "AGREED" && "border-l-4 border-l-[var(--agreed)]",
-                row.state === "VERIFIED" && "border-l-4 border-l-emerald-500",
-                row.state === "MISSING" && "border-l-4 border-l-line-strong"
+                "group cursor-pointer rounded-2xl border border-white/[0.08] bg-[#151D28]/70 backdrop-blur-xl p-4.5 transition-all hover:border-white/[0.18] hover:bg-[#1B2634]/70 shadow-[0_12px_40px_rgba(0,0,0,0.18)]",
+                isSelected && "ring-2 ring-[#3B82F6] border-[#3B82F6]",
+                row.state === "CONTESTED" && "border-l-4 border-l-[#EF4444]",
+                row.state === "AGREED" && "border-l-4 border-l-[#22C55E]",
+                row.state === "VERIFIED" && "border-l-4 border-l-teal-400",
+                row.state === "MISSING" && "border-l-4 border-l-[#F59E0B]"
               )}
             >
               <div className="grid grid-cols-1 md:grid-cols-[1fr_200px_1fr] gap-4 items-center">

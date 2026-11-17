@@ -22,6 +22,24 @@ import { useSidebar } from "@/components/layout/sidebar-context";
 import { useSession, signOut } from "@/lib/auth-client";
 
 function isItemActive(pathname: string, item: NavItem): boolean {
+  if (item.label === "Dashboard") {
+    return pathname === "/overview" || pathname === "/dashboard";
+  }
+  if (item.label === "BERR Analysis") {
+    return pathname === "/investigation" || pathname.startsWith("/investigation");
+  }
+  if (item.label === "Seller Outreach") {
+    return pathname === "/seller/requests" || pathname.startsWith("/seller/requests");
+  }
+  if (item.label === "Activity & Audit") {
+    return pathname.startsWith("/admin/security") || pathname === "/audit";
+  }
+  if (item.label === "Administration") {
+    return pathname.startsWith("/admin/security");
+  }
+  if (item.label === "Settings") {
+    return pathname === "/settings" || pathname.startsWith("/settings/");
+  }
   if (item.href === "/overview") {
     return pathname === "/overview";
   }
@@ -29,7 +47,7 @@ function isItemActive(pathname: string, item: NavItem): boolean {
     return pathname === "/seller";
   }
   if (item.href === "/cases") {
-    return pathname === "/cases" || pathname.startsWith("/cases/") || pathname === "/investigation";
+    return (pathname === "/cases" || pathname.startsWith("/cases/")) && !pathname.includes("investigation");
   }
   if (item.href === "/evidence") {
     return pathname === "/evidence" || pathname.startsWith("/evidence/");
@@ -42,9 +60,6 @@ function isItemActive(pathname: string, item: NavItem): boolean {
   }
   if (item.href === "/organizations") {
     return pathname === "/organizations" || pathname.startsWith("/organizations/") || pathname.startsWith("/seller/directory");
-  }
-  if (item.href === "/settings") {
-    return pathname === "/settings" || pathname.startsWith("/settings/") || pathname === "/admin/security" || pathname.startsWith("/admin/security/");
   }
   if (pathname === item.href || pathname.startsWith(`${item.href}/`)) {
     return true;
@@ -91,12 +106,12 @@ export function SidebarBrand({ collapsed }: { collapsed: boolean }) {
 
   if (collapsed) {
     return (
-      <div className="flex h-14 shrink-0 items-center justify-center border-b border-white/[0.08] bg-[#080B11]">
+      <div className="flex h-14 shrink-0 items-center justify-center border-b border-white/[0.09] bg-transparent">
         <Tooltip label="RESOLVEGRAPH Workspace" side="right">
           <Link
             href={brandHref}
             aria-label="RESOLVEGRAPH Workspace Overview"
-            className="flex h-9 w-9 items-center justify-center rounded-xl hover:bg-white/[0.06] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+            className="flex h-9 w-9 items-center justify-center rounded-xl hover:bg-white/[0.06] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]"
           >
             <Logo className="h-7 w-7 shrink-0 transition-transform duration-200 hover:scale-105" />
           </Link>
@@ -106,20 +121,20 @@ export function SidebarBrand({ collapsed }: { collapsed: boolean }) {
   }
 
   return (
-    <div className="flex h-14 shrink-0 items-center justify-between border-b border-white/[0.08] px-3.5 bg-[#080B11]">
+    <div className="flex h-14 shrink-0 items-center justify-between border-b border-white/[0.09] px-3.5 bg-transparent">
       <Link
         href={brandHref}
         aria-label="RESOLVEGRAPH Workspace Overview"
-        className="group flex min-w-0 flex-1 items-center gap-2.5 rounded-lg p-1 transition-all duration-150 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+        className="group flex min-w-0 flex-1 items-center gap-2.5 rounded-lg p-1 transition-all duration-150 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]"
       >
         <Logo className="h-7 w-7 shrink-0 transition-transform duration-200 group-hover:scale-105" />
         <div className="min-w-0 flex flex-col">
-          <span className="truncate text-[13.5px] font-bold tracking-[0.08em] text-white">
-            RESOLVE<span className="text-[var(--accent)]">GRAPH</span>
+          <span className="truncate text-[13.5px] font-bold tracking-[0.08em] text-[#F4F7FB]">
+            RESOLVE<span className="text-[#3B82F6]">GRAPH</span>
           </span>
           <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--agreed)] shrink-0" />
-            <span className="truncate text-[10.5px] font-mono text-white/50 tracking-tight">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] shrink-0" />
+            <span className="truncate text-[10.5px] font-mono text-[#A3AFBF] tracking-tight">
               {organizationName}
             </span>
           </div>
@@ -130,7 +145,7 @@ export function SidebarBrand({ collapsed }: { collapsed: boolean }) {
         type="button"
         onClick={toggleCollapsed}
         aria-label="Collapse sidebar"
-        className="rounded-lg p-1.5 text-white/40 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+        className="rounded-lg p-1.5 text-[#718096] hover:bg-white/[0.06] hover:text-[#F4F7FB] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]"
         title="Collapse sidebar (Press [ )"
       >
         <PanelLeftClose className="h-4 w-4" />
@@ -351,7 +366,7 @@ export function SidebarNav({
                 const active = isItemActive(pathname, item);
 
                 return (
-                  <Tooltip key={item.href} label={item.label} side="right">
+                  <Tooltip key={`${group.label}-${item.label}-${item.href}`} label={item.label} side="right">
                     <Link
                       href={item.href}
                       onClick={onNavigate}
@@ -367,15 +382,15 @@ export function SidebarNav({
                       {active && (
                         <span
                           aria-hidden="true"
-                          className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-[var(--accent)]"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-[#3B82F6] shadow-[0_0_8px_rgba(59,130,246,0.6)]"
                         />
                       )}
                       <Icon
                         className={cn(
                           "h-5 w-5 shrink-0 transition-colors",
                           active
-                            ? "text-[var(--accent)]"
-                            : "text-white/60 group-hover:text-white"
+                            ? "text-[#3B82F6]"
+                            : "text-[#748195] group-hover:text-white"
                         )}
                         aria-hidden="true"
                       />
@@ -390,11 +405,9 @@ export function SidebarNav({
         // Expanded view
         return (
           <div key={group.label} className="flex flex-col gap-1 w-full">
-            {group.label !== "Platform" && (
-              <div className="px-3 pt-2 pb-1 text-[10.5px] font-mono uppercase tracking-[0.1em] text-white/40 font-semibold select-none">
-                {group.label}
-              </div>
-            )}
+            <div className="px-3 pt-3 pb-1 text-[10px] font-mono uppercase tracking-[0.14em] text-[#748195] font-semibold select-none">
+              {group.label}
+            </div>
 
             <ul className="flex flex-col gap-1">
               {visibleItems.map((item) => {
@@ -404,31 +417,31 @@ export function SidebarNav({
                 const hasSubItems = Boolean(item.subItems && item.subItems.length > 0);
 
                 return (
-                  <li key={item.href} className="flex flex-col">
+                  <li key={`${group.label}-${item.label}-${item.href}`} className="flex flex-col">
                     <Link
                       href={item.href}
                       onClick={onNavigate}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "group relative flex h-10 items-center gap-3 rounded-xl px-3 text-[13px] font-medium transition-all duration-150 select-none",
+                        "group relative flex h-9.5 items-center gap-3 rounded-xl px-3 text-[13px] font-medium transition-all duration-150 select-none",
                         active
-                          ? "bg-white/[0.08] text-white font-semibold shadow-xs"
-                          : "text-white/70 hover:text-white hover:bg-white/[0.04]"
+                          ? "bg-[#3B82F6]/12 border border-[#3B82F6]/25 text-[#F5F7FA] font-semibold shadow-[0_2px_10px_rgba(59,130,246,0.12)]"
+                          : "border border-transparent text-[#A7B2C2] hover:text-[#F5F7FA] hover:bg-white/[0.04]"
                       )}
                     >
                       {/* Active Left Indicator Bar */}
                       {active && (
                         <span
                           aria-hidden="true"
-                          className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-[var(--accent)]"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 h-4.5 w-[3px] rounded-r-full bg-[#3B82F6] shadow-[0_0_8px_rgba(59,130,246,0.6)]"
                         />
                       )}
 
                       {/* Item Icon */}
                       <Icon
                         className={cn(
-                          "h-[18px] w-[18px] shrink-0 transition-colors",
-                          active ? "text-[var(--accent)]" : "text-white/50 group-hover:text-white"
+                          "h-[17px] w-[17px] shrink-0 transition-colors",
+                          active ? "text-[#3B82F6]" : "text-[#748195] group-hover:text-[#F5F7FA]"
                         )}
                         aria-hidden="true"
                       />
@@ -444,8 +457,8 @@ export function SidebarNav({
                           className={cn(
                             "rounded-full px-2 py-0.5 font-mono text-[10px] tabular-nums shrink-0",
                             active
-                              ? "bg-[var(--accent)]/30 text-white font-semibold"
-                              : "bg-white/[0.08] text-white/60 group-hover:text-white"
+                              ? "bg-[#3B82F6]/25 text-white font-semibold"
+                              : "bg-white/[0.08] text-[#A7B2C2] group-hover:text-white"
                           )}
                           title={badge.label}
                         >
@@ -531,13 +544,13 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
 
   if (collapsed) {
     return (
-      <div className="shrink-0 border-t border-white/[0.08] py-3 px-2 flex flex-col items-center gap-2.5 bg-[#080B11]">
+      <div className="shrink-0 border-t border-white/[0.09] py-3 px-2 flex flex-col items-center gap-2 bg-transparent">
         <Tooltip label={`${displayName} (${roleLabel})`} side="right">
           <div
             tabIndex={0}
             role="button"
             aria-label={`${displayName} (${roleLabel})`}
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent)]/20 border border-[var(--accent)]/30 font-mono text-xs font-bold text-white shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3B82F6]/20 border border-[#3B82F6]/35 font-mono text-xs font-bold text-[#F4F7FB] shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]"
           >
             {initials}
           </div>
@@ -550,7 +563,7 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
             type="button"
             onClick={toggleCollapsed}
             aria-label="Expand sidebar"
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-white/50 hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+            className="flex h-8.5 w-8.5 items-center justify-center rounded-xl text-[#718096] hover:bg-white/[0.06] hover:text-[#F4F7FB] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]"
           >
             <PanelLeftOpen className="h-4 w-4" />
           </button>
@@ -561,7 +574,7 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
             type="button"
             onClick={handleSignOut}
             aria-label="Sign out"
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-white/50 hover:bg-red-500/15 hover:text-red-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+            className="flex h-8.5 w-8.5 items-center justify-center rounded-xl text-[#718096] hover:bg-red-500/15 hover:text-red-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]"
           >
             <LogOut className="h-4 w-4" />
           </button>
@@ -571,19 +584,19 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
   }
 
   return (
-    <div className="shrink-0 border-t border-white/[0.08] p-3 bg-[#080B11]">
-      <div className="flex items-center justify-between gap-2.5 rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5">
+    <div className="shrink-0 border-t border-white/[0.09] p-3 bg-transparent">
+      <div className="flex items-center justify-between gap-2.5 rounded-xl border border-white/[0.08] bg-[#151D28]/60 backdrop-blur-md p-2.5">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--accent)]/20 border border-[var(--accent)]/30 font-mono text-xs font-bold text-white shadow-xs">
+          <div className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-xl bg-[#3B82F6]/20 border border-[#3B82F6]/35 font-mono text-xs font-bold text-[#F4F7FB] shadow-xs">
             {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-xs font-semibold text-white">
+            <div className="truncate text-xs font-semibold text-[#F4F7FB]">
               {displayName}
             </div>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--agreed)] shrink-0" />
-              <span className="truncate text-[10.5px] font-mono text-white/50">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] shrink-0" />
+              <span className="truncate text-[10px] font-mono text-[#718096]">
                 {roleLabel}
               </span>
             </div>
@@ -595,18 +608,18 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
             href="/settings"
             title="Account Settings"
             aria-label="Settings"
-            className="rounded-lg p-1.5 text-white/40 hover:bg-white/[0.06] hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+            className="rounded-lg p-1.5 text-[#718096] hover:bg-white/[0.06] hover:text-[#F4F7FB] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]"
           >
-            <Settings className="h-4 w-4" />
+            <Settings className="h-3.5 w-3.5" />
           </Link>
           <button
             type="button"
             onClick={handleSignOut}
             title="Sign out of session"
             aria-label="Sign out"
-            className="rounded-lg p-1.5 text-white/40 hover:bg-red-500/15 hover:text-red-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+            className="rounded-lg p-1.5 text-[#718096] hover:bg-red-500/15 hover:text-red-300 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]"
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
@@ -615,10 +628,10 @@ export function SidebarFooter({ collapsed }: { collapsed: boolean }) {
 }
 
 /**
- * Enterprise Redesigned Desktop Left Rail:
- * - Expanded: 260px fixed width, no label wrapping
- * - Collapsed: 72px rail, icons only with accessible tooltips, centered horizontally
- * - Dark enterprise charcoal palette (#0A0D14)
+ * Apple-Inspired Dark Glassmorphism Left Rail:
+ * - Expanded: 250px fixed width, elegant hierarchy
+ * - Collapsed: 68px rail with accessible tooltips
+ * - Dark charcoal/slate palette with subtle border and blur
  */
 export function AppSidebar() {
   const { collapsed } = useSidebar();
@@ -628,9 +641,9 @@ export function AppSidebar() {
       id="app-sidebar"
       aria-label="Global Workspace Navigation"
       className={cn(
-        "sticky top-0 z-50 hidden h-screen shrink-0 flex-col bg-[#0A0D14] text-white/90 lg:flex border-r border-white/[0.08]",
-        "transition-[width] duration-200 ease-out select-none",
-        collapsed ? "w-[72px] min-w-[72px]" : "w-[260px] min-w-[260px]"
+        "sticky top-0 z-50 hidden h-screen shrink-0 flex-col bg-[#0E141D]/95 backdrop-blur-2xl text-[#F5F7FA] lg:flex border-r border-white/[0.08]",
+        "transition-[width] duration-200 ease-out select-none shadow-[4px_0_24px_rgba(0,0,0,0.3)]",
+        collapsed ? "w-[68px] min-w-[68px]" : "w-[250px] min-w-[250px]"
       )}
     >
       <SidebarBrand collapsed={collapsed} />

@@ -29,12 +29,12 @@ export function AppShell({ children }: { children: ReactNode }) {
               Skip to content
             </a>
 
-            <div className="flex min-h-screen w-full bg-[var(--bg)] text-[var(--ink)]">
+            <div className="flex min-h-screen w-full bg-[#090D13] text-[#F5F7FA] selection:bg-[#3B82F6]/30">
               <AppSidebar />
 
-              <div className="flex min-w-0 flex-1 flex-col">
+              <div className="flex min-w-0 flex-1 flex-col bg-[#090D13]">
                 <Topbar />
-                <main id="main-content" className="min-w-0 flex-1 pb-16 lg:pb-6">
+                <main id="main-content" className="min-w-0 flex-1 pb-16 lg:pb-8">
                   <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
                     {children}
                   </div>

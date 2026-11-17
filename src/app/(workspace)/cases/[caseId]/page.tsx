@@ -26,7 +26,6 @@ import {
   Lock,
   Building2,
   Layers,
-  Check,
 } from "lucide-react";
 import { useDemoCases } from "@/hooks/use-demo-cases";
 import { CANONICAL_DEMO_CASE, CANONICAL_TIMELINE_STEPS } from "@/lib/demo-fixture";
@@ -71,6 +70,21 @@ export type ActiveTab =
   | "timeline"
   | "paypal"
   | "copilot";
+
+interface PolicyEvalOption {
+  title?: string;
+  reason?: string;
+  isEligible?: boolean;
+  proposalType?: string;
+  groundingFindings?: string[];
+}
+
+interface PolicyEvalState {
+  policyName?: string;
+  policyVersion?: string;
+  recommendedOption?: PolicyEvalOption | null;
+  options?: PolicyEvalOption[];
+}
 
 interface EnrichedResolutionCase extends ResolutionCase {
   marketplace?: string | null;
@@ -125,7 +139,6 @@ export default function CaseDetailsPage() {
 }
 
 function EnterpriseCaseDetailsView() {
-  const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
   const caseId = (params?.caseId as string) || "RG-2026-0412";
@@ -154,7 +167,7 @@ function EnterpriseCaseDetailsView() {
   };
 
   const [fetchedCase, setFetchedCase] = useState<EnrichedResolutionCase | null>(null);
-  const [policyEval, setPolicyEval] = useState<any>(null);
+  const [policyEval, setPolicyEval] = useState<PolicyEvalState | null>(null);
   const [highlightedBegNodeIds, setHighlightedBegNodeIds] = useState<string[]>([]);
   const [highlightedBegEdgeIds, setHighlightedBegEdgeIds] = useState<string[]>([]);
 
@@ -181,10 +194,10 @@ function EnterpriseCaseDetailsView() {
           customer: data.buyer?.fullName || data.buyer?.name || data.customer || "Alex Morgan",
           merchant: resolvedMerchant,
           rawMerchantName: data.identifiedSeller || resolvedMerchant,
-          category: (data.category as any) || "Damaged Product",
+          category: (data.category as ResolutionCase['category']) || "Damaged Product",
           amount: typeof data.amountMinor === "number" ? data.amountMinor / 100 : (data.amount || 956.0),
           currency: (data.currency as "USD" | "INR") || "INR",
-          priority: (data.priority as any) || "High",
+          priority: (data.priority as ResolutionCase['priority']) || "High",
           status:
             data.status === "RESOLVED"
               ? "Resolved"
@@ -392,11 +405,11 @@ function EnterpriseCaseDetailsView() {
       </div>
 
       {/* Primary Case Header */}
-      <section className="rg-card p-5 sm:p-6">
+      <section className="glass-card rounded-2xl p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2.5">
-              <span className="font-mono text-[15px] font-bold text-fg">
+              <span className="font-mono text-[15px] font-bold text-[#F5F7FA]">
                 {caseItem.id}
               </span>
 
@@ -409,12 +422,12 @@ function EnterpriseCaseDetailsView() {
                   title="Click to update status"
                 >
                   <CaseStatusBadge status={caseItem.status} />
-                  <ChevronDown className="h-3 w-3 text-subtle transition-transform group-hover:text-muted" />
+                  <ChevronDown className="h-3 w-3 text-[#A7B2C2] transition-transform group-hover:text-[#F5F7FA]" />
                 </button>
 
                 {statusMenuOpen && (
-                  <div className="absolute left-0 top-full z-30 mt-1.5 w-48 rounded-lg border border-line bg-surface p-1.5 shadow-lg">
-                    <p className="px-2 py-1 text-[10.5px] font-semibold uppercase tracking-wider text-subtle">
+                  <div className="absolute left-0 top-full z-30 mt-1.5 w-48 rounded-xl border border-white/[0.12] bg-[#151F2B]/95 backdrop-blur-2xl p-1.5 shadow-2xl">
+                    <p className="px-2 py-1 text-[10.5px] font-semibold uppercase tracking-wider text-[#748195]">
                       Update Case Status
                     </p>
                     <div className="flex flex-col gap-0.5">
@@ -423,15 +436,15 @@ function EnterpriseCaseDetailsView() {
                           key={status}
                           type="button"
                           onClick={() => handleStatusChange(status)}
-                          className={`flex w-full items-center justify-between rounded-md px-2.5 py-1.5 text-left text-[12px] transition-colors ${
+                          className={`flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-[12px] transition-colors ${
                             caseItem.status === status
-                              ? "bg-surface-2 font-semibold text-fg"
-                              : "text-muted hover:bg-surface-2 hover:text-fg"
+                              ? "bg-[#3B82F6]/20 font-semibold text-[#F5F7FA]"
+                              : "text-[#A7B2C2] hover:bg-white/[0.05] hover:text-[#F5F7FA]"
                           }`}
                         >
                           <span>{status}</span>
                           {caseItem.status === status && (
-                            <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#3B82F6]" />
                           )}
                         </button>
                       ))}
@@ -443,56 +456,56 @@ function EnterpriseCaseDetailsView() {
               <PriorityBadge priority={caseItem.priority} />
 
               {caseItem.marketplace && (
-                <span className="rounded bg-sky-500/10 px-2 py-0.5 text-[11px] font-medium text-sky-400 border border-sky-500/20">
+                <span className="rounded-full bg-[#3B82F6]/10 px-2.5 py-0.5 text-[11px] font-mono font-medium text-[#60A5FA] border border-[#3B82F6]/25">
                   {caseItem.marketplace}
                 </span>
               )}
 
               {caseItem.orderId && (
-                <span className="font-mono text-[11px] text-subtle border border-line rounded px-1.5 py-0.5">
+                <span className="font-mono text-[11px] text-[#A7B2C2] border border-white/[0.08] bg-[#111923]/70 rounded-full px-2.5 py-0.5">
                   Order: {caseItem.orderId}
                 </span>
               )}
 
               {isCanonicalDemo && (
-                <span className="rounded bg-[color-mix(in_srgb,var(--buyer)_12%,transparent)] px-2 py-0.5 text-[11px] font-medium text-[var(--buyer)] border border-[color-mix(in_srgb,var(--buyer)_30%,transparent)]">
-                  Canonical Evaluation Story
+                <span className="rounded-full bg-[#3B82F6]/15 px-2.5 py-0.5 text-[11px] font-mono font-semibold text-[#60A5FA] border border-[#3B82F6]/30 uppercase tracking-wider">
+                  Canonical Evaluation
                 </span>
               )}
             </div>
 
-            <h1 className="mt-2 text-[20px] font-bold tracking-tight text-fg sm:text-[23px]">
+            <h1 className="mt-2 text-[20px] font-bold tracking-tight text-[#F5F7FA] sm:text-[23px]">
               {caseItem.title}
             </h1>
 
-            <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-subtle">
+            <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-[#A7B2C2]">
               <span className="inline-flex items-center gap-1.5">
-                <User className="h-4 w-4 text-[var(--buyer)]" />
-                <span className="text-fg font-medium">{caseItem.customer}</span>
-                <span className="text-subtle font-mono text-xs">(Buyer)</span>
+                <User className="h-4 w-4 text-[#3B82F6]" />
+                <span className="text-[#F5F7FA] font-medium">{caseItem.customer}</span>
+                <span className="text-[#748195] font-mono text-xs">(Buyer)</span>
               </span>
 
               <span className="inline-flex items-center gap-1.5">
-                <Store className="h-4 w-4 text-[var(--merchant)]" />
-                <span className="text-fg font-medium">{caseItem.merchant}</span>
-                <span className="text-subtle font-mono text-xs">(Seller)</span>
+                <Store className="h-4 w-4 text-amber-400" />
+                <span className="text-[#F5F7FA] font-medium">{caseItem.merchant}</span>
+                <span className="text-[#748195] font-mono text-xs">(Seller)</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 font-semibold text-fg">
-                <Receipt className="h-4 w-4 text-[var(--payment)]" />
+              <span className="inline-flex items-center gap-1.5 font-semibold text-[#F5F7FA]">
+                <Receipt className="h-4 w-4 text-emerald-400" />
                 <span className="font-mono">
                   {formatCurrency(caseItem.amount, caseItem.currency)}
                 </span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 text-subtle">
-                <Calendar className="h-4 w-4" />
+              <span className="inline-flex items-center gap-1.5 text-[#A7B2C2]">
+                <Calendar className="h-4 w-4 text-[#748195]" />
                 <span>Opened {formatDate(caseItem.createdAt)}</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 text-subtle">
-                <Lock className="h-3.5 w-3.5 text-[var(--accent)]" />
-                <span>Investigator: <strong className="text-fg font-medium">{caseItem.assignedOfficer || "Priya Raghavan"}</strong></span>
+              <span className="inline-flex items-center gap-1.5 text-[#A7B2C2]">
+                <Lock className="h-3.5 w-3.5 text-[#3B82F6]" />
+                <span>Investigator: <strong className="text-[#F5F7FA] font-medium">{caseItem.assignedOfficer || "Priya Raghavan"}</strong></span>
               </span>
             </div>
           </div>
@@ -503,7 +516,8 @@ function EnterpriseCaseDetailsView() {
               variant="outline"
               size="sm"
               onClick={() => setActiveTab("resolution")}
-              icon={<Scale className="h-3.5 w-3.5 text-[var(--accent)]" />}
+              className="border-white/[0.08] bg-[#151F2B]/80 text-[#F5F7FA] hover:bg-[#1B2634] rounded-xl shadow-xs"
+              icon={<Scale className="h-3.5 w-3.5 text-[#3B82F6]" />}
             >
               Propose Remedy
             </Button>
@@ -511,7 +525,8 @@ function EnterpriseCaseDetailsView() {
               variant="secondary"
               size="sm"
               onClick={handleExportBrief}
-              icon={<Download className="h-3.5 w-3.5" />}
+              className="border-white/[0.08] bg-[#151F2B]/80 text-[#F5F7FA] hover:bg-[#1B2634] rounded-xl shadow-xs"
+              icon={<Download className="h-3.5 w-3.5 text-[#A7B2C2]" />}
             >
               Export Dossier
             </Button>
@@ -519,6 +534,7 @@ function EnterpriseCaseDetailsView() {
               variant="primary"
               size="sm"
               onClick={() => setConfirmDialogOpen(true)}
+              className="bg-[#3B82F6] hover:bg-[#60A5FA] text-white rounded-xl shadow-xs"
             >
               Take Action
             </Button>
@@ -527,9 +543,9 @@ function EnterpriseCaseDetailsView() {
       </section>
 
       {/* Tab Navigation Bar: 6 Primary Tabs + Advanced Tools Dropdown */}
-      <div className="relative border-b border-[var(--line)]">
+      <div className="relative border-b border-white/[0.08] bg-[#111923]/50 backdrop-blur-md rounded-t-2xl px-2">
         <div className="flex items-center justify-between overflow-x-auto pb-0.5">
-          <div className="flex items-center gap-1.5 min-w-max pr-4">
+          <div className="flex items-center gap-1 min-w-max pr-4">
             {primaryTabs.map((tab) => {
               const isActive =
                 activeTab === tab.id ||
@@ -539,10 +555,10 @@ function EnterpriseCaseDetailsView() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 rounded-t-lg border-b-2 px-3.5 py-2.5 text-[13px] font-medium transition-colors ${
+                  className={`flex items-center gap-2 rounded-t-xl border-b-2 px-4 py-3 text-[13px] font-medium transition-all ${
                     isActive
-                      ? "border-[var(--accent)] bg-[var(--surface)] text-[var(--accent)] font-semibold shadow-xs"
-                      : "border-transparent text-[var(--ink-2)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
+                      ? "border-[#3B82F6] bg-[#3B82F6]/10 text-[#F5F7FA] font-semibold shadow-[0_0_12px_rgba(59,130,246,0.25)]"
+                      : "border-transparent text-[#A7B2C2] hover:bg-white/[0.04] hover:text-[#F5F7FA]"
                   }`}
                 >
                   {tab.icon}
@@ -553,13 +569,13 @@ function EnterpriseCaseDetailsView() {
           </div>
 
           {/* Advanced Tools Dropdown */}
-          <div className="relative shrink-0">
+          <div className="relative shrink-0 py-1.5">
             <button
               type="button"
               onClick={() => setToolsMenuOpen((prev) => !prev)}
-              className="flex items-center gap-1.5 rounded-md border border-line bg-surface-2 px-3 py-1.5 text-xs font-medium text-subtle hover:text-fg hover:border-line-2 transition-colors"
+              className="flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-[#151F2B]/80 px-3 py-1.5 text-xs font-medium text-[#A7B2C2] hover:text-[#F5F7FA] hover:border-white/[0.18] transition-colors"
             >
-              <Layers className="h-3.5 w-3.5 text-[var(--accent)]" />
+              <Layers className="h-3.5 w-3.5 text-[#3B82F6]" />
               <span>Advanced Tools</span>
               <ChevronDown className="h-3 w-3" />
             </button>
@@ -609,42 +625,43 @@ function EnterpriseCaseDetailsView() {
           {/* Right Rail: Dynamic Next Recommended Action, Human Review, Key Facts */}
           <div className="flex flex-col gap-6">
             {/* Dynamic Next Recommended Action Card */}
-            <div className="rounded-lg border border-dashed border-[var(--ai)] bg-[var(--ai)]/5 p-5">
+            <div className="glass-card rounded-2xl border border-[#3B82F6]/30 bg-[#3B82F6]/5 p-5 shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
               <div className="flex items-center justify-between">
-                <span className="flex items-center gap-1.5 text-xs font-bold text-[var(--ai)] uppercase tracking-wider">
-                  <Sparkles className="h-4 w-4" />
+                <span className="flex items-center gap-1.5 text-xs font-bold text-[#60A5FA] uppercase tracking-wider">
+                  <Sparkles className="h-4 w-4 text-[#3B82F6]" />
                   Next Recommended Action
                 </span>
-                <span className="rounded bg-[var(--ai)]/10 px-1.5 py-0.5 font-mono text-[10px] text-[var(--ai)] font-bold">
+                <span className="rounded-full bg-[#3B82F6]/15 border border-[#3B82F6]/30 px-2 py-0.5 font-mono text-[10px] text-[#60A5FA] font-bold">
                   {recOption ? (isEligibleRec ? "POLICY COMPLIANT" : "ACTION REQUIRED") : "EVALUATING"}
                 </span>
               </div>
 
               {recOption ? (
                 <>
-                  <p className="mt-2 text-sm font-semibold text-fg">
+                  <p className="mt-2 text-sm font-semibold text-[#F5F7FA]">
                     {recOption.title}
                   </p>
-                  <p className="mt-1 text-xs text-muted leading-relaxed">
+                  <p className="mt-1 text-xs text-[#A7B2C2] leading-relaxed">
                     {recOption.reason}
                   </p>
 
                   {recOption.groundingFindings && recOption.groundingFindings.length > 0 && (
-                    <div className="mt-3 rounded bg-surface/50 p-2 text-[11px] text-subtle space-y-1">
+                    <div className="mt-3 rounded-xl bg-[#111923]/70 border border-white/[0.06] p-2.5 text-[11px] text-[#A7B2C2] space-y-1">
                       {recOption.groundingFindings.slice(0, 2).map((gf: string, idx: number) => (
                         <p key={idx} className="truncate">{gf}</p>
                       ))}
                     </div>
                   )}
 
-                  <div className="mt-4 flex items-center justify-between border-t border-line/60 pt-3">
-                    <span className="text-[11px] font-mono text-subtle">
+                  <div className="mt-4 flex items-center justify-between border-t border-white/[0.08] pt-3">
+                    <span className="text-[11px] font-mono text-[#748195]">
                       Policy: {policyEval.policyName} v{policyEval.policyVersion}
                     </span>
                     <Button
                       variant="primary"
                       size="sm"
                       onClick={() => setConfirmDialogOpen(true)}
+                      className="bg-[#3B82F6] hover:bg-[#60A5FA] text-white rounded-xl shadow-xs"
                     >
                       Authorize Action
                     </Button>
@@ -652,20 +669,21 @@ function EnterpriseCaseDetailsView() {
                 </>
               ) : isCanonicalDemo ? (
                 <>
-                  <p className="mt-2 text-sm font-semibold text-fg">
+                  <p className="mt-2 text-sm font-semibold text-[#F5F7FA]">
                     Execute ₹1,800 Partial Settlement via PayPal
                   </p>
-                  <p className="mt-1 text-xs text-muted leading-relaxed">
+                  <p className="mt-1 text-xs text-[#A7B2C2] leading-relaxed">
                     BERR evidence verifies 512GB received vs 1TB ordered. Proposed remedy reimburses the exact price delta between models while buyer keeps the drive.
                   </p>
-                  <div className="mt-4 flex items-center justify-between border-t border-line/60 pt-3">
-                    <span className="text-[11px] font-mono text-subtle">
+                  <div className="mt-4 flex items-center justify-between border-t border-white/[0.08] pt-3">
+                    <span className="text-[11px] font-mono text-[#748195]">
                       Citation: E-0101, E-0201, BERR-001
                     </span>
                     <Button
                       variant="primary"
                       size="sm"
                       onClick={() => setConfirmDialogOpen(true)}
+                      className="bg-[#3B82F6] hover:bg-[#60A5FA] text-white rounded-xl shadow-xs"
                     >
                       Approve Remedy
                     </Button>
@@ -673,17 +691,18 @@ function EnterpriseCaseDetailsView() {
                 </>
               ) : (
                 <>
-                  <p className="mt-2 text-sm font-semibold text-fg">
+                  <p className="mt-2 text-sm font-semibold text-[#F5F7FA]">
                     Reviewing Bilateral Evidence & Policy Rules
                   </p>
-                  <p className="mt-1 text-xs text-muted leading-relaxed">
+                  <p className="mt-1 text-xs text-[#A7B2C2] leading-relaxed">
                     Awaiting seller evidence or policy evaluation. Open the Resolution tab to review candidate options.
                   </p>
-                  <div className="mt-4 flex items-center justify-end border-t border-line/60 pt-3">
+                  <div className="mt-4 flex items-center justify-end border-t border-white/[0.08] pt-3">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setActiveTab("resolution")}
+                      className="border-white/[0.08] bg-[#151F2B]/80 text-[#F5F7FA] hover:bg-[#1B2634] rounded-xl shadow-xs"
                     >
                       View Resolution Options
                     </Button>
@@ -693,53 +712,53 @@ function EnterpriseCaseDetailsView() {
             </div>
 
             {/* Human Review Status Card */}
-            <div className="rg-card p-5">
+            <div className="glass-card rounded-2xl p-5 shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
               <div className="flex items-center gap-2">
-                <Lock className="h-4 w-4 text-[var(--accent)]" />
-                <h3 className="text-sm font-semibold text-fg">Human Review Gate</h3>
+                <Lock className="h-4 w-4 text-[#3B82F6]" />
+                <h3 className="text-sm font-semibold text-[#F5F7FA]">Human Review Gate</h3>
               </div>
-              <p className="mt-1 text-xs text-muted">
+              <p className="mt-1.5 text-xs text-[#A7B2C2] leading-relaxed">
                 In compliance with ResolveGraph arbitration policy, no financial disbursement or merchant liability determination executes autonomously.
               </p>
-              <div className="mt-3 flex items-center gap-2 rounded-md bg-surface-2 p-2.5 text-xs">
-                <CheckCircle2 className="h-4 w-4 text-[var(--agreed)] shrink-0" />
-                <span className="text-subtle">
-                  Assigned Officer: <strong className="text-fg">{caseItem.assignedOfficer || "Priya Raghavan"}</strong> (Administrator)
+              <div className="mt-3.5 flex items-center gap-2 rounded-xl bg-[#1B2634]/70 border border-white/[0.08] p-2.5 text-xs">
+                <CheckCircle2 className="h-4 w-4 text-[#22C55E] shrink-0" />
+                <span className="text-[#A7B2C2]">
+                  Assigned Officer: <strong className="text-[#F5F7FA]">{caseItem.assignedOfficer || "Priya Raghavan"}</strong> (Administrator)
                 </span>
               </div>
             </div>
 
             {/* Key Facts Summary */}
-            <div className="rg-card p-5 space-y-3">
-              <h3 className="text-sm font-semibold text-fg border-b border-line pb-2">
+            <div className="glass-card rounded-2xl p-5 space-y-3 shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
+              <h3 className="text-sm font-semibold text-[#F5F7FA] border-b border-white/[0.08] pb-2">
                 Key Facts Ledger
               </h3>
-              <div className="space-y-2 text-xs">
+              <div className="space-y-2.5 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-subtle">Disputed Value:</span>
-                  <span className="font-mono font-semibold text-fg">
+                  <span className="text-[#A7B2C2]">Disputed Value:</span>
+                  <span className="font-mono font-semibold text-[#F5F7FA]">
                     {formatCurrency(caseItem.amount, caseItem.currency)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-subtle">Marketplace / Channel:</span>
-                  <span className="font-medium text-fg">{caseItem.marketplace || "ResolveGraph Direct"}</span>
+                  <span className="text-[#A7B2C2]">Marketplace / Channel:</span>
+                  <span className="font-medium text-[#F5F7FA]">{caseItem.marketplace || "ResolveGraph Direct"}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-subtle">Identified Seller:</span>
-                  <span className="font-medium text-[var(--merchant)] truncate max-w-[180px]" title={caseItem.merchant}>
+                  <span className="text-[#A7B2C2]">Identified Seller:</span>
+                  <span className="font-medium text-amber-400 truncate max-w-[180px]" title={caseItem.merchant}>
                     {caseItem.merchant}
                   </span>
                 </div>
                 {caseItem.sellerGstin && (
                   <div className="flex justify-between">
-                    <span className="text-subtle">Seller GSTIN:</span>
-                    <span className="font-mono text-fg">{caseItem.sellerGstin}</span>
+                    <span className="text-[#A7B2C2]">Seller GSTIN:</span>
+                    <span className="font-mono text-[#F5F7FA]">{caseItem.sellerGstin}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span className="text-subtle">Disputed Product:</span>
-                  <span className="font-medium text-[var(--buyer)] truncate max-w-[180px]" title={caseItem.productName || caseItem.expectedProduct || caseItem.title}>
+                  <span className="text-[#A7B2C2]">Disputed Product:</span>
+                  <span className="font-medium text-[#60A5FA] truncate max-w-[180px]" title={caseItem.productName || caseItem.expectedProduct || caseItem.title}>
                     {caseItem.productName || caseItem.expectedProduct || caseItem.title}
                   </span>
                 </div>

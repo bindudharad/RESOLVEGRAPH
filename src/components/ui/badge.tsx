@@ -12,19 +12,19 @@ export type BadgeTone =
 
 const TONES: Record<BadgeTone, string> = {
   neutral:
-    "bg-[var(--surface-2)] text-[var(--ink-2)] border-[var(--line)]",
+    "bg-white/[0.06] text-[#A3AFBF] border-white/[0.09]",
   info:
-    "bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800/60",
+    "bg-[#3B82F6]/15 text-[#60A5FA] border-[#3B82F6]/30",
   brand:
-    "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/60",
+    "bg-[#3B82F6]/15 text-[#60A5FA] border-[#3B82F6]/30",
   success:
-    "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60",
+    "bg-[#22C55E]/15 text-[#4ADE80] border-[#22C55E]/30",
   warning:
-    "bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/60",
+    "bg-[#F59E0B]/15 text-[#FCD34D] border-[#F59E0B]/30",
   danger:
-    "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60",
+    "bg-[#EF4444]/15 text-[#F87171] border-[#EF4444]/30",
   accent:
-    "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/60",
+    "bg-[#3B82F6]/15 text-[#60A5FA] border-[#3B82F6]/30",
 };
 
 export interface BadgeProps extends ComponentPropsWithRef<"span"> {

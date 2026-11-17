@@ -1,113 +1,142 @@
-import { prisma } from '../src/lib/prisma';
+import { PrismaClient } from '../src/generated/prisma/client';
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+
+const prisma = new PrismaClient({ adapter: new PrismaBetterSqlite3({ url: 'file:./dev.db' }) });
 
 async function main() {
-  console.log('================================================================================');
-  console.log('RECONCILING HISTORICAL CASES: RG-1462, RG-1001, RG-1463, RG-1464, RG-1465');
-  console.log('================================================================================\n');
-
-  const cases = await prisma.caseRecord.findMany({
-    where: { caseNumber: { in: ['RG-1462', 'RG-1001', 'RG-1463', 'RG-1464', 'RG-1465'] } },
-    include: {
-      buyer: true,
-      merchant: true,
-      organization: true,
-      claims: true,
-      evidence: true,
-      resolutionProposals: { include: { replacementFulfillment: true, responses: true } },
-      sellerEvidenceRequests: {
-        include: {
-          seller: true,
-          organization: true,
-          responses: { include: { evidenceItems: true } }
-        }
-      },
-      sellerIdentityMatches: true,
-      events: { orderBy: { createdAt: 'desc' } }
+  const all = await prisma.evidence.findMany({
+    select: {
+      id: true,
+      caseId: true,
+      storageKey: true,
+      filename: true,
+      mimeType: true,
+      sizeBytes: true,
+      sha256: true,
+      sourceType: true,
+      metadataJson: true,
+      createdAt: true
     }
   });
+  console.log('Total evidence records in DB:', all.length);
 
-  for (const c of cases) {
-    console.log(`\n----------------- Case: ${c.caseNumber} (DB ID: ${c.id}) -----------------`);
-    console.log(`Title: ${c.title}`);
-    console.log(`Category: ${c.category} | Status: ${c.status} | Stage: ${c.stage}`);
-    console.log(`Amount: ${c.amountMinor} minor units (${c.currency} ${(c.amountMinor / 100).toFixed(2)})`);
-    console.log(`Buyer: ${c.buyer?.name} (${c.buyer?.email})`);
-    console.log(`Merchant User: ${c.merchant?.name} (${c.merchant?.email})`);
-    console.log(`Organization: ${c.organization?.name} (ID: ${c.organizationId})`);
-    console.log(`Recommended Remedy: ${c.recommendedRemedy}`);
-    console.log(`Evidence items (${c.evidence.length}):`);
-    for (const ev of c.evidence) {
-      console.log(`  - [${ev.evidenceType}] ${ev.filename} (${ev.mimeType}, ${ev.sizeBytes} bytes, SHA256: ${ev.sha256?.substring(0, 16)}...)`);
-    }
-    console.log(`Seller Identity Matches (${c.sellerIdentityMatches.length}):`);
-    for (const sim of c.sellerIdentityMatches) {
-      console.log(`  - Extracted: "${sim.extractedLegalName}" | MatchedSellerId: ${sim.matchedSellerId} | MatchOutcome: ${sim.matchOutcome} | Status: ${(sim as any).sellerRegistrationStatus || (sim as any).registrationStatus}`);
-    }
-    console.log(`Seller Evidence Requests (${c.sellerEvidenceRequests.length}):`);
-    for (const req of c.sellerEvidenceRequests) {
-      console.log(`  - Req ${req.requestNumber} (ID: ${req.id}) -> Seller: ${req.seller?.legalName} | Org: ${req.organization?.name} | Status: ${req.status} | Channel: ${(req as any).selectedChannel || (req as any).channel}`);
-      for (const resp of req.responses) {
-        console.log(`    * Response ${resp.id}: Stance=${resp.stance}, Summary="${resp.summary?.substring(0, 50)}...", EvidenceItems=${resp.evidenceItems.length}`);
-      }
-    }
-    console.log(`Proposals (${c.resolutionProposals.length}):`);
-    for (const prop of c.resolutionProposals) {
-      console.log(`  - Proposal ${prop.id}: Type=${prop.proposalType}, Status=${prop.status}, Auth=${prop.authorizationStatus}, Amount=${prop.amountMinor} ${prop.currency}`);
-      if (prop.replacementFulfillment) {
-        console.log(`    * Fulfillment: Status=${prop.replacementFulfillment.status}, Carrier=${prop.replacementFulfillment.carrierName}, Tracking=${prop.replacementFulfillment.trackingNumber}`);
-      }
-    }
-    console.log(`Total Events: ${c.events.length}`);
+  const evidenceDir = path.resolve(process.cwd(), '.private/evidence');
+  const diskFiles = fs.readdirSync(evidenceDir);
+  console.log('Total physical files in .private/evidence:', diskFiles.length);
+
+  const diskFileMap = new Map<string, { size: number; sha256: string; path: string }>();
+  for (const f of diskFiles) {
+    const fullPath = path.join(evidenceDir, f);
+    const buf = fs.readFileSync(fullPath);
+    const hash = crypto.createHash('sha256').update(buf).digest('hex');
+    diskFileMap.set(f, { size: buf.length, sha256: hash, path: fullPath });
   }
 
-  console.log('\n================================================================================');
-  console.log('RECONCILING TECHSTORE SELLER DIRECTORY & ORGANIZATION ENTITIES');
-  console.log('================================================================================\n');
+  // Classification categories
+  let exactMatchCount = 0;
+  let hashMatchCount = 0;
+  let missingCount = 0;
+  let syntheticDummyCount = 0;
+  let realUploadCount = 0;
 
-  const sellers = await prisma.sellerDirectoryEntry.findMany({
-    where: {
-      OR: [
-        { legalName: { contains: 'TechStore' } },
-        { displayName: { contains: 'TechStore' } },
-        { legalName: { contains: 'DigitalMart' } }
-      ]
-    },
-    include: {
-      marketplaceAccounts: true,
-      linkedOrganization: { include: { members: { include: { user: true } } } },
-      linkedMerchantUser: true
+  const recordsByPattern: Record<string, number> = {};
+
+  const analyzedRecords = all.map(ev => {
+    const safeBase = path.basename(ev.storageKey);
+    let matchedFile = diskFileMap.get(safeBase);
+
+    // Also check if storageKey matches direct relative path
+    if (!matchedFile && diskFileMap.has(ev.storageKey)) {
+      matchedFile = diskFileMap.get(ev.storageKey);
     }
+
+    const fileExists = Boolean(matchedFile);
+    const sha256Match = matchedFile ? matchedFile.sha256 === ev.sha256 : false;
+
+    // Is it a synthetic dummy created by the on-demand generator? (104 bytes dummy PDF or 1x1 png or 118 bytes csv)
+    const isSyntheticDummy = matchedFile && (
+      (matchedFile.size === 104 && matchedFile.sha256 === 'a7b89eee4a7a43f94fefe413827b720a5295bc06e5446fec4b058dce36720ae1') ||
+      (matchedFile.size === 68 && matchedFile.sha256 === '3b0922e374521743788ff3f8319fcf4d440ad84620f498c4309a4d8ae72e2cf5') ||
+      (matchedFile.size === 118 && matchedFile.sha256 === '8a6669911e3bce7bfba3e2264c399bf0954b8d7eb80536c4ff55850974cf978a')
+    );
+
+    let classification = 'UNKNOWN';
+    if (!fileExists) {
+      classification = 'MISSING_ORIGINAL';
+      missingCount++;
+    } else if (isSyntheticDummy) {
+      classification = 'SYNTHETIC_GENERATED_PLACEHOLDER';
+      syntheticDummyCount++;
+    } else if (sha256Match) {
+      classification = 'ORIGINAL_UPLOAD_VERIFIED';
+      hashMatchCount++;
+      exactMatchCount++;
+    } else {
+      classification = 'REAL_BINARY_HASH_MISMATCH';
+      realUploadCount++;
+    }
+
+    const prefix = ev.storageKey.split('/')[0] || 'root';
+    recordsByPattern[prefix] = (recordsByPattern[prefix] || 0) + 1;
+
+    return {
+      id: ev.id,
+      caseId: ev.caseId,
+      filename: ev.filename,
+      storageKey: ev.storageKey,
+      mimeType: ev.mimeType,
+      dbSizeBytes: ev.sizeBytes,
+      diskSizeBytes: matchedFile?.size || 0,
+      dbSha256: ev.sha256,
+      diskSha256: matchedFile?.sha256 || null,
+      classification
+    };
   });
 
-  for (const s of sellers) {
-    console.log(`\nSeller Entry: ${s.id}`);
-    console.log(`  Legal Name: "${s.legalName}"`);
-    console.log(`  Display Name: "${s.displayName}"`);
-    console.log(`  GSTIN: "${s.gstin}" | State: "${s.state}"`);
-    console.log(`  Identity Status: ${s.identityStatus} | Registration Status: ${s.registrationStatus} | Verification: ${s.verificationStatus}`);
-    console.log(`  Linked Org: ${s.linkedOrganization?.name} (ID: ${s.linkedOrganizationId}, Slug: ${s.linkedOrganization?.slug})`);
-    console.log(`  Linked User: ${s.linkedMerchantUser?.name} (${s.linkedMerchantUser?.email})`);
-    console.log(`  Marketplace Accounts (${s.marketplaceAccounts.length}):`);
-    for (const m of s.marketplaceAccounts) {
-      console.log(`    - Marketplace: ${m.marketplace} | SellerId: "${m.marketplaceSellerId}" | Store: "${m.storefrontName}" | Verified: ${m.isVerified}`);
-    }
-    if (s.linkedOrganization) {
-      console.log(`  Org Members (${s.linkedOrganization.members.length}):`);
-      for (const mem of s.linkedOrganization.members) {
-        console.log(`    * Member: ${mem.user?.name} (${mem.user?.email}) | Role: ${mem.role}`);
-      }
-    }
+  console.log('\n--- STORAGE KEY PATTERNS IN DB ---');
+  console.log(recordsByPattern);
+
+  const withMeta = all.filter(e => e.metadataJson);
+  console.log('Total with metadataJson:', withMeta.length);
+  if (withMeta.length > 0) {
+    console.log('Sample metadataJson:', withMeta.slice(0, 3).map(e => ({ id: e.id, meta: e.metadataJson })));
   }
 
-  const allOrgs = await prisma.organization.findMany({
-    include: { members: { include: { user: true } } }
+  console.log('\n--- EVIDENCE CLASSIFICATION BREAKDOWN ---');
+  console.log({
+    totalDbRecords: all.length,
+    exactSha256Matches: hashMatchCount,
+    syntheticGeneratedPlaceholders: syntheticDummyCount,
+    realBinaryHashMismatches: realUploadCount,
+    missingFiles: missingCount
   });
-  console.log('\n================================================================================');
-  console.log('ALL ORGANIZATIONS IN DATABASE:');
-  console.log('================================================================================');
-  for (const o of allOrgs) {
-    console.log(`Org: ${o.id} | Slug: "${o.slug}" | Name: "${o.name}" | Members: ${o.members.map(m => `${m.user?.email} (${m.role})`).join(', ')}`);
-  }
+
+  // Check orphaned files on disk
+  const referencedKeys = new Set(all.map(e => path.basename(e.storageKey)));
+  const orphanFiles = diskFiles.filter(f => !referencedKeys.has(f));
+  console.log('\n--- ORPHAN DISK FILES ---');
+  console.log('Total orphan files on disk (not referenced in DB evidence records):', orphanFiles.length);
+  console.log('Orphan file prefixes:', {
+    ev_uuid: orphanFiles.filter(f => f.startsWith('ev_')).length,
+    intake: orphanFiles.filter(f => f.startsWith('intake_')).length,
+    other: orphanFiles.filter(f => !f.startsWith('ev_') && !f.startsWith('intake_')).length
+  });
+
+  // Sample verified records
+  const sampleVerified = analyzedRecords.filter(r => r.classification === 'ORIGINAL_UPLOAD_VERIFIED').slice(0, 5);
+  console.log('\nSample ORIGINAL_UPLOAD_VERIFIED:', sampleVerified);
+
+  // Sample synthetic placeholders
+  const sampleSynthetic = analyzedRecords.filter(r => r.classification === 'SYNTHETIC_GENERATED_PLACEHOLDER').slice(0, 5);
+  console.log('\nSample SYNTHETIC_GENERATED_PLACEHOLDER:', sampleSynthetic);
+
+  // Inspect the realBinaryHashMismatches
+  const realMismatches = analyzedRecords.filter(r => r.classification === 'REAL_BINARY_HASH_MISMATCH');
+  console.log('\n--- REAL BINARY HASH MISMATCHES (COUNT: ' + realMismatches.length + ') ---');
+  console.log(realMismatches.slice(0, 10));
 }
 
 main().catch(console.error).finally(() => prisma.$disconnect());

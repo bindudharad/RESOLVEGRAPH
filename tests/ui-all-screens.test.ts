@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 const PORTS = [3005, 3000];
 let activeBaseUrl = '';
+let authCookie = '';
 
 describe('PHASE 8 — UI & Screen Rendering End-to-End Suite', () => {
   before(async () => {
@@ -19,10 +20,26 @@ describe('PHASE 8 — UI & Screen Rendering End-to-End Suite', () => {
         // Continue probing
       }
     }
+
+    if (activeBaseUrl) {
+      try {
+        const loginRes = await fetch(`${activeBaseUrl}/api/auth/demo-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ workspace: 'PLATFORM' }),
+        });
+        const setCookie = loginRes.headers.get('set-cookie');
+        if (setCookie) {
+          authCookie = setCookie.split(';')[0];
+        }
+      } catch {
+        // Continue without cookie
+      }
+    }
   });
 
   const screens = [
-    { name: '1. Login Screen', path: '/sign-in', expectedPattern: /Sign In|Welcome Back|Email/i },
+    { name: '1. Login Screen', path: '/sign-in', expectedPattern: /Sign In|Sign-in|Workspace|Welcome Back|Email/i },
     { name: '2. Registration Screen', path: '/sign-up', expectedPattern: /Create|Sign Up|Register/i },
     { name: '3. Dashboard Screen', path: '/dashboard', expectedPattern: /Dashboard|Overview|Cases/i },
     { name: '4. Customer Portal (Cases List)', path: '/cases', expectedPattern: /Dispute|Cases|Case/i },
@@ -61,7 +78,8 @@ describe('PHASE 8 — UI & Screen Rendering End-to-End Suite', () => {
         'Accept': 'text/html,application/xhtml+xml',
       };
       if (!isPublicAuthScreen) {
-        headers['x-demo-user-email'] = 'alex.chen@example.com';
+        headers['x-demo-user-email'] = 'admin@resolvegraph.demo';
+        if (authCookie) headers['Cookie'] = authCookie;
       }
 
       const res = await fetch(`${activeBaseUrl}${screen.path}`, { headers });
@@ -95,7 +113,8 @@ describe('PHASE 8 — UI & Screen Rendering End-to-End Suite', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-demo-user-email': 'alex.chen@example.com',
+        'x-demo-user-email': 'admin@resolvegraph.demo',
+        ...(authCookie ? { 'Cookie': authCookie } : {}),
       },
       body: JSON.stringify({ simulateDispute: true }),
     });

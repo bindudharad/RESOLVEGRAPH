@@ -410,23 +410,23 @@ export function ResolutionPanel({ caseItem }: ResolutionPanelProps) {
   });
 
   return (
-    <div className="rg-card flex flex-col gap-5 p-5">
+    <div className="glass-card flex flex-col gap-5 p-5 sm:p-6 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
       {/* Top Header */}
-      <div className="flex flex-col justify-between gap-2 border-b border-line pb-4 sm:flex-row sm:items-center">
+      <div className="flex flex-col justify-between gap-2 border-b border-white/[0.09] pb-4 sm:flex-row sm:items-center">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-[14px] font-semibold text-fg">Resolution Intelligence & Bilateral Workflow</h3>
-            <span className="rounded border border-[color-mix(in_srgb,var(--color-warning)_30%,transparent)] bg-[color-mix(in_srgb,var(--color-warning)_12%,transparent)] px-2 py-0.5 text-[10.5px] font-semibold text-[#fcd34d]">
+            <h3 className="text-[14px] font-semibold text-[#F4F7FB]">Resolution Intelligence &amp; Bilateral Workflow</h3>
+            <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[10.5px] font-mono font-semibold text-amber-300">
               Policy Grounded
             </span>
           </div>
-          <p className="mt-0.5 text-[12.5px] text-subtle">
+          <p className="mt-0.5 text-[12.5px] text-[#A3AFBF]">
             Proposed pathways evaluated against {policyInfo?.policyName || "Standard Resolution Policy"} ({policyInfo?.policyVersion || "v1.0"}).
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 text-[11.5px] text-faint">
-          <ShieldCheck className="h-3.5 w-3.5 text-[#34d399]" />
+        <div className="flex items-center gap-1.5 text-[11.5px] text-[#718096]">
+          <ShieldCheck className="h-3.5 w-3.5 text-[#22C55E]" />
           <span>Bilateral Agreement Enforced</span>
         </div>
       </div>

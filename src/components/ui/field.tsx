@@ -3,15 +3,15 @@ import type { ComponentPropsWithRef, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 const FIELD_BASE =
-  "w-full rounded-lg border border-[var(--line)] bg-[var(--surface)] text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-3)] " +
-  "transition-colors duration-150 " +
-  "focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 " +
+  "w-full rounded-xl border border-white/[0.09] bg-[#151D28]/70 backdrop-blur-md text-[13px] text-[#F4F7FB] placeholder:text-[#718096] " +
+  "transition-all duration-150 " +
+  "focus:border-[#3B82F6] focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/25 " +
   "disabled:cursor-not-allowed disabled:opacity-50";
 
 const VALID =
-  "hover:border-[var(--line-strong)]";
+  "hover:border-white/[0.18]";
 const INVALID =
-  "border-[var(--danger)] focus:border-[var(--danger)] focus:ring-[var(--danger)]/20";
+  "border-[#EF4444] focus:border-[#EF4444] focus:ring-[#EF4444]/25";
 
 export interface InputProps extends ComponentPropsWithRef<"input"> {
   invalid?: boolean;

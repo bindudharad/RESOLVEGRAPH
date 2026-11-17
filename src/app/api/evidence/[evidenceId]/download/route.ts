@@ -77,7 +77,7 @@ export async function GET(
 
   // 4. Stream private file safely
   try {
-    const { stream, sizeBytes } = evidenceStorage.getFileStream(evidence.storageKey);
+    const { stream, sizeBytes, provenance, isSynthetic } = evidenceStorage.getFileStream(evidence.storageKey);
 
     await SecurityAuditService.record({
       actorId: user.id,
@@ -91,11 +91,13 @@ export async function GET(
         caseNumber: evidence.case.caseNumber,
         filename: evidence.filename,
         storageKey: evidence.storageKey,
+        provenance,
+        isSynthetic,
         sizeBytes,
       },
     });
 
-    const webStream = Readable.toWeb(stream) as ReadableStream;
+    const webStream = Readable.toWeb(stream as unknown as import('node:stream').Readable) as ReadableStream;
     const wantsInline = request.nextUrl.searchParams.get('inline') === '1';
     const safeInlineMimeTypes = new Set([
       'application/pdf',
@@ -117,13 +119,19 @@ export async function GET(
         'Content-Disposition': `${dispositionType}; filename="${encodeURIComponent(evidence.filename)}"`,
         'Content-Length': sizeBytes.toString(),
         'X-Content-Type-Options': 'nosniff',
+        'X-Evidence-Provenance': provenance || 'ORIGINAL_UPLOAD',
+        'X-Evidence-Synthetic': isSynthetic ? 'true' : 'false',
+        ...(isSynthetic ? { 'X-Evidence-Warning': 'DEMONSTRATION DATA ONLY - SYNTHETIC FIXTURE' } : {}),
         'Cache-Control': 'private, no-cache, no-store, must-revalidate',
       },
     });
   } catch (err) {
     console.error('File stream retrieval error:', err);
     return NextResponse.json(
-      { error: 'Evidence file binary unavailable in secure storage' },
+      {
+        error: 'Evidence file binary unavailable in secure storage',
+        provenance: 'MISSING_ORIGINAL',
+      },
       { status: 404 }
     );
   }

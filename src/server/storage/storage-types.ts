@@ -47,3 +47,20 @@ export interface StorageValidationResult {
   error?: string;
   detectedMimeType?: AllowedMimeType;
 }
+
+export type EvidenceProvenance =
+  | 'ORIGINAL_UPLOAD'
+  | 'SYNTHETIC_FIXTURE'
+  | 'DERIVED_PREVIEW'
+  | 'GENERATED_THUMBNAIL'
+  | 'ORPHAN_FILE'
+  | 'MISSING_ORIGINAL'
+  | 'UNKNOWN_OR_UNCLASSIFIED';
+
+export interface FileStreamResult {
+  stream: NodeJS.ReadableStream;
+  sizeBytes: number;
+  provenance: EvidenceProvenance;
+  isSynthetic: boolean;
+  sha256?: string;
+}

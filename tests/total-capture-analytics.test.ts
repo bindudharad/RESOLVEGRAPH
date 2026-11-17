@@ -439,13 +439,13 @@ describe('RESOLVEGRAPH: Total Capture Analytics End-to-End Suite', () => {
       paymentStatus: 'COMPLETED',
       capturedAt: new Date('2026-11-10T08:00:00.000Z'),
     });
-    // Future capture timestamp (> referenceDate)
+    // Future capture timestamp (> referenceDate and > now)
     await seedPayment({
       suffix: 'bad-future-capture',
       orgId: orgAId,
       amountMinor: 66600,
       paymentStatus: 'COMPLETED',
-      capturedAt: new Date('2026-11-14T08:00:00.000Z'),
+      capturedAt: new Date(Math.max(Date.now(), REF_NOV_12_IST.getTime()) + 86400000 * 30),
     });
 
     // ---------------- Multi-Currency Capture in Org A (INR) ----------------

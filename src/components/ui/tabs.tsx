@@ -42,7 +42,7 @@ export function TabsList({
     <div
       role="tablist"
       className={cn(
-        "relative flex items-center border-b border-[var(--line)] gap-1 overflow-x-auto no-scrollbar",
+        "relative flex items-center border-b border-white/[0.09] gap-1 overflow-x-auto no-scrollbar",
         className
       )}
     >
@@ -76,10 +76,10 @@ export function TabTrigger({
       aria-selected={isSelected}
       onClick={() => ctx.onValueChange(value)}
       className={cn(
-        "relative flex items-center gap-2 px-3.5 py-2.5 text-[13px] font-medium transition-colors select-none",
+        "relative flex items-center gap-2 px-4 py-3 text-[13px] font-medium transition-colors select-none cursor-pointer",
         isSelected
-          ? "text-[var(--ink)] font-semibold"
-          : "text-[var(--ink-3)] hover:text-[var(--ink-2)]",
+          ? "text-[#F4F7FB] font-semibold"
+          : "text-[#718096] hover:text-[#A3AFBF] hover:bg-white/[0.02] rounded-t-lg",
         className
       )}
     >
@@ -90,7 +90,7 @@ export function TabTrigger({
       {isSelected && (
         <motion.div
           layoutId={`tab-underline-${ctx.id}`}
-          className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--accent)] rounded-full"
+          className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#3B82F6] rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"
           transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         />
       )}

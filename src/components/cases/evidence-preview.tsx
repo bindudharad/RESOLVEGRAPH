@@ -89,47 +89,47 @@ export function EvidencePreview({ caseId }: EvidencePreviewProps) {
 
   return (
     <>
-      <div className="rg-card flex flex-col gap-4 p-5">
-        <div className="flex flex-col justify-between gap-2 border-b border-line pb-4 sm:flex-row sm:items-center">
+      <div className="glass-card flex flex-col gap-4 p-5 sm:p-6 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
+        <div className="flex flex-col justify-between gap-2 border-b border-white/[0.09] pb-4 sm:flex-row sm:items-center">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-[14px] font-semibold text-fg">Evidence Vault</h3>
+              <h3 className="text-[14px] font-semibold text-[#F4F7FB]">Evidence Vault</h3>
               {isCanonicalDemo && !hasRealEvidence && (
-                <span className="rounded bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[10.5px] font-medium text-amber-300">
+                <span className="rounded-full bg-amber-500/15 border border-amber-500/30 px-2.5 py-0.5 text-[10.5px] font-mono font-semibold text-amber-300">
                   Demo Evaluation Case
                 </span>
               )}
               {hasRealEvidence && (
-                <span className="rounded bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10.5px] font-medium text-emerald-400">
+                <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10.5px] font-mono font-semibold text-[#22C55E]">
                   {dbEvidence.length} Persisted Artifact{dbEvidence.length > 1 ? "s" : ""}
                 </span>
               )}
             </div>
-            <p className="mt-0.5 text-[12.5px] text-subtle">
+            <p className="mt-0.5 text-[12.5px] text-[#A3AFBF]">
               Cryptographically fingerprinted documents and media artifacts filed for case {caseId}.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 text-[12px] text-faint">
+          <div className="flex items-center gap-2 text-[12px] text-[#718096]">
             {hasRealEvidence ? (
-              <span className="inline-flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-[var(--color-success)]" />
+              <span className="inline-flex items-center gap-1.5 text-[#22C55E]">
+                <span className="h-2 w-2 rounded-full bg-[#22C55E]" />
                 {dbEvidence.length} Attached to Complaint
               </span>
             ) : isCanonicalDemo ? (
               <>
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-[var(--color-success)]" />
+                <span className="inline-flex items-center gap-1.5 text-[#22C55E]">
+                  <span className="h-2 w-2 rounded-full bg-[#22C55E]" />
                   {FEATURED_EVIDENCE_SLOTS.filter((s) => s.present).length} Available
                 </span>
                 <span>·</span>
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-[var(--color-warning)]" />
+                <span className="inline-flex items-center gap-1.5 text-amber-400">
+                  <span className="h-2 w-2 rounded-full bg-amber-400" />
                   {FEATURED_EVIDENCE_SLOTS.filter((s) => !s.present).length} Pending
                 </span>
               </>
             ) : (
-              <span className="inline-flex items-center gap-1.5 text-muted">
+              <span className="inline-flex items-center gap-1.5 text-[#718096]">
                 <Clock className="h-3 w-3" />
                 Awaiting Upload
               </span>
@@ -146,7 +146,7 @@ export function EvidencePreview({ caseId }: EvidencePreviewProps) {
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
             {dbEvidence.map((item) => {
               const IconComp = getFileIcon(item.extension || item.type);
-              const isImage = ["png", "jpg", "jpeg", "webp"].includes(item.extension?.toLowerCase());
+              const _isImage = ["png", "jpg", "jpeg", "webp"].includes(item.extension?.toLowerCase());
               return (
                 <div
                   key={item.id}

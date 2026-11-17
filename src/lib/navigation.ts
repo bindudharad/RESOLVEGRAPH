@@ -1,18 +1,18 @@
 import {
   BarChart3,
-  Bot,
   CreditCard,
   FolderOpen,
   LayoutDashboard,
-  Library,
-  Package,
   Scale,
   Settings,
   ShieldCheck,
-  ShoppingCart,
   Inbox,
   Building2,
   BookOpen,
+  Brain,
+  Store,
+  Activity,
+  Network,
   type LucideIcon,
 } from "lucide-react";
 
@@ -51,14 +51,19 @@ export interface NavGroup {
 
 export const NAV_GROUPS: NavGroup[] = [
   {
-    label: "Platform",
+    label: "Overview",
     items: [
       {
-        label: "Overview",
+        label: "Dashboard",
         href: "/overview",
         icon: LayoutDashboard,
         availability: "live",
       },
+    ],
+  },
+  {
+    label: "Investigation",
+    items: [
       {
         label: "Cases",
         href: "/cases",
@@ -72,7 +77,19 @@ export const NAV_GROUPS: NavGroup[] = [
       {
         label: "Evidence & BEG",
         href: "/evidence",
-        icon: Library,
+        icon: Network,
+        availability: "live",
+      },
+      {
+        label: "BERR Analysis",
+        href: "/investigation",
+        icon: Brain,
+        availability: "live",
+      },
+      {
+        label: "Seller Outreach",
+        href: "/seller/requests",
+        icon: Store,
         availability: "live",
       },
       {
@@ -85,8 +102,13 @@ export const NAV_GROUPS: NavGroup[] = [
           { label: "Bilateral Room", href: "/resolution-room" },
         ],
       },
+    ],
+  },
+  {
+    label: "Operations",
+    items: [
       {
-        label: "Payments & Capture Analytics",
+        label: "Payments & Capture",
         href: "/payments",
         icon: CreditCard,
         availability: "live",
@@ -106,16 +128,30 @@ export const NAV_GROUPS: NavGroup[] = [
           { label: "Seller Directory", href: "/seller/directory", adminOnly: true },
         ],
       },
+    ],
+  },
+  {
+    label: "System",
+    items: [
       {
         label: "Administration",
+        href: "/admin/security",
+        icon: ShieldCheck,
+        availability: "live",
+        adminOnly: true,
+      },
+      {
+        label: "Activity & Audit",
+        href: "/admin/security",
+        icon: Activity,
+        availability: "live",
+        adminOnly: true,
+      },
+      {
+        label: "Settings",
         href: "/settings",
         icon: Settings,
         availability: "live",
-        adminOnly: true,
-        subItems: [
-          { label: "Settings", href: "/settings" },
-          { label: "Security & Audit", href: "/admin/security", adminOnly: true },
-        ],
       },
     ],
   },

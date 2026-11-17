@@ -131,7 +131,7 @@ export function Dialog({
       role="presentation"
     >
       <div
-        className="rg-anim-fade fixed inset-0 bg-black/65 backdrop-blur-[2px]"
+        className="fixed inset-0 bg-black/75 backdrop-blur-md transition-opacity"
         onClick={dismissOnBackdrop ? onClose : undefined}
         aria-hidden="true"
       />
@@ -143,22 +143,22 @@ export function Dialog({
         aria-describedby={description ? descId : undefined}
         tabIndex={-1}
         className={cn(
-          "rg-anim-rise relative w-full rounded-xl border border-line-2 bg-surface outline-none",
-          "shadow-[0_24px_64px_-16px_rgba(0,0,0,0.85)]",
+          "relative w-full rounded-2xl border border-white/[0.12] bg-[#151D28]/95 backdrop-blur-2xl outline-none",
+          "shadow-[0_24px_80px_rgba(0,0,0,0.6)]",
           SIZES[size],
           className,
         )}
       >
-        <header className="flex items-start justify-between gap-4 border-b border-line px-5 py-4">
+        <header className="flex items-start justify-between gap-4 border-b border-white/[0.08] px-6 py-5">
           <div className="min-w-0">
             <h2
               id={titleId}
-              className="text-[15px] font-semibold tracking-[-0.012em] text-fg"
+              className="text-[16px] font-bold tracking-tight text-[#F4F7FB]"
             >
               {title}
             </h2>
             {description ? (
-              <p id={descId} className="mt-1 text-[12.5px] leading-relaxed text-subtle">
+              <p id={descId} className="mt-1 text-[12.5px] leading-relaxed text-[#A3AFBF]">
                 {description}
               </p>
             ) : null}
@@ -167,16 +167,16 @@ export function Dialog({
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="-mr-1.5 -mt-1 shrink-0 rounded-md p-1.5 text-faint transition-colors hover:bg-surface-2 hover:text-fg"
+            className="-mr-1.5 -mt-1 shrink-0 rounded-lg p-1.5 text-[#718096] transition-colors hover:bg-white/[0.06] hover:text-[#F4F7FB]"
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </header>
 
-        <div className={cn("px-5 py-4.5", bodyClassName)}>{children}</div>
+        <div className={cn("px-6 py-5", bodyClassName)}>{children}</div>
 
         {footer ? (
-          <footer className="flex flex-wrap items-center justify-end gap-2 rounded-b-xl border-t border-line bg-surface-2 px-5 py-3.5">
+          <footer className="flex flex-wrap items-center justify-end gap-2.5 rounded-b-2xl border-t border-white/[0.08] bg-[#111821]/80 px-6 py-4">
             {footer}
           </footer>
         ) : null}

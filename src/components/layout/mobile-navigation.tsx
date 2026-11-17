@@ -76,7 +76,7 @@ export function MobileNavigation() {
       {/* Bottom Tab Bar (below 1024px) */}
       <nav
         aria-label="Mobile Bottom Navigation"
-        className="fixed bottom-0 inset-x-0 z-40 flex h-14 items-center justify-around border-t border-[var(--line)] bg-[#0A0D14]/95 px-2 backdrop-blur-md lg:hidden"
+        className="fixed bottom-0 inset-x-0 z-40 flex h-14 items-center justify-around border-t border-white/[0.08] bg-[#0E141D]/95 px-2 backdrop-blur-2xl lg:hidden"
       >
         {mobileTabs.map((tab) => {
           const Icon = tab.icon;
@@ -137,7 +137,7 @@ export function MobileNavigation() {
           aria-label="Navigation drawer"
           tabIndex={-1}
           className={cn(
-            "absolute inset-y-0 left-0 flex w-[min(20rem,85vw)] flex-col bg-[#0A0D14] text-white border-r border-white/[0.08]",
+            "absolute inset-y-0 left-0 flex w-[min(20rem,85vw)] flex-col bg-[#0E141D] text-[#F5F7FA] border-r border-white/[0.08]",
             "shadow-2xl transition-transform duration-250 ease-out",
             mobileOpen ? "translate-x-0" : "-translate-x-full"
           )}

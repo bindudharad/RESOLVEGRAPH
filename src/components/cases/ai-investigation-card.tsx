@@ -199,8 +199,18 @@ export function AiInvestigationCard({ caseId = "RG-1001" }: { caseId?: string })
           if (active && berrData.berrV2) {
             const assessment = berrData.berrV2;
             if (assessment.findings && assessment.findings.length > 0) {
+              interface BerrFindingRaw {
+                dbId?: string;
+                findingId?: string;
+                claim?: string;
+                field?: string;
+                classification?: string;
+                explanation?: string;
+                recommendedNextAction?: string;
+                humanReviewStatus?: string;
+              }
               setFindings(
-                assessment.findings.map((f: any, idx: number) => ({
+                assessment.findings.map((f: BerrFindingRaw, idx: number) => ({
                   id: f.dbId || f.findingId || `fnd-${idx}`,
                   findingType: f.claim || f.field || "EVALUATION_FINDING",
                   outcome: f.classification === "AGREED" ? "RECONCILED" : f.classification === "CONTESTED" ? "CONFLICTING" : "INSUFFICIENT_EVIDENCE",

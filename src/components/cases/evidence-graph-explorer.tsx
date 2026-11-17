@@ -661,46 +661,62 @@ export function EvidenceGraphExplorer({
   return (
     <div className="space-y-4">
       {/* Compact Header & KPI Strip */}
-      <div className="rg-card p-4">
+      <div className="glass-card p-5 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <Network className="h-4 w-4 text-[var(--ai)]" />
-              <h2 className="text-[16px] font-bold text-fg">Bilateral Evidence Graph (BEG)</h2>
-              <span className="rounded border border-line bg-surface-2 px-2 py-0.5 font-mono text-[11px] text-subtle">
+              <Network className="h-4 w-4 text-[#3B82F6]" />
+              <h2 className="text-[16px] font-bold text-[#F5F7FA]">Bilateral Evidence Graph (BEG)</h2>
+              <span className="rounded-full border border-white/[0.08] bg-[#111923]/80 px-2.5 py-0.5 font-mono text-[11px] text-[#A7B2C2]">
                 Rev v{graph.metadata.revisionNumber || 1}
               </span>
-              <span className="rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
+              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-mono font-medium text-[#22C55E]">
                 {graph.nodes.length} nodes • {graph.edges.length > 300 ? `Showing top ${filteredGraph?.edges.length} of ${graph.edges.length.toLocaleString()} links` : `${graph.edges.length} links`}
               </span>
               {(summary?.contestedCount || 0) > 0 && (
-                <span className="rounded border border-rose-500/30 bg-rose-500/10 px-2 py-0.5 text-[11px] font-semibold text-rose-700 dark:text-rose-300">
+                <span className="rounded-full border border-rose-500/30 bg-rose-500/10 px-2.5 py-0.5 text-[11px] font-mono font-semibold text-[#EF4444]">
                   {summary?.contestedCount} Contested / Discrepancy
                 </span>
               )}
               {(summary?.missingCount || 0) > 0 && (
-                <span className="rounded border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300">
+                <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-mono font-semibold text-[#F59E0B]">
                   {summary?.missingCount} Missing Evidence Gap(s)
                 </span>
               )}
             </div>
-            <p className="mt-1 text-xs text-muted">
+            <p className="mt-1 text-xs text-[#A7B2C2]">
               Left: Buyer submissions • Center: Shared order, product specs & findings • Right: Seller identity & fulfillment evidence
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             {onSwitchToBerr && (
-              <Button variant="secondary" size="sm" onClick={onSwitchToBerr}>
-                <Scale className="mr-1.5 h-3.5 w-3.5" />
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={onSwitchToBerr}
+                className="border-white/[0.08] bg-[#151F2B]/80 text-[#F5F7FA] hover:bg-[#1B2634] rounded-xl shadow-xs"
+              >
+                <Scale className="mr-1.5 h-3.5 w-3.5 text-[#3B82F6]" />
                 Open BERR Matrix
               </Button>
             )}
-            <Button variant="secondary" size="sm" onClick={handleResetLayout}>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleResetLayout}
+              className="border-white/[0.08] bg-[#151F2B]/80 text-[#F5F7FA] hover:bg-[#1B2634] rounded-xl shadow-xs"
+            >
               <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
               Reset Layout
             </Button>
-            <Button variant="primary" size="sm" onClick={handleRebuild} disabled={rebuilding}>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={handleRebuild}
+              disabled={rebuilding}
+              className="bg-[#3B82F6] hover:bg-[#60A5FA] text-white rounded-xl shadow-xs"
+            >
               <RefreshCw className={cn("mr-1.5 h-3.5 w-3.5", rebuilding && "animate-spin")} />
               {rebuilding ? "Syncing BEG..." : "Rebuild BEG"}
             </Button>
@@ -708,7 +724,7 @@ export function EvidenceGraphExplorer({
         </div>
 
         {/* Search + Filter Pills + Highlight Toggles */}
-        <div className="mt-3 flex flex-col gap-2.5 border-t border-line pt-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="mt-4 flex flex-col gap-2.5 border-t border-white/[0.08] pt-3.5 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap items-center gap-1.5">
             {(
               [
@@ -728,10 +744,10 @@ export function EvidenceGraphExplorer({
                 type="button"
                 onClick={() => setCategoryFilter(key)}
                 className={cn(
-                  "rounded-md border px-2.5 py-1 text-[11px] font-medium transition-colors",
+                  "rounded-xl px-2.5 py-1 text-[11px] font-medium transition-all",
                   categoryFilter === key
-                    ? "border-fg bg-fg text-bg font-semibold"
-                    : "border-line bg-surface-2 text-subtle hover:text-fg"
+                    ? "bg-[#3B82F6] text-white font-semibold shadow-xs"
+                    : "border border-white/[0.08] bg-[#1B2634]/60 text-[#A7B2C2] hover:text-[#F5F7FA] hover:bg-[#1B2634]"
                 )}
               >
                 {label}
@@ -741,26 +757,26 @@ export function EvidenceGraphExplorer({
 
           <div className="flex flex-wrap items-center gap-2">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-2.5 top-2 h-3.5 w-3.5 text-muted" />
+              <Search className="pointer-events-none absolute left-2.5 top-2 h-3.5 w-3.5 text-[#748195]" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search order ID, SKU, filename, seller..."
-                className="h-7.5 w-60 rounded-md border border-line bg-surface-2 pl-8 pr-7 text-xs text-fg placeholder:text-muted focus:border-fg focus:outline-none"
+                className="h-8 w-60 rounded-xl border border-white/[0.08] bg-[#151F2B]/80 pl-8 pr-7 text-xs text-[#F5F7FA] placeholder-[#748195] focus:border-[#3B82F6] focus:outline-none focus:ring-1 focus:ring-[#3B82F6]/30 transition-all"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-2 top-2 text-muted hover:text-fg"
+                  className="absolute right-2 top-2 text-[#748195] hover:text-[#F5F7FA]"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
               )}
             </div>
 
-            <div className="flex items-center gap-1 rounded-md border border-line bg-surface-2 p-0.5 text-[11px]">
+            <div className="flex items-center gap-1 rounded-xl border border-white/[0.08] bg-[#111923]/80 p-0.5 text-[11px]">
               {(
                 [
                   ["CONTRADICTIONS", "Contradictions"],
@@ -773,10 +789,10 @@ export function EvidenceGraphExplorer({
                   type="button"
                   onClick={() => setHighlightMode((prev) => (prev === mode ? "NONE" : mode))}
                   className={cn(
-                    "rounded px-2 py-0.5 font-medium transition-colors",
+                    "rounded-lg px-2.5 py-1 font-medium transition-all",
                     highlightMode === mode
-                      ? "bg-rose-600 text-white"
-                      : "text-subtle hover:text-fg"
+                      ? "bg-rose-500/20 text-rose-300 font-semibold border border-rose-500/30"
+                      : "text-[#A7B2C2] hover:text-[#F5F7FA]"
                   )}
                 >
                   {text}
@@ -790,9 +806,9 @@ export function EvidenceGraphExplorer({
       {/* Main Split Workspace: Interactive 2D Canvas + Contextual Investigator Panel */}
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_390px]">
         {/* Interactive Canvas Column */}
-        <div className="rg-card relative flex flex-col overflow-hidden">
+        <div className="glass-card relative flex flex-col overflow-hidden rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
           {/* Canvas Floating Toolbar */}
-          <div className="flex items-center justify-between border-b border-line bg-surface-2/60 px-3 py-2">
+          <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#111923]/80 backdrop-blur-md px-3.5 py-2.5">
             <div className="flex items-center gap-2 text-[11px] text-muted">
               {expandedNeighborhoodIds ? (
                 <button
@@ -1085,16 +1101,16 @@ export function EvidenceGraphExplorer({
         </div>
 
         {/* Contextual Investigator Side Panel */}
-        <div className="rg-card flex flex-col overflow-hidden">
-          <div className="flex border-b border-line bg-surface-2/60 text-xs">
+        <div className="glass-panel flex flex-col overflow-hidden rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
+          <div className="flex border-b border-white/[0.08] bg-[#111923]/70 text-xs">
             <button
               type="button"
               onClick={() => setSideTab("INSPECT")}
               className={cn(
-                "flex-1 px-3 py-2.5 font-medium border-b-2 transition-colors",
+                "flex-1 px-3 py-3 font-medium border-b-2 transition-all",
                 sideTab === "INSPECT"
-                  ? "border-fg text-fg font-semibold"
-                  : "border-transparent text-subtle hover:text-fg"
+                  ? "border-[#3B82F6] text-[#F5F7FA] font-semibold bg-[#3B82F6]/10"
+                  : "border-transparent text-[#A7B2C2] hover:text-[#F5F7FA] hover:bg-white/[0.03]"
               )}
             >
               Inspect Details
@@ -1103,10 +1119,10 @@ export function EvidenceGraphExplorer({
               type="button"
               onClick={() => setSideTab("DISCREPANCIES")}
               className={cn(
-                "flex-1 px-3 py-2.5 font-medium border-b-2 transition-colors",
+                "flex-1 px-3 py-3 font-medium border-b-2 transition-all",
                 sideTab === "DISCREPANCIES"
-                  ? "border-fg text-fg font-semibold"
-                  : "border-transparent text-subtle hover:text-fg"
+                  ? "border-[#3B82F6] text-[#F5F7FA] font-semibold bg-[#3B82F6]/10"
+                  : "border-transparent text-[#A7B2C2] hover:text-[#F5F7FA] hover:bg-white/[0.03]"
               )}
             >
               Gaps ({(summary?.discrepancies.length || 0) + (summary?.missingEvidenceGaps.length || 0)})
@@ -1115,10 +1131,10 @@ export function EvidenceGraphExplorer({
               type="button"
               onClick={() => setSideTab("HISTORY")}
               className={cn(
-                "flex-1 px-3 py-2.5 font-medium border-b-2 transition-colors",
+                "flex-1 px-3 py-3 font-medium border-b-2 transition-all",
                 sideTab === "HISTORY"
-                  ? "border-fg text-fg font-semibold"
-                  : "border-transparent text-subtle hover:text-fg"
+                  ? "border-[#3B82F6] text-[#F5F7FA] font-semibold bg-[#3B82F6]/10"
+                  : "border-transparent text-[#A7B2C2] hover:text-[#F5F7FA] hover:bg-white/[0.03]"
               )}
             >
               History ({revisions.length})

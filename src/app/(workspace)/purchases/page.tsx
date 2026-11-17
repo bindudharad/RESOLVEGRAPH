@@ -13,13 +13,10 @@ import {
   CheckCircle2,
   Lock,
   Layers2,
-  Clock,
-  ArrowRight,
   Truck,
   Box,
   FileCheck,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { DemoBadge } from "@/components/common/demo-badge";
@@ -53,7 +50,7 @@ const PURCHASE_STAGES = [
 
 export default function PurchasesPage() {
   const [purchases, setPurchases] = useState<PurchaseMemoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedMemory, setSelectedMemory] = useState<PurchaseMemoryItem | null>(null);
   const [showAmendments, setShowAmendments] = useState(false);
@@ -127,8 +124,8 @@ export default function PurchasesPage() {
       setPurchases([
         {
           id: "pmem-canonical-01",
-          orderNumber: "ORD-RG-2026-0412",
-          merchantName: "Apex Tech Labs Ltd",
+          orderNumber: "ORD-20261103-8821",
+          merchantName: "TechStore Global",
           buyerName: "Alex Morgan",
           totalAmountMinor: 649900,
           currency: "INR",
@@ -145,7 +142,7 @@ export default function PurchasesPage() {
             { claim: "5-Year Manufacturer Warranty", source: "Listing Spec #APX-1TB", verified: true },
           ],
           packageId: "pkg-demo-01",
-          packageTrackingNumber: "APX-TRK-9942",
+          packageTrackingNumber: "BD-DM-REP-8829104",
           createdAt: new Date().toISOString(),
         },
       ]);

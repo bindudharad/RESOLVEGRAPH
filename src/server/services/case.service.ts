@@ -112,9 +112,26 @@ export function formatCaseResponse<
     };
   }>
 >(c: T) {
+  type CaseMarketplaceRecord = T & {
+    sellerIdentityMatches?: Array<{
+      matchedSeller?: { legalName?: string | null; gstin?: string | null } | null;
+      extractedLegalName?: string | null;
+      extractedGstin?: string | null;
+    }>;
+    sellerEvidenceRequests?: Array<{
+      seller?: { legalName?: string | null } | null;
+      sellerLegalName?: string | null;
+      marketplace?: string | null;
+      orderId?: string | null;
+      productName?: string | null;
+      registrationStatus?: string | null;
+    }>;
+    organization?: { name?: string | null } | null;
+  };
+  const rec = c as CaseMarketplaceRecord;
   const descMeta = extractMarketplaceMetaFromDescription(c.description);
-  const sellerMatch = (c as any).sellerIdentityMatches?.[0];
-  const sellerRequest = (c as any).sellerEvidenceRequests?.[0];
+  const sellerMatch = rec.sellerIdentityMatches?.[0];
+  const sellerRequest = rec.sellerEvidenceRequests?.[0];
 
   const extractedLegalName =
     sellerMatch?.matchedSeller?.legalName ||
@@ -136,9 +153,9 @@ export function formatCaseResponse<
   if (extractedLegalName) {
     sellerDisplayName = isUnregistered
       ? `${extractedLegalName} (Unregistered)`
-      : (c as any).organization?.name || extractedLegalName;
-  } else if ((c as any).organization?.name) {
-    sellerDisplayName = (c as any).organization.name;
+      : rec.organization?.name || extractedLegalName;
+  } else if (rec.organization?.name) {
+    sellerDisplayName = rec.organization.name;
   } else if (!isPlatformAdminMerchant && (c.merchant?.organization || c.merchant?.fullName)) {
     sellerDisplayName = c.merchant.organization || c.merchant.fullName;
   } else {
@@ -167,7 +184,7 @@ export function formatCaseResponse<
     orderId,
     productName,
     merchantUser: c.merchant,
-    merchantOrganization: (c as any).organization || null,
+    merchantOrganization: rec.organization || null,
   };
 }
 

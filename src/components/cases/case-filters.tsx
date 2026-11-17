@@ -62,7 +62,7 @@ export function CaseFilters({
       />
 
       <div className="flex flex-wrap items-center gap-2">
-        <span className="hidden items-center gap-1.5 pr-0.5 text-[11.5px] font-medium text-faint sm:flex">
+        <span className="hidden items-center gap-1.5 pr-0.5 text-[11.5px] font-medium text-[#718096] sm:flex">
           <Filter className="h-3.5 w-3.5" aria-hidden="true" />
           Filters
         </span>

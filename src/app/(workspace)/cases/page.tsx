@@ -184,22 +184,22 @@ function EnterpriseCasesWorkbench() {
       {/* ======================================================== */}
       <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
         <div className="flex items-center gap-2">
-          <span className="rounded-lg bg-white text-black px-3.5 py-1.5 text-xs font-semibold inline-flex items-center gap-1.5 shadow-xs">
-            <FolderOpen className="h-3.5 w-3.5 text-black" />
-            <span>Investigation Roster</span>
+          <span className="rounded-xl bg-[#3B82F6] text-white px-3.5 py-1.5 text-xs font-semibold inline-flex items-center gap-1.5 shadow-xs">
+            <FolderOpen className="h-3.5 w-3.5" />
+            <span>Investigation Cases</span>
           </span>
           <Link
             href="/investigation"
-            className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+            className="rounded-xl px-3.5 py-1.5 text-xs font-medium text-[#A7B2C2] hover:text-[#F5F7FA] hover:bg-[#151F2B]/80 transition-colors inline-flex items-center gap-1.5 border border-transparent hover:border-white/[0.08]"
           >
-            <Brain className="h-3.5 w-3.5 text-white/50" />
+            <Brain className="h-3.5 w-3.5 text-[#3B82F6]" />
             <span>BERR Reasoning Engine</span>
           </Link>
           <Link
             href="/cases/RG-1001"
-            className="rounded-lg px-3.5 py-1.5 text-xs font-medium text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors inline-flex items-center gap-1.5"
+            className="rounded-xl px-3.5 py-1.5 text-xs font-medium text-[#A7B2C2] hover:text-[#F5F7FA] hover:bg-[#151F2B]/80 transition-colors inline-flex items-center gap-1.5 border border-transparent hover:border-white/[0.08]"
           >
-            <Network className="h-3.5 w-3.5 text-white/50" />
+            <Network className="h-3.5 w-3.5 text-[#3B82F6]" />
             <span>Evidence Graph View</span>
           </Link>
         </div>
@@ -209,9 +209,9 @@ function EnterpriseCasesWorkbench() {
             variant="outline"
             size="sm"
             onClick={handleExport}
-            className="text-xs border-white/[0.08] bg-white/[0.03] text-white/80 hover:bg-white/[0.06] hover:text-white gap-1.5"
+            className="text-xs border-white/[0.08] bg-[#151F2B]/70 text-[#F5F7FA] hover:bg-[#1B2634] gap-1.5 rounded-xl shadow-xs"
           >
-            <Download className="h-3.5 w-3.5" />
+            <Download className="h-3.5 w-3.5 text-[#A7B2C2]" />
             <span>Export CSV</span>
           </Button>
           <CreateCaseAction />
@@ -221,24 +221,24 @@ function EnterpriseCasesWorkbench() {
       {/* ======================================================== */}
       {/* 2. PAGE HEADER                                           */}
       {/* ======================================================== */}
-      <header className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-6 shadow-xs">
+      <header className="glass-card rounded-2xl p-6 shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-white/50">
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-[#A7B2C2]">
                 Dispute Case Management
               </span>
               <span className="text-white/20">·</span>
-              <span className="inline-flex items-center gap-1.5 rounded-md bg-white/[0.04] border border-white/[0.08] px-2 py-0.5 font-mono text-[11px] text-white/70">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 px-2.5 py-0.5 font-mono text-[11px] text-emerald-400">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                 Active Dossiers Synchronized
               </span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">
-              Investigations Workbench
+            <h1 className="text-2xl sm:text-[26px] font-bold tracking-tight text-[#F5F7FA]">
+              Investigation Cases
             </h1>
-            <p className="mt-1 text-xs text-white/60">
-              Cross-examine buyer assertions against merchant fulfillment logs with symmetric BERR reasoning.
+            <p className="mt-1 text-xs sm:text-sm text-[#A7B2C2]">
+              Review and manage ongoing purchase disputes. Cross-examine assertions with symmetric BERR evidence reasoning.
             </p>
           </div>
         </div>
@@ -252,69 +252,77 @@ function EnterpriseCasesWorkbench() {
         className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
       >
         {/* Total Active Cases */}
-        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-white/50 text-xs font-medium">
+        <div className="glass-card rounded-2xl p-4.5 flex flex-col justify-between shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
+          <div className="flex items-center justify-between text-[#A7B2C2] text-xs font-medium">
             <span>Active Disputes</span>
-            <Layers className="h-4 w-4 text-sky-400" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#3B82F6]/10 border border-[#3B82F6]/20 text-[#3B82F6]">
+              <Layers className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="mt-4">
-            <div className="font-mono text-2xl font-bold text-white tabular-nums">
+          <div className="mt-3">
+            <div className="font-mono text-2xl font-bold text-[#F5F7FA] tabular-nums">
               {activeCount}
             </div>
-            <p className="mt-1 text-xs text-white/50">Open investigation files</p>
+            <p className="mt-1 text-[11.5px] text-[#A7B2C2]">Open investigation files</p>
           </div>
-          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-sky-400">
+          <div className="mt-3 pt-2.5 border-t border-white/[0.06] text-[11px] font-mono text-[#3B82F6]">
             Across 14 Merchants
           </div>
         </div>
 
         {/* Under Investigation */}
-        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-white/50 text-xs font-medium">
+        <div className="glass-card rounded-2xl p-4.5 flex flex-col justify-between shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
+          <div className="flex items-center justify-between text-[#A7B2C2] text-xs font-medium">
             <span>Forensic Triage</span>
-            <Brain className="h-4 w-4 text-teal-400" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400">
+              <Brain className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="mt-4">
+          <div className="mt-3">
             <div className="font-mono text-2xl font-bold text-teal-400 tabular-nums">
               {underInvestigationCount}
             </div>
-            <p className="mt-1 text-xs text-white/50">Under BERR engine analysis</p>
+            <p className="mt-1 text-[11.5px] text-[#A7B2C2]">Under BERR engine analysis</p>
           </div>
-          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-white/40">
+          <div className="mt-3 pt-2.5 border-t border-white/[0.06] text-[11px] font-mono text-teal-400">
             Contradiction Detection Active
           </div>
         </div>
 
         {/* Awaiting Merchant */}
-        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-white/50 text-xs font-medium">
+        <div className="glass-card rounded-2xl p-4.5 flex flex-col justify-between shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
+          <div className="flex items-center justify-between text-[#A7B2C2] text-xs font-medium">
             <span>Awaiting Merchant</span>
-            <Store className="h-4 w-4 text-amber-400" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+              <Store className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="mt-4">
+          <div className="mt-3">
             <div className="font-mono text-2xl font-bold text-amber-400 tabular-nums">
               {awaitingMerchantCount}
             </div>
-            <p className="mt-1 text-xs text-white/50">Counter-evidence pending</p>
+            <p className="mt-1 text-[11.5px] text-[#A7B2C2]">Counter-evidence pending</p>
           </div>
-          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-amber-400">
+          <div className="mt-3 pt-2.5 border-t border-white/[0.06] text-[11px] font-mono text-amber-400">
             Statutory TAT: 72h
           </div>
         </div>
 
         {/* High Priority */}
-        <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] p-5 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between text-white/50 text-xs font-medium">
+        <div className="glass-card rounded-2xl p-4.5 flex flex-col justify-between shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
+          <div className="flex items-center justify-between text-[#A7B2C2] text-xs font-medium">
             <span>Priority Attention</span>
-            <AlertTriangle className="h-4 w-4 text-rose-400" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400">
+              <AlertTriangle className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="mt-4">
+          <div className="mt-3">
             <div className="font-mono text-2xl font-bold text-rose-400 tabular-nums">
               {highPriorityCount}
             </div>
-            <p className="mt-1 text-xs text-white/50">SLA breach risk / high value</p>
+            <p className="mt-1 text-[11.5px] text-[#A7B2C2]">SLA breach risk / high value</p>
           </div>
-          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-rose-400">
+          <div className="mt-3 pt-2.5 border-t border-white/[0.06] text-[11px] font-mono text-rose-400">
             Action Required
           </div>
         </div>
@@ -323,7 +331,7 @@ function EnterpriseCasesWorkbench() {
       {/* ======================================================== */}
       {/* 4. STATUS PILLS & FILTER BAR                             */}
       {/* ======================================================== */}
-      <div className="flex flex-col gap-3 rounded-2xl border border-white/[0.08] bg-[#0E121D] p-4">
+      <div className="flex flex-col gap-3 rounded-2xl glass-panel p-4 shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {QUICK_STATUS_TABS.map((statusTab) => {
             const isActive = filters.status === statusTab;
@@ -339,16 +347,16 @@ function EnterpriseCasesWorkbench() {
                     status: statusTab,
                   }))
                 }
-                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors shrink-0 flex items-center gap-2 ${
+                className={`rounded-xl px-3 py-1.5 text-xs font-medium transition-all shrink-0 flex items-center gap-2 ${
                   isActive
-                    ? "bg-white text-black font-semibold shadow-xs"
-                    : "bg-white/[0.03] border border-white/[0.06] text-white/60 hover:text-white hover:bg-white/[0.06]"
+                    ? "bg-[#3B82F6] text-white font-semibold shadow-xs"
+                    : "bg-[#1B2634]/60 border border-white/[0.08] text-[#A7B2C2] hover:text-[#F5F7FA] hover:bg-[#1B2634]"
                 }`}
               >
                 <span>{statusTab}</span>
                 <span
-                  className={`font-mono text-[10.5px] tabular-nums rounded px-1.5 py-0.2 ${
-                    isActive ? "bg-black/10 text-black font-bold" : "text-white/40"
+                  className={`font-mono text-[10.5px] tabular-nums rounded-full px-1.5 py-0.2 ${
+                    isActive ? "bg-black/20 text-white font-bold" : "text-[#718096]"
                   }`}
                 >
                   {count}
@@ -359,7 +367,7 @@ function EnterpriseCasesWorkbench() {
         </div>
 
         {/* Search & Secondary Filter Dropdowns */}
-        <div className="pt-2 border-t border-white/[0.06]">
+        <div className="pt-2 border-t border-white/[0.08]">
           <CaseFilters state={filters} onChange={setFilters} />
         </div>
       </div>
@@ -367,7 +375,7 @@ function EnterpriseCasesWorkbench() {
       {/* ======================================================== */}
       {/* 5. INVESTIGATION ROSTER TABLE                            */}
       {/* ======================================================== */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[#0E121D] shadow-xs overflow-hidden">
+      <div className="rounded-2xl glass-panel shadow-[0_12px_40px_rgba(0,0,0,0.22)] overflow-hidden">
         <CaseTable cases={filteredCases} />
       </div>
     </div>

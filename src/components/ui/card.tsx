@@ -4,11 +4,19 @@ import { cn } from "@/lib/utils";
 export function Card({
   className,
   hover = false,
+  glass = true,
   ...props
-}: ComponentPropsWithRef<"div"> & { hover?: boolean }) {
+}: ComponentPropsWithRef<"div"> & { hover?: boolean; glass?: boolean }) {
   return (
     <div
-      className={cn("rg-card", hover && "rg-card-hover", className)}
+      className={cn(
+        "relative rounded-2xl border transition-all duration-200",
+        glass
+          ? "border-white/[0.09] bg-[#151D28]/70 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.18)]"
+          : "border-white/[0.09] bg-[#151D28] shadow-sm",
+        hover && "hover:border-white/[0.18] hover:bg-[#1B2532]/80 hover:shadow-[0_8px_32px_rgba(0,0,0,0.28)]",
+        className
+      )}
       {...props}
     />
   );
@@ -22,7 +30,7 @@ export function CardHeader({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-start justify-between gap-3 px-5 pb-3 pt-4.5",
+        "flex flex-wrap items-start justify-between gap-3 px-6 pb-3 pt-5 border-b border-white/[0.06]",
         className,
       )}
       {...props}
@@ -40,7 +48,7 @@ export function CardTitle({
   return (
     <h2
       className={cn(
-        "text-[14.5px] font-semibold tracking-[-0.011em] text-fg",
+        "text-[15px] font-semibold tracking-[-0.011em] text-[#F4F7FB]",
         className,
       )}
       {...props}
@@ -57,7 +65,7 @@ export function CardDescription({
 }: ComponentPropsWithRef<"p">) {
   return (
     <p
-      className={cn("mt-1 text-[12.5px] leading-relaxed text-subtle", className)}
+      className={cn("mt-1 text-[12.5px] leading-relaxed text-[#A3AFBF]", className)}
       {...props}
     >
       {children}
@@ -69,7 +77,7 @@ export function CardContent({
   className,
   ...props
 }: ComponentPropsWithRef<"div">) {
-  return <div className={cn("px-5 pb-5", className)} {...props} />;
+  return <div className={cn("p-6", className)} {...props} />;
 }
 
 /** Header block used across dashboard and record pages. */

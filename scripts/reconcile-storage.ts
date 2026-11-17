@@ -18,8 +18,10 @@ async function main() {
   console.log(`Files on Disk:           ${report.totalFilesOnDisk}`);
   console.log(`Database Records:        ${report.totalRecordsInDb}`);
   console.log(`Verified Matching:       ${report.verifiedMatchingCount}`);
+  console.log(`  - Original Uploads:    ${report.originalUploadsVerifiedCount}`);
+  console.log(`  - Synthetic Fixtures:  ${report.syntheticFixturesCount}`);
+  console.log(`Missing Originals:       ${report.missingFiles.length}`);
   console.log(`Orphan Files on Disk:    ${report.orphanFiles.length}`);
-  console.log(`Missing from Disk:       ${report.missingFiles.length}`);
   console.log(`Hash Mismatches:         ${report.hashMismatches.length}`);
   console.log(`Stale Temp Cleaned:      ${report.staleTempFilesCleaned}`);
   console.log(`\nReconciliation Status:   ${report.status}`);

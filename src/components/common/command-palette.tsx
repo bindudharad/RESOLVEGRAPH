@@ -10,7 +10,6 @@ import {
   HelpCircle,
   Home,
   Inbox,
-  LayoutDashboard,
   Library,
   Plus,
   Search,
@@ -191,7 +190,7 @@ export function CommandPalette({ open, onClose, onOpenChange, onCreateCase }: Co
       const matchCat = item.category.toLowerCase().includes(q);
       return matchTitle || matchSubtitle || matchCat;
     });
-  }, [query, cases, onClose, onCreateCase]);
+  }, [query, cases, onClose, onCreateCase, handleClose]);
 
   // Derive clamped safe index during render (no effect needed)
   const safeIndex = items.length === 0 ? 0 : Math.min(selectedIndex, items.length - 1);

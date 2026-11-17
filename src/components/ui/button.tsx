@@ -16,27 +16,27 @@ export type ButtonSize = "sm" | "md" | "lg" | "icon" | "icon-sm";
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
-    "bg-[var(--accent)] text-white border border-transparent shadow-[0_1px_2px_rgba(14,18,32,0.12)] hover:bg-[#3743C9] active:bg-[#2C36A8] font-medium",
+    "bg-[#3B82F6] text-white border border-[#3B82F6]/30 shadow-[0_2px_12px_rgba(59,130,246,0.30)] hover:bg-[#60A5FA] active:bg-[#2563EB] font-semibold",
   secondary:
-    "bg-[var(--surface-2)] text-[var(--ink)] border border-[var(--line)] hover:bg-[var(--line)] hover:text-[var(--ink)]",
+    "bg-[#151D28]/80 text-[#F4F7FB] border border-white/[0.09] hover:bg-[#1B2532] hover:border-white/[0.16] shadow-xs",
   outline:
-    "bg-transparent text-[var(--ink-2)] border border-[var(--line)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)]",
+    "bg-transparent text-[#A3AFBF] border border-white/[0.09] hover:text-[#F4F7FB] hover:bg-white/[0.04] hover:border-white/[0.16]",
   ghost:
-    "bg-transparent text-[var(--ink-2)] border border-transparent hover:text-[var(--ink)] hover:bg-[var(--surface-2)]",
+    "bg-transparent text-[#A3AFBF] border border-transparent hover:text-[#F4F7FB] hover:bg-white/[0.04]",
   subtle:
-    "bg-[var(--surface)] text-[var(--ink-2)] border border-[var(--line)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)]",
+    "bg-[#151D28]/60 text-[#A3AFBF] border border-white/[0.08] hover:text-[#F4F7FB] hover:bg-[#1B2532]/70",
   financial:
-    "bg-[var(--payment)] text-white border border-transparent shadow-sm hover:opacity-90 active:scale-[0.99]",
+    "bg-[#3B82F6] text-white border border-[#3B82F6]/40 shadow-[0_2px_12px_rgba(59,130,246,0.30)] hover:bg-[#60A5FA] active:scale-[0.99]",
   danger:
-    "bg-[var(--danger)] text-white border border-transparent hover:opacity-90 active:scale-[0.99]",
+    "bg-[#EF4444] text-white border border-[#EF4444]/40 hover:bg-[#DC2626] active:scale-[0.99] shadow-[0_2px_12px_rgba(239,68,68,0.25)]",
 };
 
 const SIZES: Record<ButtonSize, string> = {
-  sm: "h-8 px-2.5 text-[12px] gap-1.5 rounded-lg",
-  md: "h-9 px-3.5 text-[13px] gap-2 rounded-lg",
-  lg: "h-10 px-4 text-[14px] gap-2 rounded-lg",
-  icon: "h-9 w-9 rounded-lg",
-  "icon-sm": "h-8 w-8 rounded-lg",
+  sm: "h-8 px-3 text-[12px] gap-1.5 rounded-xl",
+  md: "h-9 px-3.5 text-[13px] gap-2 rounded-xl",
+  lg: "h-10 px-4.5 text-[14px] gap-2 rounded-xl font-medium",
+  icon: "h-9 w-9 rounded-xl",
+  "icon-sm": "h-8 w-8 rounded-xl",
 };
 
 export interface ButtonProps extends ComponentPropsWithRef<"button"> {

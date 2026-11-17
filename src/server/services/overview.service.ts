@@ -229,7 +229,7 @@ export class OverviewService {
         berrFindings: true,
         canonicalTransactions: true,
         sellerIdentityMatches: { include: { matchedSeller: true }, take: 1 },
-        sellerEvidenceRequests: { take: 1 },
+        sellerEvidenceRequests: { include: { seller: true }, take: 1 },
         resolutionProposals: { take: 2, orderBy: { createdAt: "desc" } },
         assignedManager: true,
       },
@@ -575,7 +575,7 @@ export class OverviewService {
     });
 
     // 6b. Build Cases Requiring Attention table
-    const casesRequiringAttention: CaseRequiringAttentionRow[] = casesInScope.slice(0, 8).map((c: any) => {
+    const casesRequiringAttention: CaseRequiringAttentionRow[] = casesInScope.slice(0, 8).map((c) => {
       const descMeta = (c.description || "").match(
         /\[Platform:\s*([^|]+)\s*\|\s*Order ID:\s*([^|]+)\s*\|\s*Product:\s*([^|]+)\s*\|\s*Category:\s*([^\]]+)\]/i
       );
@@ -584,7 +584,7 @@ export class OverviewService {
       const seller =
         c.sellerIdentityMatches?.[0]?.matchedSeller?.legalName ||
         c.sellerIdentityMatches?.[0]?.extractedLegalName ||
-        c.sellerEvidenceRequests?.[0]?.merchantName ||
+        c.sellerEvidenceRequests?.[0]?.seller?.legalName ||
         c.merchant?.fullName ||
         "Identified Seller";
 
@@ -593,7 +593,7 @@ export class OverviewService {
         actionRequired = "Awaiting Seller Evidence";
       } else if (c.status === CaseStatus.UNDER_ANALYSIS) {
         actionRequired = "Evaluate Discrepancy";
-      } else if (c.resolutionProposals?.some((p: any) => p.status === "PROPOSED")) {
+      } else if (c.resolutionProposals?.some((p) => p.status === "PROPOSED")) {
         actionRequired = "Dual-Key Approval Needed";
       } else if (c.status === CaseStatus.IN_REVIEW) {
         actionRequired = "Remedy Authorization";

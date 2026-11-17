@@ -10,6 +10,15 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  async redirects() {
+    return [
+      {
+        source: "/package-passport",
+        destination: "/packages",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

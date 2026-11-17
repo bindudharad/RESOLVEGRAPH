@@ -11,14 +11,9 @@ import {
   Eye,
   Inbox,
   RotateCcw,
-  SlidersHorizontal,
   CheckSquare,
   Square,
-  Layers,
   ArrowRight,
-  ShieldCheck,
-  Clock,
-  Sparkles,
 } from "lucide-react";
 import { useMemo, useState, useEffect } from "react";
 import { CaseStatusBadge } from "@/components/cases/case-status-badge";
@@ -26,7 +21,6 @@ import { PriorityBadge } from "@/components/cases/priority-badge";
 import { DemoBadge } from "@/components/common/demo-badge";
 import { EmptyState } from "@/components/common/empty-state";
 import { Button } from "@/components/ui/button";
-import { Chip } from "@/components/ui/chip";
 import { SlideOver } from "@/components/ui/slide-over";
 import { toast } from "@/components/common/toast";
 import {
@@ -37,7 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn, formatCurrency, formatDate, relativeAge } from "@/lib/utils";
+import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import type { ResolutionCase } from "@/lib/types";
 
 type SortKey =
@@ -184,20 +178,20 @@ export function CaseTable({
   }
 
   return (
-    <div className={cn("relative overflow-hidden rounded-lg border border-line bg-surface", className)}>
+    <div className={cn("relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#151F2B]/70 backdrop-blur-xl shadow-[0_12px_40px_rgba(0,0,0,0.22)]", className)}>
       <div className="overflow-x-auto">
         <Table className="min-w-[1040px]">
           <TableHeader>
-            <tr className="h-11 border-b border-line bg-surface-2 text-[12px] font-medium text-subtle">
+            <tr className="sticky top-0 z-10 h-11 border-b border-white/[0.08] bg-[#111923]/90 backdrop-blur-md text-[11px] font-mono uppercase tracking-wider text-[#748195]">
               <th className="w-10 px-3 text-center">
                 <button
                   type="button"
                   onClick={toggleSelectAll}
                   aria-label="Select all visible"
-                  className="inline-flex items-center text-muted hover:text-fg"
+                  className="inline-flex items-center text-[#748195] hover:text-[#F5F7FA]"
                 >
                   {selectedIds.size === visible.length && visible.length > 0 ? (
-                    <CheckSquare className="h-4 w-4 text-[var(--accent)]" />
+                    <CheckSquare className="h-4 w-4 text-[#3B82F6]" />
                   ) : (
                     <Square className="h-4 w-4" />
                   )}
@@ -212,23 +206,23 @@ export function CaseTable({
                     aria-sort={
                       active ? (sort.dir === "asc" ? "ascending" : "descending") : "none"
                     }
-                    className="py-2.5 px-3"
+                    className="py-3 px-3 font-semibold"
                   >
                     <button
                       type="button"
                       onClick={() => toggleSort(column.key)}
                       className={cn(
-                        "inline-flex items-center gap-1.5 rounded transition-colors hover:text-fg text-subtle",
-                        active && "text-fg font-semibold",
+                        "inline-flex items-center gap-1.5 rounded transition-colors text-[#748195] hover:text-[#F5F7FA]",
+                        active && "text-[#F5F7FA] font-semibold",
                         column.align === "right" && "flex-row-reverse",
                       )}
                     >
                       <span>{column.label}</span>
                       {active ? (
                         sort.dir === "asc" ? (
-                          <ArrowUp className="h-3 w-3 text-[var(--accent)]" />
+                          <ArrowUp className="h-3 w-3 text-[#3B82F6]" />
                         ) : (
-                          <ArrowDown className="h-3 w-3 text-[var(--accent)]" />
+                          <ArrowDown className="h-3 w-3 text-[#3B82F6]" />
                         )
                       ) : (
                         <ArrowUpDown className="h-3 w-3 opacity-30" />
@@ -237,7 +231,7 @@ export function CaseTable({
                   </TableHead>
                 );
               })}
-              <TableHead align="right" className="pr-4 py-2.5">
+              <TableHead align="right" className="pr-4 py-3 font-semibold">
                 Actions
               </TableHead>
             </tr>
@@ -257,19 +251,19 @@ export function CaseTable({
                   }}
                   tabIndex={0}
                   className={cn(
-                    "group h-11 cursor-pointer transition-colors border-b border-line hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--accent)]",
-                    isSelected && "bg-[color-mix(in_srgb,var(--accent)_8%,transparent)]",
-                    isCanonical && "border-l-2 border-l-[var(--buyer)]",
+                    "group h-12 cursor-pointer transition-colors border-b border-white/[0.05] hover:bg-white/[0.03] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#3B82F6]",
+                    isSelected && "bg-[#3B82F6]/10",
+                    isCanonical && "border-l-2 border-l-[#3B82F6]",
                   )}
                 >
                   <TableCell className="w-10 px-3 text-center" onClick={(e) => toggleSelectRow(item.id, e)}>
                     <button
                       type="button"
                       aria-label={`Select ${item.id}`}
-                      className="inline-flex items-center text-muted hover:text-fg"
+                      className="inline-flex items-center text-[#748195] hover:text-[#F5F7FA]"
                     >
                       {isSelected ? (
-                        <CheckSquare className="h-4 w-4 text-[var(--accent)]" />
+                        <CheckSquare className="h-4 w-4 text-[#3B82F6]" />
                       ) : (
                         <Square className="h-4 w-4" />
                       )}
@@ -281,37 +275,37 @@ export function CaseTable({
                       <Link
                         href={`/cases/${item.id}`}
                         onClick={(event) => event.stopPropagation()}
-                        className="font-medium text-fg underline-offset-2 transition-colors hover:text-[var(--accent)] hover:underline"
+                        className="font-bold text-[#3B82F6] hover:text-[#60A5FA] underline-offset-2 transition-colors hover:underline"
                       >
                         {item.id}
                       </Link>
                       {item.ephemeral ? <DemoBadge size="xs" /> : null}
                       {isCanonical ? (
-                        <span className="rounded bg-[color-mix(in_srgb,var(--buyer)_12%,transparent)] px-1 py-0.2 text-[9.5px] font-medium text-[var(--buyer)] uppercase tracking-wider">
-                          Demo Story
+                        <span className="rounded-full bg-[#3B82F6]/15 border border-[#3B82F6]/30 px-2 py-0.5 text-[9.5px] font-mono font-semibold text-[#60A5FA] uppercase tracking-wider">
+                          Canonical
                         </span>
                       ) : null}
                     </span>
                   </TableCell>
 
-                  <TableCell className="whitespace-nowrap px-3 text-[13px] text-fg font-medium">
+                  <TableCell className="whitespace-nowrap px-3 text-[13px] text-[#F5F7FA] font-medium">
                     {item.customer}
                   </TableCell>
 
-                  <TableCell className="whitespace-nowrap px-3 text-[12.5px] text-muted">
+                  <TableCell className="whitespace-nowrap px-3 text-[12.5px] text-[#A7B2C2]">
                     {item.merchant}
                   </TableCell>
 
                   <TableCell className="max-w-[220px] px-3">
                     <span
-                      className="block truncate text-[12.5px] text-muted"
+                      className="block truncate text-[12.5px] text-[#A7B2C2]"
                       title={item.title || item.category}
                     >
                       {item.title || item.category}
                     </span>
                   </TableCell>
 
-                  <TableCell className="whitespace-nowrap px-3 text-right font-mono text-[12.5px] font-semibold text-fg">
+                  <TableCell className="whitespace-nowrap px-3 text-right font-mono text-[12.5px] font-semibold text-[#F5F7FA]">
                     {formatCurrency(item.amount, item.currency)}
                   </TableCell>
 
@@ -323,12 +317,12 @@ export function CaseTable({
                     <PriorityBadge priority={item.priority} />
                   </TableCell>
 
-                  <TableCell className="whitespace-nowrap px-3 font-mono text-[11.5px] text-subtle">
+                  <TableCell className="whitespace-nowrap px-3 font-mono text-[11.5px] text-[#748195]">
                     <span>{formatDate(item.updatedAt)}</span>
                   </TableCell>
 
                   <TableCell className="text-right pr-4">
-                    <div className="inline-flex items-center gap-1">
+                    <div className="inline-flex items-center gap-1.5">
                       <button
                         type="button"
                         onClick={(e) => {
@@ -336,16 +330,16 @@ export function CaseTable({
                           setPeekCase(item);
                         }}
                         title="Quick peek (or hit Space)"
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-line text-muted transition-colors hover:border-line-strong hover:bg-surface-2 hover:text-fg"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/[0.08] bg-[#151F2B]/80 text-[#A7B2C2] transition-colors hover:border-white/[0.18] hover:bg-[#1B2634] hover:text-[#F5F7FA]"
                       >
                         <Eye className="h-3.5 w-3.5" />
                       </button>
                       <Link
                         href={`/cases/${item.id}`}
                         onClick={(event) => event.stopPropagation()}
-                        className="inline-flex h-7 items-center gap-1 rounded-md border border-line px-2 text-[11.5px] font-medium text-muted transition-colors hover:border-[var(--accent)] hover:text-fg"
+                        className="inline-flex h-7 items-center gap-1 rounded-lg border border-[#3B82F6]/30 bg-[#3B82F6]/10 px-2.5 text-[11.5px] font-medium text-[#60A5FA] transition-colors hover:bg-[#3B82F6]/25 hover:text-white"
                       >
-                        <span>Open</span>
+                        <span>Investigate</span>
                         <ArrowRight className="h-3 w-3" />
                       </Link>
                     </div>
