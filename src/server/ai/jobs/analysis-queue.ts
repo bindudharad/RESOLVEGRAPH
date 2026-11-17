@@ -13,7 +13,13 @@ export class AnalysisQueue {
     analysisType?: string;
   }) {
     const provider = params.provider || process.env.AI_PROVIDER || 'test';
-    const model = params.model || (provider === 'openai' ? (process.env.OPENAI_MODEL || 'gpt-4o-mini') : 'deterministic-mock-v1');
+    const model = params.model || (
+      provider === 'openai'
+        ? (process.env.OPENAI_MODEL || 'gpt-4o-mini')
+        : provider === 'gemini'
+        ? (process.env.GEMINI_TEXT_MODEL || 'gemini-3.5-flash-lite')
+        : 'deterministic-mock-v1'
+    );
 
     const run = await prisma.aIAnalysisRun.create({
       data: {

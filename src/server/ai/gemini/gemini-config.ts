@@ -18,9 +18,9 @@ import { GeminiIntegrationError } from './gemini-errors';
  * - gemini-3.5-flash-lite: Verified for text, image, and video.
  * - gemini-3.1-flash-lite: Verified for text.
  */
-export const DEFAULT_GEMINI_VISION_MODEL = 'gemini-3.6-flash';
-export const DEFAULT_GEMINI_VIDEO_MODEL = 'gemini-3.6-flash';
-export const DEFAULT_GEMINI_TEXT_MODEL = 'gemini-3.6-flash';
+export const DEFAULT_GEMINI_VISION_MODEL = 'gemini-3.5-flash-lite';
+export const DEFAULT_GEMINI_VIDEO_MODEL = 'gemini-3.5-flash-lite';
+export const DEFAULT_GEMINI_TEXT_MODEL = 'gemini-3.5-flash-lite';
 
 export const DEFAULT_GEMINI_TIMEOUT_MS = 25_000;
 

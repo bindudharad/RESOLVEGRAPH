@@ -64,13 +64,15 @@ export async function GET() {
       (aiProvider === 'gemini' && hasGeminiKey) ||
       (aiProvider === 'openai' && hasOpenAiKey);
 
-    let aiMode: 'LIVE_AI' | 'DETERMINISTIC' | 'TEST_MOCK' | 'DISABLED' = 'DETERMINISTIC';
+    let aiMode: 'LIVE_AI' | 'DETERMINISTIC' | 'TEST_MOCK' | 'DISABLED' | 'DEGRADED' = 'DETERMINISTIC';
     if (!aiEnabled) {
       aiMode = 'DISABLED';
     } else if (aiProvider === 'mock' || process.env.NODE_ENV === 'test') {
       aiMode = 'TEST_MOCK';
     } else if (hasLiveKey) {
       aiMode = 'LIVE_AI';
+    } else if ((aiProvider === 'gemini' && !hasGeminiKey) || (aiProvider === 'openai' && !hasOpenAiKey)) {
+      aiMode = 'DEGRADED';
     } else {
       aiMode = 'DETERMINISTIC';
     }
