@@ -1,0 +1,98 @@
+[
+  {
+    "role": "UNAUTHENTICATED",
+    "targetRoute": "/overview",
+    "finalUrl": "http://localhost:3000/sign-in?callbackUrl=%2Foverview",
+    "httpStatus": 200,
+    "accessBlocked": true,
+    "verdict": "PASS: Redirected to login"
+  },
+  {
+    "role": "UNAUTHENTICATED",
+    "targetRoute": "/cases",
+    "finalUrl": "http://localhost:3000/sign-in?callbackUrl=%2Fcases",
+    "httpStatus": 200,
+    "accessBlocked": true,
+    "verdict": "PASS: Redirected to login"
+  },
+  {
+    "role": "UNAUTHENTICATED",
+    "targetRoute": "/cases/RG-1001",
+    "finalUrl": "http://localhost:3000/sign-in?callbackUrl=%2Fcases%2FRG-1001",
+    "httpStatus": 200,
+    "accessBlocked": true,
+    "verdict": "PASS: Redirected to login"
+  },
+  {
+    "role": "UNAUTHENTICATED",
+    "targetRoute": "/admin/security",
+    "finalUrl": "http://localhost:3000/sign-in?callbackUrl=%2Fadmin%2Fsecurity",
+    "httpStatus": 200,
+    "accessBlocked": true,
+    "verdict": "PASS: Redirected to login"
+  },
+  {
+    "role": "UNAUTHENTICATED",
+    "targetRoute": "/seller",
+    "finalUrl": "http://localhost:3000/sign-in?callbackUrl=%2Fseller",
+    "httpStatus": 200,
+    "accessBlocked": true,
+    "verdict": "PASS: Redirected to login"
+  },
+  {
+    "role": "UNAUTHENTICATED",
+    "targetRoute": "/purchases",
+    "finalUrl": "http://localhost:3000/sign-in?callbackUrl=%2Fpurchases",
+    "httpStatus": 200,
+    "accessBlocked": true,
+    "verdict": "PASS: Redirected to login"
+  },
+  {
+    "role": "BUYER",
+    "targetRoute": "/admin/security",
+    "finalUrl": "http://localhost:3000/access-denied",
+    "httpStatus": 200,
+    "accessBlocked": true,
+    "verdict": "PASS: Forbidden route prevented"
+  },
+  {
+    "role": "BUYER",
+    "targetRoute": "/seller",
+    "finalUrl": "http://localhost:3000/seller",
+    "httpStatus": 200,
+    "accessBlocked": false,
+    "verdict": "FAIL: Restricted route accessed"
+  },
+  {
+    "role": "BUYER",
+    "targetRoute": "/seller/requests",
+    "finalUrl": "http://localhost:3000/seller/requests",
+    "httpStatus": 200,
+    "accessBlocked": false,
+    "verdict": "FAIL: Restricted route accessed"
+  },
+  {
+    "role": "MERCHANT",
+    "targetRoute": "/admin/security",
+    "finalUrl": "http://localhost:3000/access-denied",
+    "httpStatus": 200,
+    "accessBlocked": true,
+    "verdict": "PASS: Forbidden route prevented"
+  },
+  {
+    "role": "MERCHANT",
+    "targetRoute": "/purchases",
+    "finalUrl": "http://localhost:3000/purchases",
+    "httpStatus": 200,
+    "accessBlocked": false,
+    "verdict": "FAIL: Restricted route accessed"
+  },
+  {
+    "role": "MERCHANT",
+    "targetRoute": "/intake",
+    "finalUrl": "http://localhost:3000/intake",
+    "httpStatus": 200,
+    "accessBlocked": false,
+    "verdict": "FAIL: Restricted route accessed"
+  }
+]

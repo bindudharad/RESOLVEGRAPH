@@ -1,0 +1,314 @@
+[
+  {
+    "viewport": "desktop-1080p",
+    "dimensions": "1920x1080",
+    "page": "overview",
+    "route": "/overview",
+    "screenshot": "MOB-desktop-1080p-overview.png",
+    "metrics": {
+      "docWidth": 1920,
+      "scrollWidth": 1920,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "desktop-1080p",
+    "dimensions": "1920x1080",
+    "page": "dossier-RG1001",
+    "route": "/cases/RG-1001",
+    "screenshot": "MOB-desktop-1080p-dossier-RG1001.png",
+    "metrics": {
+      "docWidth": 1920,
+      "scrollWidth": 1920,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "desktop-1080p",
+    "dimensions": "1920x1080",
+    "page": "buyer-intake",
+    "route": "/intake",
+    "screenshot": "MOB-desktop-1080p-buyer-intake.png",
+    "metrics": {
+      "docWidth": 1920,
+      "scrollWidth": 1920,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "desktop-1080p",
+    "dimensions": "1920x1080",
+    "page": "seller-dashboard",
+    "route": "/seller",
+    "screenshot": "MOB-desktop-1080p-seller-dashboard.png",
+    "metrics": {
+      "docWidth": 1920,
+      "scrollWidth": 1920,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "laptop-900p",
+    "dimensions": "1440x900",
+    "page": "overview",
+    "route": "/overview",
+    "screenshot": "MOB-laptop-900p-overview.png",
+    "metrics": {
+      "docWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "laptop-900p",
+    "dimensions": "1440x900",
+    "page": "dossier-RG1001",
+    "route": "/cases/RG-1001",
+    "screenshot": "MOB-laptop-900p-dossier-RG1001.png",
+    "metrics": {
+      "docWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "laptop-900p",
+    "dimensions": "1440x900",
+    "page": "buyer-intake",
+    "route": "/intake",
+    "screenshot": "MOB-laptop-900p-buyer-intake.png",
+    "metrics": {
+      "docWidth": 1440,
+      "scrollWidth": 1460,
+      "hasHorizontalScroll": true,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "laptop-900p",
+    "dimensions": "1440x900",
+    "page": "seller-dashboard",
+    "route": "/seller",
+    "screenshot": "MOB-laptop-900p-seller-dashboard.png",
+    "metrics": {
+      "docWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "compact-800p",
+    "dimensions": "1280x800",
+    "page": "overview",
+    "route": "/overview",
+    "screenshot": "MOB-compact-800p-overview.png",
+    "metrics": {
+      "docWidth": 1280,
+      "scrollWidth": 1280,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "compact-800p",
+    "dimensions": "1280x800",
+    "page": "dossier-RG1001",
+    "route": "/cases/RG-1001",
+    "screenshot": "MOB-compact-800p-dossier-RG1001.png",
+    "metrics": {
+      "docWidth": 1280,
+      "scrollWidth": 1280,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "compact-800p",
+    "dimensions": "1280x800",
+    "page": "buyer-intake",
+    "route": "/intake",
+    "screenshot": "MOB-compact-800p-buyer-intake.png",
+    "metrics": {
+      "docWidth": 1280,
+      "scrollWidth": 1342,
+      "hasHorizontalScroll": true,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "compact-800p",
+    "dimensions": "1280x800",
+    "page": "seller-dashboard",
+    "route": "/seller",
+    "screenshot": "MOB-compact-800p-seller-dashboard.png",
+    "metrics": {
+      "docWidth": 1280,
+      "scrollWidth": 1280,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "tablet-landscape",
+    "dimensions": "1024x768",
+    "page": "overview",
+    "route": "/overview",
+    "screenshot": "MOB-tablet-landscape-overview.png",
+    "metrics": {
+      "docWidth": 1024,
+      "scrollWidth": 1024,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "tablet-landscape",
+    "dimensions": "1024x768",
+    "page": "dossier-RG1001",
+    "route": "/cases/RG-1001",
+    "screenshot": "MOB-tablet-landscape-dossier-RG1001.png",
+    "metrics": {
+      "docWidth": 1024,
+      "scrollWidth": 1024,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "tablet-landscape",
+    "dimensions": "1024x768",
+    "page": "buyer-intake",
+    "route": "/intake",
+    "screenshot": "MOB-tablet-landscape-buyer-intake.png",
+    "metrics": {
+      "docWidth": 1024,
+      "scrollWidth": 1121,
+      "hasHorizontalScroll": true,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "tablet-landscape",
+    "dimensions": "1024x768",
+    "page": "seller-dashboard",
+    "route": "/seller",
+    "screenshot": "MOB-tablet-landscape-seller-dashboard.png",
+    "metrics": {
+      "docWidth": 1024,
+      "scrollWidth": 1024,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "tablet-portrait",
+    "dimensions": "768x1024",
+    "page": "overview",
+    "route": "/overview",
+    "screenshot": "MOB-tablet-portrait-overview.png",
+    "metrics": {
+      "docWidth": 768,
+      "scrollWidth": 768,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "tablet-portrait",
+    "dimensions": "768x1024",
+    "page": "dossier-RG1001",
+    "route": "/cases/RG-1001",
+    "screenshot": "MOB-tablet-portrait-dossier-RG1001.png",
+    "metrics": {
+      "docWidth": 768,
+      "scrollWidth": 768,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "tablet-portrait",
+    "dimensions": "768x1024",
+    "page": "buyer-intake",
+    "route": "/intake",
+    "screenshot": "MOB-tablet-portrait-buyer-intake.png",
+    "metrics": {
+      "docWidth": 768,
+      "scrollWidth": 873,
+      "hasHorizontalScroll": true,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "tablet-portrait",
+    "dimensions": "768x1024",
+    "page": "seller-dashboard",
+    "route": "/seller",
+    "screenshot": "MOB-tablet-portrait-seller-dashboard.png",
+    "metrics": {
+      "docWidth": 768,
+      "scrollWidth": 768,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "mobile-390p",
+    "dimensions": "390x844",
+    "page": "overview",
+    "route": "/overview",
+    "screenshot": "MOB-mobile-390p-overview.png",
+    "metrics": {
+      "docWidth": 390,
+      "scrollWidth": 390,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "mobile-390p",
+    "dimensions": "390x844",
+    "page": "dossier-RG1001",
+    "route": "/cases/RG-1001",
+    "screenshot": "MOB-mobile-390p-dossier-RG1001.png",
+    "metrics": {
+      "docWidth": 390,
+      "scrollWidth": 390,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "mobile-390p",
+    "dimensions": "390x844",
+    "page": "buyer-intake",
+    "route": "/intake",
+    "screenshot": "MOB-mobile-390p-buyer-intake.png",
+    "metrics": {
+      "docWidth": 390,
+      "scrollWidth": 400,
+      "hasHorizontalScroll": true,
+      "hasMobileMenuBtn": true
+    }
+  },
+  {
+    "viewport": "mobile-390p",
+    "dimensions": "390x844",
+    "page": "seller-dashboard",
+    "route": "/seller",
+    "screenshot": "MOB-mobile-390p-seller-dashboard.png",
+    "metrics": {
+      "docWidth": 390,
+      "scrollWidth": 390,
+      "hasHorizontalScroll": false,
+      "hasMobileMenuBtn": true
+    }
+  }
+]

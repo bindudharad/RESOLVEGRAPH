@@ -1,0 +1,2189 @@
+[
+  {
+    "route": "/seller",
+    "name": "dashboard",
+    "testId": "SEL-001",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "SEL-001-dashboard-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Seller Dashboard"
+        },
+        {
+          "tag": "H2",
+          "text": "Request Summary"
+        },
+        {
+          "tag": "H2",
+          "text": "Recent Evidence Requests"
+        },
+        {
+          "tag": "H3",
+          "text": "UltraFast Portable SSD 1TB USB 3.2"
+        },
+        {
+          "tag": "H3",
+          "text": "UltraFast Portable SSD 1TB USB 3.2"
+        },
+        {
+          "tag": "H3",
+          "text": "Wrong Product Received"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "99+",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "TG TechStore Retail LLC",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "Refresh",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "View 4-Step Welcome Guide",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "Hide",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "How metrics work",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-11",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-12",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH TechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/seller"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Read Seller Guidelines & Commitments",
+          "href": "/seller/guidelines"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "Total Capture PAYPAL SANDBOX All-time captured ledger through today $84,185.21 U",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "New Requests 0 Awaiting your initial review & response",
+          "href": "/seller/requests?status=NEW"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "In Progress 0 Drafts started & pending submission",
+          "href": "/seller/requests?status=IN_PROGRESS"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Submitted 3 Responses submitted for verification",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "View All Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "View Response",
+          "href": "/seller/requests/cmwdsunv300cr14vjkpa9kdbg"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "View Response",
+          "href": "/seller/requests/cmwdstcpz000m14vjoyxxs34i"
+        },
+        {
+          "id": "link-17",
+          "type": "link",
+          "text": "View Response",
+          "href": "/seller/requests/cmwdc7dqt017cm8vjz7qjybi5"
+        },
+        {
+          "id": "link-18",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-19",
+          "type": "link",
+          "text": "Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-20",
+          "type": "link",
+          "text": "Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-21",
+          "type": "link",
+          "text": "RESOLVEGRAPHTechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-22",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-23",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-24",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-25",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-26",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [],
+      "badges": [
+        "99+",
+        "Seller Portal",
+        "PAYPAL SANDBOX",
+        "How metrics work",
+        "Submitted",
+        "Submitted",
+        "Submitted"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH TechStore Retail LLC SELLER PORTAL Dashboard Evidence Requests Submitted Responses Capture Analytics TG TechStore Global Merchant Agent TechStore Retail LLC Seller Dashboard 99+ TG TechStore Retail LLC Seller Portal TechStore Retail LLC Seller Dashboard Manage customer complaints and respond to evidence requests. Refresh Welcome to your Seller Workspace Review customer complaints linked to your business, explain your perspective, and upload relevant fulfillment or order records so both sides are considered during investigation. View 4-Step Welcome Guide • Read Seller Guidelines & Commitments Hide Total Capture PAYPAL SANDBOX All-time captured ledger through today $84,185.21 USD 949 successful captures • This month (Nov): $84,185.21 (949) View Capture Ana"
+    },
+    "interactionLogs": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/seller/requests",
+    "name": "requests",
+    "testId": "SEL-002",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "SEL-002-requests-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Evidence Requests"
+        },
+        {
+          "tag": "H2",
+          "text": "UltraFast Portable SSD 1TB USB 3.2"
+        },
+        {
+          "tag": "H2",
+          "text": "UltraFast Portable SSD 1TB USB 3.2"
+        },
+        {
+          "tag": "H2",
+          "text": "Wrong Product Received"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "99+",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "TG TechStore Retail LLC",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "Refresh",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "Hide",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "All",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "New",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "In Progress",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "Submitted",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-11",
+          "type": "button",
+          "text": "Additional Information Required",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-12",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-13",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-14",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-15",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH TechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/seller"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Seller Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "View Request",
+          "href": "/seller/requests/cmwdsunv300cr14vjkpa9kdbg"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "View Request",
+          "href": "/seller/requests/cmwdstcpz000m14vjoyxxs34i"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "View Request",
+          "href": "/seller/requests/cmwdc7dqt017cm8vjz7qjybi5"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "RESOLVEGRAPHTechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-17",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-18",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-19",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-20",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-21",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "text",
+          "name": "",
+          "placeholder": "Search by Complaint ID, Order ID, or Product name...",
+          "value": "",
+          "required": false,
+          "disabled": false
+        }
+      ],
+      "badges": [
+        "99+",
+        "All",
+        "New",
+        "In Progress",
+        "Submitted",
+        "Additional Information Required",
+        "DEMO / TEST",
+        "Submitted",
+        "DEMO / TEST",
+        "Submitted",
+        "DEMO / TEST",
+        "Submitted"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH TechStore Retail LLC SELLER PORTAL Dashboard Evidence Requests Submitted Responses Capture Analytics TG TechStore Global Merchant Agent TechStore Retail LLC Seller Dashboard Evidence Requests 99+ TG TechStore Retail LLC Evidence Requests Review customer complaints and provide the relevant supporting information. Refresh Demonstration Portal Mode: Evidence requests shown in this workspace are internal demonstration requests delivered directly to your RESOLVEGRAPH Seller Portal account. No external emails or marketplace communications are dispatched. Understanding Your Evidence Requests Each request summarizes a customer complaint associated with your store along with specific supporting items tailored to the complaint category. Only share records that actual"
+    },
+    "interactionLogs": [
+      {
+        "action": "Discovered Seller Request URLs",
+        "count": 3,
+        "urls": [
+          "/seller/requests/cmwdsunv300cr14vjkpa9kdbg",
+          "/seller/requests/cmwdstcpz000m14vjoyxxs34i",
+          "/seller/requests/cmwdc7dqt017cm8vjz7qjybi5"
+        ]
+      }
+    ],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/seller/responses",
+    "name": "responses",
+    "testId": "SEL-003",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "SEL-003-responses-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Submitted Responses"
+        },
+        {
+          "tag": "H2",
+          "text": "TODAY"
+        },
+        {
+          "tag": "H3",
+          "text": "UltraFast Portable SSD 1TB USB 3.2"
+        },
+        {
+          "tag": "H2",
+          "text": "NOVEMBER 13, 2026"
+        },
+        {
+          "tag": "H3",
+          "text": "UltraFast Portable SSD 1TB USB 3.2"
+        },
+        {
+          "tag": "H2",
+          "text": "NOVEMBER 12, 2026"
+        },
+        {
+          "tag": "H3",
+          "text": "UltraFast Portable SSD 1TB USB 3.2"
+        },
+        {
+          "tag": "H3",
+          "text": "UltraFast Portable SSD 1TB USB 3.2"
+        },
+        {
+          "tag": "H3",
+          "text": "Wrong Product Received"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "99+",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "TG TechStore Retail LLC",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "Refresh",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "Hide",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "All",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "Under Verification",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "Verified for Investigation",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "Additional Information Required",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-11",
+          "type": "button",
+          "text": "Human Review Required",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-12",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-13",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-14",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-15",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH TechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/seller"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Seller Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "View Response",
+          "href": "/seller/responses/cmwkljdqc000y0ovjar1wi346"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "View Response",
+          "href": "/seller/responses/cmwdwn8jc0009scvjkesbs9cn"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "View Response",
+          "href": "/seller/responses/cmwdsuolp00dd14vjroesnp4i"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "View Response",
+          "href": "/seller/responses/cmwdstkva003o14vjfe3bcoad"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "View Response",
+          "href": "/seller/responses/cmwdcds9h018jm8vjr3fkxp6g"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-17",
+          "type": "link",
+          "text": "Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-18",
+          "type": "link",
+          "text": "RESOLVEGRAPHTechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-19",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-20",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-21",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-22",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-23",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "text",
+          "name": "",
+          "placeholder": "Search by Complaint ID, Order ID, or Product...",
+          "value": "",
+          "required": false,
+          "disabled": false
+        }
+      ],
+      "badges": [
+        "99+",
+        "All",
+        "Under Verification",
+        "Verified for Investigation",
+        "Additional Information Required",
+        "Human Review Required",
+        "DEMO / TEST",
+        "Under Verification",
+        "DEMO / TEST",
+        "Under Verification",
+        "DEMO / TEST",
+        "Under Verification",
+        "DEMO / TEST",
+        "Under Verification",
+        "DEMO / TEST",
+        "Under Verification"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH TechStore Retail LLC SELLER PORTAL Dashboard Evidence Requests Submitted Responses Capture Analytics TG TechStore Global Merchant Agent TechStore Retail LLC Seller Dashboard Submitted Responses 99+ TG TechStore Retail LLC Submitted Responses Review previously submitted responses, attached evidence files, and their current verification status. Refresh Understanding Submitted Response Statuses Under Verification: Automated usability, extraction, and relevance checks or investigator verification are underway. Verified for Investigation: Records passed verification and are part of the bilateral investigation record. Additional Information Required: Follow-up details are requested on the open request; your previous response remains intact. Human Review Required:"
+    },
+    "interactionLogs": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/seller/guidelines",
+    "name": "guidelines",
+    "testId": "SEL-004",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "SEL-004-guidelines-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Seller Guidelines & Investigation Overview"
+        },
+        {
+          "tag": "H2",
+          "text": "Seller Guidelines"
+        },
+        {
+          "tag": "H3",
+          "text": "Respond Honestly and Constructively"
+        },
+        {
+          "tag": "H3",
+          "text": "Provide Relevant Evidence"
+        },
+        {
+          "tag": "H3",
+          "text": "Do Not Guess or Fabricate Information"
+        },
+        {
+          "tag": "H3",
+          "text": "Respect Customer Privacy"
+        },
+        {
+          "tag": "H3",
+          "text": "Follow Statuses and Respond to Follow-Ups Promptly"
+        },
+        {
+          "tag": "H3",
+          "text": "Understand Automated Verification and Human Review"
+        },
+        {
+          "tag": "H3",
+          "text": "Understand How Resolution Decisions Are Made"
+        },
+        {
+          "tag": "H3",
+          "text": "Maintain Accurate Business Profile Details"
+        },
+        {
+          "tag": "H2",
+          "text": "Our Commitments to Sellers"
+        },
+        {
+          "tag": "H3",
+          "text": "Fair Consideration"
+        },
+        {
+          "tag": "H3",
+          "text": "Evidence-Based Evaluation"
+        },
+        {
+          "tag": "H3",
+          "text": "Transparent Progress"
+        },
+        {
+          "tag": "H3",
+          "text": "Responsible Information Handling"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "99+",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "TG TechStore Retail LLC",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "Reopen Welcome Guide",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH TechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/seller"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Seller Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "Back to Seller Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Business Profile",
+          "href": "/seller/profile"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-17",
+          "type": "link",
+          "text": "RESOLVEGRAPHTechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-18",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-19",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-20",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-21",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-22",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [],
+      "badges": [
+        "99+",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH TechStore Retail LLC SELLER PORTAL Dashboard Evidence Requests Submitted Responses Capture Analytics TG TechStore Global Merchant Agent TechStore Retail LLC Seller Dashboard Seller Guidelines 99+ TG TechStore Retail LLC Back to Seller Dashboard Seller Guidelines & Investigation Overview Your business deserves to be heard. RESOLVEGRAPH helps buyers and sellers resolve purchase-related disputes through transparent communication, relevant evidence and a structured investigation process. Reopen Welcome Guide Seller Guidelines Practical practices that help investigation teams review your response accurately. 1 Respond Honestly and Constructively Review the customer's concern carefully and share clear, factual context. Choose Agree, Disagree, or Clarification On"
+    },
+    "interactionLogs": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/seller/directory",
+    "name": "directory",
+    "testId": "SEL-005",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "SEL-005-directory-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Seller Directory"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "99+",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "TG TechStore Retail LLC",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "Refresh",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "Add Seller Entry",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "ALL",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "REGISTERED",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "UNREGISTERED",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "INACTIVE",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-11",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-12",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-13",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-14",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH TechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/seller"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Overview",
+          "href": "/overview"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Seller Outreach",
+          "href": "/seller"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "RESOLVEGRAPHTechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-17",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-18",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-19",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "text",
+          "name": "",
+          "placeholder": "Search legal name, storefront, GSTIN, or state...",
+          "value": "",
+          "required": false,
+          "disabled": false
+        }
+      ],
+      "badges": [
+        "99+",
+        "ALL",
+        "REGISTERED",
+        "UNREGISTERED",
+        "INACTIVE"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH TechStore Retail LLC SELLER PORTAL Dashboard Evidence Requests Submitted Responses Capture Analytics TG TechStore Global Merchant Agent TechStore Retail LLC Overview Seller Outreach directory 99+ TG TechStore Retail LLC CENTRAL IDENTITY GOVERNANCE Seller Directory Distinguishes unverified sellers extracted from buyer invoices from verified merchant organizations registered on RESOLVEGRAPH. Refresh Add Seller Entry Forbidden: Investigator or Admin permissions required. ALL REGISTERED UNREGISTERED INACTIVE No matching sellers in directory."
+    },
+    "interactionLogs": [],
+    "consoleErrors": [
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      },
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      }
+    ],
+    "networkErrors": [
+      {
+        "url": "http://localhost:3000/api/seller/directory?",
+        "status": 403
+      },
+      {
+        "url": "http://localhost:3000/api/seller/directory?",
+        "status": 403
+      }
+    ]
+  },
+  {
+    "route": "/seller/profile",
+    "name": "profile",
+    "testId": "SEL-006",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "SEL-006-profile-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "TechStore Official"
+        },
+        {
+          "tag": "H2",
+          "text": "Registered Legal & Tax Identity"
+        },
+        {
+          "tag": "H2",
+          "text": "Storefront & Contact Information"
+        },
+        {
+          "tag": "H2",
+          "text": "Linked Marketplace Storefronts (2)"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "99+",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "TG TechStore Retail LLC",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "Save Profile Changes",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "Link Marketplace",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH TechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/seller"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Seller Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "Back to Seller Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "RESOLVEGRAPHTechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-17",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-18",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-19",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "text",
+          "name": "",
+          "placeholder": "",
+          "value": "TechStore Retail Private Limited",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-1",
+          "type": "text",
+          "name": "",
+          "placeholder": "15-character GSTIN",
+          "value": "29AABCT1234E1Z5",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-2",
+          "type": "text",
+          "name": "",
+          "placeholder": "",
+          "value": "TechStore Official",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-3",
+          "type": "text",
+          "name": "",
+          "placeholder": "e.g., Private Limited, Sole Proprietorship",
+          "value": "Private Limited Commerce Entity",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-4",
+          "type": "email",
+          "name": "",
+          "placeholder": "",
+          "value": "disputes@techstore.demo",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-5",
+          "type": "text",
+          "name": "",
+          "placeholder": "",
+          "value": "",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-6",
+          "type": "textarea",
+          "name": "",
+          "placeholder": "",
+          "value": "Bengaluru Fulfillment Hub, Karnataka",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-7",
+          "type": "text",
+          "name": "",
+          "placeholder": "",
+          "value": "Karnataka",
+          "required": false,
+          "disabled": false
+        }
+      ],
+      "badges": [
+        "99+",
+        "Verified",
+        "Verified",
+        "Pending"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH TechStore Retail LLC SELLER PORTAL Dashboard Evidence Requests Submitted Responses Capture Analytics TG TechStore Global Merchant Agent TechStore Retail LLC Seller Dashboard Business Profile 99+ TG TechStore Retail LLC Back to Seller Dashboard TechStore Official Verified Organization: TechStore Global Workspace · Role: OWNER · Verified 12 Nov 2026 Registered Legal & Tax Identity Legal Business Name GSTIN Storefront & Contact Information Storefront Display Name Business Type Business Contact Email Verified Contact Number Registered / Dispatch Address State / Jurisdiction Save Profile Changes Linked Marketplace Storefronts (2) Link Marketplace DIRECT Verified Storefront: TechStore ID: TECHSTORE-DIRECT-01 AMAZON Pending Storefront: TechStore Retail Pvt Ltd"
+    },
+    "interactionLogs": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/settings",
+    "name": "settings",
+    "testId": "SEL-007",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "SEL-007-settings-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Account Settings"
+        },
+        {
+          "tag": "H2",
+          "text": "Seller Account Profile"
+        },
+        {
+          "tag": "H3",
+          "text": "TechStore Global"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "99+",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "TG TechStore Retail LLC",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "Save Changes",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "Account Profile",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "Appearance",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "Notifications",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-11",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-12",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH TechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/seller"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Seller Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "Seller Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "Business Profile",
+          "href": "/seller/profile"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "RESOLVEGRAPHTechStore Retail LLC",
+          "href": "/seller"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "Dashboard",
+          "href": "/seller"
+        },
+        {
+          "id": "link-17",
+          "type": "link",
+          "text": "Evidence Requests",
+          "href": "/seller/requests"
+        },
+        {
+          "id": "link-18",
+          "type": "link",
+          "text": "Submitted Responses",
+          "href": "/seller/responses"
+        },
+        {
+          "id": "link-19",
+          "type": "link",
+          "text": "Capture Analytics",
+          "href": "/analytics/captures"
+        },
+        {
+          "id": "link-20",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "text",
+          "name": "",
+          "placeholder": "",
+          "value": "TechStore Global",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-1",
+          "type": "text",
+          "name": "",
+          "placeholder": "+91 98765 43210",
+          "value": "+1 (555) 600-4400",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-2",
+          "type": "text",
+          "name": "",
+          "placeholder": "",
+          "value": "disputes@techstore.demo",
+          "required": false,
+          "disabled": true
+        },
+        {
+          "id": "inp-3",
+          "type": "text",
+          "name": "",
+          "placeholder": "",
+          "value": "Seller Account",
+          "required": false,
+          "disabled": true
+        }
+      ],
+      "badges": [
+        "99+",
+        "Seller Account"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH TechStore Retail LLC SELLER PORTAL Dashboard Evidence Requests Submitted Responses Capture Analytics TG TechStore Global Merchant Agent TechStore Retail LLC Seller Dashboard Account Settings 99+ TG TechStore Retail LLC Seller Dashboard Business Profile Account Settings Account Settings Seller Account Manage your personal profile details, contact number, and notification preferences. Save Changes Account Profile Appearance Notifications Seller Account Profile Verified account details stored securely in RESOLVEGRAPH. TG TechStore Global Seller Account Full Name Phone Number Optional contact number for complaint updates Registered Email Address Sign-in email cannot be edited here Account Role Active Organization Memberships TechStore Global Workspace O"
+    },
+    "interactionLogs": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/seller/requests/cmwdsunv300cr14vjkpa9kdbg",
+    "name": "request-details-and-wizard",
+    "testId": "SEL-008",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "SEL-008-request-details-step1.png",
+    "wizardInteractions": [
+      {
+        "action": "Read Step 1 Options",
+        "options": [
+          "99+",
+          "TG\nTechStore Retail LLC",
+          "Hide",
+          "View",
+          "View",
+          "View",
+          "View",
+          "View",
+          "View",
+          "View"
+        ],
+        "status": "PASS"
+      }
+    ],
+    "consoleErrors": [],
+    "networkErrors": []
+  }
+]

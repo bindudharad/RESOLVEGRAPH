@@ -1,0 +1,698 @@
+[
+  {
+    "route": "/sign-in",
+    "name": "sign-in-one-click",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "NAV-sign-in-one-click.png",
+    "pageData": {
+      "headings": [
+        {
+          "tag": "H2",
+          "text": "RESOLVEGRAPH"
+        },
+        {
+          "tag": "H1",
+          "text": "Choose Your Workspace"
+        },
+        {
+          "tag": "H2",
+          "text": "PLATFORM"
+        },
+        {
+          "tag": "H2",
+          "text": "BUYER"
+        },
+        {
+          "tag": "H2",
+          "text": "SELLER / MERCHANT"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Enter Platform",
+          "disabled": false
+        },
+        {
+          "text": "Enter Buyer",
+          "disabled": false
+        },
+        {
+          "text": "Enter Merchant",
+          "disabled": false
+        },
+        {
+          "text": "Already have an account? Sign in normally",
+          "disabled": false
+        }
+      ],
+      "links": [
+        {
+          "text": "RESOLVEGRAPH\nCOMMERCE RESOLUTION",
+          "href": "/"
+        },
+        {
+          "text": "RESOLVEGRAPH",
+          "href": "/"
+        }
+      ],
+      "inputs": [],
+      "bodySnippet": "RESOLVEGRAPH PREPARING YOUR WORKSPACE BILATERAL VERIFICATION ENGINE · READY RESOLVEGRAPH COMMERCE RESOLUTION Enterprise Tenant Isolation RESOLVEGRAPH Instant Workspace Access Choose Your Workspace Select your destination role to instantly enter the RESOLVEGRAPH 2.0 dispute resolution workspace. PLATFORM ADMINISTRATION PLATFORM Universal dispute triage, cross-tenant forensics, emergency kill switch controls, and tamper-evident audit ledger. Cross-Tenant Triage Forensic Kill Switch Tamper-Evid"
+    },
+    "actionResults": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/sign-up",
+    "name": "sign-up",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "NAV-sign-up.png",
+    "pageData": {
+      "headings": [
+        {
+          "tag": "H2",
+          "text": "Create ResolveGraph Account"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Create Account & Enter",
+          "disabled": true
+        }
+      ],
+      "links": [
+        {
+          "text": "RESOLVEGRAPH\nCOMMERCE RESOLUTION",
+          "href": "/"
+        },
+        {
+          "text": "Sign in",
+          "href": "/sign-in"
+        }
+      ],
+      "inputs": [
+        {
+          "type": "text",
+          "name": "",
+          "placeholder": "e.g. Alex Morgan",
+          "value": "",
+          "required": true
+        },
+        {
+          "type": "email",
+          "name": "",
+          "placeholder": "e.g. alex.morgan@example.com",
+          "value": "",
+          "required": true
+        },
+        {
+          "type": "password",
+          "name": "",
+          "placeholder": "Minimum 12 characters",
+          "value": "",
+          "required": true
+        },
+        {
+          "type": "password",
+          "name": "",
+          "placeholder": "Re-enter your password",
+          "value": "",
+          "required": true
+        }
+      ],
+      "bodySnippet": "RESOLVEGRAPH COMMERCE RESOLUTION Enterprise Tenant Isolation Create ResolveGraph Account Register to file complaints, provide evidence, and manage resolutions. Consumer Role Enforcement: Public registrations are assigned standard Buyer credentials. Merchant access requires an administrator invitation. Full Legal Name* Email Address* Password* Confirm Password* Password Requirements: Minimum 12 characters (0/12) At least one uppercase letter (A-Z) At least one number or special symbol Passwords"
+    },
+    "actionResults": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/forgot-password",
+    "name": "forgot-password",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "NAV-forgot-password.png",
+    "pageData": {
+      "headings": [
+        {
+          "tag": "H2",
+          "text": "Reset Your Password"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Send Password Reset Link",
+          "disabled": false
+        }
+      ],
+      "links": [
+        {
+          "text": "RESOLVEGRAPH\nCOMMERCE RESOLUTION",
+          "href": "/"
+        },
+        {
+          "text": "Back to sign in",
+          "href": "/sign-in"
+        }
+      ],
+      "inputs": [
+        {
+          "type": "email",
+          "name": "",
+          "placeholder": "e.g. name@merchant.com",
+          "value": "",
+          "required": true
+        }
+      ],
+      "bodySnippet": "RESOLVEGRAPH COMMERCE RESOLUTION Enterprise Tenant Isolation Reset Your Password Enter your registered email address to receive password reset instructions. Registered Email* Send Password Reset Link Back to sign in AES-256 Encrypted Storage • Role-Based Access Control • Audit-Verified Session Tokens"
+    },
+    "actionResults": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/reset-password",
+    "name": "reset-password",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "NAV-reset-password.png",
+    "pageData": {
+      "headings": [
+        {
+          "tag": "H2",
+          "text": "Set New Password"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Update Password",
+          "disabled": true
+        }
+      ],
+      "links": [
+        {
+          "text": "RESOLVEGRAPH\nCOMMERCE RESOLUTION",
+          "href": "/"
+        },
+        {
+          "text": "Cancel and return to sign in",
+          "href": "/sign-in"
+        }
+      ],
+      "inputs": [
+        {
+          "type": "password",
+          "name": "",
+          "placeholder": "Minimum 12 characters",
+          "value": "",
+          "required": true
+        },
+        {
+          "type": "password",
+          "name": "",
+          "placeholder": "Confirm password",
+          "value": "",
+          "required": true
+        }
+      ],
+      "bodySnippet": "RESOLVEGRAPH COMMERCE RESOLUTION Enterprise Tenant Isolation Set New Password Please establish a secure password conforming to enterprise security policies. New Password* Confirm New Password* Minimum 12 characters At least one uppercase letter At least one number or symbol Update Password Cancel and return to sign in AES-256 Encrypted Storage • Role-Based Access Control • Audit-Verified Session Tokens"
+    },
+    "actionResults": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/verify-email",
+    "name": "verify-email",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "NAV-verify-email.png",
+    "pageData": {
+      "headings": [
+        {
+          "tag": "H2",
+          "text": "Email Verified Successfully"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Continue to Workspace Dashboard",
+          "disabled": false
+        }
+      ],
+      "links": [
+        {
+          "text": "RESOLVEGRAPH\nCOMMERCE RESOLUTION",
+          "href": "/"
+        },
+        {
+          "text": "Continue to Workspace Dashboard",
+          "href": "/dashboard"
+        }
+      ],
+      "inputs": [],
+      "bodySnippet": "RESOLVEGRAPH COMMERCE RESOLUTION Enterprise Tenant Isolation Email Verified Successfully Your identity and electronic communications address have been authenticated in accordance with ResolveGraph tenant security policy. Tenant Clearance Level: Standard Continue to Workspace Dashboard AES-256 Encrypted Storage • Role-Based Access Control • Audit-Verified Session Tokens"
+    },
+    "actionResults": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/access-denied",
+    "name": "access-denied",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "NAV-access-denied.png",
+    "pageData": {
+      "headings": [
+        {
+          "tag": "H2",
+          "text": "Tenant Isolation Boundary Enforced"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Return to Home",
+          "disabled": false
+        },
+        {
+          "text": "Switch Account",
+          "disabled": false
+        }
+      ],
+      "links": [
+        {
+          "text": "RESOLVEGRAPH\nCOMMERCE RESOLUTION",
+          "href": "/"
+        },
+        {
+          "text": "Return to Home",
+          "href": "/dashboard"
+        }
+      ],
+      "inputs": [],
+      "bodySnippet": "RESOLVEGRAPH COMMERCE RESOLUTION Enterprise Tenant Isolation 403 ACCESS DENIED Tenant Isolation Boundary Enforced You do not have authorization to view or modify this case, evidence asset, or organizational domain under ResolveGraph tenant isolation rules. Return to Home Switch Account AES-256 Encrypted Storage • Role-Based Access Control • Audit-Verified Session Tokens"
+    },
+    "actionResults": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/docs",
+    "name": "docs",
+    "status": 200,
+    "title": "Documentation & API Reference · RESOLVEGRAPH · RESOLVEGRAPH",
+    "screenshot": "NAV-docs.png",
+    "pageData": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Technical Documentation & Protocols"
+        },
+        {
+          "tag": "H2",
+          "text": "Deterministic 10-Tier Matching Hierarchy"
+        },
+        {
+          "tag": "H2",
+          "text": "RBI Circular DPSS.CO.PD No.629/02.01.014/2019-20"
+        },
+        {
+          "tag": "H2",
+          "text": "Core Endpoints & JSON Contracts"
+        },
+        {
+          "tag": "H3",
+          "text": "Fair commerce requires\nverifiable, auditable truth."
+        }
+      ],
+      "buttons": [
+        {
+          "text": "PRODUCT",
+          "disabled": false
+        },
+        {
+          "text": "PLATFORM",
+          "disabled": false
+        },
+        {
+          "text": "RESOURCES",
+          "disabled": false
+        },
+        {
+          "text": "Search records\n⌘K",
+          "disabled": false
+        },
+        {
+          "text": "Toggle navigation menu",
+          "disabled": false
+        }
+      ],
+      "links": [
+        {
+          "text": "RESOLVEGRAPH\nEVIDENCE ENGINE",
+          "href": "/overview"
+        },
+        {
+          "text": "HOW IT WORKS",
+          "href": "#how-it-works"
+        },
+        {
+          "text": "METHODOLOGY",
+          "href": "/methodology"
+        },
+        {
+          "text": "Sign in",
+          "href": "/sign-in"
+        },
+        {
+          "text": "Open workspace",
+          "href": "/dashboard"
+        },
+        {
+          "text": "Back to Overview",
+          "href": "/"
+        },
+        {
+          "text": "Review BERR v2 Research Methodology →",
+          "href": "/methodology"
+        },
+        {
+          "text": "Launch Workspace",
+          "href": "/dashboard"
+        },
+        {
+          "text": "RESOLVEGRAPH",
+          "href": "/overview"
+        },
+        {
+          "text": "Open Workspace",
+          "href": "/dashboard"
+        },
+        {
+          "text": "Workspace Overview",
+          "href": "/overview"
+        },
+        {
+          "text": "Investigation Workspace",
+          "href": "/cases"
+        },
+        {
+          "text": "Bilateral Evidence Graph",
+          "href": "/investigation"
+        },
+        {
+          "text": "Bilateral Evidence Review (BERR)",
+          "href": "/overview"
+        },
+        {
+          "text": "Purchase Memory",
+          "href": "/purchases"
+        },
+        {
+          "text": "Package Passport & Telemetry",
+          "href": "/packages"
+        },
+        {
+          "text": "Resolution Room Escrow",
+          "href": "/resolution-room"
+        },
+        {
+          "text": "Payment Intelligence Rails",
+          "href": "/payments"
+        },
+        {
+          "text": "Evidence Vault (SHA-256)",
+          "href": "/evidence"
+        },
+        {
+          "text": "AI Copilot Investigation",
+          "href": "/copilot"
+        },
+        {
+          "text": "Reconciliation Ledger",
+          "href": "/reconciliation"
+        },
+        {
+          "text": "Incident Response",
+          "href": "/incidents"
+        },
+        {
+          "text": "Evidence Intake API",
+          "href": "/intake"
+        },
+        {
+          "text": "10-Tier Evidentiary Standard",
+          "href": "/methodology"
+        },
+        {
+          "text": "Workspace Overview",
+          "href": "/overview"
+        },
+        {
+          "text": "API & SDK Documentation",
+          "href": "/docs"
+        },
+        {
+          "text": "Multilingual Ingestion",
+          "href": "/multilingual"
+        },
+        {
+          "text": "Dispute Analytics",
+          "href": "/analytics"
+        },
+        {
+          "text": "Operator Support Manual",
+          "href": "/help"
+        },
+        {
+          "text": "Security & Zero-Knowledge Trust",
+          "href": "/admin/security"
+        },
+        {
+          "text": "Multi-Tenant Organization Scope",
+          "href": "/organizations"
+        },
+        {
+          "text": "Cryptographic Audit Ledger",
+          "href": "/reconciliation"
+        },
+        {
+          "text": "Operator Settings & Keys",
+          "href": "/settings"
+        },
+        {
+          "text": "PayPal Sandbox Dispute Console",
+          "href": "/paypal/disputes"
+        }
+      ],
+      "inputs": [],
+      "bodySnippet": "RESOLVEGRAPH EVIDENCE ENGINE PRODUCT PLATFORM HOW IT WORKS RESOURCES METHODOLOGY Search records ⌘K Sign in Open workspace Back to Overview / Documentation & Reference SYSTEM ARCHITECTURE & API REFERENCE Technical Documentation & Protocols Reference guide covering the 10-tier deterministic matching algorithm, 12-stage root-cause diagnostic state machine, statutory banking turnaround guidelines, and core REST APIs. 01 · RECONCILIATION ENGINE Deterministic 10-Tier Matching Hierarchy Cross-provid"
+    },
+    "actionResults": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/methodology",
+    "name": "methodology",
+    "status": 200,
+    "title": "Methodology & Benchmark · RESOLVEGRAPH · RESOLVEGRAPH",
+    "screenshot": "NAV-methodology.png",
+    "pageData": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Bilateral Evidence-to-Remedy Reasoning (BERR v2)"
+        },
+        {
+          "tag": "H2",
+          "text": "Deterministic Rules vs. AI Assistance"
+        },
+        {
+          "tag": "H2",
+          "text": "Multi-Modal Discrepancy & Objective Uncertainty"
+        },
+        {
+          "tag": "H2",
+          "text": "Epistemic Rigor: No Party Statement is Independent Truth"
+        },
+        {
+          "tag": "H2",
+          "text": "400-Case Empirical Research Benchmark"
+        },
+        {
+          "tag": "H3",
+          "text": "Fair commerce requires\nverifiable, auditable truth."
+        }
+      ],
+      "buttons": [
+        {
+          "text": "PRODUCT",
+          "disabled": false
+        },
+        {
+          "text": "PLATFORM",
+          "disabled": false
+        },
+        {
+          "text": "RESOURCES",
+          "disabled": false
+        },
+        {
+          "text": "Search records\n⌘K",
+          "disabled": false
+        },
+        {
+          "text": "Toggle navigation menu",
+          "disabled": false
+        }
+      ],
+      "links": [
+        {
+          "text": "RESOLVEGRAPH\nEVIDENCE ENGINE",
+          "href": "/overview"
+        },
+        {
+          "text": "HOW IT WORKS",
+          "href": "#how-it-works"
+        },
+        {
+          "text": "METHODOLOGY",
+          "href": "/methodology"
+        },
+        {
+          "text": "Sign in",
+          "href": "/sign-in"
+        },
+        {
+          "text": "Open workspace",
+          "href": "/dashboard"
+        },
+        {
+          "text": "Back to Overview",
+          "href": "/"
+        },
+        {
+          "text": "Explore Technical Architecture & API Documentation →",
+          "href": "/docs"
+        },
+        {
+          "text": "Open Operational Workspace",
+          "href": "/dashboard"
+        },
+        {
+          "text": "RESOLVEGRAPH",
+          "href": "/overview"
+        },
+        {
+          "text": "Open Workspace",
+          "href": "/dashboard"
+        },
+        {
+          "text": "Workspace Overview",
+          "href": "/overview"
+        },
+        {
+          "text": "Investigation Workspace",
+          "href": "/cases"
+        },
+        {
+          "text": "Bilateral Evidence Graph",
+          "href": "/investigation"
+        },
+        {
+          "text": "Bilateral Evidence Review (BERR)",
+          "href": "/overview"
+        },
+        {
+          "text": "Purchase Memory",
+          "href": "/purchases"
+        },
+        {
+          "text": "Package Passport & Telemetry",
+          "href": "/packages"
+        },
+        {
+          "text": "Resolution Room Escrow",
+          "href": "/resolution-room"
+        },
+        {
+          "text": "Payment Intelligence Rails",
+          "href": "/payments"
+        },
+        {
+          "text": "Evidence Vault (SHA-256)",
+          "href": "/evidence"
+        },
+        {
+          "text": "AI Copilot Investigation",
+          "href": "/copilot"
+        },
+        {
+          "text": "Reconciliation Ledger",
+          "href": "/reconciliation"
+        },
+        {
+          "text": "Incident Response",
+          "href": "/incidents"
+        },
+        {
+          "text": "Evidence Intake API",
+          "href": "/intake"
+        },
+        {
+          "text": "10-Tier Evidentiary Standard",
+          "href": "/methodology"
+        },
+        {
+          "text": "Workspace Overview",
+          "href": "/overview"
+        },
+        {
+          "text": "API & SDK Documentation",
+          "href": "/docs"
+        },
+        {
+          "text": "Multilingual Ingestion",
+          "href": "/multilingual"
+        },
+        {
+          "text": "Dispute Analytics",
+          "href": "/analytics"
+        },
+        {
+          "text": "Operator Support Manual",
+          "href": "/help"
+        },
+        {
+          "text": "Security & Zero-Knowledge Trust",
+          "href": "/admin/security"
+        },
+        {
+          "text": "Multi-Tenant Organization Scope",
+          "href": "/organizations"
+        },
+        {
+          "text": "Cryptographic Audit Ledger",
+          "href": "/reconciliation"
+        },
+        {
+          "text": "Operator Settings & Keys",
+          "href": "/settings"
+        },
+        {
+          "text": "PayPal Sandbox Dispute Console",
+          "href": "/paypal/disputes"
+        }
+      ],
+      "inputs": [],
+      "bodySnippet": "RESOLVEGRAPH EVIDENCE ENGINE PRODUCT PLATFORM HOW IT WORKS RESOURCES METHODOLOGY Search records ⌘K Sign in Open workspace Back to Overview / Research & Methodology RESEARCH PAPER & SYSTEM SPECIFICATION Bilateral Evidence-to-Remedy Reasoning (BERR v2) A mathematically rigorous, order-permutation invariant evaluation framework designed to eliminate hallucinated merchant remedies and establish ground-truth resolution under objective uncertainty. 01 · ARCHITECTURAL INVARIANT Deterministic Rules vs"
+    },
+    "actionResults": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  }
+]

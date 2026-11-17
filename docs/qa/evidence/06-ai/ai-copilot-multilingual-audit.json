@@ -1,0 +1,92 @@
+{
+  "copilot": {
+    "data": {
+      "agentCards": [
+        "AI Resolution Copilot\nHuman-Governed Agents\n\nSpecialized multi-agent intelligence: forensic fact extraction, merchant policy evaluation, and dual-key remedy drafting.\n\nFinancial Guardrails Enforced (Zero Live Payouts)",
+        "Human-Governed Agents",
+        "RECENT ORCHESTRATIONS (15):\n\nScenario C Refund Proposal Run\n\nRG-1528\n\nCOMPLETED\n\nPayPal Refund Investigation Run\n\nCASE-PAYPAL-demo_1794929361522_18561\n\nCOMPLETED\n\nCancellation Test\n\nRG-1001\n\nCANCELLED\n\nE2E Test Copilot Run\n\nRG-1001\n\nCOMPLETED\n\nApproval Test\n\nRG-1001\n\nCOMPLETED\n\nSpecialists Test Run\n\nRG-1001\n\nRUNNING\n\nPayPal Refund Investigation Run\n\nCASE-PAYPAL-demo_1794927102897_29795\n\nCOMPLETED\n\nScenario C Refund Proposal Run\n\nRG-1522\n\nCOMPLETED\n\nPayPal Refund Investigation Run\n\nCASE-PAYPAL-demo_1794927003386_22624\n\nCOMPLETED\n\nCancellation Test\n\nRG-1001\n\nCANCELLED\n\nE2E Test Copilot Run\n\nRG-1001\n\nCOMPLETED\n\nApproval Test\n\nRG-1001\n\nCOMPLETED\n\nSpecialists Test Run\n\nRG-1001\n\nFAILED\n\nPayPal Refund Investigation Run\n\nCASE-PAYPAL-demo_1794926143756_50635\n\nCOMPLETED\n\nScenario C Refund Proposal Run\n\nRG-1516\n\nCOMPLETED",
+        "Specialists Test Run\n\nRG-1001\n\nRUNNING",
+        "Specialists Test Run\n\nRG-1001\n\nFAILED"
+      ],
+      "buttons": [
+        "Search cases, evidence, graph…\n⌘\nK",
+        "PR\nPriya Raghavan",
+        "Investigate Discrepancies\nFORENSIC\n\nAudit claims and evidence for contradictions and missing documentation.",
+        "Evaluate Policy & Settle\nPOLICY\n\nCheck merchant policy bounds and draft a compliant resolution proposal.",
+        "Draft Bilateral Message\nCOMMUNICATION\n\nPrepare grounded professional communication citing verified case facts.",
+        "PayPal Dispute Dossier\nFINTECH\n\nCompile chronological dispute defense and evidence for PayPal submission.",
+        "Scenario C Refund Proposal Run\n\nRG-1528\n\nCOMPLETED",
+        "PayPal Refund Investigation Run\n\nCASE-PAYPAL-demo_1794929361522_18561\n\nCOMPLETED",
+        "Cancellation Test\n\nRG-1001\n\nCANCELLED",
+        "E2E Test Copilot Run\n\nRG-1001\n\nCOMPLETED",
+        "Approval Test\n\nRG-1001\n\nCOMPLETED",
+        "Specialists Test Run\n\nRG-1001\n\nRUNNING",
+        "PayPal Refund Investigation Run\n\nCASE-PAYPAL-demo_1794927102897_29795\n\nCOMPLETED",
+        "Scenario C Refund Proposal Run\n\nRG-1522\n\nCOMPLETED",
+        "PayPal Refund Investigation Run\n\nCASE-PAYPAL-demo_1794927003386_22624\n\nCOMPLETED",
+        "Cancellation Test\n\nRG-1001\n\nCANCELLED",
+        "E2E Test Copilot Run\n\nRG-1001\n\nCOMPLETED",
+        "Approval Test\n\nRG-1001\n\nCOMPLETED",
+        "Specialists Test Run\n\nRG-1001\n\nFAILED",
+        "PayPal Refund Investigation Run\n\nCASE-PAYPAL-demo_1794926143756_50635\n\nCOMPLETED",
+        "Scenario C Refund Proposal Run\n\nRG-1516\n\nCOMPLETED",
+        "Execute",
+        "Technical Execution Traces (0 subtasks)",
+        "More"
+      ],
+      "inputs": [
+        {
+          "placeholder": "Instruct Copilot (e.g. 'Investigate claims, check merchant policy, and draft a 50% partial refund proposal')...",
+          "value": ""
+        }
+      ],
+      "pageText": "Skip to content RESOLVEGRAPH ResolveGraph Global OVERVIEW Dashboard INVESTIGATION Cases 12 Evidence & BEG 4 BERR Analysis Seller Outreach Resolution 3 OPERATIONS Payments & Capture 2 Organizations & Sellers SYSTEM Administration Activity & Audit Settings PR Priya Raghavan Platform Admin Commerce Resolution Workspace Overview Copilot Search cases, evidence, graph… ⌘ K PR Priya Raghavan AI Resolution Copilot Human-Governed Agents Specialized multi-agent intelligence: forensic fact extraction, merchant policy evaluation, and dual-key remedy drafting. Financial Guardrails Enforced (Zero Live Payouts) SELECT ACTIVE DISPUTE: Cross-Case / General Context RG-SEC-CURR-1794929369080 — Currency Mismatch Case RG-1529 — Scenario D: Capacity Cla RG-1528 — Scenario C: Refund Not R RG-1527 — Scenario A: Defective St CASE-PAYPAL-demo_1794929361522_18561 — Dispute: $49.99 Debited RG-1526 — State Transition Test Ca RG-1525 — Automated Test Defective RG-1524 — Route Handler Test Case CASE-PAYPAL-demo_1794927102897_29795 — Dispute: $49.99 Debited RG-SEC-CURR-1794927012393 — Currency Mismatch Case RG-1523 — Scenario D: Capacity Cla RG-1522 — Scenario C: Refund Not R RG-1521 — Scenario A: Defective St CASE-PAYPAL-demo_1794927003386_22624 — Dispute: $49.99 Debited RG-1520 — State Transition Test Ca RG-1519 — Automated Test Defective RG-1518 — Route Handler Test Case CASE-PAYPAL-demo_1794926143756_50635 — Dispute: $49.99 Debited RG-SEC-CURR-1794926031956 — Currency Mismatch Case RG-1517 — Scenario D:"
+    },
+    "actions": [
+      {
+        "action": "Clicked 'Scenario C Refund Proposal Run\n\nRG-1528\n\nCOMPLETED'",
+        "result": "PASS: Action triggered",
+        "status": "PASS"
+      }
+    ]
+  },
+  "multilingual": {
+    "data": {
+      "selects": [
+        {
+          "name": "",
+          "options": [
+            "English (India / Global)",
+            "ಕನ್ನಡ (Kannada)",
+            "हिन्दी (Hindi)"
+          ]
+        }
+      ],
+      "buttons": [
+        "Search cases, evidence, graph…\n⌘\nK",
+        "PR\nPriya Raghavan",
+        "English Sample",
+        "ಕನ್ನಡ Sample",
+        "हिन्दी Sample",
+        "Record Voice",
+        "Process & Extract Structured Entities",
+        "More"
+      ],
+      "textareas": [
+        {
+          "placeholder": "Speak or describe the payment failure: e.g. 'Debited ₹1200 via UPI on Sunday but order failed...'",
+          "value": ""
+        }
+      ]
+    },
+    "actions": [
+      {
+        "action": "Translate test sentence via 'null'",
+        "result": "PASS: Translation action completed",
+        "outputSnippet": "Skip to content RESOLVEGRAPH ResolveGraph Global OVERVIEW Dashboard INVESTIGATION Cases 12 Evidence & BEG 4 BERR Analysis Seller Outreach Resolution 3 OPERATIONS Payments & Capture 2 Organizations & Sellers SYSTEM Administration Activity & Audit Settings PR Priya Raghavan Platform Admin Commerce Res"
+      }
+    ]
+  },
+  "consoleErrors": [],
+  "networkErrors": []
+}

@@ -1,0 +1,3253 @@
+[
+  {
+    "route": "/overview",
+    "name": "overview",
+    "testId": "BUY-001",
+    "status": 200,
+    "title": "Overview Dashboard — RESOLVEGRAPH · RESOLVEGRAPH",
+    "screenshot": "BUY-001-overview-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Submit a Complaint"
+        },
+        {
+          "tag": "H2",
+          "text": "Tell us about your purchase"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "29",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "Theme and Motion settings",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "AM Alex Morgan",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "Continue",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH Customer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/overview"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Submit",
+          "href": "/overview"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "RESOLVEGRAPHCustomer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "select-one",
+          "name": "",
+          "placeholder": "",
+          "value": "Amazon",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-1",
+          "type": "text",
+          "name": "",
+          "placeholder": "Enter your order ID",
+          "value": "",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-2",
+          "type": "text",
+          "name": "",
+          "placeholder": "Enter the name of the purchased product",
+          "value": "",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-3",
+          "type": "number",
+          "name": "",
+          "placeholder": "Enter purchase amount",
+          "value": "",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-4",
+          "type": "select-one",
+          "name": "",
+          "placeholder": "",
+          "value": "INR",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-5",
+          "type": "date",
+          "name": "",
+          "placeholder": "",
+          "value": "",
+          "required": false,
+          "disabled": false
+        }
+      ],
+      "badges": [
+        "29",
+        "Customer Resolution Portal",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH Customer Resolution Portal CUSTOMER PORTAL Submit Complaint My Complaints Profile & Settings AM Alex Morgan Consumer Customer Portal Submit Complaint 29 AM Alex Morgan Customer Resolution Portal · Signed in as Alex Morgan Submit a Complaint Having a problem with an online purchase? Tell us what happened, submit available evidence, and let RESOLVEGRAPH investigate. My Complaints 1 Order information 2 What is your problem? 3 What resolution do you prefer? 4 Supporting evidence Tell us about your purchase Provide the details of the online purchase you are experiencing a problem with. Shopping platform * Amazon Flipkart OLX Meesho Myntra Other Order ID * Product name * Purchase amount * ₹ Currency INR (₹) USD ($) EUR (€) GBP (£) Purchase date (Optional) Continu"
+    },
+    "interactionLogs": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/dashboard",
+    "name": "dashboard",
+    "testId": "BUY-002",
+    "status": 200,
+    "title": "Overview Dashboard — RESOLVEGRAPH · RESOLVEGRAPH",
+    "screenshot": "BUY-002-dashboard-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Submit a Complaint"
+        },
+        {
+          "tag": "H2",
+          "text": "Tell us about your purchase"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "29",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "Theme and Motion settings",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "AM Alex Morgan",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "Continue",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH Customer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/overview"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Submit",
+          "href": "/overview"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "RESOLVEGRAPHCustomer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "select-one",
+          "name": "",
+          "placeholder": "",
+          "value": "Amazon",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-1",
+          "type": "text",
+          "name": "",
+          "placeholder": "Enter your order ID",
+          "value": "",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-2",
+          "type": "text",
+          "name": "",
+          "placeholder": "Enter the name of the purchased product",
+          "value": "",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-3",
+          "type": "number",
+          "name": "",
+          "placeholder": "Enter purchase amount",
+          "value": "",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-4",
+          "type": "select-one",
+          "name": "",
+          "placeholder": "",
+          "value": "INR",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-5",
+          "type": "date",
+          "name": "",
+          "placeholder": "",
+          "value": "",
+          "required": false,
+          "disabled": false
+        }
+      ],
+      "badges": [
+        "29",
+        "Customer Resolution Portal",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH Customer Resolution Portal CUSTOMER PORTAL Submit Complaint My Complaints Profile & Settings AM Alex Morgan Consumer Customer Portal Submit Complaint 29 AM Alex Morgan Customer Resolution Portal · Signed in as Alex Morgan Submit a Complaint Having a problem with an online purchase? Tell us what happened, submit available evidence, and let RESOLVEGRAPH investigate. My Complaints 1 Order information 2 What is your problem? 3 What resolution do you prefer? 4 Supporting evidence Tell us about your purchase Provide the details of the online purchase you are experiencing a problem with. Shopping platform * Amazon Flipkart OLX Meesho Myntra Other Order ID * Product name * Purchase amount * ₹ Currency INR (₹) USD ($) EUR (€) GBP (£) Purchase date (Optional) Continu"
+    },
+    "interactionLogs": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/purchases",
+    "name": "purchases",
+    "testId": "BUY-003",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "BUY-003-purchases-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Purchase Memory"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "29",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "Theme and Motion settings",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "AM Alex Morgan",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "Show Amendments (2.5D Stack)",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "Ingest Baseline",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "Compare Divergence",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "Compare Divergence",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-11",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-12",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-13",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH Customer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/overview"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "Overview",
+          "href": "/overview"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "APX-TRK-9942",
+          "href": "/packages"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "APX-TRK-9942",
+          "href": "/packages"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "Submit",
+          "href": "/overview"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "RESOLVEGRAPHCustomer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-17",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-18",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "text",
+          "name": "",
+          "placeholder": "Filter by order number, merchant, or hash...",
+          "value": "",
+          "required": false,
+          "disabled": false
+        }
+      ],
+      "badges": [
+        "29",
+        "1 Specs",
+        "1 Specs"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "ORDER NUMBER",
+            "MERCHANT",
+            "AMOUNT",
+            "SPECS SEALED",
+            "TRACKING",
+            "TAMPER-PROOF HASH",
+            "DIVERGENCE CHECK"
+          ],
+          "rows": 2
+        }
+      ],
+      "textSnippet": "Skip to content RESOLVEGRAPH Customer Resolution Portal CUSTOMER PORTAL Submit Complaint My Complaints Profile & Settings AM Alex Morgan Consumer Customer Portal Overview Purchases 29 AM Alex Morgan Purchase Memory Immutable pre-dispatch baseline preservation. Prevents post-complaint retroactive revisions. Show Amendments (2.5D Stack) Ingest Baseline 5-STAGE PURCHASE MEMORY RAIL Cryptographically Anchored Advertised Product listing & promises Confirmed Tax invoice & payment Pre-Dispatch Warehouse pick & barcode scan Transit Carrier custody & weigh-in Delivered Receipt & unboxing proof Active Baselines 2 Crystallized pre-dispatch memories Hardware Specs Anchored 2 Capacity, voltage, form-factors sealed Merchant Promises 2 Condition & warranty guarantees SHA-256 Ledger Inte"
+    },
+    "interactionLogs": [
+      {
+        "action": "Click 'Ingest Baseline'",
+        "result": "PASS: Modal opened and rendered",
+        "status": "PASS"
+      },
+      {
+        "action": "Click Modal Cancel",
+        "result": "PASS: Modal closed safely",
+        "status": "PASS"
+      }
+    ],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/intake",
+    "name": "intake",
+    "testId": "BUY-004",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "BUY-004-intake-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Universal Evidence & Verification Intake"
+        },
+        {
+          "tag": "H2",
+          "text": "Evidence Parameters"
+        },
+        {
+          "tag": "H3",
+          "text": "No Evidence Ingested Yet"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "29",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "Theme and Motion settings",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "AM Alex Morgan",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "Load PayPal Sample",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "Load UPI Statement Sample",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "Document & Payment Statement Intake",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "Dual-Sight Unboxing Verification (CameraX) 6-Digit Challenge",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "Ingest & Verify Evidence",
+          "disabled": true,
+          "visible": true
+        },
+        {
+          "id": "btn-11",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-12",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-13",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-14",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH Customer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/overview"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "Overview",
+          "href": "/overview"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Submit",
+          "href": "/overview"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "RESOLVEGRAPHCustomer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "select-one",
+          "name": "",
+          "placeholder": "",
+          "value": "RG-1529",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-1",
+          "type": "select-one",
+          "name": "",
+          "placeholder": "",
+          "value": "UPI_APP",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-2",
+          "type": "text",
+          "name": "",
+          "placeholder": "e.g., PhonePe, HDFC Bank, PayPal",
+          "value": "PhonePe",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-3",
+          "type": "file",
+          "name": "",
+          "placeholder": "",
+          "value": "",
+          "required": false,
+          "disabled": false
+        }
+      ],
+      "badges": [
+        "29",
+        "Module 02 & 10",
+        "6-Digit Challenge"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH Customer Resolution Portal CUSTOMER PORTAL Submit Complaint My Complaints Profile & Settings AM Alex Morgan Consumer Customer Portal Overview Intake 29 AM Alex Morgan Universal Evidence & Verification Intake Module 02 & 10 Ingest and verify raw bank statements, payment receipts, UPI confirmations, and CameraX Dual-Sight unboxing video streams with bitwise SHA-256 fingerprinting. Load PayPal Sample Load UPI Statement Sample Document & Payment Statement Intake Dual-Sight Unboxing Verification (CameraX) 6-Digit Challenge Evidence Parameters Attach to Case RG-1529 - Scenario D: Capacity Clash RG-1528 - Scenario C: Refund Not Received aft RG-1527 - Scenario A: Defective Storage Unit CASE-PAYPAL-demo_1794929361522_18561 - Dispute: $49.99 Debited for Cancell RG-1526"
+    },
+    "interactionLogs": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/cases",
+    "name": "cases",
+    "testId": "BUY-005",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "BUY-005-cases-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "My Complaints"
+        },
+        {
+          "tag": "H2",
+          "text": "Your Complaints"
+        },
+        {
+          "tag": "H2",
+          "text": "Today"
+        },
+        {
+          "tag": "H3",
+          "text": "Scenario D: Capacity Clash"
+        },
+        {
+          "tag": "H3",
+          "text": "Scenario C: Refund Not Received after Cancellation"
+        },
+        {
+          "tag": "H3",
+          "text": "Scenario A: Defective Storage Unit"
+        },
+        {
+          "tag": "H3",
+          "text": "Portable Ultra NVMe SSD 1TB (Cancelled by Merchant)"
+        },
+        {
+          "tag": "H3",
+          "text": "State Transition Test Case"
+        },
+        {
+          "tag": "H3",
+          "text": "Automated Test Defective Unit"
+        },
+        {
+          "tag": "H3",
+          "text": "Portable Ultra NVMe SSD 1TB (Cancelled by Merchant)"
+        },
+        {
+          "tag": "H3",
+          "text": "Scenario D: Capacity Clash"
+        },
+        {
+          "tag": "H3",
+          "text": "Scenario C: Refund Not Received after Cancellation"
+        },
+        {
+          "tag": "H3",
+          "text": "Scenario A: Defective Storage Unit"
+        },
+        {
+          "tag": "H3",
+          "text": "Portable Ultra NVMe SSD 1TB (Cancelled by Merchant)"
+        },
+        {
+          "tag": "H3",
+          "text": "State Transition Test Case"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "Theme and Motion settings",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "29",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "AM Alex Morgan",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "PENDING 394 Unresolved complaints",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "COMPLETED 89 Resolved & finalized",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "RG-1529 Online Marketplace November 17, 2026 · 8:59 PM Scenario D: Capacity Clas",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "RG-1528 Online Marketplace November 17, 2026 · 8:59 PM Scenario C: Refund Not Re",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "View and respond",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-11",
+          "type": "button",
+          "text": "RG-1527 Online Marketplace November 17, 2026 · 8:59 PM Scenario A: Defective Sto",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-12",
+          "type": "button",
+          "text": "CASE-PAYPAL-demo_1794929361522_18561 Online Marketplace November 17, 2026 · 8:59",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-13",
+          "type": "button",
+          "text": "RG-1526 Online Marketplace November 17, 2026 · 8:58 PM State Transition Test Cas",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-14",
+          "type": "button",
+          "text": "RG-1525 Online Marketplace November 17, 2026 · 8:58 PM Automated Test Defective ",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-15",
+          "type": "button",
+          "text": "CASE-PAYPAL-demo_1794927102897_29795 Online Marketplace November 17, 2026 · 8:21",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-16",
+          "type": "button",
+          "text": "RG-1523 Online Marketplace November 17, 2026 · 8:20 PM Scenario D: Capacity Clas",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-17",
+          "type": "button",
+          "text": "RG-1522 Online Marketplace November 17, 2026 · 8:20 PM Scenario C: Refund Not Re",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-18",
+          "type": "button",
+          "text": "View and respond",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-19",
+          "type": "button",
+          "text": "RG-1521 Online Marketplace November 17, 2026 · 8:20 PM Scenario A: Defective Sto",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-20",
+          "type": "button",
+          "text": "CASE-PAYPAL-demo_1794927003386_22624 Online Marketplace November 17, 2026 · 8:20",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-21",
+          "type": "button",
+          "text": "RG-1520 Online Marketplace November 17, 2026 · 8:19 PM State Transition Test Cas",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-22",
+          "type": "button",
+          "text": "Previous",
+          "disabled": true,
+          "visible": true
+        },
+        {
+          "id": "btn-23",
+          "type": "button",
+          "text": "Next",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-24",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-25",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-26",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-27",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH Customer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/overview"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Raise a New Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "Submit",
+          "href": "/overview"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "RESOLVEGRAPHCustomer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-17",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "text",
+          "name": "",
+          "placeholder": "Search by complaint ID or product name...",
+          "value": "",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-1",
+          "type": "select-one",
+          "name": "",
+          "placeholder": "",
+          "value": "all",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-2",
+          "type": "select-one",
+          "name": "",
+          "placeholder": "",
+          "value": "all",
+          "required": false,
+          "disabled": false
+        }
+      ],
+      "badges": [
+        "29",
+        "12",
+        "Submitted",
+        "Awaiting approval",
+        "Submitted",
+        "Resolved",
+        "Escalated",
+        "Submitted",
+        "Resolved",
+        "Submitted",
+        "Awaiting approval",
+        "Submitted",
+        "Resolved",
+        "Escalated"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH Customer Resolution Portal CUSTOMER PORTAL Submit Complaint My Complaints Profile & Settings AM Alex Morgan Consumer Customer Portal Submit Complaint My Complaints My Complaints Track your submitted complaints and their resolution progress. 29 Raise a New Complaint AM Alex Morgan PENDING 394 Unresolved complaints COMPLETED 89 Resolved & finalized Status: All Pending Completed All dates Today Last 7 days Last 30 days Custom date range Your Complaints 483 complaints Today 12 RG-1529 Online Marketplace November 17, 2026 · 8:59 PM Scenario D: Capacity Clash Scenario D: Capacity Clash 0 files attached · Preferred: Either is acceptable $79.99 Submitted View complaint RG-1528 Online Marketplace November 17, 2026 · 8:59 PM Scenario C: Refund Not Received after "
+    },
+    "interactionLogs": [
+      {
+        "action": "Discovered Case Filters",
+        "result": "Tabs found: COMPLETED\n89\n\nResolved & finalized",
+        "status": "PASS"
+      }
+    ],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/evidence",
+    "name": "evidence",
+    "testId": "BUY-006",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "BUY-006-evidence-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Evidence Vault & Asset Inspection"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v2_dup.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v1.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "phonepe_debit_1794929390542.csv"
+        },
+        {
+          "tag": "H4",
+          "text": "invoice_scenario_a.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "test-evidence-document.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "serial-closeup-photo.jpg"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v2_dup.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v1.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "phonepe_debit_1794927032281.csv"
+        },
+        {
+          "tag": "H4",
+          "text": "invoice_scenario_a.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "test-evidence-document.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "serial-closeup-photo.jpg"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v2_dup.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v1.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "phonepe_debit_1794926056761.csv"
+        },
+        {
+          "tag": "H4",
+          "text": "invoice_scenario_a.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "test-evidence-document.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "serial-closeup-photo.jpg"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v2_dup.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v1.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "phonepe_debit_1794920081789.csv"
+        },
+        {
+          "tag": "H4",
+          "text": "invoice_scenario_a.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "test-evidence-document.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "serial-closeup-photo.jpg"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v2_dup.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v1.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "phonepe_debit_1794916493794.csv"
+        },
+        {
+          "tag": "H4",
+          "text": "invoice_scenario_a.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "test-evidence-document.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "serial-closeup-photo.jpg"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v2_dup.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v1.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "phonepe_debit_1794914802653.csv"
+        },
+        {
+          "tag": "H4",
+          "text": "invoice_scenario_a.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "test-evidence-document.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "serial-closeup-photo.jpg"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v2_dup.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v1.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "phonepe_debit_1794722290242.csv"
+        },
+        {
+          "tag": "H4",
+          "text": "invoice_scenario_a.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "test-evidence-document.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "serial-closeup-photo.jpg"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v2_dup.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v1.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "phonepe_debit_1794721687930.csv"
+        },
+        {
+          "tag": "H4",
+          "text": "invoice_scenario_a.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "test-evidence-document.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "serial-closeup-photo.jpg"
+        },
+        {
+          "tag": "H4",
+          "text": "test-evidence-document.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "test-evidence-document.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v2_dup.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v1.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "phonepe_debit_1794511462284.csv"
+        },
+        {
+          "tag": "H4",
+          "text": "invoice_scenario_a.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "test-evidence-document.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "serial-closeup-photo.jpg"
+        },
+        {
+          "tag": "H4",
+          "text": "OD438890793307262100.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "buds.png"
+        },
+        {
+          "tag": "H4",
+          "text": "OD438890793307262100.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "buds.png"
+        },
+        {
+          "tag": "H4",
+          "text": "tax-invoice-refund.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "wrong-product-photo.png"
+        },
+        {
+          "tag": "H4",
+          "text": "tax-invoice-refund.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "wrong-product-photo.png"
+        },
+        {
+          "tag": "H4",
+          "text": "tax-invoice-refund.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "wrong-product-photo.png"
+        },
+        {
+          "tag": "H4",
+          "text": "tax-invoice-digitalmart.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "product-damage-mouse.png"
+        },
+        {
+          "tag": "H4",
+          "text": "tax-invoice-digitalmart.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "product-damage-mouse.png"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "c04e750c-7195-42d3-9ffd-3c2f6f1faa71.png"
+        },
+        {
+          "tag": "H4",
+          "text": "OD438897692023711100.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v2_dup.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v1.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "phonepe_debit_1794461197166.csv"
+        },
+        {
+          "tag": "H4",
+          "text": "invoice_scenario_a.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "TechStore_Order_Cancellation_Notice.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "test-evidence-document.pdf"
+        },
+        {
+          "tag": "H4",
+          "text": "serial-closeup-photo.jpg"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v2_dup.txt"
+        },
+        {
+          "tag": "H4",
+          "text": "unique_proof_v1.txt"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "29",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "Theme and Motion settings",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "AM Alex Morgan",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "Upload Evidence",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "Grid",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "Table",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-11",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-12",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH Customer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/overview"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "Overview",
+          "href": "/overview"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Submit",
+          "href": "/overview"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "RESOLVEGRAPHCustomer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "search",
+          "name": "",
+          "placeholder": "Search by file name, case ID, or uploader…",
+          "value": "",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-1",
+          "type": "select-one",
+          "name": "",
+          "placeholder": "",
+          "value": "All",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-2",
+          "type": "select-one",
+          "name": "",
+          "placeholder": "",
+          "value": "All",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-3",
+          "type": "select-one",
+          "name": "",
+          "placeholder": "",
+          "value": "All",
+          "required": false,
+          "disabled": false
+        }
+      ],
+      "badges": [
+        "29"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH Customer Resolution Portal CUSTOMER PORTAL Submit Complaint My Complaints Profile & Settings AM Alex Morgan Consumer Customer Portal Overview Evidence & BEG 29 AM Alex Morgan FORENSIC STORAGE VAULT · Bitwise SHA-256 Validation Active Evidence Vault & Asset Inspection Universal cryptographically hashed vault of buyer receipts, packaging photos, dispatch manifests, and unboxing media. Upload Evidence Total Assets 100 Across all tenant cases Immutable Storage Verified Records 52 Passed bitwise SHA-256 100% Integrity Match Pending Review 37 Awaiting forensic matching In Intake Queue Unverified / Disputed 11 Contested or damaged proofs Requires Re-submission All Cases CASE-PAYPAL-demo_1794461174393_24463 CASE-PAYPAL-demo_1794474105903_44574 CASE-PAYPAL-dem"
+    },
+    "interactionLogs": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/packages",
+    "name": "packages",
+    "testId": "BUY-007",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "BUY-007-packages-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Package Passports & Fulfillment Security"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "29",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "Theme and Motion settings",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "AM Alex Morgan",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "Register Package Passport",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH Customer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/overview"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "Overview",
+          "href": "/overview"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Submit",
+          "href": "/overview"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "RESOLVEGRAPHCustomer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "text",
+          "name": "",
+          "placeholder": "Search by package ID (PKG-2026-...), carrier, or tracking number...",
+          "value": "",
+          "required": false,
+          "disabled": false
+        }
+      ],
+      "badges": [
+        "29",
+        "Module 09"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "PASSPORT IDENTIFIER",
+            "STATUS",
+            "CARRIER & TRACKING",
+            "ITEMS MANIFEST",
+            "TAMPER SEALS",
+            "VERIFICATION TOKEN",
+            "ACTIONS"
+          ],
+          "rows": 1
+        }
+      ],
+      "textSnippet": "Skip to content RESOLVEGRAPH Customer Resolution Portal CUSTOMER PORTAL Submit Complaint My Complaints Profile & Settings AM Alex Morgan Consumer Customer Portal Overview Packages 29 AM Alex Morgan Package Passports & Fulfillment Security Module 09 Cryptographic parcel identities, physical tamper-evident seal tracking, courier transit checkpoints, and public QR verification. Register Package Passport Registered Passports 0 Outbound parcels tracked Tamper Seals Applied 0 Physical security seal tracking Transit Shipments 0 Monitored courier dispatch HMAC-SHA256 Status Secured Unique signed QR tokens active PASSPORT IDENTIFIER STATUS CARRIER & TRACKING ITEMS MANIFEST TAMPER SEALS VERIFICATION TOKEN ACTIONS No Package Passports registered. Click \"Register Package Passport\" to issue o"
+    },
+    "interactionLogs": [
+      {
+        "action": "Click 'Register Package Passport'",
+        "result": "PASS: Modal opened",
+        "status": "PASS"
+      },
+      {
+        "action": "Click Modal Cancel",
+        "result": "PASS: Modal closed safely",
+        "status": "PASS"
+      }
+    ],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/resolution-room",
+    "name": "resolution-room",
+    "testId": "BUY-008",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "BUY-008-resolution-room-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Bilateral Resolution Room"
+        },
+        {
+          "tag": "H3",
+          "text": "BERR Reasoning Matrix"
+        },
+        {
+          "tag": "H3",
+          "text": "10-Point Safeguard Gate"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "29",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "Theme and Motion settings",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "AM Alex Morgan",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "Public to Buyer & Merchant",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "",
+          "disabled": true,
+          "visible": true
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "Validate Execution Safeguards",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-11",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-12",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH Customer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/overview"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "Overview",
+          "href": "/overview"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Remedy Proposals & Dual-Key Approvals",
+          "href": "/resolution"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "Full Dossier",
+          "href": "/cases/RG-1529"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "Submit",
+          "href": "/overview"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "RESOLVEGRAPHCustomer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-17",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-18",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "select-one",
+          "name": "",
+          "placeholder": "",
+          "value": "RG-1529",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-1",
+          "type": "textarea",
+          "name": "",
+          "placeholder": "Type a bilateral message visible to both parties (Cmd+Enter to send)...",
+          "value": "",
+          "required": false,
+          "disabled": false
+        }
+      ],
+      "badges": [
+        "29",
+        "Shielded Workspace"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH Customer Resolution Portal CUSTOMER PORTAL Submit Complaint My Complaints Profile & Settings AM Alex Morgan Consumer Customer Portal Overview Shared Resolution Room 29 AM Alex Morgan Remedy Proposals & Dual-Key Approvals Bilateral Resolution Room Bilateral Resolution Room Shielded Workspace Bilateral buyer-merchant negotiation channel with internal manager shielding and 10-point safeguard gates. Selected Case: RG-1529 — Scenario D: Capacity Clash RG-1528 — Scenario C: Refund Not Received afte RG-1527 — Scenario A: Defective Storage Unit CASE-PAYPAL-demo_1794929361522_18561 — Dispute: $49.99 Debited for Cancelle RG-1526 — State Transition Test Case RG-1525 — Automated Test Defective Unit CASE-PAYPAL-demo_1794927102897_29795 — Dispute: $49.99 Debited for Cancel"
+    },
+    "interactionLogs": [],
+    "consoleErrors": [
+      {
+        "type": "error",
+        "text": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      }
+    ],
+    "networkErrors": [
+      {
+        "url": "http://localhost:3000/api/cases/RG-1529/berr-v2",
+        "status": 403
+      }
+    ]
+  },
+  {
+    "route": "/settings",
+    "name": "settings",
+    "testId": "BUY-009",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "BUY-009-settings-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Account Settings"
+        },
+        {
+          "tag": "H2",
+          "text": "Customer Profile"
+        },
+        {
+          "tag": "H3",
+          "text": "Alex Morgan"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "29",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "Theme and Motion settings",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "AM Alex Morgan",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "Save Changes",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "Account Profile",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "Appearance",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "Notifications",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-10",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-11",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-12",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-13",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH Customer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/overview"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Customer Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "Submit",
+          "href": "/overview"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "RESOLVEGRAPHCustomer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-17",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-18",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [
+        {
+          "id": "inp-0",
+          "type": "text",
+          "name": "",
+          "placeholder": "",
+          "value": "Alex Morgan",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-1",
+          "type": "text",
+          "name": "",
+          "placeholder": "+91 98765 43210",
+          "value": "+1 (555) 342-9901",
+          "required": false,
+          "disabled": false
+        },
+        {
+          "id": "inp-2",
+          "type": "text",
+          "name": "",
+          "placeholder": "",
+          "value": "alex.morgan@consumer.demo",
+          "required": false,
+          "disabled": true
+        },
+        {
+          "id": "inp-3",
+          "type": "text",
+          "name": "",
+          "placeholder": "",
+          "value": "Customer Account",
+          "required": false,
+          "disabled": true
+        }
+      ],
+      "badges": [
+        "29",
+        "Customer Account"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH Customer Resolution Portal CUSTOMER PORTAL Submit Complaint My Complaints Profile & Settings AM Alex Morgan Consumer Customer Portal Submit Complaint Profile & Settings 29 AM Alex Morgan Customer Portal My Complaints Account Settings Account Settings Customer Account Manage your personal profile details, contact number, and notification preferences. Save Changes Account Profile Appearance Notifications Customer Profile Verified account details stored securely in RESOLVEGRAPH. AM Alex Morgan Customer Account Full Name Phone Number Optional contact number for complaint updates Registered Email Address Sign-in email cannot be edited here Account Role"
+    },
+    "interactionLogs": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  },
+  {
+    "route": "/help",
+    "name": "help",
+    "testId": "BUY-010",
+    "status": 200,
+    "title": "RESOLVEGRAPH — AI-Powered Cross-Provider Payment Investigation & Evidence Resolution",
+    "screenshot": "BUY-010-help-desktop.png",
+    "extraction": {
+      "headings": [
+        {
+          "tag": "H1",
+          "text": "Help & Support"
+        },
+        {
+          "tag": "H2",
+          "text": "Commerce Dispute Resolution Lifecycle"
+        },
+        {
+          "tag": "H3",
+          "text": "Complaint Registration"
+        },
+        {
+          "tag": "H3",
+          "text": "Merchant Reconciliation"
+        },
+        {
+          "tag": "H3",
+          "text": "Evidence Graph Audit"
+        },
+        {
+          "tag": "H3",
+          "text": "Remedy Coordination"
+        },
+        {
+          "tag": "H3",
+          "text": "Arbitration Packaging"
+        },
+        {
+          "tag": "H2",
+          "text": "Keyboard Shortcuts"
+        },
+        {
+          "tag": "H2",
+          "text": "Frequently Asked Questions"
+        },
+        {
+          "tag": "H3",
+          "text": "What is RESOLVEGRAPH?"
+        },
+        {
+          "tag": "H3",
+          "text": "How does RESOLVEGRAPH connect to PayPal and AI?"
+        },
+        {
+          "tag": "H3",
+          "text": "How does RESOLVEGRAPH safeguard live and sandbox transactions?"
+        },
+        {
+          "tag": "H3",
+          "text": "How does case creation and management work?"
+        }
+      ],
+      "buttons": [
+        {
+          "id": "btn-0",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-1",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-2",
+          "type": "button",
+          "text": "Open navigation menu",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-3",
+          "type": "button",
+          "text": "29",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-4",
+          "type": "button",
+          "text": "Theme and Motion settings",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-5",
+          "type": "button",
+          "text": "AM Alex Morgan",
+          "disabled": false,
+          "visible": true
+        },
+        {
+          "id": "btn-6",
+          "type": "button",
+          "text": "More",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-7",
+          "type": "button",
+          "text": "Collapse sidebar",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-8",
+          "type": "button",
+          "text": "Close navigation drawer",
+          "disabled": false,
+          "visible": false
+        },
+        {
+          "id": "btn-9",
+          "type": "button",
+          "text": "Sign out",
+          "disabled": false,
+          "visible": false
+        }
+      ],
+      "links": [
+        {
+          "id": "link-0",
+          "type": "link",
+          "text": "Skip to content",
+          "href": "#main-content"
+        },
+        {
+          "id": "link-1",
+          "type": "link",
+          "text": "RESOLVEGRAPH Customer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-2",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-3",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-4",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-5",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-6",
+          "type": "link",
+          "text": "RESOLVEGRAPH Home",
+          "href": "/overview"
+        },
+        {
+          "id": "link-7",
+          "type": "link",
+          "text": "Overview",
+          "href": "/overview"
+        },
+        {
+          "id": "link-8",
+          "type": "link",
+          "text": "Help & Documentation",
+          "href": "/help"
+        },
+        {
+          "id": "link-9",
+          "type": "link",
+          "text": "Submit",
+          "href": "/overview"
+        },
+        {
+          "id": "link-10",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-11",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-12",
+          "type": "link",
+          "text": "RESOLVEGRAPHCustomer Resolution Portal",
+          "href": "/overview"
+        },
+        {
+          "id": "link-13",
+          "type": "link",
+          "text": "Submit Complaint",
+          "href": "/overview"
+        },
+        {
+          "id": "link-14",
+          "type": "link",
+          "text": "My Complaints",
+          "href": "/cases"
+        },
+        {
+          "id": "link-15",
+          "type": "link",
+          "text": "Profile & Settings",
+          "href": "/settings"
+        },
+        {
+          "id": "link-16",
+          "type": "link",
+          "text": "Settings",
+          "href": "/settings"
+        }
+      ],
+      "inputs": [],
+      "badges": [
+        "29",
+        "Knowledge Base v0.1"
+      ],
+      "tables": [],
+      "textSnippet": "Skip to content RESOLVEGRAPH Customer Resolution Portal CUSTOMER PORTAL Submit Complaint My Complaints Profile & Settings AM Alex Morgan Consumer Customer Portal Overview Help 29 AM Alex Morgan Help & Support Architecture guide, keyboard shortcuts and resolution workflow reference. Knowledge Base v0.1 Commerce Dispute Resolution Lifecycle How RESOLVEGRAPH coordinates multi-party claim settlement. STAGE 01 Complaint Registration Buyer logs transaction details, expected vs received goods, and uploads preliminary proofs (invoices, receipts, unboxing captures). STAGE 02 Merchant Reconciliation Merchant is notified with a 48-hour response window to supply dispatch waybills, warehouse packing scans, or confirm replacement dispatch. STAGE 03 Evidence Graph Audit Discrepancy engine cross-"
+    },
+    "interactionLogs": [],
+    "consoleErrors": [],
+    "networkErrors": []
+  }
+]
