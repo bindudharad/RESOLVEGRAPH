@@ -211,7 +211,12 @@ export function CasesProvider({ children }: { children: ReactNode }) {
       .then((data: { items?: DbCaseRecord[] } | null) => {
         if (active && data?.items && Array.isArray(data.items) && data.items.length > 0) {
           const formatted = data.items.map(formatDbCase);
-          commit([CANONICAL_DEMO_CASE, ...formatted.filter((c: ResolutionCase) => c.id !== CANONICAL_DEMO_CASE.id)]);
+          const hasCanonical = formatted.some((c: ResolutionCase) => c.id === "RG-1001");
+          if (hasCanonical) {
+            commit(formatted);
+          } else {
+            commit([CANONICAL_DEMO_CASE, ...formatted.filter((c: ResolutionCase) => c.id !== "RG-1001")]);
+          }
         }
       })
       .catch(() => {});
@@ -228,7 +233,12 @@ export function CasesProvider({ children }: { children: ReactNode }) {
         const data = await res.json();
         if (Array.isArray(data.items) && data.items.length > 0) {
           const formatted = data.items.map(formatDbCase);
-          commit([CANONICAL_DEMO_CASE, ...formatted.filter((c: ResolutionCase) => c.id !== CANONICAL_DEMO_CASE.id)]);
+          const hasCanonical = formatted.some((c: ResolutionCase) => c.id === "RG-1001");
+          if (hasCanonical) {
+            commit(formatted);
+          } else {
+            commit([CANONICAL_DEMO_CASE, ...formatted.filter((c: ResolutionCase) => c.id !== "RG-1001")]);
+          }
         }
       }
     } catch (e) {

@@ -11,9 +11,9 @@ export async function POST(
     const { id } = await context.params;
     const body = await request.json().catch(() => ({}));
 
-    const { claimStatement } = body;
-    if (!claimStatement) {
-      return NextResponse.json({ error: "Missing required field: 'claimStatement'" }, { status: 400 });
+    const claimStatement = body.claimStatement || body.disputeClaims || body.claim;
+    if (!claimStatement || typeof claimStatement !== 'string' || !claimStatement.trim()) {
+      return NextResponse.json({ error: "Missing required field: 'claimStatement' or 'disputeClaims'" }, { status: 400 });
     }
 
     const memory = await PurchaseMemoryService.getPurchaseMemoryById(id);
@@ -26,11 +26,21 @@ export async function POST(
       return NextResponse.json({ error: "Forbidden: Access denied to purchase record." }, { status: 403 });
     }
 
-    const comparison = await PurchaseMemoryService.compareDisputeClaim(id, claimStatement);
+    const comparison = await PurchaseMemoryService.compareDisputeClaim(id, claimStatement.trim());
+    const hasDivergence = comparison.divergencesFound.length > 0;
+    const baselineSummary = Object.entries(comparison.originalSpecifications)
+      .map(([k, v]) => `${k}: ${v}`)
+      .join(', ') || comparison.originalListingTitle;
 
     return NextResponse.json({
       success: true,
       comparison,
+      divergenceDetected: hasDivergence,
+      divergencesFound: comparison.divergencesFound,
+      baselineSummary,
+      explanation: hasDivergence
+        ? comparison.divergencesFound.map((d) => d.explanation).join(' ')
+        : 'Dispute claim matches immutable pre-dispatch purchase baseline specifications.',
     });
   } catch (error: unknown) {
     if (error instanceof AuthError) {

@@ -22,10 +22,10 @@ export interface BerrComparisonRow {
 }
 
 export const CANONICAL_DEMO_CASE: ResolutionCase = {
-  id: "RG-2026-0412",
+  id: "RG-1001",
   title: "Wrong Capacity Delivered — 1TB vs 512GB NVMe SSD",
   customer: "Alex Morgan",
-  merchant: "Apex Tech Labs Ltd",
+  merchant: "TechStore Global",
   category: "Product Not as Described",
   status: "Under Investigation",
   priority: "High",
@@ -33,8 +33,8 @@ export const CANONICAL_DEMO_CASE: ResolutionCase = {
   currency: "INR",
   createdAt: atTime(dayAnchor(-2), 10, 15).toISOString(),
   updatedAt: atTime(dayAnchor(0), 9, 30).toISOString(),
-  expectedProduct: "ApexPro 1TB NVMe Gen4 SSD",
-  reportedProduct: "ApexPro 512GB NVMe SSD",
+  expectedProduct: "Crucial P3 1TB NVMe PCIe 4.0 SSD",
+  reportedProduct: "Crucial P3 512GB NVMe SSD",
   description:
     "Buyer purchased 1TB NVMe Gen4 SSD for ₹6,499 via PayPal. Upon unboxing, package contained a 512GB SSD model with altered capacity labeling.",
 };

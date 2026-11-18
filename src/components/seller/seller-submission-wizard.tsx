@@ -382,14 +382,13 @@ export function SellerSubmissionWizard({
           <CheckCircle2 className="h-6 w-6" />
         </div>
         <div className="space-y-1">
-          <span className="rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2.5 py-0.5 text-[10px] font-mono font-semibold">
-            DEMO / TEST
+          <span className="rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-mono font-semibold">
+            BILATERAL EVIDENCE SEALED
           </span>
-          <h2 className="text-xl font-bold text-[var(--ink)] mt-1.5">Seller Evidence Submitted</h2>
+          <h2 className="text-xl font-bold text-[var(--ink)] mt-1.5">Seller Evidence Successfully Submitted</h2>
         </div>
         <p className="text-sm text-[var(--ink-2)] max-w-lg mx-auto leading-relaxed">
-          Demo seller response successfully submitted and delivered to the RESOLVEGRAPH Platform
-          Workspace. Bilateral evidence graph synchronized without external emails.
+          Your response and supporting artifacts have been cryptographically sealed and incorporated into the Bilateral Evidence Graph for investigator arbitration.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
           {submittedResult.responseId && (

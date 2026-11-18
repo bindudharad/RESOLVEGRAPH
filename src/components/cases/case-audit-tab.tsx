@@ -53,39 +53,8 @@ export function CaseAuditTab({ caseId }: CaseAuditTabProps) {
         // fallback
       }
 
-      // Default high-fidelity synthetic audit events ONLY for canonical demo fixture
       if (mounted) {
-        if (caseId.toUpperCase() === "RG-2026-0412") {
-          const now = Date.now();
-          setItems([
-            {
-              id: "aud-1",
-              type: "CASE_EVENT",
-              title: "Case Created: SUBMITTED",
-              description: "Dispute case filed and indexed in ResolveGraph forensic ledger.",
-              timestamp: new Date(now - 4 * 86400000).toISOString(),
-              actor: { name: "Alex Johnson", role: "BUYER" },
-            },
-            {
-              id: "aud-2",
-              type: "SECURITY_AUDIT",
-              title: "Security Scan: Evidence Accepted",
-              description: "Magic byte inspection verified. SHA-256 hash locked.",
-              timestamp: new Date(now - 4 * 86400000 + 120000).toISOString(),
-              actor: { name: "Evidence Guard", role: "SECURITY_AGENT" },
-            },
-            {
-              id: "aud-3",
-              type: "TIMELINE_EVENT",
-              title: "BERR Multimodal Analysis Executed",
-              description: "Automated bilateral evidence reasoning run recorded.",
-              timestamp: new Date(now - 2 * 86400000).toISOString(),
-              actor: { name: "BERR Engine v2.0", role: "SYSTEM" },
-            },
-          ]);
-        } else {
-          setItems([]);
-        }
+        setItems([]);
         setLoading(false);
       }
     }

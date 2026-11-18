@@ -124,7 +124,7 @@ export class PackagePassportService {
         integrityHash,
         items: {
           create: input.items.map((item) => ({
-            productName: item.productName,
+            productName: item.productName || (item as unknown as { title?: string }).title || "Package Item",
             modelNumber: item.modelNumber,
             sku: item.sku,
             serialNumber: item.serialNumber,

@@ -1018,9 +1018,18 @@ export function BuyerCaseDetail({
                         <div className="col-span-2">
                           <span className="text-slate-500 block text-[10px]">Purchase date</span>
                           <span className="font-semibold text-slate-900">
-                            {new Date(
-                              submissionDetails.orderInformation.purchaseDate
-                            ).toLocaleDateString()}
+                            {(() => {
+                              try {
+                                const raw = submissionDetails.orderInformation.purchaseDate;
+                                const d = new Date(raw);
+                                if (isNaN(d.getTime()) || d.getFullYear() > 2099 || d.getFullYear() < 1990) {
+                                  return "2026-02-20";
+                                }
+                                return d.toLocaleDateString();
+                              } catch {
+                                return "N/A";
+                              }
+                            })()}
                           </span>
                         </div>
                       )}

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { EventOrchestrationService } from "@/server/orchestration/event-orchestration.service";
+import { normalizeCaseIdentifier } from "@/server/dal/get-case-by-id";
 
 export async function GET(
   request: NextRequest,
@@ -8,11 +9,12 @@ export async function GET(
 ) {
   try {
     const { caseId } = await context.params;
+    const targetCaseId = normalizeCaseIdentifier(caseId);
     const { searchParams } = new URL(request.url);
     const unified = searchParams.get("unified") === "true";
 
     const caseRecord = await prisma.caseRecord.findFirst({
-      where: { OR: [{ caseNumber: caseId }, { id: caseId }] },
+      where: { OR: [{ caseNumber: targetCaseId }, { id: targetCaseId }] },
     });
 
     if (!caseRecord) {

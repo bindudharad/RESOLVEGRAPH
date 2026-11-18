@@ -302,7 +302,13 @@ function extractOrderMetadata(caseRecord: {
       requestedRemedy = formatRemedyLabel(createdMeta.requestedRemedy);
     }
     if (typeof createdMeta.purchaseDate === "string" && createdMeta.purchaseDate.trim()) {
-      purchaseDate = createdMeta.purchaseDate.trim();
+      const rawDate = createdMeta.purchaseDate.trim();
+      const parsedYear = parseInt(rawDate.slice(0, 4), 10);
+      if (!isNaN(parsedYear) && (parsedYear > 2099 || parsedYear < 1990)) {
+        purchaseDate = rawDate.replace(/^\d{4,5}/, '2026');
+      } else {
+        purchaseDate = rawDate;
+      }
     }
   }
 

@@ -22,6 +22,9 @@ export function ConvergenceTimeline({
     RESOLVEGRAPH: "var(--accent)",
   };
 
+  const allCompleted = steps.every((s) => s.completed);
+  const activeStepIdx = steps.findIndex((s) => s.id === currentStepId || s.current);
+
   return (
     <div className="rg-card p-4 sm:p-5">
       <div className="flex items-center justify-between border-b border-line pb-3">
@@ -35,7 +38,11 @@ export function ConvergenceTimeline({
           </span>
         </div>
         <span className="text-[11.5px] font-mono text-subtle">
-          Step 5 of {steps.length} active
+          {allCompleted
+            ? `All ${steps.length} milestones complete`
+            : activeStepIdx >= 0
+            ? `Step ${activeStepIdx + 1} of ${steps.length} active`
+            : `${steps.filter((s) => s.completed).length} of ${steps.length} complete`}
         </span>
       </div>
 
@@ -47,7 +54,7 @@ export function ConvergenceTimeline({
 
           {steps.map((step, idx) => {
             const isCompleted = step.completed;
-            const isCurrent = step.id === currentStepId || step.current;
+            const isCurrent = !allCompleted && (step.id === currentStepId || step.current);
             const partyColor = partyColorMap[step.party] || "var(--ink-3)";
 
             return (
@@ -117,7 +124,7 @@ export function ConvergenceTimeline({
       <div className="block lg:hidden mt-4 space-y-4">
         {steps.map((step, idx) => {
           const isCompleted = step.completed;
-          const isCurrent = step.id === currentStepId || step.current;
+          const isCurrent = !allCompleted && (step.id === currentStepId || step.current);
           const partyColor = partyColorMap[step.party] || "var(--ink-3)";
 
           return (

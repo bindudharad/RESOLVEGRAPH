@@ -99,7 +99,7 @@ interface EnrichedResolutionCase extends ResolutionCase {
 export default function CaseDetailsPage() {
   const router = useRouter();
   const params = useParams();
-  const caseId = (params?.caseId as string) || "RG-2026-0412";
+  const caseId = (params?.caseId as string) || "RG-1001";
   const { data: session, isPending } = useSession();
   const sessionUser = session?.user as { role?: string; isPlatformAdmin?: boolean } | undefined;
   const isBuyer = Boolean(sessionUser?.role === "BUYER" && !sessionUser?.isPlatformAdmin);
@@ -141,7 +141,7 @@ export default function CaseDetailsPage() {
 function EnterpriseCaseDetailsView() {
   const params = useParams();
   const searchParams = useSearchParams();
-  const caseId = (params?.caseId as string) || "RG-2026-0412";
+  const caseId = (params?.caseId as string) || "RG-1001";
   const { cases, updateCaseStatus } = useDemoCases();
   const { toast } = useToast();
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
@@ -320,9 +320,6 @@ function EnterpriseCaseDetailsView() {
 
   // Dynamic 5-milestone bilateral timeline derived from genuine case properties (no demo leakage)
   const dynamicTimelineSteps = useMemo(() => {
-    if (caseItem.id === "RG-2026-0412") {
-      return CANONICAL_TIMELINE_STEPS;
-    }
     const isResolved = caseItem.status === "Resolved";
     const hasOutreach = Boolean(caseItem.merchant && caseItem.merchant !== "Unregistered Seller");
     const formattedAmount = formatCurrency(caseItem.amount, caseItem.currency);
@@ -390,17 +387,10 @@ function EnterpriseCaseDetailsView() {
         </Link>
 
         <div className="flex items-center gap-2">
-          {isCanonicalDemo ? (
-            <>
-              <DemoBadge size="sm" />
-              <span className="text-[12px] font-mono text-subtle">Evaluation Dataset RG-2026-0412</span>
-            </>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-2.5 py-0.5 text-[11px] font-mono text-muted">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              Persisted Case · {caseItem.id}
-            </span>
-          )}
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-2.5 py-0.5 text-[11px] font-mono text-muted">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            Persisted Case · {caseItem.id}
+          </span>
         </div>
       </div>
 
@@ -464,12 +454,6 @@ function EnterpriseCaseDetailsView() {
               {caseItem.orderId && (
                 <span className="font-mono text-[11px] text-[#A7B2C2] border border-white/[0.08] bg-[#111923]/70 rounded-full px-2.5 py-0.5">
                   Order: {caseItem.orderId}
-                </span>
-              )}
-
-              {isCanonicalDemo && (
-                <span className="rounded-full bg-[#3B82F6]/15 px-2.5 py-0.5 text-[11px] font-mono font-semibold text-[#60A5FA] border border-[#3B82F6]/30 uppercase tracking-wider">
-                  Canonical Evaluation
                 </span>
               )}
             </div>

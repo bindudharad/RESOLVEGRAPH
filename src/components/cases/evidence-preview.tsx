@@ -14,7 +14,6 @@ import {
   ShieldAlert,
   ExternalLink,
 } from "lucide-react";
-import { FEATURED_EVIDENCE_SLOTS, type CaseEvidenceSlot } from "@/lib/mock-data";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
@@ -40,11 +39,9 @@ interface EvidencePreviewProps {
 }
 
 export function EvidencePreview({ caseId }: EvidencePreviewProps) {
-  const isCanonicalDemo = caseId.toUpperCase() === "RG-2026-0412";
   const [dbEvidence, setDbEvidence] = useState<EvidenceRecordItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDbItem, setSelectedDbItem] = useState<EvidenceRecordItem | null>(null);
-  const [selectedDemoSlot, setSelectedDemoSlot] = useState<CaseEvidenceSlot | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -94,16 +91,9 @@ export function EvidencePreview({ caseId }: EvidencePreviewProps) {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-[14px] font-semibold text-[#F4F7FB]">Evidence Vault</h3>
-              {isCanonicalDemo && !hasRealEvidence && (
-                <span className="rounded-full bg-amber-500/15 border border-amber-500/30 px-2.5 py-0.5 text-[10.5px] font-mono font-semibold text-amber-300">
-                  Demo Evaluation Case
-                </span>
-              )}
-              {hasRealEvidence && (
-                <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10.5px] font-mono font-semibold text-[#22C55E]">
-                  {dbEvidence.length} Persisted Artifact{dbEvidence.length > 1 ? "s" : ""}
-                </span>
-              )}
+              <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10.5px] font-mono font-semibold text-[#22C55E]">
+                {hasRealEvidence ? `${dbEvidence.length} Persisted Artifact${dbEvidence.length > 1 ? "s" : ""}` : "0 Artifacts"}
+              </span>
             </div>
             <p className="mt-0.5 text-[12.5px] text-[#A3AFBF]">
               Cryptographically fingerprinted documents and media artifacts filed for case {caseId}.
@@ -116,18 +106,6 @@ export function EvidencePreview({ caseId }: EvidencePreviewProps) {
                 <span className="h-2 w-2 rounded-full bg-[#22C55E]" />
                 {dbEvidence.length} Attached to Complaint
               </span>
-            ) : isCanonicalDemo ? (
-              <>
-                <span className="inline-flex items-center gap-1.5 text-[#22C55E]">
-                  <span className="h-2 w-2 rounded-full bg-[#22C55E]" />
-                  {FEATURED_EVIDENCE_SLOTS.filter((s) => s.present).length} Available
-                </span>
-                <span>·</span>
-                <span className="inline-flex items-center gap-1.5 text-amber-400">
-                  <span className="h-2 w-2 rounded-full bg-amber-400" />
-                  {FEATURED_EVIDENCE_SLOTS.filter((s) => !s.present).length} Pending
-                </span>
-              </>
             ) : (
               <span className="inline-flex items-center gap-1.5 text-[#718096]">
                 <Clock className="h-3 w-3" />
@@ -198,73 +176,8 @@ export function EvidencePreview({ caseId }: EvidencePreviewProps) {
               );
             })}
           </div>
-        ) : isCanonicalDemo ? (
-          /* Canonical Demo Slots fallback ONLY for demo case */
-          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURED_EVIDENCE_SLOTS.map((slot) => {
-              const IconComponent = getFileIcon(slot.type);
-              return (
-                <div
-                  key={slot.label}
-                  onClick={() => setSelectedDemoSlot(slot)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setSelectedDemoSlot(slot);
-                    }
-                  }}
-                  tabIndex={0}
-                  role="button"
-                  className={`group relative flex cursor-pointer flex-col justify-between rounded-lg border p-4 transition-all focus-visible:outline-2 focus-visible:outline-[var(--accent)] ${
-                    slot.present
-                      ? "border-line bg-surface-2 hover:border-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--surface-2)_80%,var(--accent)_6%)]"
-                      : "border-dashed border-line-2 bg-app/50 hover:border-line"
-                  }`}
-                >
-                  <div>
-                    <div className="flex items-start justify-between">
-                      <div
-                        className={`flex h-9 w-9 items-center justify-center rounded-md border ${
-                          slot.present
-                            ? "border-[var(--line)] bg-[var(--surface)] text-[var(--accent)] shadow-xs"
-                            : "border-[var(--line)] bg-[var(--surface)] text-[var(--ink-3)]"
-                        }`}
-                      >
-                        <IconComponent className="h-4 w-4" />
-                      </div>
-
-                      {slot.present ? (
-                        <span className="inline-flex items-center gap-1 rounded bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 text-[10.5px] font-semibold text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40">
-                          <CheckCircle2 className="h-3 w-3" />
-                          Attached
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 rounded bg-amber-50 dark:bg-amber-950/40 px-1.5 py-0.5 text-[10.5px] font-semibold text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/40">
-                          <Clock className="h-3 w-3" />
-                          Requested
-                        </span>
-                      )}
-                    </div>
-
-                    <h4 className="mt-3 text-[13px] font-semibold text-fg group-hover:text-[var(--accent)] transition-colors">
-                      {slot.label}
-                    </h4>
-                    <p className="mt-1 text-[11.5px] text-faint">{slot.note}</p>
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between border-t border-line/60 pt-2.5 text-[11px]">
-                    <span className="text-subtle font-mono">{slot.type}</span>
-                    <span className="inline-flex items-center gap-1 text-[var(--accent)] opacity-80 group-hover:opacity-100">
-                      <Eye className="h-3 w-3" />
-                      Inspect
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         ) : (
-          /* Clean Empty State for live cases with no evidence */
+          /* Clean Empty State for cases with no evidence */
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-line p-8 text-center">
             <ShieldAlert className="h-8 w-8 text-subtle mb-2" />
             <h4 className="text-sm font-semibold text-fg">No Evidence Files Uploaded Yet</h4>
@@ -338,31 +251,45 @@ export function EvidencePreview({ caseId }: EvidencePreviewProps) {
             )}
 
             {/* Visual Canvas / Preview */}
-            <div className="relative flex min-h-[220px] flex-col items-center justify-center rounded-lg border border-line bg-[#040711] p-4 text-center overflow-hidden">
+            <div className="relative flex min-h-[260px] flex-col items-center justify-center rounded-lg border border-line bg-[#040711] p-3 text-center overflow-hidden">
               {["png", "jpg", "jpeg", "webp"].includes(selectedDbItem.extension?.toLowerCase()) ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={`/api/evidence/${selectedDbItem.id}/download`}
+                  src={`/api/evidence/${selectedDbItem.id}/download?inline=1`}
                   alt={selectedDbItem.name}
-                  className="max-h-[300px] w-auto rounded object-contain"
+                  className="max-h-[350px] w-auto rounded object-contain shadow-lg"
                 />
               ) : selectedDbItem.extension?.toLowerCase() === "pdf" ? (
-                <div className="flex flex-col items-center gap-2 text-subtle">
-                  <FileText className="h-12 w-12 text-[var(--accent)]" />
-                  <p className="text-xs font-medium text-fg">PDF Document Artifact</p>
+                <div className="w-full flex flex-col items-center gap-3">
+                  <iframe
+                    src={`/api/evidence/${selectedDbItem.id}/download?inline=1`}
+                    title={selectedDbItem.name}
+                    className="w-full h-[380px] rounded border border-line bg-surface"
+                  />
                   <a
-                    href={`/api/evidence/${selectedDbItem.id}/download`}
+                    href={`/api/evidence/${selectedDbItem.id}/download?inline=1`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-[var(--accent)] underline"
+                    className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)] underline font-medium hover:text-fg"
                   >
-                    Open PDF in Viewer <ExternalLink className="h-3 w-3" />
+                    Open PDF in Separate Tab <ExternalLink className="h-3 w-3" />
                   </a>
                 </div>
+              ) : ["mp4", "webm"].includes(selectedDbItem.extension?.toLowerCase()) ? (
+                <div className="w-full flex flex-col items-center gap-2">
+                  <video
+                    controls
+                    playsInline
+                    src={`/api/evidence/${selectedDbItem.id}/download?inline=1`}
+                    className="max-h-[350px] w-full rounded object-contain bg-black"
+                  />
+                  <p className="text-[11px] text-subtle font-mono">Continuous Video Stream · Authenticated</p>
+                </div>
               ) : (
-                <div className="flex flex-col items-center gap-2 text-subtle">
+                <div className="flex flex-col items-center gap-2 py-6 text-subtle">
                   <FileCheck className="h-12 w-12 text-[var(--accent)]" />
-                  <p className="text-xs font-medium text-fg">Certified Dispute Artifact</p>
+                  <p className="text-xs font-medium text-fg">{selectedDbItem.name}</p>
+                  <p className="text-[11px] text-muted">Certified Dispute Artifact ({selectedDbItem.extension?.toUpperCase() || "DATA"})</p>
                 </div>
               )}
 
@@ -375,58 +302,6 @@ export function EvidencePreview({ caseId }: EvidencePreviewProps) {
             <div className="rounded-md border border-line/80 bg-surface-2 p-2.5 font-mono text-[10.5px] text-muted break-all">
               <strong className="text-subtle font-sans">Full Hash: </strong>
               {selectedDbItem.sha256}
-            </div>
-          </div>
-        )}
-      </Dialog>
-
-      {/* Demo Modal ONLY for canonical demo case */}
-      <Dialog
-        open={Boolean(selectedDemoSlot)}
-        onClose={() => setSelectedDemoSlot(null)}
-        title={selectedDemoSlot ? `${selectedDemoSlot.label} — Demo Evidence Item` : "Evidence Detail"}
-        description="Fictional demonstration record for visual layout verification."
-        size="md"
-        footer={
-          <div className="flex w-full items-center justify-between">
-            <span className="text-[11.5px] text-faint">
-              Demo Preview Only
-            </span>
-            <Button variant="secondary" size="sm" onClick={() => setSelectedDemoSlot(null)}>
-              Close
-            </Button>
-          </div>
-        }
-      >
-        {selectedDemoSlot && (
-          <div className="flex flex-col gap-4 py-2">
-            <div className="flex items-center justify-between rounded-md border border-line bg-surface-2 p-3">
-              <div>
-                <p className="text-[11.5px] text-subtle">Document Type</p>
-                <p className="text-[13px] font-semibold text-fg">{selectedDemoSlot.type}</p>
-              </div>
-              <div>
-                <p className="text-[11.5px] text-subtle">Availability</p>
-                <p className="text-[13px] font-medium text-fg">
-                  {selectedDemoSlot.present ? "Present on record" : "Awaiting merchant upload"}
-                </p>
-              </div>
-              <div>
-                <p className="text-[11.5px] text-subtle">Case Associated</p>
-                <p className="text-[13px] font-mono text-[var(--accent)]">{caseId}</p>
-              </div>
-            </div>
-
-            <div className="relative flex min-h-[180px] flex-col items-center justify-center rounded-lg border border-line bg-[#040711] p-6 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full border border-line-2 bg-surface-2 text-[var(--accent)]">
-                <FileCheck className="h-6 w-6" />
-              </div>
-              <p className="mt-3 text-[13.5px] font-medium text-fg">
-                {selectedDemoSlot.label} Visual Canvas
-              </p>
-              <p className="mt-1 max-w-sm text-[12px] text-faint">
-                {selectedDemoSlot.note}
-              </p>
             </div>
           </div>
         )}

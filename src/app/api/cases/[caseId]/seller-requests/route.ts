@@ -12,6 +12,7 @@ import { requireAuth, AuthError } from '@/server/auth/require-auth';
 import { EventType, UserRole } from '@/generated/prisma/client';
 import { SellerCommunicationGatewayService } from '@/server/seller/seller-communication-gateway.service';
 import { BegSyncService } from '@/server/graph/beg-sync.service';
+import { normalizeCaseIdentifier } from '@/server/dal/get-case-by-id';
 
 function isInvestigator(user: { isPlatformAdmin: boolean; role: string }) {
   return (
@@ -43,8 +44,9 @@ export async function POST(
     }
 
     const { caseId } = await context.params;
+    const targetCaseId = normalizeCaseIdentifier(caseId);
     const caseRecord = await prisma.caseRecord.findFirst({
-      where: { OR: [{ id: caseId }, { caseNumber: caseId }] },
+      where: { OR: [{ id: targetCaseId }, { caseNumber: targetCaseId }] },
       include: {
         buyer: { select: { id: true, fullName: true, email: true } },
         organization: { select: { id: true, name: true, slug: true } },
@@ -271,11 +273,11 @@ export async function POST(
           caseId: caseRecord.id,
           actorId: user.id,
           eventType: EventType.SELLER_EVIDENCE_REQUESTED,
-          description: `[DEMO / TEST] Evidence request ${requestNumber} created by investigator for ${organization.name}.`,
+          description: `Evidence request ${requestNumber} created by investigator for ${organization.name}.`,
           metadataJson: JSON.stringify({
             requestId: createdRequest.id,
             requestNumber,
-            isDemo: true,
+            isDemo: false,
             subject,
             organizationId: targetOrgId,
             dueAt: dueAt.toISOString(),
@@ -285,13 +287,13 @@ export async function POST(
           caseId: caseRecord.id,
           actorId: user.id,
           eventType: EventType.SELLER_EVIDENCE_DISPATCHED,
-          description: `[DEMO / TEST] Evidence request ${requestNumber} delivered to RESOLVEGRAPH Seller Portal (${organization.name}).`,
+          description: `Evidence request ${requestNumber} delivered to RESOLVEGRAPH Seller Portal (${organization.name}).`,
           metadataJson: JSON.stringify({
             requestId: createdRequest.id,
             requestNumber,
             channel: 'SELLER_PORTAL',
             deliveryState: 'DELIVERED',
-            isDemo: true,
+            isDemo: false,
           }),
         },
       ],
@@ -303,7 +305,7 @@ export async function POST(
         caseId: caseRecord.id,
         actorId: user.id,
         eventType: 'SELLER_EVIDENCE_REQUESTED',
-        title: 'Evidence request sent to Seller Portal (DEMO)',
+        title: 'Evidence request sent to Seller Portal',
         description: `Investigator sent itemized evidence request (${requestNumber}) to ${organization.name}. Response deadline: ${dueAt.toLocaleDateString()}.`,
         occurredAt: executedAt,
         timePrecision: 'EXACT_TIMESTAMP',
@@ -311,7 +313,7 @@ export async function POST(
         metadataJson: JSON.stringify({
           requestId: createdRequest.id,
           channel: 'SELLER_PORTAL',
-          isDemo: true,
+          isDemo: false,
         }),
       },
     });
@@ -358,7 +360,7 @@ export async function POST(
         dueAt: createdRequest.dueAt?.toISOString(),
         organizationName: organization.name,
       },
-      message: "Demo evidence request successfully delivered to the seller's RESOLVEGRAPH workspace.",
+      message: "Evidence request successfully delivered to the seller's RESOLVEGRAPH workspace.",
     });
   } catch (err) {
     if (err instanceof AuthError) {

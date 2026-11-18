@@ -112,6 +112,7 @@ export default function PackagesPage() {
           trackingNumber,
           items: [
             {
+              productName: itemTitle,
               title: itemTitle,
               sku: itemSku,
               quantity: 1,

@@ -181,10 +181,15 @@ export default function PurchasesPage() {
       const res = await fetch(`/api/purchases/${selectedMemory.id}/compare-dispute`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ disputeClaims: disputeClaimText }),
+        body: JSON.stringify({
+          claimStatement: disputeClaimText,
+          disputeClaims: disputeClaimText,
+        }),
       });
-      const data = await res.json();
-      setDivergenceResult(data);
+      if (res.ok) {
+        const data = await res.json();
+        setDivergenceResult(data);
+      }
     } catch {
       setDivergenceResult({
         divergenceDetected: true,

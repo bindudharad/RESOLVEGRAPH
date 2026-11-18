@@ -15,6 +15,7 @@ import {
   BuyerScreeningService,
   SellerWorkflowOrchestrator,
 } from '@/server/seller';
+import { normalizeCaseIdentifier } from '@/server/dal/get-case-by-id';
 
 function isInvestigator(user: { isPlatformAdmin: boolean; role: string }) {
   return (
@@ -40,9 +41,10 @@ export async function GET(
   try {
     const user = await requireAuth(request);
     const { caseId } = await context.params;
+    const targetCaseId = normalizeCaseIdentifier(caseId);
 
     const caseRecord = await prisma.caseRecord.findFirst({
-      where: { OR: [{ id: caseId }, { caseNumber: caseId }] },
+      where: { OR: [{ id: targetCaseId }, { caseNumber: targetCaseId }] },
     });
 
     if (!caseRecord) {
@@ -265,10 +267,11 @@ export async function POST(
     }
 
     const { caseId } = await context.params;
+    const targetCaseId = normalizeCaseIdentifier(caseId);
     const body = await request.json().catch(() => ({}));
 
     const result = await SellerWorkflowOrchestrator.initiateAfterScreening({
-      caseIdOrNumber: caseId,
+      caseIdOrNumber: targetCaseId,
       actorId: user.id,
       marketplaceHint: typeof body.marketplace === 'string' ? body.marketplace : undefined,
       orderIdHint: typeof body.orderId === 'string' ? body.orderId : undefined,
@@ -277,7 +280,7 @@ export async function POST(
       idempotencyKey:
         typeof body.idempotencyKey === 'string'
           ? body.idempotencyKey
-          : `manual:${caseId}:${Date.now()}`,
+          : `manual:${targetCaseId}:${Date.now()}`,
     });
 
     return NextResponse.json({ success: true, result });
@@ -307,8 +310,9 @@ export async function PATCH(
     }
 
     const { caseId } = await context.params;
+    const targetCaseId = normalizeCaseIdentifier(caseId);
     const caseRecord = await prisma.caseRecord.findFirst({
-      where: { OR: [{ id: caseId }, { caseNumber: caseId }] },
+      where: { OR: [{ id: targetCaseId }, { caseNumber: targetCaseId }] },
       select: { id: true },
     });
     if (!caseRecord) {

@@ -11,6 +11,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { randomBytes, createHash } from "crypto";
+import { normalizeCaseIdentifier } from "@/server/dal/get-case-by-id";
 
 export interface InitiateSessionInput {
   buyerId: string;
@@ -51,13 +52,34 @@ export class CameraSessionService {
 
     const challengeCode = this.generateChallengeCode();
 
+    // Resolve caseId to canonical DB primary key (cuid)
+    let resolvedCaseId: string | null = null;
+    if (input.caseId) {
+      const normalized = normalizeCaseIdentifier(input.caseId);
+      const foundCase = await prisma.caseRecord.findFirst({
+        where: { OR: [{ id: normalized }, { caseNumber: normalized }] },
+        select: { id: true },
+      });
+      resolvedCaseId = foundCase?.id || null;
+    }
+
+    // Resolve packageId to canonical DB primary key (cuid)
+    let resolvedPackageId: string | null = null;
+    if (input.packageId) {
+      const foundPkg = await prisma.packagePassport.findFirst({
+        where: { OR: [{ id: input.packageId }, { packageNumber: input.packageId }] },
+        select: { id: true },
+      });
+      resolvedPackageId = foundPkg?.id || null;
+    }
+
     const session = await prisma.cameraSession.create({
       data: {
         sessionToken,
         buyerId: input.buyerId,
         orderId: input.orderId,
-        packageId: input.packageId,
-        caseId: input.caseId,
+        packageId: resolvedPackageId,
+        caseId: resolvedCaseId,
         deviceInfo: input.deviceInfo || "Android / Chrome Mobile",
         captureMode: input.captureMode || "DUAL_CONCURRENT",
         isFrontOptionalAccepted: input.isFrontOptionalAccepted ?? false,

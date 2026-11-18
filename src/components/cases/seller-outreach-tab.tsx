@@ -36,9 +36,18 @@ interface SellerWorkflowPayload {
   screening: {
     passed: boolean;
     screeningState: string;
+    disposition?: string;
     reason: string;
     eligibleDocumentIds: string[];
     flaggedEvidenceIds: string[];
+    stages?: Array<{
+      stageIndex: number;
+      stageName: string;
+      status: string;
+      details: string;
+      findings: string[];
+    }>;
+    riskScore?: number;
   };
   matches: Array<{
     id: string;
@@ -399,8 +408,8 @@ export function SellerOutreachTab({ caseId }: { caseId: string }) {
           <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-mono border border-line text-fg">
             Seller Outreach Portal
           </span>
-          <span className="rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 text-[10px] font-mono font-semibold">
-            DEMO / TEST
+          <span className="rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-mono font-semibold">
+            Bilateral Protocol Active
           </span>
         </div>
 
@@ -420,13 +429,13 @@ export function SellerOutreachTab({ caseId }: { caseId: string }) {
             className="bg-emerald-600 hover:bg-emerald-500 text-white font-medium shadow-xs"
           >
             <PlusCircle className="h-3.5 w-3.5 mr-1" />
-            Create Evidence Request (Demo)
+            Create Evidence Request
           </Button>
         </div>
       </div>
 
-      {/* Stage 1: Buyer Evidence Screening Gate */}
-      <section className="rg-card p-5 space-y-3">
+      {/* Stage 1: Buyer Evidence Screening Gate (10-Stage Pipeline) */}
+      <section className="rg-card p-5 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             {data.screening.passed ? (
@@ -435,10 +444,28 @@ export function SellerOutreachTab({ caseId }: { caseId: string }) {
               <ShieldAlert className="h-4 w-4 text-amber-400" />
             )}
             <h3 className="text-sm font-semibold text-fg">
-              Buyer Evidence Screening Gate: {data.screening.screeningState}
+              Buyer Evidence Screening Pipeline
             </h3>
+            {data.screening.disposition && (
+              <span className={`rounded-full px-2.5 py-0.5 text-[10.5px] font-mono font-semibold border ${
+                data.screening.disposition === "READY_FOR_INVESTIGATOR_REVIEW"
+                  ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                  : data.screening.disposition === "MORE_BUYER_INFORMATION_REQUIRED"
+                  ? "bg-sky-500/15 text-sky-300 border-sky-500/30"
+                  : data.screening.disposition === "SUSPICIOUS_REQUIRES_REVIEW"
+                  ? "bg-rose-500/15 text-rose-300 border-rose-500/30"
+                  : "bg-amber-500/15 text-amber-300 border-amber-500/30"
+              }`}>
+                {data.screening.disposition}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2">
+            {typeof data.screening.riskScore === "number" && (
+              <span className="text-xs font-mono text-subtle">
+                Risk Score: <strong className="text-fg">{data.screening.riskScore}/100</strong>
+              </span>
+            )}
             {data.directoryCandidates.length > 0 && (
               <Button size="sm" variant="outline" onClick={handleTriggerWorkflow} disabled={actionBusy}>
                 <Send className="h-3.5 w-3.5 mr-1" />
@@ -448,6 +475,41 @@ export function SellerOutreachTab({ caseId }: { caseId: string }) {
           </div>
         </div>
         <p className="text-xs text-muted">{data.screening.reason}</p>
+
+        {/* 10-Stage Evaluation Matrix */}
+        {data.screening.stages && data.screening.stages.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 pt-2 border-t border-line/60">
+            {data.screening.stages.map((st) => (
+              <div
+                key={st.stageIndex}
+                className="rounded-lg border border-line bg-surface-2/60 p-2.5 text-[11px] flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-mono text-[10px] text-subtle">Stage {st.stageIndex}</span>
+                    <span className={`px-1.5 py-0.2 rounded text-[9.5px] font-mono font-semibold ${
+                      st.status === "PASSED"
+                        ? "bg-emerald-500/20 text-emerald-400"
+                        : st.status === "FLAGGED"
+                        ? "bg-rose-500/20 text-rose-400"
+                        : st.status === "INSUFFICIENT"
+                        ? "bg-amber-500/20 text-amber-400"
+                        : "bg-slate-500/20 text-slate-400"
+                    }`}>
+                      {st.status}
+                    </span>
+                  </div>
+                  <p className="font-medium text-fg text-xs truncate" title={st.stageName}>
+                    {st.stageName}
+                  </p>
+                  <p className="mt-1 text-[10.5px] text-faint line-clamp-2" title={st.details}>
+                    {st.details}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Stage 2 & 3: Role-Aware Extraction & Directory Match */}
@@ -581,8 +643,8 @@ export function SellerOutreachTab({ caseId }: { caseId: string }) {
                 <span className="text-[11px] font-mono uppercase text-subtle">
                   Seller Communication Gateway
                 </span>
-                <span className="rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 text-[10px] font-mono font-semibold">
-                  DEMO / TEST
+                <span className="rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-mono font-semibold">
+                  SECURE CHANNEL
                 </span>
               </div>
               <h3 className="text-base font-semibold text-fg mt-0.5 flex items-center gap-2">
@@ -625,13 +687,13 @@ export function SellerOutreachTab({ caseId }: { caseId: string }) {
             </div>
           </div>
 
-          {/* Internal Demo Notice Banner */}
+          {/* Bilateral Gateway Notice Banner */}
           <div className="rounded-xl border border-sky-500/25 bg-sky-500/10 p-3 text-xs text-sky-200 flex items-center gap-2.5">
             <Sparkles className="h-4 w-4 text-sky-400 shrink-0" />
             <span>
-              <strong>Demonstration Delivery Safeguard:</strong> This evidence request was delivered
+              <strong>Bilateral Gateway Delivery:</strong> This evidence request was delivered
               directly to the verified seller organization&apos;s RESOLVEGRAPH workspace (
-              <span className="font-mono">{activeReq.organizationName || "TechStore Global"}</span>). No real emails or external marketplace messages were transmitted.
+              <span className="font-mono">{activeReq.organizationName || "TechStore Global"}</span>). All responses, attached documents, and verification states are synchronized with the Bilateral Evidence Graph.
             </span>
           </div>
 
@@ -878,7 +940,7 @@ export function SellerOutreachTab({ caseId }: { caseId: string }) {
                     Create Seller Evidence Request
                   </h3>
                   <p className="text-[11px] text-subtle">
-                    Platform Workspace · Internal Demonstration Workflow
+                    Platform Workspace · Bilateral Evidence Dispatch
                   </p>
                 </div>
               </div>
@@ -893,14 +955,14 @@ export function SellerOutreachTab({ caseId }: { caseId: string }) {
 
             {/* Modal Body */}
             <div className="p-6 space-y-5 overflow-y-auto flex-1">
-              {/* Internal Demo Safeguard Warning */}
-              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200 flex items-start gap-2.5">
-                <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+              {/* Bilateral Gateway Notice */}
+              <div className="rounded-xl border border-sky-500/30 bg-sky-500/10 p-3 text-xs text-sky-200 flex items-start gap-2.5">
+                <ShieldCheck className="h-4 w-4 text-sky-400 shrink-0 mt-0.5" />
                 <div>
-                  <strong className="block font-semibold">Internal Demonstration Safeguard:</strong>
+                  <strong className="block font-semibold">Enterprise Bilateral Gateway:</strong>
                   This request will be delivered directly to the registered seller&apos;s RESOLVEGRAPH
-                  portal workspace. No external emails, SMTP dispatches, or third-party communications
-                  will be transmitted.
+                  portal workspace. All requested items, submissions, and timeline events are
+                  cryptographically recorded.
                 </div>
               </div>
 
@@ -981,7 +1043,7 @@ export function SellerOutreachTab({ caseId }: { caseId: string }) {
                       >
                         {selectedItems.length === DEFAULT_DEMO_ITEMS.length
                           ? "Deselect All"
-                          : "Select All 6 Demo Items"}
+                          : "Select All 6 Required Items"}
                       </button>
                     </div>
 

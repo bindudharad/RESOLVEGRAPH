@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { Prisma, EvidenceType, VerificationStatus } from '@/generated/prisma/client';
 import { AuthenticatedUser } from '../auth/session';
 import { canViewEvidence } from '../auth/permissions';
+import { normalizeCaseIdentifier } from './get-case-by-id';
 
 export interface AccessibleEvidenceParams {
   page?: number;
@@ -38,7 +39,8 @@ export async function getAccessibleEvidence(user: AuthenticatedUser, params: Acc
   }
 
   if (params.caseId) {
-    caseWhere.OR = [{ caseNumber: params.caseId }, { id: params.caseId }];
+    const targetCaseId = normalizeCaseIdentifier(params.caseId);
+    caseWhere.OR = [{ caseNumber: targetCaseId }, { id: targetCaseId }];
   }
 
   const where: Prisma.EvidenceWhereInput = {};
