@@ -44,6 +44,25 @@ interface AuditRecord {
   timestamp: string;
 }
 
+export type VerificationState =
+  | { status: "IDLE" }
+  | { status: "LOADING" }
+  | {
+      status: "VALID";
+      totalRecords: number;
+      headHash?: string;
+      checkedAt: string;
+    }
+  | {
+      status: "CORRUPTED";
+      brokenAtSequence?: number;
+      reason: string;
+    }
+  | {
+      status: "UNAVAILABLE";
+      errorMessage: string;
+    };
+
 export default function SecurityPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
@@ -52,7 +71,7 @@ export default function SecurityPage() {
 
   const [killSwitch, setKillSwitch] = useState<KillSwitchState | null>(null);
   const [auditRecords, setAuditRecords] = useState<AuditRecord[]>([]);
-  const [chainValid, setChainValid] = useState<boolean | null>(null);
+  const [verificationState, setVerificationState] = useState<VerificationState>({ status: "IDLE" });
   const [updating, setUpdating] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [reason, setReason] = useState("");
@@ -138,15 +157,53 @@ export default function SecurityPage() {
 
   const verifyLedgerIntegrity = async () => {
     setVerifying(true);
+    setVerificationState({ status: "LOADING" });
     try {
       const res = await fetch("/api/audit/chained?verify=true");
-      if (res.ok) {
-        const data = await res.json();
-        setChainValid(Boolean(data.verification?.isValid ?? data.isChainValid));
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        setVerificationState({
+          status: "UNAVAILABLE",
+          errorMessage: errJson.error || `HTTP ${res.status}: Verification service temporarily unavailable.`,
+        });
+        return;
       }
-    } catch (err) {
-      console.error(err);
-      setChainValid(false);
+
+      const data = await res.json();
+      if (!data || typeof data !== "object" || !data.verification) {
+        setVerificationState({
+          status: "UNAVAILABLE",
+          errorMessage: "Malformed API response: missing verification object.",
+        });
+        return;
+      }
+
+      const v = data.verification;
+      if (v.isValid === true) {
+        setVerificationState({
+          status: "VALID",
+          totalRecords: typeof v.totalRecords === "number" ? v.totalRecords : 0,
+          headHash: v.headHash,
+          checkedAt: v.checkedAt ? new Date(v.checkedAt).toLocaleString() : new Date().toLocaleString(),
+        });
+      } else if (v.isValid === false) {
+        setVerificationState({
+          status: "CORRUPTED",
+          brokenAtSequence: v.brokenAtSequence,
+          reason: v.reason || "Cryptographic link mismatch detected in sequential ledger blocks.",
+        });
+      } else {
+        setVerificationState({
+          status: "UNAVAILABLE",
+          errorMessage: "Invalid verification response: isValid flag missing or non-boolean.",
+        });
+      }
+    } catch (err: unknown) {
+      console.error("Audit verification error:", err);
+      setVerificationState({
+        status: "UNAVAILABLE",
+        errorMessage: err instanceof Error ? err.message : "Network failure while connecting to audit verification service.",
+      });
     } finally {
       setVerifying(false);
     }
@@ -233,33 +290,95 @@ export default function SecurityPage() {
       )}
 
       {/* Chain Integrity Result Banner */}
-      {chainValid !== null && (
-        <div
-          className={`rounded-xl border p-4 text-xs flex items-center justify-between ${
-            chainValid
-              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-              : "border-rose-500/30 bg-rose-500/10 text-rose-400"
-          }`}
-        >
+      {verificationState.status === "LOADING" && (
+        <div className="rounded-xl border border-sky-500/30 bg-sky-500/10 p-4 text-xs flex items-center justify-between text-sky-400">
           <div className="flex items-center gap-2.5">
-            {chainValid ? (
-              <ShieldCheck className="h-5 w-5 shrink-0" />
-            ) : (
-              <ShieldAlert className="h-5 w-5 shrink-0" />
-            )}
+            <RefreshCw className="h-5 w-5 shrink-0 animate-spin text-sky-400" />
             <span className="font-medium">
-              {chainValid
-                ? "Cryptographic Verification Succeeded: All sequential SHA-256 blocks validated without tampering or chain breakage."
-                : "Cryptographic Verification Warning: Hash mismatch detected in sequential ledger blocks!"}
+              Verifying sequential cryptographic SHA-256 blocks across immutable ledger...
             </span>
           </div>
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
-            chainValid
-              ? "border-emerald-500/40 bg-emerald-500/20 text-emerald-300"
-              : "border-rose-500/40 bg-rose-500/20 text-rose-300"
-          }`}>
-            {chainValid ? "CHAIN VALID" : "CHAIN CORRUPTED"}
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded border uppercase border-sky-500/40 bg-sky-500/20 text-sky-300">
+            VERIFYING
           </span>
+        </div>
+      )}
+
+      {verificationState.status === "VALID" && (
+        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-emerald-400">
+          <div className="flex items-start sm:items-center gap-2.5 min-w-0">
+            <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-400 mt-0.5 sm:mt-0" />
+            <div>
+              <p className="font-semibold text-emerald-300">
+                AUDIT CHAIN INTEGRITY VERIFIED
+              </p>
+              <p className="text-[11px] text-emerald-400/80 mt-0.5">
+                All {verificationState.totalRecords} sequential SHA-256 blocks validated without tampering or chain breakage. Verified: {verificationState.checkedAt}
+                {verificationState.headHash && (
+                  <span className="ml-2 font-mono text-[10px] text-emerald-500/90">
+                    [Head: {verificationState.headHash.slice(0, 16)}...]
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+          <span className="text-[10px] font-bold px-2.5 py-1 rounded border uppercase border-emerald-500/40 bg-emerald-500/20 text-emerald-300 shrink-0 self-start sm:self-auto">
+            CHAIN VALID
+          </span>
+        </div>
+      )}
+
+      {verificationState.status === "CORRUPTED" && (
+        <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-4 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-rose-300">
+          <div className="flex items-start sm:items-center gap-2.5 min-w-0">
+            <ShieldAlert className="h-5 w-5 shrink-0 text-rose-400 mt-0.5 sm:mt-0" />
+            <div>
+              <p className="font-semibold text-rose-200">
+                AUDIT CHAIN INTEGRITY FAILED
+              </p>
+              <p className="text-[11px] text-rose-300/90 mt-0.5">
+                {verificationState.reason}
+                {verificationState.brokenAtSequence !== undefined && (
+                  <span className="font-semibold text-rose-200 ml-1">
+                    (Broken at block sequence #{verificationState.brokenAtSequence})
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+          <span className="text-[10px] font-bold px-2.5 py-1 rounded border uppercase border-rose-500/40 bg-rose-500/20 text-rose-200 shrink-0 self-start sm:self-auto">
+            CHAIN CORRUPTED
+          </span>
+        </div>
+      )}
+
+      {verificationState.status === "UNAVAILABLE" && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-amber-300">
+          <div className="flex items-start sm:items-center gap-2.5 min-w-0">
+            <AlertTriangle className="h-5 w-5 shrink-0 text-amber-400 mt-0.5 sm:mt-0" />
+            <div>
+              <p className="font-semibold text-amber-200">
+                AUDIT VERIFICATION UNAVAILABLE
+              </p>
+              <p className="text-[11px] text-amber-300/80 mt-0.5">
+                {verificationState.errorMessage}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={verifyLedgerIntegrity}
+              disabled={verifying}
+              className="text-[11px] border-amber-500/40 hover:bg-amber-500/20 text-amber-200"
+            >
+              Retry Verification
+            </Button>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded border uppercase border-amber-500/40 bg-amber-500/20 text-amber-300">
+              UNAVAILABLE
+            </span>
+          </div>
         </div>
       )}
 

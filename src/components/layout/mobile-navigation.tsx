@@ -76,7 +76,7 @@ export function MobileNavigation() {
       {/* Bottom Tab Bar (below 1024px) */}
       <nav
         aria-label="Mobile Bottom Navigation"
-        className="fixed bottom-0 inset-x-0 z-40 flex h-14 items-center justify-around border-t border-white/[0.08] bg-[#0E141D]/95 px-2 backdrop-blur-2xl lg:hidden"
+        className="fixed bottom-0 inset-x-0 z-40 flex h-[calc(3.5rem+env(safe-area-inset-bottom,0px))] pb-[env(safe-area-inset-bottom,0px)] items-center justify-around border-t border-white/[0.08] bg-[#0E141D]/95 px-2 backdrop-blur-2xl lg:hidden"
       >
         {mobileTabs.map((tab) => {
           const Icon = tab.icon;

@@ -11,9 +11,29 @@
 
 import { prisma } from '@/lib/prisma';
 
+export const SUPPORTED_CANONICAL_PROVIDERS = [
+  'PAYPAL',
+  'PHONEPE',
+  'GOOGLE_PAY',
+  'PAYTM',
+  'BHIM',
+  'HDFC_BANK',
+  'ICICI_BANK',
+  'STRIPE',
+  'RAZORPAY',
+  'CASHFREE',
+  'OTHER',
+] as const;
+
+export type CanonicalProvider = (typeof SUPPORTED_CANONICAL_PROVIDERS)[number];
+
+export function isSupportedProvider(val: string): val is CanonicalProvider {
+  return (SUPPORTED_CANONICAL_PROVIDERS as readonly string[]).includes(val.toUpperCase());
+}
+
 export interface CreateCanonicalTransactionInput {
   caseId?: string;
-  provider: 'PAYPAL' | 'PHONEPE' | 'GOOGLE_PAY' | 'PAYTM' | 'BHIM' | 'HDFC_BANK' | 'ICICI_BANK' | 'STRIPE' | 'RAZORPAY' | 'CASHFREE' | 'OTHER';
+  provider: CanonicalProvider;
   providerTxId?: string;
   externalReference?: string;
   payerReference?: string;

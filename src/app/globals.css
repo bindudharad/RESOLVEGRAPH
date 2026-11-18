@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../**/*.{ts,tsx}";
 
 @theme {
   --font-heading: var(--font-heading), "Space Grotesk", system-ui, -apple-system, sans-serif;

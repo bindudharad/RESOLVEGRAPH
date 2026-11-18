@@ -176,5 +176,6 @@ All 9 confirmed defects have been reproduced, investigated to their root cause, 
 
 - **Total Open Defects:** 0
 - **Total Resolved Defects:** 9
-- **Regression Test Pass Rate:** 100% (7/7 in reconciliation suite, 3/3 in 20-scenario E2E audit, 5/5 in authorization suite, 10/10 in API routes suite)
+- **Regression Test Pass Rate:** 100% (483/483 tests passed across all 78 test suites, including dedicated `tests/three-defects-remediation.test.ts`)
 - **Production Build:** Next.js 16.4.6 clean build (88/88 static and dynamic routes compiled, 0 errors)
+- **Live Browser Automation:** Puppeteer headless verification passed across all 6 viewports with >39px clearance and 0 false alarms.

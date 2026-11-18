@@ -65,9 +65,114 @@ interface CaseItem {
   title: string;
 }
 
+const SANDBOX_PROVIDER_TEMPLATES = {
+  PAYPAL: {
+    provider: "PAYPAL",
+    label: "PayPal Sandbox (USD $49.99)",
+    currency: "USD",
+    grossAmountMinor: 4999,
+    feeAmountMinor: 175,
+    merchantName: "TechStore Global",
+    orderPrefix: "ORD-PP-SANDBOX",
+    sources: [
+      {
+        sourceType: "PAYMENT_GATEWAY",
+        providerName: "PayPal Sandbox",
+        status: "COMPLETED",
+      },
+      {
+        sourceType: "MERCHANT_INVOICE",
+        providerName: "TechStore Portal",
+        status: "PENDING_CAPTURE", // Intentional discrepancy!
+      },
+      {
+        sourceType: "EMAIL_CONFIRMATION",
+        providerName: "Customer Receipt Email",
+        status: "PAID",
+      },
+      {
+        sourceType: "NET_BANKING",
+        providerName: "HDFC Card Debit",
+        status: "SETTLED",
+      },
+    ],
+  },
+  PHONEPE: {
+    provider: "PHONEPE",
+    label: "PhonePe UPI Sandbox (INR ₹4,999)",
+    currency: "INR",
+    grossAmountMinor: 499900,
+    feeAmountMinor: 0,
+    merchantName: "DigitalMart Express",
+    orderPrefix: "ORD-PHONEPE-SANDBOX",
+    sources: [
+      {
+        sourceType: "UPI_APP",
+        providerName: "PhonePe UPI App",
+        status: "SUCCESS",
+      },
+      {
+        sourceType: "BANK_STATEMENT",
+        providerName: "HDFC Bank Account",
+        status: "DEBITED",
+      },
+      {
+        sourceType: "MERCHANT_PORTAL",
+        providerName: "DigitalMart Gateway",
+        status: "PENDING", // Intentional discrepancy: bank debited vs merchant pending
+      },
+    ],
+  },
+  STRIPE: {
+    provider: "STRIPE",
+    label: "Stripe Sandbox (USD $79.00)",
+    currency: "USD",
+    grossAmountMinor: 7900,
+    feeAmountMinor: 259,
+    merchantName: "Global Tech Retail",
+    orderPrefix: "ORD-STRIPE-SANDBOX",
+    sources: [
+      {
+        sourceType: "GATEWAY_API",
+        providerName: "Stripe API Charge",
+        status: "SUCCEEDED",
+      },
+      {
+        sourceType: "MERCHANT_INVOICE",
+        providerName: "Merchant Billing Ledger",
+        status: "PAID",
+      },
+    ],
+  },
+  HDFC_BANK: {
+    provider: "HDFC_BANK",
+    label: "HDFC NetBanking Sandbox (INR ₹9,499)",
+    currency: "INR",
+    grossAmountMinor: 949900,
+    feeAmountMinor: 5000,
+    merchantName: "TechStore Global",
+    orderPrefix: "ORD-HDFC-SANDBOX",
+    sources: [
+      {
+        sourceType: "BANK_STATEMENT",
+        providerName: "HDFC Corporate NetBanking",
+        status: "DEBITED",
+      },
+      {
+        sourceType: "GATEWAY_API",
+        providerName: "Payment Gateway Aggregator",
+        status: "FAILED", // Intentional discrepancy
+      },
+    ],
+  },
+} as const;
+
+type SandboxProviderKey = keyof typeof SANDBOX_PROVIDER_TEMPLATES;
+
 export default function ReconciliationPage() {
   const [cases, setCases] = useState<CaseItem[]>([]);
   const [selectedCaseId, setSelectedCaseId] = useState("");
+  const [selectedProvider, setSelectedProvider] = useState<SandboxProviderKey>("PAYPAL");
   const [transactions, setTransactions] = useState<CanonicalTx[]>([]);
   const [loading, setLoading] = useState(false);
   const [reconciling, setReconciling] = useState(false);
@@ -146,65 +251,55 @@ export default function ReconciliationPage() {
   };
 
   const seedMultiSourceDemo = async () => {
-    if (!selectedCaseId) return;
+    if (!selectedCaseId) {
+      setMessage("Please select an active case first.");
+      return;
+    }
     setReconciling(true);
+    setMessage(null);
     try {
-      // Create canonical transaction with multi-source records
+      const template = SANDBOX_PROVIDER_TEMPLATES[selectedProvider];
+      const timestampSuffix = Date.now().toString().slice(-6);
+      const txRef = `SANDBOX-${template.provider}-${timestampSuffix}`;
+      const providerTxId = `TXID-${template.provider}-${timestampSuffix}`;
+      const orderRef = `${template.orderPrefix}-${timestampSuffix}`;
+
+      // Create canonical transaction with provider-specific multi-source records
       const res = await fetch("/api/transactions/canonical", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           caseId: selectedCaseId,
-          provider: "PAYPAL",
-          providerTxId: "CAPTURE-9988112233",
-          orderReference: "ORD-RG-2026-X19",
-          merchantName: "TechStore Global",
-          canonicalReference: `TX-CANONICAL-${Date.now().toString().slice(-6)}`,
-          grossAmountMinor: 4999, // $49.99
-          feeAmountMinor: 175,
-          netAmountMinor: 4824,
-          currency: "USD",
-          normalizedStatus: "COMPLETED",
-          sourceRecords: [
-            {
-              sourceType: "PAYMENT_GATEWAY",
-              providerName: "PayPal Sandbox",
-              claimedReference: "CAPTURE-9988112233",
-              claimedAmountMinor: 4999,
-              claimedCurrency: "USD",
-              claimedStatus: "COMPLETED",
-            },
-            {
-              sourceType: "MERCHANT_INVOICE",
-              providerName: "TechStore Portal",
-              claimedReference: "ORD-RG-2026-X19",
-              claimedAmountMinor: 4999,
-              claimedCurrency: "USD",
-              claimedStatus: "PENDING_CAPTURE", // Intentional discrepancy!
-            },
-            {
-              sourceType: "EMAIL_CONFIRMATION",
-              providerName: "Customer Receipt Email",
-              claimedReference: "RECEIPT-887766",
-              claimedAmountMinor: 4999,
-              claimedCurrency: "USD",
-              claimedStatus: "PAID",
-            },
-            {
-              sourceType: "NET_BANKING",
-              providerName: "HDFC Card Debit",
-              claimedReference: "CARD-AUTH-5544",
-              claimedAmountMinor: 4999,
-              claimedCurrency: "USD",
-              claimedStatus: "SETTLED",
-            },
-          ],
+          provider: template.provider,
+          providerTxId,
+          orderReference: orderRef,
+          merchantName: template.merchantName,
+          canonicalReference: txRef,
+          grossAmountMinor: template.grossAmountMinor,
+          feeAmountMinor: template.feeAmountMinor,
+          currency: template.currency,
+          originalStatus: "COMPLETED",
+          metadata: {
+            isSandbox: true,
+            environment: "SANDBOX_SIMULATION",
+            providerTemplate: selectedProvider,
+            seededAt: new Date().toISOString(),
+          },
+          sourceRecords: template.sources.map((s, idx) => ({
+            sourceType: s.sourceType,
+            providerName: s.providerName,
+            claimedReference: `${txRef}-SRC${idx + 1}`,
+            claimedAmountMinor: template.grossAmountMinor,
+            claimedCurrency: template.currency,
+            claimedStatus: s.status,
+            reportedAt: new Date().toISOString(),
+          })),
         }),
       });
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || "Failed to seed multi-source data");
+        throw new Error(errData.error || `Failed to seed ${template.provider} data (HTTP ${res.status})`);
       }
 
       // Auto-reconcile
@@ -215,10 +310,10 @@ export default function ReconciliationPage() {
       });
 
       await refreshTransactions(selectedCaseId);
-      setMessage("Seeded 4-Source Cross-Provider Incident: Gateway Confirmed vs Merchant Pending.");
+      setMessage(`Seeded ${template.label} [Ref: ${txRef}] and completed reconciliation evaluation.`);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Seed failed";
-      alert(msg);
+      setMessage(`Error: ${msg}`);
     } finally {
       setReconciling(false);
     }
@@ -240,6 +335,19 @@ export default function ReconciliationPage() {
           </p>
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <select
+            aria-label="Select Sandbox Payment Provider"
+            value={selectedProvider}
+            onChange={(e) => setSelectedProvider(e.target.value as SandboxProviderKey)}
+            disabled={reconciling}
+            className="rounded-md border border-border bg-surface-2 px-2.5 py-1.5 text-xs text-fg focus:outline-none focus:ring-1 focus:ring-primary shrink-0"
+          >
+            {Object.entries(SANDBOX_PROVIDER_TEMPLATES).map(([key, t]) => (
+              <option key={key} value={key}>
+                {t.label}
+              </option>
+            ))}
+          </select>
           <Button
             variant="outline"
             size="sm"
@@ -286,7 +394,13 @@ export default function ReconciliationPage() {
           </select>
         </div>
         {message && (
-          <span className="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded">
+          <span
+            className={`text-xs px-3 py-1 rounded border ${
+              message.startsWith("Error:")
+                ? "text-rose-400 bg-rose-500/10 border-rose-500/20"
+                : "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
+            }`}
+          >
             {message}
           </span>
         )}
