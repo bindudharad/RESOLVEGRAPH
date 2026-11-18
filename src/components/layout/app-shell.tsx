@@ -34,7 +34,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
               <div className="flex min-w-0 flex-1 flex-col bg-[#090D13]">
                 <Topbar />
-                <main id="main-content" className="min-w-0 flex-1 pb-16 lg:pb-8">
+                <main id="main-content" className="min-w-0 flex-1 pb-24 sm:pb-20 lg:pb-8">
                   <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
                     {children}
                   </div>

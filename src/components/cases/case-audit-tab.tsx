@@ -34,9 +34,11 @@ export function CaseAuditTab({ caseId }: CaseAuditTabProps) {
   const [items, setItems] = useState<AuditItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<string>("ALL");
+  const [visibleCount, setVisibleCount] = useState<number>(50);
 
   useEffect(() => {
     let mounted = true;
+    setVisibleCount(50);
 
     async function loadAuditHistory() {
       try {
@@ -139,7 +141,7 @@ export function CaseAuditTab({ caseId }: CaseAuditTabProps) {
         </div>
       ) : (
         <div className="divide-y divide-line">
-          {filteredItems.map((item, idx) => (
+          {filteredItems.slice(0, visibleCount).map((item, idx) => (
             <div key={item.id || idx} className="p-4 hover:bg-surface-2/40 transition-colors">
               <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-2.5">
@@ -167,6 +169,18 @@ export function CaseAuditTab({ caseId }: CaseAuditTabProps) {
               )}
             </div>
           ))}
+
+          {filteredItems.length > visibleCount && (
+            <div className="p-4 text-center bg-surface-1">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((prev) => prev + 50)}
+                className="rounded-lg border border-line bg-surface-2 px-4 py-2 text-xs font-medium text-fg hover:bg-surface-3 transition-colors"
+              >
+                Load 50 More Records ({filteredItems.length - visibleCount} remaining)
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

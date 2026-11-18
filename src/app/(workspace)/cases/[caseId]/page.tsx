@@ -320,7 +320,10 @@ function EnterpriseCaseDetailsView() {
 
   // Dynamic 5-milestone bilateral timeline derived from genuine case properties (no demo leakage)
   const dynamicTimelineSteps = useMemo(() => {
-    const isResolved = caseItem.status === "Resolved";
+    const isResolved =
+      caseItem.status === "Resolved" ||
+      (caseItem.status as string).toLowerCase().includes("resolve") ||
+      (caseItem.status as string).toLowerCase().includes("close");
     const hasOutreach = Boolean(caseItem.merchant && caseItem.merchant !== "Unregistered Seller");
     const formattedAmount = formatCurrency(caseItem.amount, caseItem.currency);
     const dateFormatted = caseItem.createdAt ? formatDate(caseItem.createdAt) : "Day 1";
@@ -346,8 +349,8 @@ function EnterpriseCaseDetailsView() {
         id: "STEP-3",
         title: "Seller Outreach",
         party: "MERCHANT" as const,
-        timestamp: hasOutreach ? "Active" : "Awaiting Seller",
-        completed: Boolean(caseItem.sellerGstin || hasOutreach),
+        timestamp: hasOutreach || isResolved ? "Completed" : "Awaiting Seller",
+        completed: Boolean(caseItem.sellerGstin || hasOutreach || isResolved),
         current: !isResolved && caseItem.status === "Awaiting Merchant",
         description: `Bilateral communication routed to ${caseItem.merchant || "Identified Seller Organization"} for fulfillment documentation.`,
       },
@@ -355,7 +358,7 @@ function EnterpriseCaseDetailsView() {
         id: "STEP-4",
         title: "BEG & BERR Analysis",
         party: "AI" as const,
-        timestamp: "Active",
+        timestamp: isResolved ? "Completed" : "Active",
         completed: isResolved,
         current: !isResolved && (caseItem.status === "Under Investigation" || caseItem.status === "Escalated"),
         description: `Cross-correlating buyer evidence, packing declarations, and policy constraints in BEG.`,
@@ -366,7 +369,7 @@ function EnterpriseCaseDetailsView() {
         party: "RESOLVEGRAPH" as const,
         timestamp: isResolved ? "Resolved" : "Pending",
         completed: isResolved,
-        current: isResolved,
+        current: false,
         description: isResolved
           ? `Dispute finalized with authorized remedy fulfillment.`
           : `Remedy evaluation governed by Resolution Manager under Enterprise Dispute Policy.`,
@@ -808,9 +811,12 @@ function EnterpriseCaseDetailsView() {
         <div className="flex flex-col gap-6">
           <ConvergenceTimeline
             steps={dynamicTimelineSteps}
-            currentStepId={dynamicTimelineSteps.find((s) => s.current)?.id || (caseItem.status === "Resolved" ? "STEP-5" : "STEP-4")}
+            currentStepId={
+              dynamicTimelineSteps.find((s) => s.current)?.id ||
+              (caseItem.status === "Resolved" ? "STEP-5" : "STEP-4")
+            }
           />
-          <CaseAuditTab caseId={caseItem.id} />
+          <CaseAuditTab caseId={caseId || caseItem.id} />
         </div>
       )}
 

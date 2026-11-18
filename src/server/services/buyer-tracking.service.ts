@@ -1333,7 +1333,10 @@ export class BuyerTrackingService {
 
     let stage2Status: TimelineMilestoneStatus = "UPCOMING";
     let stage2Desc = "Our system will examine your complaint and submitted evidence.";
-    if (latestBerr) {
+    if (caseRecord.status === CaseStatus.RESOLVED || caseRecord.status === CaseStatus.CLOSED) {
+      stage2Status = "COMPLETED";
+      stage2Desc = "Evidence examination complete — dispute resolved.";
+    } else if (latestBerr) {
       if (latestBerr.overallStatus === "REQUIRES_ADDITIONAL_EVIDENCE") {
         stage2Status = "CURRENT";
         stage2Desc = "Initial evidence check finished; additional supporting documentation or clarification is needed.";
@@ -1464,7 +1467,10 @@ export class BuyerTrackingService {
 
     let stage3Status: TimelineMilestoneStatus = "UPCOMING";
     let stage3Desc = "Relevant information has been requested from the seller to help complete the investigation.";
-    if (hasSellerEvidence || latestSellerRequest?.status === "SELLER_RESPONDED") {
+    if (caseRecord.status === CaseStatus.RESOLVED || caseRecord.status === CaseStatus.CLOSED) {
+      stage3Status = "COMPLETED";
+      stage3Desc = "Merchant evidentiary records and representations have been finalized.";
+    } else if (hasSellerEvidence || latestSellerRequest?.status === "SELLER_RESPONDED") {
       stage3Status = "COMPLETED";
       stage3Desc = "The seller has submitted information for review.";
     } else if (latestSellerRequest?.status === "CUSTOMER_ACTION_REQUIRED") {

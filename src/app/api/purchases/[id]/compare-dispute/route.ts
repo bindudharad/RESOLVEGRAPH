@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, AuthError } from "@/server/auth/require-auth";
+import { prisma } from "@/lib/prisma";
 import { PurchaseMemoryService } from "@/server/services/purchase-memory.service";
 
 export async function POST(
@@ -16,7 +17,26 @@ export async function POST(
       return NextResponse.json({ error: "Missing required field: 'claimStatement' or 'disputeClaims'" }, { status: 400 });
     }
 
-    const memory = await PurchaseMemoryService.getPurchaseMemoryById(id);
+    let memory = await PurchaseMemoryService.getPurchaseMemoryById(id);
+    if (!memory) {
+      memory = await prisma.purchaseMemory.findFirst({
+        where: { OR: [{ id }, { externalOrderId: id }, { orderId: id }] },
+        include: {
+          specifications: true,
+          promises: true,
+          snapshots: true,
+          packages: {
+            include: {
+              items: true,
+              seals: true,
+              events: true,
+            },
+          },
+          disputes: true,
+        },
+      });
+    }
+
     if (!memory) {
       return NextResponse.json({ error: `PurchaseMemory '${id}' not found.` }, { status: 404 });
     }
@@ -26,7 +46,7 @@ export async function POST(
       return NextResponse.json({ error: "Forbidden: Access denied to purchase record." }, { status: 403 });
     }
 
-    const comparison = await PurchaseMemoryService.compareDisputeClaim(id, claimStatement.trim());
+    const comparison = await PurchaseMemoryService.compareDisputeClaim(memory.id, claimStatement.trim());
     const hasDivergence = comparison.divergencesFound.length > 0;
     const baselineSummary = Object.entries(comparison.originalSpecifications)
       .map(([k, v]) => `${k}: ${v}`)

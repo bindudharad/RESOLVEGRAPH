@@ -142,7 +142,7 @@ export default function SecurityPage() {
       const res = await fetch("/api/audit/chained?verify=true");
       if (res.ok) {
         const data = await res.json();
-        setChainValid(data.isChainValid);
+        setChainValid(Boolean(data.verification?.isValid ?? data.isChainValid));
       }
     } catch (err) {
       console.error(err);

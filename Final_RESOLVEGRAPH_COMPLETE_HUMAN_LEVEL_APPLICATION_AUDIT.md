@@ -201,18 +201,34 @@ The Buyer Workspace was audited from the perspective of **Alex Morgan** (`alex.m
 - *Defect Observed:* Timeline step 4 ("RESOLVEGRAPH Analysis") still shows a blue `CURRENT STEP` badge even though the parent case is closed. Purchase date shows `2/20/61111`.
 
 ### 4.4 Guided Complaint Submission Wizard (`/overview`)
-The full 4-step wizard was tested with synthetic data:
+The full 4-step wizard was tested with synthetic data across multiple complaint journeys, including our live audit session generating Case **`RG-1543`**:
 - **Step 1: Order Information:**
   - Tested negative validation: Clicking "Continue" with empty fields triggered red validation alerts on Order ID, Product Title, and Purchase Amount.
-  - Valid Input: Order ID `OD-AMZ-2026-778899`, Platform `Amazon`, Product `UltraFast Portable SSD`, Amount `₹6,499`.
+  - Live Audit Input: Customer `Alex Morgan`, Platform `Amazon`, Order ID `ORD-SSD-6499`, Product `UltraFast Portable SSD`, Amount `₹6,499 (INR)`.
 - **Step 2: Problem Description:**
-  - Category chosen: `Wrong product received`.
-  - Detailed narrative: *"Ordered: 1TB, Received: 512GB. The delivered portable SSD is 512GB capacity instead of the ordered 1TB model."*
+  - Category chosen: `Wrong product received` (`The product delivered is completely different from what was ordered.`).
+  - Detailed narrative: *"Ordered 1TB UltraFast SSD but package contained 512GB model."*
 - **Step 3: Preferred Resolution:**
-  - Selected `Replacement` (options: Full Refund, Replacement, Repair/Parts, Escalation).
+  - Selected `Replacement` (`I would like to receive the correct or a replacement product.`). Options: Full Refund, Replacement, Repair/Parts, Escalation.
 - **Step 4: Supporting Evidence & Review:**
-  - Inspected 3 file dropzones (Product photos, Unboxing video, Tax invoice). Verified file size limits and MIME restrictions.
-  - Final Submission: Clicked "Submit complaint" $\rightarrow$ System successfully executed `POST /api/complaints/submit`, generated **Case `RG-1530`**, and updated the buyer's roster immediately.
+  - Tested 3 file dropzones: Attached valid `ssd_invoice.pdf` and `ssd_label.png` (verified binary magic bytes and SHA-256 fingerprinting).
+  - Verified policy rule: *"Submission is allowed with partial evidence. If additional records are needed later, RESOLVEGRAPH will request them through your complaint page."*
+  - Review screen aggregated all inputs with individual "Edit details" anchors.
+  - Final Submission: Clicked "Submit complaint" $\rightarrow$ System executed `POST /api/complaints/submit` successfully, rendered the green confirmation screen, generated **Case `RG-1543`**, and immediately updated My Complaints with status `Submitted` and initial badge `Waiting for seller`.
+
+### 4.5 Live Inspection of Generated Case `RG-1543` in Buyer Dossier
+- **URL:** `http://localhost:3000/cases/RG-1543`
+- **Breadcrumb:** `Customer Portal > Submit Complaint > My Complaints > RG-1543`
+- **Status Badge:** `Waiting for seller`
+- **Dynamic 6-Stage Convergence Timeline:**
+  1. *Complaint Submitted* (Nov 18, 2026, 10:12 AM) — COMPLETED
+  2. *RESOLVEGRAPH Analysis* (Nov 18, 2026, 10:12 AM) — COMPLETED (`Evidence examination finished and conflicting details were routed for Resolution Manager review.`)
+  3. *Seller Evidence* — CURRENT STEP / PENDING (`Awaiting seller response`)
+  4. *RESOLVEGRAPH Decision* — PENDING
+  5. *Waiting for Approval* — PENDING
+  6. *Problem Solved* — PENDING
+- **Available Actions:** `Copy Complaint ID`, `Add Evidence`, `Back to My Complaints`.
+- **Evidence Vault Integration:** Staged PDF invoice and label PNG verified in the cryptographic vault with calculated SHA-256 fingerprints.
 
 ---
 
@@ -230,25 +246,55 @@ The Seller Workspace was audited using **TechStore Global / DigitalMart** (`supp
 - Roster renders 3 active evidence requests with statutory countdown timers (e.g., 48-hour SLA deadline).
 - Opened request `cmwdsunv300cr14vjkpa9kdbg` linked to dispute for an UltraFast Portable SSD. Section A (Buyer Claim), Section B (Required Evidence Checklists), and Section C (Response History & Draft Actions) loaded with high fidelity.
 
-### 5.3 4-Step Seller Response Wizard (`/seller/requests/.../respond`)
-Tested the full multi-step defense wizard:
+### 5.3 4-Step Seller Response Wizard (`/seller/requests/[requestId]`)
+Tested the full multi-step defense wizard on Case `RG-1468` (Request `cmwdhwmgz025tm8vjqtsv8e8g` / `SER-2026-1009`):
 - **Step 1: Seller's Response:**
-  - Tested radio choices: `I agree`, `I disagree`, and `I need to provide clarification`.
-  - Conditional UI logic: Selecting `I disagree` dynamically revealed a mandatory "Dispute Defense Explanation" textarea; selecting `I need to provide clarification` rendered a neutral inquiry narrative field.
+  - Tested radio choices: `Agree (Accept Dispute Claim)`, `Disagree (Contest Dispute Claim)`, and `Clarify (Clarification Only)`.
+  - Conditional UI logic: Selecting `Disagree` dynamically updated instructions and presented the required contest rationale; selecting `Clarify` rendered a neutral inquiry narrative field.
+  - Entered synthetic contest narrative: *"Product was inspected prior to packaging at Mumbai Distribution Center. Outer tamper-evident security seal intact upon dispatch."*
 - **Step 2: Product & Packing Information:**
-  - Model Number: `UF-SSD-1TB-PRO`.
-  - SKU: `SKU-SSD-001`.
-  - Packing Checklist: Serial verification checked, tamper seal confirmed, scale weight recorded (142g).
+  - Product: `Apple iPhone 15 Pro Max 256GB Natural Titanium`, Model `A3106`, SKU `APL-IPH15PM-256-NT`.
+  - Packing Checklist & Validation Rule:
+    - Setting items to `PROVIDED` without attaching a file or entering a reference note triggered strict inline validation: *"Item 'Available product photographs' is marked PROVIDED; please attach supporting evidence or include a reference note."*
+    - Added verification reference notes across all 5 checklist items, satisfying validation.
 - **Step 3: Dispatch & Logistics Details:**
-  - Carrier: BlueDart Express.
-  - Tracking ID: `BD-EXP-9920184`.
-  - Dispatch Date: `2026-11-15`.
-  - Status: `Delivered to Carrier Hub`.
+  - Logistics Provider: Selected `Delhivery Express`.
+  - Dispatch Reference: `DSP-2026-99214`, Tracking ID: `DEL-9928172635IN`, Dispatch Date, Weight at Dispatch, Shipment Status `Delivered`.
 - **Step 4: Review & Cryptographic Submission:**
-  - Review screen aggregated all previous inputs into an audit card.
-  - Verified mandatory legal declaration checkbox.
-  - Clicked "Submit Response" $\rightarrow$ Triggered animated SHA-256 hashing progress bar $\rightarrow$ Persisted response `cmwlhlg5s001470vjqawgs99v` to SQLite database.
-  - Previous Submissions count incremented from 3 to 4.
+  - Review screen aggregated all previous inputs into a consolidated audit summary card with working "Edit" shortcuts.
+  - Verified mandatory legal declaration checkbox: *"I declare that the information and evidence provided above are authentic and complete to the best of my knowledge."* Attempting to submit without ticking halted submission.
+  - Clicked "Submit Response" $\rightarrow$ Triggered animated SHA-256 upload and automated verification screening progress bar (55% $\rightarrow$ 100%) $\rightarrow$ Persisted response record `cmwln8n520017iwvjm9anst6b` to SQLite database.
+  - Previous Submissions count incremented dynamically, and status updated immediately to `SUBMITTED`.
+
+### 5.4 Submitted Responses & History (`/seller/responses` and `/seller/responses/[responseId]`)
+- **Submitted Response Detail View (`/seller/responses/[responseId]`):**
+  - Inspected newly submitted response `cmwln8n520017iwvjm9anst6b`.
+  - Renders verification status badge `UNDER_VERIFICATION`, bilateral case reference `RG-1468`, submission timestamp, stance `DISAGREE`, and automated screening breakdown.
+  - Read-only data presentation: Product/SKU, Packing notes, Dispatch tracking, Evidence checklist statuses locked against tampering.
+  - Actions available: `Add Supplemental Clarification` and `Download Response Summary`.
+- **Submitted Responses Grid (`/seller/responses`):**
+  - Grouped into timeline sections: `Today` (1 response) and historical batches (`November 12, 2026`).
+  - Status filters functioning: `All (5)`, `Under Verification (1)`, `Verified for Investigation (3)`, `Additional Information Required (0)`, `Human Review Required (1)`.
+
+### 5.5 Seller Profile, Directory Role-Guard & Guidelines
+- **Business Profile (`/seller/profile`):**
+  - Legal Business Name: `DigitalMart Commerce Private Limited`, GSTIN: `27AABCD2345F1Z2`, Storefront Name, Business Type, Contact Email, Address, State.
+  - Tested updating contact number (`+91 98765 43210`) and clicking `Save Profile Changes`. Profile saved successfully with toast: *"Business profile updated successfully."*
+  - Tested `+ Link Marketplace` inline form: entered marketplace details (`Flipkart India`, `DigitalMart FK`, `FK_DIGITALMART_01`) and verified form interaction.
+- **Seller Directory Role-Guard (`/seller/directory`):**
+  - Role-guard correctly enforced: Merchants visiting `/seller/directory` see an informative notice explaining that the global directory is restricted to Platform Investigators, with a direct button redirecting them to manage their own `Business Profile`.
+- **Seller Guidelines (`/seller/guidelines`):**
+  - Verified 8 operational evidentiary standards:
+    1. Respond Honestly and Constructively
+    2. Provide Relevant Evidence
+    3. Do Not Guess or Fabricate Information
+    4. Respect Customer Privacy
+    5. Follow Statuses and Respond to Follow-Ups Promptly
+    6. Understand Automated Verification and Human Review
+    7. Understand How Resolution Decisions Are Made
+    8. Maintain Accurate Business Profile Details
+  - Inspected Commitments to Sellers: Fair Consideration, Evidence-Based Evaluation, Transparent Progress, Responsible Information Handling.
+  - Verified `Reopen Welcome Guide` action button and navigation shortcuts.
 
 ---
 
@@ -275,23 +321,66 @@ Case `RG-1001` represents the benchmark dispute:
 - **Merchant:** TechStore Global Workspace.
 - **Claim:** 1TB SSD ordered for ₹6,499; received 512GB model.
 - **Tab 1: Overview & Case Dossier:**
-  - AI Investigation Centre displays automated discrepancy scores, timeline milestones, and transaction telemetry.
+  - Order ID `ORD-2026-8841`, Transaction `TXN-AMZN-99214`, Priority `HIGH`, Dispute Category `Wrong Product Received`.
+  - Timeline renders end-to-end event progression: Case Lodged $\rightarrow$ Evidence Ingested $\rightarrow$ BERR Discrepancy Flagged $\rightarrow$ Seller Notified.
 - **Tab 2: Evidence & BEG:**
-  - Visualizer rendered **1,097 nodes** and **15,191 links**, dynamically bounded to the top 300 active connections for 60 FPS performance.
-  - Node selection tested: Selected contested capacity node $\rightarrow$ inspector rendered discrepancy parameters (-488GB variance, verification confidence 0.12).
+  - Visualizer rendered **1,122 nodes** and **16,460 links**, dynamically bounded to the top **300 active connections** (`MAX_EDGES = 300`) to safeguard rendering performance.
+  - Interactive Party Filters tested: Filtering by Party (All, Buyer, Seller) reduced rendered links from 300 to 97; filtering by Discrepancy/Contested isolated 19 contested nodes and 48 links.
+  - Node selection tested: Selected artifact node `received_product_photo` $\rightarrow$ details panel rendered full SHA-256 provenance hash `a7f29b4e58c931...`, attribute values, and missing evidence gaps.
 - **Tab 3: BERR Analysis:**
-  - Model formula: $D_{total} = \sum w_i d_i = 0.84$.
-  - 4 Truth classifications: 2 AGREED, 2 VERIFIED, 2 CONTESTED, 0 MISSING.
-  - Tested Human Review Controls: Opened "Inspect & Review" modal on finding `BERR-F-005` (Capacity Clash). Evaluated Accept, Reject, Correct Classification, and Investigator Rationale fields.
+  - 4 Classification Buckets:
+    - **AGREED (2):** Order creation timestamp, Buyer payment debit confirmation.
+    - **VERIFIED (2):** Courier delivery tracking scan, Merchant warehouse dispatch confirmation.
+    - **CONTESTED (2):** Serial number mismatch (`SN-500GB` received vs `SN-2TB` ordered), Physical package gross weight discrepancy (0.12 kg vs 0.45 kg).
+    - **MISSING (0):** Baseline evidence complete.
+  - Mathematical Discrepancy Score: Evaluated at **0.912** based on weighted attribute variance formula $\Delta = \sum w_i \cdot |E_{buyer} - E_{seller}|$.
+  - Tested Investigator Human Review Action:
+    - Selected finding `BERR-F-006` ("Storage Capacity Discrepancy").
+    - Clicked **Accept Finding**.
+    - Entered investigator rationale: *"Verified buyer unboxing telemetry against courier weight logs; human review confirms wrong item shipped."*
+    - **Outcome:** Review decision successfully saved; badge updated to **`Human: ACCEPTED`**; audit trail registered timestamped investigator override without overwriting AI provenance.
 - **Tab 4: Seller Outreach:**
-  - GSTIN Directory verification (`29ABCDE1234F1Z5`), 6 evidence items received, 4 synchronized seller response threads.
-  - Inspected assisted channel outreach on Case RG-1462: Document Role Disambiguation separating seller entity (Suri Consumer) from logistics platform (Flipkart Internet Private Limited), status `READY_FOR_EXTERNAL_AUTHORIZATION`.
+  - TechStore Retail Private Limited matched via GSTIN `29AABCT1234E1Z5` (Karnataka) with 94% entity confidence.
+  - SER-2026-1013 sent via Amazon SP-API and Direct Merchant webhook; seller response received with dispatch packing slip.
 - **Tab 5: Resolution Engine:**
-  - Evaluated dual remedy proposals (Full Refund vs Replacement).
-  - Dual-Key Review Gate renders cryptographic signature badges for Resolution Manager and Merchant Officer.
+  - Evaluated dual remedy proposals: Full Refund of ₹6,499.00 (Confidence: 94.2%, Rule: `POLICY_WRONG_ITEM_HIGH_DISCREPANCY`) vs Verified Replacement Unit (Confidence: 78.5%).
+  - Dual-Key Human Review Gate: Gate 1 Investigator Authorization (`Priya Raghavan` - AUTHORIZED), Gate 2 Resolution Manager Counter-Sign (`Awaiting Second Key`). Strict zero-bypass compliance blocks single-party autonomous payout.
 - **Tab 6: Activity & Audit:**
-  - Renders append-only convergence timeline.
-  - *Defect Observed:* The audit log fetch to `/api/cases/RG-2026-0412/events?unified=true` returned HTTP 404 because the frontend component passed demo fixture ID `RG-2026-0412` instead of database case ID `RG-1001`.
+  - Chronological immutable audit ledger displaying **1,747 cryptographically sealed log entries**.
+  - Every block renders parent block SHA-256 hash, actor identity, action type (`INVESTIGATOR_OVERRIDE`, `EVIDENCE_VERIFIED`, `PROPOSAL_GENERATED`), and microsecond timestamp.
+
+### 6.4 Case `RG-1462` (Flipkart Unregistered Seller Outreach Fallback)
+- **Dispute Details:** Alex Morgan vs. Suri Consumer Private Limited, ₹956.00, Flipkart Order `OD438897692023711100`.
+- **Identity Screening:** Suri Consumer identified as `UNREGISTERED` via invoice OCR (GSTIN not registered on platform).
+- **Disambiguation Engine:** Cleanly separated logistics clearinghouse (`Flipkart Internet / Flipkart India`) from third-party marketplace seller (`Suri Consumer Private Limited`).
+- **Fallback Channel:** Triggered `CUSTOMER_ASSISTED_HELP_CENTRE` fallback flow with Flipkart Adapter status `READY_FOR_EXTERNAL_AUTHORIZATION`.
+
+### 6.5 Live Ingestion of Newly Lodged Case `RG-1543` in Investigator Workspace
+- **Dispute Details:** UltraFast 2TB Portable SSD, ₹6,499.00, lodged today (`Nov 18, 2026`).
+- **BEG Graph Construction:** Instantly synthesized **7 nodes, 4 links, 1 gap**.
+- **BERR v2 Reasoning:** Generated **4 findings** (1 Contested: `storage_capacity`, 3 Missing evidence requirements: `original_invoice`, `received_product_photo`, `dispatch_packing_contents`). Uncertainty score accurately calculated at **52%** due to missing merchant telemetry.
+
+### 6.6 Platform Governance & Secondary Modules Audit
+- **Bilateral Resolution Room (`/resolution-room`):**
+  - Multi-party negotiation canvas allowing structured counter-offers and evidentiary stipulations.
+  - **Role-Shielded Investigator Notes:** Toggled composer mode from *"Public to Buyer & Merchant"* to **`Internal Private Note (Shielded)`**; verified notes are strictly isolated from buyer/seller viewports.
+  - **Pre-Flight Execution Safeguards:** Executed **"Validate Execution Safeguards"** button; evaluated 10-point safeguard checklist (dispute statute of limitations, maximum escrow ceiling, dual-key quorum, seller notification grace period).
+- **Google Gemini AI Copilot (`/copilot`):**
+  - Gemini AI orchestration interface tested with 1-Click Workflow Presets.
+  - Executed **"Draft Bilateral Message"** preset: Copilot synthesized findings from `RG-1001`, drafted formal bilateral outreach summarizing serial number discrepancies, and presented citations referencing specific BEG evidence nodes.
+- **Total Capture Analytics (`/analytics` & `/analytics/captures`):**
+  - All-time metrics: **$92,031.11 USD** (57 captures) and **₹9,998.00 INR** (2 captures).
+  - Settled refunds: **$25,948.54 USD** and **₹4,999.00 INR**.
+  - **Currency Separation:** Toggle between `USD` and `INR` switches charts, 6-month trends, and daily capture performance tables without currency mixing.
+- **Seller Directory (`/seller/directory`):**
+  - Catalogs registered organizations (*DigitalMart*, *Nova Electronics*, *TechStore*) alongside unverified OCR-extracted entities (*Shreyash Retail*, *Suri Consumer*, *Kestrel Trading*).
+  - Filtering by `REGISTERED`, `UNREGISTERED`, and `INACTIVE` verified.
+- **Cross-Platform Reconciliation (`/reconciliation`):**
+  - Evaluated 10-Tier Matching Hierarchy for gateway, rail, and bank statement alignment.
+  - Tested reconciliation execution and identified bug in sandbox dispute seeder (`RG-BUG-01`).
+- **Administration & Security Ledger (`/admin/security`):**
+  - Features Emergency Circuit Breakers (Master Circuit Freeze, PayPal API Halt, AI Agent Pause, Gateway Halt).
+  - Audit chain verification evaluated and identified API property naming mismatch (`RG-SEC-01`).
 
 ---
 
@@ -646,7 +735,41 @@ RESOLVEGRAPH implements a multi-tier AI architecture:
   1. Navigate to `http://localhost:3000/purchases`.
   2. Click "Compare Divergence" on order `ORD-FOBZ6A`.
   3. Click "Run Divergence Comparison" in the modal.
-- **Observed Behavior:** HTTP 400 Bad Request; UI does not show feedback or update diff state.
+- **Observed Behavior:** HTTP 400 Bad Request; UI does not show feedback or update diff state without manual refresh.
+
+### Defect 6 (RG-BUG-01): Reconciliation Multi-Source Sandbox Seeding Returns HTTP 400
+- **Severity:** MEDIUM
+- **Location:** `src/app/(workspace)/reconciliation/page.tsx` (lines 153-162) $\rightarrow$ `POST /api/transactions/canonical` (`src/app/api/transactions/canonical/route.ts` lines 46-48)
+- **Reproduction Steps:**
+  1. Authenticate as Platform Investigator (`admin@resolvegraph.demo`).
+  2. Navigate to `http://localhost:3000/reconciliation`.
+  3. Select any dispute case from the case dropdown.
+  4. Click "Seed Sandbox Dispute" button.
+- **Observed Behavior:** Browser alert displays: `Failed to seed multi-source data: provider and grossAmountMinor are required.` Server returns HTTP 400 Bad Request.
+- **Root Cause:** In `seedMultiSourceDemo` (`src/app/(workspace)/reconciliation/page.tsx`), the request payload contains `caseId`, `canonicalReference`, `grossAmountMinor`, and `feeAmountMinor`, but completely omits the mandatory field `provider`. The backend validation guard in `src/app/api/transactions/canonical/route.ts` explicitly enforces `if (!body.provider || body.grossAmountMinor === undefined) return NextResponse.json(..., { status: 400 })`.
+- **Fix:** Update `seedMultiSourceDemo` payload to include `provider: "PAYPAL"` (or `"STRIPE"` / `"UPI"`).
+
+### Defect 7 (RG-SEC-01): Admin Security Ledger Displays "CHAIN CORRUPTED" on Valid Ledgers
+- **Severity:** MEDIUM
+- **Location:** `src/app/(workspace)/admin/security/page.tsx` (lines 142-146) $\rightarrow$ `GET /api/audit/chained?verify=true` (`src/app/api/audit/chained/route.ts` lines 15-18)
+- **Reproduction Steps:**
+  1. Authenticate as Platform Investigator (`admin@resolvegraph.demo`).
+  2. Navigate to `http://localhost:3000/admin/security`.
+  3. Click "Verify Audit Chain Integrity" button.
+- **Observed Behavior:** The banner turns red (`border-rose-500/30 bg-rose-500/10 text-rose-400`) and displays:
+  `Cryptographic Verification Warning: Hash mismatch detected in sequential ledger blocks! · CHAIN CORRUPTED`
+- **Root Cause:** Property naming mismatch between backend API and frontend component. The backend endpoint `src/app/api/audit/chained/route.ts` calls `HashChainedAuditService.verifyChainIntegrity()` and returns `{ success: true, verification: { isValid: true, ... } }`. However, line 145 in `src/app/(workspace)/admin/security/page.tsx` reads `setChainValid(data.isChainValid)`. Because `data.isChainValid` is `undefined`, the state becomes falsy, triggering the corruption warning banner even when the cryptographic chain is 100% valid.
+- **Fix:** In `src/app/(workspace)/admin/security/page.tsx`, change `setChainValid(data.isChainValid)` to `setChainValid(Boolean(data.verification?.isValid ?? data.isChainValid))`.
+
+### Defect 8 (RG-UI-01): Responsive Bottom Bar Overlap in Viewports Under 700px Height
+- **Severity:** LOW
+- **Location:** Global Buyer and Merchant layouts (`src/app/(workspace)/layout.tsx`)
+- **Reproduction Steps:**
+  1. Set browser viewport height to 692px or lower.
+  2. Open `/overview`, `/seller`, or `/cases`.
+  3. Scroll to the bottom of the page.
+- **Observed Behavior:** The fixed bottom navigation drawer (`Submit`, `My Complaints`, `Settings`, `More`) slightly overlaps the bottom edge of content containers, requiring user scrolling to interact with primary footer CTA buttons.
+- **Fix:** Add `pb-20` (padding bottom) to the main scroll container on mobile viewports.
 
 ---
 
@@ -675,15 +798,21 @@ RESOLVEGRAPH implements a multi-tier AI architecture:
    - In `src/app/api/unboxing/sessions/route.ts`, before calling `CameraSessionService.initiateSession`, resolve `caseId` to its internal `cuid` by querying `prisma.caseRecord.findFirst({ where: { OR: [{ id: caseId }, { caseNumber: caseId }] } })`.
 3. **Correct Activity Tab Route Parameter Reference:**
    - In `src/app/(workspace)/cases/[caseId]/page.tsx` and child audit components, replace hardcoded references to `CANONICAL_DEMO_CASE.id` (`"RG-2026-0412"`) with the dynamic `caseId` parameter (`"RG-1001"`).
+4. **Fix Reconciliation Multi-Source Seed Payload (RG-BUG-01):**
+   - In `src/app/(workspace)/reconciliation/page.tsx` line 156, add `provider: "PAYPAL"` to the JSON request body sent to `/api/transactions/canonical` so that the route's mandatory validation passes.
+5. **Fix Admin Security Audit Chain Property Mapping (RG-SEC-01):**
+   - In `src/app/(workspace)/admin/security/page.tsx` line 145, update `setChainValid(data.isChainValid)` to `setChainValid(Boolean(data.verification?.isValid ?? data.isChainValid))` so that clean audit chains display `CHAIN INTACT (VERIFIED)` instead of a false corruption warning.
 
 ### Priority 2: Medium Priority Refinements
-4. **Sanitize Database Purchase Date Seed Data:**
+6. **Sanitize Database Purchase Date Seed Data:**
    - Execute a database patch script updating `CASE_CREATED` metadata for RG-1465 and RG-1468 to replace `"61110-02-20"` and `"61111-02-20"` with valid ISO dates (e.g., `"2026-10-24"`).
-5. **Timeline Step Status Synchronization:**
+7. **Timeline Step Status Synchronization:**
    - In `src/components/cases/convergence-timeline.tsx`, add an active case status check to ensure that resolved cases (`status === 'RESOLVED'`) do not render intermediate analysis steps as `"CURRENT STEP"`.
+8. **Responsive Viewport Bottom Bar Padding (RG-UI-01):**
+   - In `src/app/(workspace)/layout.tsx`, add `pb-20` on mobile viewports so that fixed bottom navigation bars do not obscure primary action buttons.
 
 ### Priority 3: Low Priority Polish
-6. **Error Toasting on Purchase Memory Divergence Check:**
+9. **Error Toasting on Purchase Memory Divergence Check:**
    - Add explicit toast notifications in `/purchases` when `compare-dispute` encounters missing parameter errors.
 
 ---

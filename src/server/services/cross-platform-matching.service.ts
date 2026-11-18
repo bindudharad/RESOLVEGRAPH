@@ -175,13 +175,27 @@ export class CrossPlatformMatchingService {
    * Reconciles all source records for a given case or transaction.
    */
   public static async reconcileCase(caseId: string) {
+    const foundCase = await prisma.caseRecord.findFirst({
+      where: {
+        OR: [
+          { id: caseId },
+          { caseNumber: caseId },
+        ],
+      },
+      select: { id: true },
+    });
+    const resolvedCaseId = foundCase ? foundCase.id : null;
+    const caseQueryWhere = resolvedCaseId
+      ? { OR: [{ caseId: resolvedCaseId }, { caseId }] }
+      : { caseId };
+
     const canonicalTxs = await prisma.canonicalTransaction.findMany({
-      where: { caseId },
+      where: caseQueryWhere,
       include: { sourceRecords: true },
     });
 
     const sourceRecords = await prisma.transactionSourceRecord.findMany({
-      where: { caseId },
+      where: caseQueryWhere,
     });
 
     const decisions = [];
@@ -197,7 +211,7 @@ export class CrossPlatformMatchingService {
         // Record matching decision
         const decision = await prisma.matchingDecision.create({
           data: {
-            caseId,
+            caseId: resolvedCaseId,
             canonicalTransactionId: tx.id,
             targetRecordId: src.id,
             matchTier: evalResult.matchTier,
@@ -223,7 +237,7 @@ export class CrossPlatformMatchingService {
           if (normSrcStatus !== tx.normalizedStatus) {
             const mismatch = await prisma.reconciliationMismatch.create({
               data: {
-                caseId,
+                caseId: resolvedCaseId,
                 canonicalTransactionId: tx.id,
                 mismatchType: 'STATUS_MISMATCH',
                 severity: 'HIGH',
@@ -241,7 +255,7 @@ export class CrossPlatformMatchingService {
           hasConflict = true;
           const mismatch = await prisma.reconciliationMismatch.create({
             data: {
-              caseId,
+              caseId: resolvedCaseId,
               canonicalTransactionId: tx.id,
               mismatchType: 'AMOUNT_DISCREPANCY',
               severity: 'CRITICAL',
@@ -265,7 +279,7 @@ export class CrossPlatformMatchingService {
     }
 
     return {
-      caseId,
+      caseId: resolvedCaseId || caseId,
       totalDecisions: decisions.length,
       totalMismatches: mismatches.length,
       decisions,
@@ -277,8 +291,22 @@ export class CrossPlatformMatchingService {
    * Retrieves full reconciliation summary for a case.
    */
   public static async getReconciliationSummary(caseId: string) {
+    const foundCase = await prisma.caseRecord.findFirst({
+      where: {
+        OR: [
+          { id: caseId },
+          { caseNumber: caseId },
+        ],
+      },
+      select: { id: true },
+    });
+    const resolvedCaseId = foundCase ? foundCase.id : null;
+    const caseQueryWhere = resolvedCaseId
+      ? { OR: [{ caseId: resolvedCaseId }, { caseId }] }
+      : { caseId };
+
     const transactions = await prisma.canonicalTransaction.findMany({
-      where: { caseId },
+      where: caseQueryWhere,
       include: {
         sourceRecords: true,
         matchingDecisions: true,
@@ -287,12 +315,12 @@ export class CrossPlatformMatchingService {
     });
 
     const allMismatches = await prisma.reconciliationMismatch.findMany({
-      where: { caseId },
+      where: caseQueryWhere,
       orderBy: { createdAt: 'desc' },
     });
 
     return {
-      caseId,
+      caseId: resolvedCaseId || caseId,
       transactionCount: transactions.length,
       mismatchCount: allMismatches.length,
       transactions,

@@ -13,8 +13,24 @@ export async function GET(request: NextRequest) {
     const provider = searchParams.get('provider') || undefined;
     const status = searchParams.get('status') || undefined;
 
+    let resolvedCaseId = caseId;
+    if (resolvedCaseId) {
+      const foundCase = await prisma.caseRecord.findFirst({
+        where: {
+          OR: [
+            { id: resolvedCaseId },
+            { caseNumber: resolvedCaseId },
+          ],
+        },
+        select: { id: true },
+      });
+      if (foundCase) {
+        resolvedCaseId = foundCase.id;
+      }
+    }
+
     const where: any = {};
-    if (caseId) where.caseId = caseId;
+    if (resolvedCaseId) where.caseId = resolvedCaseId;
     if (provider) where.provider = provider.toUpperCase();
     if (status) where.normalizedStatus = status.toUpperCase();
 
@@ -43,15 +59,32 @@ export async function POST(request: NextRequest) {
     await requireAuth(request);
     const body = await request.json();
 
-    if (!body.provider || body.grossAmountMinor === undefined) {
+    const provider = body.provider || 'PAYPAL';
+    if (body.grossAmountMinor === undefined) {
       return NextResponse.json({ error: 'provider and grossAmountMinor are required.' }, { status: 400 });
     }
 
+    let resolvedCaseId: string | undefined = undefined;
+    if (body.caseId) {
+      const foundCase = await prisma.caseRecord.findFirst({
+        where: {
+          OR: [
+            { id: body.caseId },
+            { caseNumber: body.caseId },
+          ],
+        },
+        select: { id: true },
+      });
+      if (foundCase) {
+        resolvedCaseId = foundCase.id;
+      }
+    }
+
     const tx = await CanonicalTransactionService.createCanonicalTransaction({
-      caseId: body.caseId,
-      provider: body.provider.toUpperCase(),
+      caseId: resolvedCaseId,
+      provider: provider.toUpperCase(),
       providerTxId: body.providerTxId,
-      externalReference: body.externalReference,
+      externalReference: body.externalReference || body.canonicalReference,
       payerReference: body.payerReference,
       payeeReference: body.payeeReference,
       merchantName: body.merchantName,
@@ -63,6 +96,22 @@ export async function POST(request: NextRequest) {
       transactionTimestamp: body.transactionTimestamp ? new Date(body.transactionTimestamp) : new Date(),
       metadata: body.metadata,
     });
+
+    if (Array.isArray(body.sourceRecords) && body.sourceRecords.length > 0) {
+      for (const rec of body.sourceRecords) {
+        await CanonicalTransactionService.recordSourceObservation({
+          caseId: resolvedCaseId,
+          canonicalTransactionId: tx.id,
+          sourceType: rec.sourceType || 'PAYMENT_GATEWAY',
+          sourceName: rec.providerName || rec.sourceName || provider,
+          referenceId: rec.claimedReference || rec.referenceId || `REF-${Date.now()}`,
+          amountMinor: rec.claimedAmountMinor ?? rec.amountMinor ?? tx.grossAmountMinor,
+          currency: rec.claimedCurrency || rec.currency || tx.currency,
+          reportedStatus: rec.claimedStatus || rec.reportedStatus || 'COMPLETED',
+          reportedAt: rec.reportedAt ? new Date(rec.reportedAt) : new Date(),
+        });
+      }
+    }
 
     return NextResponse.json({ success: true, data: tx }, { status: 201 });
   } catch (error: any) {

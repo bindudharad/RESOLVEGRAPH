@@ -237,7 +237,7 @@ export class BuyerScreeningService {
     // STAGE 4: EXIF & Metadata Extraction
     // =========================================================================
     const exifFindings: string[] = [];
-    let exifSuspicious = false;
+    const exifSuspicious = false;
 
     for (const ev of buyerUploads) {
       const ext = (ev.filename || '').split('.').pop()?.toLowerCase() || '';

@@ -14,7 +14,11 @@ export async function GET(request: NextRequest) {
 
     if (shouldVerify) {
       const verification = await HashChainedAuditService.verifyChainIntegrity();
-      return NextResponse.json({ success: true, verification });
+      return NextResponse.json({
+        success: true,
+        verification,
+        isChainValid: verification.isValid,
+      });
     }
 
     if (resourceType) {
@@ -31,6 +35,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       verification,
+      isChainValid: verification.isValid,
       recentRecords,
     });
   } catch (error: any) {

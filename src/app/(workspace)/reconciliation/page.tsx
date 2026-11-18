@@ -155,6 +155,10 @@ export default function ReconciliationPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           caseId: selectedCaseId,
+          provider: "PAYPAL",
+          providerTxId: "CAPTURE-9988112233",
+          orderReference: "ORD-RG-2026-X19",
+          merchantName: "TechStore Global",
           canonicalReference: `TX-CANONICAL-${Date.now().toString().slice(-6)}`,
           grossAmountMinor: 4999, // $49.99
           feeAmountMinor: 175,
@@ -198,7 +202,10 @@ export default function ReconciliationPage() {
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to seed multi-source data");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to seed multi-source data");
+      }
 
       // Auto-reconcile
       await fetch("/api/transactions/reconcile", {
